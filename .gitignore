@@ -9,13 +9,8 @@ client/dist
 client/dist-ssr
 *.local
 
-## Server
-server/logs
 *.log
-server/npm-debug.log*
-server/node_modules
-server/dist
-server/dist-ssr
+
 
 # Editor directories and files
 .vscode/*
