@@ -4,9 +4,9 @@ import { supabase } from '../config/supabase.conf'
 const AuthContext = createContext(); 
 
 export default function AuthContextProvider({children}) {
-  const [session, setSession] = useState(); 
+  const [session, setSession] = useState(null); 
 
-  const signUpNewUser = async (email, password) => { 
+  const signUpUser = async (email, password) => { 
     const { data, error } = await supabase.auth.signUp({
       email: email.lowerCase(),
       password: password
@@ -15,7 +15,7 @@ export default function AuthContextProvider({children}) {
     if (error) {
       alert("There has been an error", error); 
     }
-    
+    return { success: true, data } 
   }
 
   const signInUser = async (email, password) => { 
@@ -27,6 +27,7 @@ export default function AuthContextProvider({children}) {
     if (error) {
       alert("There has been an error", error); 
     }
+    return { success: true, message: "user succesfully created" } 
   }
 
   const signOut = async () => {
@@ -47,7 +48,7 @@ export default function AuthContextProvider({children}) {
   })  
 
   return (
-    <AuthContext.Provider value={{session, setSession}}>
+    <AuthContext.Provider value={{session, signUpUser, signInUser, signOut}}>
       {children}
     </AuthContext.Provider>
   )

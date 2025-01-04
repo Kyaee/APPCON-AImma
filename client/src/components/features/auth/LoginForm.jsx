@@ -9,13 +9,39 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+
 import { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
+import { useNavigate } from "react-router-dom"
 
 export default function LoginForm({className, ...props}) {
+  const [siteError, setSiteError] = useState()
+  const [loading, setLoading] = useState()
   const [login, setLogin] = useState({
     email: '',
     password: ''
   })
+
+  const navigate = useNavigate();
+  const { signInUser } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true)
+
+    const { session, error } = signInUser()
+    if (error) {
+      setSiteError(error)
+      setTimeout(() => {
+        setSiteError('')
+      }, 2000)
+    } else 
+      navigate('/dashboard') 
+
+    if (session) {
+      setSiteError('')
+    }
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -27,7 +53,7 @@ export default function LoginForm({className, ...props}) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
@@ -61,7 +87,9 @@ export default function LoginForm({className, ...props}) {
                     id="email"
                     type="email"
                     placeholder="m@example.com"
+                    value={login.email}
                     required
+                    onChange={(e) => setLogin({ ...login, email: e.target.value })}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -74,9 +102,15 @@ export default function LoginForm({className, ...props}) {
                       Forgot your password?
                     </a>
                   </div>
-                  <Input id="password" type="password" required />
+                  <Input 
+                    id="password" 
+                    type="password" 
+                    required 
+                    value={login.password}
+                    onChange={(e) => setLogin({...login, password: e.target.value})}
+                  />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" disabled={siteError} className="w-full">
                   Login
                 </Button>
               </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function boiler() {
+export default function PDFViewer() {
   return (
     <div>boiler</div>
   )

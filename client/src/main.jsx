@@ -6,7 +6,7 @@ import AuthContext from './hooks/useAuth'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthContext>
+    <AuthContext className="antialiased">
       <App />
     </AuthContext>
   </StrictMode>,
