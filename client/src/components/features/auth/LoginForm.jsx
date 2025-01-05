@@ -29,17 +29,23 @@ export default function LoginForm({className, ...props}) {
     e.preventDefault();
     setLoading(true)
 
-    const { session, error } = signInUser()
-    if (error) {
-      setSiteError(error)
-      setTimeout(() => {
+    try {
+      const { session, error } = signInUser()
+      if (error) {
+        setSiteError(error)
+        setTimeout(() => {
+          setSiteError('')
+        }, 3000)
+      } else 
+        navigate('/dashboard') 
+  
+      if (session) {
         setSiteError('')
-      }, 2000)
-    } else 
-      navigate('/dashboard') 
+      }
+    } catch {
 
-    if (session) {
-      setSiteError('')
+    } finally {
+      setLoading(false)
     }
   }
 

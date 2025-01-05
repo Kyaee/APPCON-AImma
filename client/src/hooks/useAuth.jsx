@@ -6,11 +6,12 @@ const AuthContext = createContext();
 export default function AuthContextProvider({children}) {
   const [session, setSession] = useState(null); 
 
-  const signUpUser = async (email, password) => { 
+  const signUpUser = async (email, password, contact) => { 
     const { data, error } = await supabase.auth.signUp({
-      email: email.lowerCase(),
-      password: password
-    })
+      email: email.toLowerCase(),
+      password: password,
+      contact: contact
+    })  
 
     if (error) {
       alert("There has been an error", error); 
