@@ -11,7 +11,7 @@ import Dashboard from "./routes/dashboard"
 import Profile from "./routes/profile"
 import Shop from "./routes/shop"
 import JobOpportunities from "./routes/job-opportunities"
-import NotFound from "./routes/not-found"
+import NotFound from "./routes/NotFound"
 
 
 function App() {
