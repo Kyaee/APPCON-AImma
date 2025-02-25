@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -30,6 +32,7 @@
   --chart-4: hsl(43 74% 66%);
   --chart-5: hsl(27 87% 67%);
   --radius: 0.6rem;
+  --brown: #BF8648;
 }
 
 .dark {
@@ -96,5 +99,17 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {  
+  body { 
+    font-family: "Inter"
+  }
+  .custom-shadow-50 {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.50);
+  }
+  .custom-shadow-75 {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.75);
   }
 }

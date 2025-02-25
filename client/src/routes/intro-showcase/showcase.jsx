@@ -34,10 +34,10 @@ const Showcase = () => {
   const currentSlideData = IntroSlides[currentSlide];
 
   return (
-    <div 
+    <main 
       className="w-full h-screen flex items-center justify-center px-6 md:px-16 lg:px-32 xl:px-48"
       style={{
-        backgroundImage: "url('/gradient-2nd.png')" ,
+        backgroundImage: "url('/static-gradient.png')" ,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
@@ -105,7 +105,7 @@ const Showcase = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
