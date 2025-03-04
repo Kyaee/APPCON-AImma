@@ -9,23 +9,23 @@ export default function Header() {
         className="p-3 px-4 flex items-center gap-4 bg-white text-black custom-shadow-75 rounded-lg 
       *:text-sm *:flex *:gap-2 *:px-4 *:py-1 *:rounded-md "
       >
-        <Link to="/lesson/:id" className="hover:bg-neutral-200">
+        <Link to="/:id/lesson/:id" className="hover:bg-neutral-200">
           <Sprout size="20" />
           Lesson
         </Link>
-        <Link to="/lesson/:id/assessment" className="hover:bg-neutral-200">
+        <Link to="/:id/lesson/assessment/:id" className="hover:bg-neutral-200">
           <Target size="19" />
           Assessment
         </Link>
-        <Link to="/shop" className="hover:bg-neutral-200">
+        <Link to="/shop/:id" className="hover:bg-neutral-200">
           <ShoppingCart size="17  " />
           Shop
         </Link>
       </nav>
-      <button className="text-sm p-2 flex bg-white text-black gap-1 custom-shadow-50 rounded-md">
+      <Link to="/dashboard/:id" className="text-sm p-2 flex bg-white text-black gap-1 custom-shadow-50 rounded-md">
         <ArrowUpRight size="20" />
         Quit
-      </button>
+      </Link>
     </header>
   )
 }

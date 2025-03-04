@@ -35,12 +35,12 @@ function App() {
               or /2/dashboard or /3/shop.
             */}
 
-            <Route path="/:id/dashboard" element={<Dashboard/>} />
-            <Route path="/:id/profile" element={<Profile/>} />
-            <Route path="/shop" element={<Shop/>} />
+            <Route path="/dashboard/:id" element={<Dashboard/>} />
+            <Route path="/profile/:id" element={<Profile/>} />
+            <Route path="/shop/:id" element={<Shop/>} />
             <Route path="/job-opportunities/:id" element={<JobOpportunities/>} />
-            <Route path="/lesson/:id" element={<Lesson/>} />
-            <Route path="/lesson/:id/assessment" element={<LessonAssessment/>} />
+            <Route path="/:id/lesson/:id" element={<Lesson/>} />
+            <Route path="/:id/lesson/assessment/:id" element={<LessonAssessment/>} />
 
             <Route path="*" element={<NotFound/>} />
           </Routes>

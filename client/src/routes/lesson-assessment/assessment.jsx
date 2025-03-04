@@ -2,8 +2,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "@/assets/lesson-assessment/la-intro-capybara.png";
 import { bouncy } from "ldrs"; bouncy.register();
 import Questions from "./questions";
-import Header from "./lesson-header";
-import Loading from "./loading";
+import Header from "@/components/layout/lesson/header-navigator";
+import Loading from "@/components/layout/loading";
 
 // Use Hooks
 import { useState, useEffect } from "react";
