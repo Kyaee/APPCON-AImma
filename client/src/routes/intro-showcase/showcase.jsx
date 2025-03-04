@@ -1,9 +1,10 @@
-import { useState } from 'react'; 
+import React, { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 const IntroSlides = [
   {
     id: 'welcome',
-    logo: '/public/brandicon.png', 
+    logo: true,
     title: 'Welcome to',
     subtitle: "Here's how our platform helps you grow professionally.",
     brandName: 'Capacademy!',
@@ -13,12 +14,41 @@ const IntroSlides = [
     id: 'learning-paths',
     title: 'Personalized Learning Paths',
     subtitle: 'AI tailors courses based on your assessment results, ensuring you learn exactly what you need.',
-    image: '/public/brandicon.png' 
+    image: '/public/learning.png' 
+  },
+  {
+    id: 'quizzes',
+    title: 'Interactive Quizzes',
+    subtitle: 'Test your knowledge and track your progress with interactive quizzes.',
+    image: '/public/quiz.png'
+  },
+  {
+    id: 'gamified',
+    title: 'Gamified Experience',
+    subtitle: 'Earn badges, level up, and compete on leaderboards to stay motivated.',
+    image: '/public/game.png'
+  },
+  {
+    id: 'opportunities',
+    title: 'Opportunities Hub',
+    subtitle: 'Access exclusive job offers, internships, and networking opportunities.',
+    image: '/opportunity.png'
+  },
+  {
+    id: 'analytics',
+    title: 'Real-Time Analytics',
+    subtitle: 'Monitor your skill development with detailed analytics and insights.',
+    image: '/analytics.png'
+  },
+  {
+    id: 'assessment',
+    title: 'Before we begin',
+    subtitle: 'Let us start by assessing you to know about you more.',
+    button: 'Begin Assessment'
   }
-  // Other slides remain unchanged
 ];
 
-const Showcase = () => {
+const App = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleNext = () => {
@@ -34,10 +64,10 @@ const Showcase = () => {
   const currentSlideData = IntroSlides[currentSlide];
 
   return (
-    <main 
+    <div 
       className="w-full h-screen flex items-center justify-center px-6 md:px-16 lg:px-32 xl:px-48"
       style={{
-        backgroundImage: "url('/static-gradient.png')" ,
+        backgroundImage: "url('/public/static-gradient.png')" ,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
@@ -47,7 +77,7 @@ const Showcase = () => {
           <div className="flex justify-center mb-6">
             <div className="rounded-full p-4 w-32 h-32 flex items-center justify-center shadow-md bg-gradient-to-b from-white/80 to-white/40">
               <img
-                src={currentSlideData.logo}
+                src="/api/placeholder/64/64"
                 alt="Capybara mascot"
                 className="w-full h-full object-contain rounded-full"
               />
@@ -105,8 +135,8 @@ const Showcase = () => {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 };
 
-export default Showcase;
+export default App;

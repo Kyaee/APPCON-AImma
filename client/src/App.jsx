@@ -15,7 +15,6 @@ import Lesson from "./routes/lesson"
 import LessonAssessment from "./routes/lesson-assessment/assessment"
 import NotFound from "./routes/NotFound"
 
-
 // Theme provider
 import { ThemeProvider } from "./components/features/theme-provider"
 
