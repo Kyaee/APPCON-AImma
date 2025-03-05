@@ -14,6 +14,7 @@ import JobOpportunities from "./routes/job-opportunities"
 import Lesson from "./routes/lesson"
 import LessonAssessment from "./routes/lesson-assessment/assessment"
 import NotFound from "./routes/NotFound"
+import Card from "./components/features/new-user-card"
 
 // Theme provider
 import { ThemeProvider } from "./components/features/theme-provider"
@@ -41,6 +42,7 @@ function App() {
             <Route path="/job-opportunities/:id" element={<JobOpportunities/>} />
             <Route path="/:id/lesson/:id" element={<Lesson/>} />
             <Route path="/:id/lesson/assessment/:id" element={<LessonAssessment/>} />
+            <Route path="/test" element={<Card/>} />
 
             <Route path="*" element={<NotFound/>} />
           </Routes>
