@@ -137,36 +137,41 @@ const Showcase = () => {
         
         {/* Footer with navigation and progress indicators - Aligned with image */}
         <div className="w-full max-w-4xl mt-8">
-          {!currentSlideData.isLast && !currentSlideData.logo ? (
+          {!currentSlideData.isLast ? (
             <div className="flex items-center justify-between">
-              {/* Progress indicators */}
-              <div className="flex space-x-2">
-                {IntroSlides.slice(1, 6).map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-5 h-5 rounded-full border-black border-2 transition-colors duration-200 ${
-                      index + 1 === currentSlide 
-                        ? 'bg-amber-500' 
-                        : index + 1 < currentSlide 
-                          ? 'bg-gray-300' 
-                          : 'bg-gray-300/50'
-                    }`}
-                  />
-                ))}
-              </div>
+              {/* Progress indicators - Only show for middle slides */}
+              {!currentSlideData.logo && (
+                <div className="flex space-x-2">
+                  {IntroSlides.slice(1, 6).map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-5 h-5 rounded-full border-black border-2 transition-colors duration-200 ${
+                        index + 1 === currentSlide 
+                          ? 'bg-amber-500' 
+                          : index + 1 < currentSlide 
+                            ? 'bg-gray-300' 
+                            : 'bg-gray-300/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
 
-              {/* Navigation button */}
-              <button 
-                onClick={handleNext}
-                className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg 
-                shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
-              >
-                {currentSlideData.button}
-                <ArrowRight size={20} />
-              </button>
+              {/* Navigation button for non-last slides */}
+              <div className={`${currentSlideData.logo ? 'w-full flex justify-center' : ''}`}>
+                <button 
+                  onClick={handleNext}
+                  className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg 
+                  shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+                >
+                  {currentSlideData.button}
+                  <ArrowRight size={20} />
+                </button>
+              </div>
             </div>
           ) : (
-            <div className={`flex ${currentSlideData.isLast ? 'justify-center' : 'justify-center'}`}>
+            // Only last slide gets Link component
+            <div className="w-full flex justify-center">
               <Link 
                 to="/intro/assessment"
                 className="bg-[#BF9566] border-black border-2 text-white px-8 py-3 rounded-lg text-lg 
