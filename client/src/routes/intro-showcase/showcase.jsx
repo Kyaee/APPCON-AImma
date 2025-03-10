@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const IntroSlides = [
   {
@@ -14,41 +15,47 @@ const IntroSlides = [
     id: 'learning-paths',
     title: 'Personalized Learning Paths',
     subtitle: 'AI tailors courses based on your assessment results, ensuring you learn exactly what you need.',
-    image: '/public/learning.png' 
+    image: '/learning.png',
+    button: "Next"
   },
   {
     id: 'quizzes',
     title: 'Interactive Quizzes',
     subtitle: 'Test your knowledge and track your progress with interactive quizzes.',
-    image: '/public/quiz.png'
+    image: '/quiz.png',
+    button: "Next"
   },
   {
     id: 'gamified',
     title: 'Gamified Experience',
     subtitle: 'Earn badges, level up, and compete on leaderboards to stay motivated.',
-    image: '/public/game.png'
+    image: '/game.png',
+    button: "Next"
   },
   {
     id: 'opportunities',
     title: 'Opportunities Hub',
     subtitle: 'Access exclusive job offers, internships, and networking opportunities.',
-    image: '/opportunity.png'
+    image: '/opportunity.png',
+    button: "Next"
   },
   {
     id: 'analytics',
     title: 'Real-Time Analytics',
     subtitle: 'Monitor your skill development with detailed analytics and insights.',
-    image: '/analytics.png'
+    image: '/analytics.png',
+    button: "Next"
   },
   {
     id: 'assessment',
     title: 'Before we begin',
     subtitle: 'Let us start by assessing you to know about you more.',
-    button: 'Begin Assessment'
+    button: 'Begin Assessment',
+    isLast: true
   }
 ];
 
-const App = () => {
+const Showcase = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleNext = () => {
@@ -67,76 +74,118 @@ const App = () => {
     <div 
       className="w-full h-screen flex items-center justify-center px-6 md:px-16 lg:px-32 xl:px-48"
       style={{
-        backgroundImage: "url('/public/static-gradient.png')" ,
+        backgroundImage: "url('/static-gradient.png')", // Updated path to point to public folder
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
     >
-      <div className="max-w-4xl w-full flex flex-col items-center text-center p-8 md:p-12 relative">
-        {currentSlideData.logo && (
-          <div className="flex justify-center mb-6">
-            <div className="rounded-full p-4 w-32 h-32 flex items-center justify-center shadow-md bg-gradient-to-b from-white/80 to-white/40">
+      <div className="max-w-6xl w-full flex flex-col items-center p-8 md:p-12 relative">
+        {/* Skip button - aligned with image width */}
+        {currentSlide > 0 && currentSlide < 6 && (
+          <div className="w-full max-w-4xl flex justify-end mb-4">
+            <button
+              onClick={handleSkip}
+              className="px-10 py-2 rounded-lg text-sm 
+              bg-white/10 backdrop-blur-sm text-gray-200 hover:bg-white/20 
+              transition-colors"
+            >
+              Skip
+            </button>
+          </div>
+        )}
+
+        {/* Logo - Larger size for first and last slide */}
+        {(currentSlideData.logo || currentSlideData.isLast) && (
+          <div className="w-full flex justify-center mb-8">
+            <div className="flex items-center justify-center">
               <img
-                src="/api/placeholder/64/64"
-                alt="Capybara mascot"
-                className="w-full h-full object-contain rounded-full"
+                src="/src/assets/intro-showcase/brandicon.png"
+                alt="Brand icon"
+                className="w-48 h-48 object-contain rounded-full" // Increased size
               />
             </div>
           </div>
         )}
         
+        {/* Slide image - Larger size */}
         {currentSlideData.image && (
-          <div className="flex justify-center mb-6 w-full max-w-2xl">
-            <img src={currentSlideData.image} alt={currentSlideData.title} className="w-full h-auto rounded-lg shadow-lg" />
+          <div className="w-full flex justify-center mb-8">
+            <img 
+              src={currentSlideData.image} 
+              alt={currentSlideData.title} 
+              className="w-full max-w-4xl h-auto rounded-lg shadow-lg" // Increased max-width
+            />
           </div>
         )}
         
-        <div className="space-y-2">
-          <h1 className="text-white text-5xl font-bold">{currentSlideData.title}</h1>
-          {currentSlideData.brandName && (
-            <h1 className="text-white text-5xl font-bold">{currentSlideData.brandName}</h1>
-          )}
-          <p className="text-gray-200 text-xl mt-2">{currentSlideData.subtitle}</p>
+        {/* Content - Aligned with image width */}
+        <div className={`w-full max-w-4xl space-y-2 ${(currentSlideData.logo || currentSlideData.isLast) ? 'items-center text-center' : ''}`}>
+          <div className={`w-full ${(currentSlideData.logo || currentSlideData.isLast) ? 'flex flex-col items-center' : ''}`}>
+            <h1 className={`text-white text-5xl font-bold ${(currentSlideData.logo || currentSlideData.isLast) ? 'text-center' : ''}`}>
+              {currentSlideData.title}
+            </h1>
+            {currentSlideData.brandName && (
+              <h1 className="text-white text-5xl font-bold mt-2">
+                {currentSlideData.brandName}
+              </h1>
+            )}
+            <p className={`text-gray-200 text-xl mt-4 ${(currentSlideData.logo || currentSlideData.isLast) ? 'text-center' : ''}`}>
+              {currentSlideData.subtitle}
+            </p>
+          </div>
         </div>
         
-        {currentSlideData.button && (
-          <div className="flex flex-col items-center gap-4 mt-6 relative w-full">
-            <button 
-              className="bg-amber-600 text-white px-8 py-3 rounded text-lg shadow-lg hover:bg-amber-700 transition-colors"
-              onClick={handleNext}
-            >
-              {currentSlideData.button}
-            </button>
-            {currentSlide !== IntroSlides.length - 1 && (
-              <button
-                onClick={handleSkip}
-                className="absolute top-0 right-0 px-6 py-2 rounded text-lg bg-white/10 backdrop-blur-sm text-gray-200 shadow-lg hover:bg-white/20 transition-colors"
-              >
-                Skip
-              </button>
-            )}
-          </div>
-        )}
+        {/* Footer with navigation and progress indicators - Aligned with image */}
+        <div className="w-full max-w-4xl mt-8">
+          {!currentSlideData.isLast ? (
+            <div className="flex items-center justify-between">
+              {/* Progress indicators - Only show for middle slides */}
+              {!currentSlideData.logo && (
+                <div className="flex space-x-2">
+                  {IntroSlides.slice(1, 6).map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-5 h-5 rounded-full border-black border-2 transition-colors duration-200 ${
+                        index + 1 === currentSlide 
+                          ? 'bg-amber-500' 
+                          : index + 1 < currentSlide 
+                            ? 'bg-gray-300' 
+                            : 'bg-gray-300/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
 
-        <div className="flex justify-center items-center mt-8 w-full max-w-lg">
-          <div className="flex space-x-2">
-            {IntroSlides.map((_, index) => (
-              <div
-                key={index}
-                className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                  index === currentSlide 
-                    ? 'bg-blue-500' 
-                    : index < currentSlide 
-                      ? 'bg-gray-300' 
-                      : 'bg-gray-300/50'
-                }`}
-              />
-            ))}
-          </div>
+              {/* Navigation button for non-last slides */}
+              <div className={`${currentSlideData.logo ? 'w-full flex justify-center' : ''}`}>
+                <button 
+                  onClick={handleNext}
+                  className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg 
+                  shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+                >
+                  {currentSlideData.button}
+                  <ArrowRight size={20} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            // Only last slide gets Link component
+            <div className="w-full flex justify-center">
+              <Link 
+                to="/intro/assessment"
+                className="bg-[#BF9566] border-black border-2 text-white px-8 py-3 rounded-lg text-lg 
+                shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+              >
+                {currentSlideData.button}
+                <ArrowRight size={20} />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default App;
+export default Showcase;
