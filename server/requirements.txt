@@ -1,0 +1,7 @@
+openai
+python-dotenv
+pandas
+jsonify
+fastapi
+pydantic
+json

@@ -9,7 +9,7 @@ export default function loading() {
     "These giant rodents are herbivores and eat about 6-8 pounds of grass per day",
     "Capybaras are known as 'nature's chairs' because other animals often sit on them",
     "They can jump up to 4 feet high despite their chubby appearance",
-    "Capybaras are close relatives of guinea pigs"
+    "Capybaras are close relatives of guinea pigs",
   ];
 
   const randomTip = tips[Math.floor(Math.random() * tips.length)];
@@ -30,9 +30,7 @@ export default function loading() {
         className="mb-8"
       ></l-bouncy>
       <h3 className="font-extrabold text-xl mb-2">Tip:</h3>
-      <p className="max-w-1/4 text-center text-white">
-        {randomTip}
-      </p>
+      <p className="max-w-1/4 text-center text-white">{randomTip}</p>
     </main>
   );
 }

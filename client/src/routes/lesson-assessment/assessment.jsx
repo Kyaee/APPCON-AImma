@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "@/assets/lesson-assessment/la-intro-capybara.png";
-import { bouncy } from "ldrs"; bouncy.register();
+import { bouncy } from "ldrs";
+bouncy.register();
 import Questions from "./questions";
 import Header from "@/components/layout/lesson/header-navigator";
 import Loading from "@/components/layout/loading";
@@ -54,7 +55,7 @@ export default function Assessment() {
   const [isQuestionData, setQuestionData] = useState([]);
 
   const answers = useAnswersStore((state) => state.answers);
-  
+
   useEffect(() => {
     // fetchData();
   }, []);
@@ -94,7 +95,7 @@ export default function Assessment() {
   return (
     <>
       {isLoading ? (
-        <Loading/>
+        <Loading />
       ) : (
         <main
           className="h-screen w-full py-5 flex flex-col justify-between select-none"
@@ -103,12 +104,12 @@ export default function Assessment() {
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
-        > 
+        >
           <Header />
 
           <form>
             {isIntroSlide ? (
-              <article className="flex flex-col items-center justify-center p-8 md:p-12 relative">
+              <article className="flex flex-col items-center justify-center p-8 mt-22 md:p-12 relative">
                 <img src={Image} alt="capybara superhero" />
                 <h1 className="text-4xl font-extrabold mb-4">
                   Start Your Assessment?
