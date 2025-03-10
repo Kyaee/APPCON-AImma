@@ -71,14 +71,16 @@ const Showcase = () => {
   const currentSlideData = IntroSlides[currentSlide];
 
   return (
-    <div 
-      className="w-full h-screen flex items-center justify-center px-6 md:px-16 lg:px-32 xl:px-48"
-      style={{
-        backgroundImage: "url('/static-gradient.png')", // Updated path to point to public folder
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
+    <div className="w-full h-screen flex items-center justify-center px-6 md:px-16 lg:px-32 xl:px-48 relative">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+      >
+        <source src="/GradientBG.mp4" type="video/mp4" />
+      </video>
       <div className="max-w-6xl w-full flex flex-col items-center p-8 md:p-12 relative">
         {/* Skip button - aligned with image width */}
         {currentSlide > 0 && currentSlide < 6 && (
