@@ -15,7 +15,7 @@ const Questions = ({questionNumber, type, question, options=[], correct}) => {
       // };   
 
       return (
-        <article className="flex items-center justify-center">
+        <article className="flex items-center justify-center mt-52">
           <div className="flex flex-col items-center justify-center p-8 md:p-12 relative">
           <div>
             <h1 className="font-extrabold text-4xl mb-5">#{questionNumber}</h1>
@@ -52,7 +52,7 @@ const Questions = ({questionNumber, type, question, options=[], correct}) => {
       // };
 
       return (
-        <article className="flex items-center justify-center">
+        <article className="flex items-center justify-center mt-52">
           <div className="flex flex-col items-center justify-center p-8 md:p-12 relative">
             <div className="flex flex-col items-start">
               <h1 className="font-extrabold text-4xl mb-5">#{questionNumber}</h1>
@@ -93,7 +93,7 @@ const Questions = ({questionNumber, type, question, options=[], correct}) => {
     )
     case "short-answer":
       return (
-        <article className="flex items-center justify-center">
+        <article className="flex items-center justify-center mt-52">
           <div className="flex flex-col items-center justify-center p-8 md:p-12 relative">
         <div>
           <h1 className="font-extrabold text-4xl mb-5">#{questionNumber}</h1>
@@ -123,7 +123,7 @@ const Questions = ({questionNumber, type, question, options=[], correct}) => {
       )
     case "checkbox":
       return (
-        <article className="flex items-center justify-center w-full">
+        <article className="flex items-center justify-center w-full mt-52">
           <div className="flex flex-col items-center justify-center p-8 md:p-12 relative">
             <div>
               <h1 className="font-extrabold text-4xl mb-5">#{questionNumber}</h1>
