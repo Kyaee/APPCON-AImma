@@ -1,10 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 // import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
-import React from "react";
+
+import Header from "@/components/layout/lesson/header-navigator";
 
 export default function ElementShop() {
   // Data for shop items
@@ -35,6 +42,22 @@ export default function ElementShop() {
     },
     {
       id: 4,
+      title: "Free trial for 6 hours",
+      price: "500 Gems",
+      // image: "/image-fx-removebg-preview-1-3.png",
+      bgColor: "#57b2f4e6",
+      icon: "++",
+    },
+    {
+      id: 5,
+      title: "Free trial for 6 hours",
+      price: "500 Gems",
+      // image: "/image-fx-removebg-preview-1-3.png",
+      bgColor: "#57b2f4e6",
+      icon: "++",
+    },
+    {
+      id: 6,
       title: "Free trial for 6 hours",
       price: "500 Gems",
       // image: "/image-fx-removebg-preview-1-3.png",
@@ -78,20 +101,24 @@ export default function ElementShop() {
   ];
 
   return (
-    <div className="relative w-full h-screen bg-custom-lines text-black overflow-hidden mx-auto">
+    <div className="w-full h-full text-black overflow-hidden">
       {/* Navigation */}
+      <div className="fixed top-0 bg-custom-lines h-screen w-screen -z-10"></div>
+      <Header page="lesson" />
 
       {/* Main Content */}
-      <div className="px-[120px] py-6">
-        {/* Gems Section */}
+      <div className="mt-32 ml-32 py-6">
+        <h1 className="text-3xl font-semibold mb-2 ml-8">In-App Purchases</h1>
+        {/* <p className="text-p mb-5 ml-8 text-neutral-600">Whether you're looking to boost your progress, gain extra lives, or enjoy premium features, <br/>we've got you covered. Dive in and make the most of your learning journey!</p> */}
 
-        <h2 className="text-3xl font-semibold mb-5 text-black">Gems</h2>
-
-        <div className="grid grid-cols-4 gap-7 mb-5">
+        <div
+          className="flex items-center w-11/12 gap-7 mb-5 px-7 pb-5 overflow-auto hide-scrollbar 
+          [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+        >
           {shopItems.map((item) => (
             <Card
               key={item.id}
-              className="flex flex-col justify-between border border-black rounded-[20px] bg-white overflow-hidden"
+              className="border border-black rounded-[20px] bg-white transform transition-transform hover:scale-105"
             >
               <CardContent className="flex flex-col items-center justify-center gap-1">
                 <div className="relative w-56 h-56 ">
@@ -100,10 +127,10 @@ export default function ElementShop() {
                     style={{ backgroundColor: item.bgColor }}
                   />
                   {/* <img
-                      className="absolute w-[178px] h-[177px] top-0 left-0"
-                      alt={item.title}
-                      src={item.image}
-                    /> */}
+                  className="absolute w-[178px] h-[177px] top-0 left-0"
+                  alt={item.title}
+                  src={item.image}
+                /> */}
                   <div className="absolute top-12 left-[117px] font-extrabold text-black text-2xl">
                     {item.icon}
                   </div>
@@ -123,34 +150,34 @@ export default function ElementShop() {
         </div>
       </div>
 
-      <div className="relative z-10 w-full max-w-5xl mx-auto mt-16">
-        <h1 className="text-3xl font-semibold mb-2 ml-8">In-App Purchases</h1>
-        <h2 className="text-3xl font-semibold mb-8 ml-8">Premium</h2>
 
-        {/* Pricing cards */}
+      {/* Pricing cards */}
+      <div className="mt-6 ">
+        <h2 className="ml-40 text-3xl font-semibold mb-8">User Plan</h2>
+
         <div className="flex flex-wrap gap-8 justify-center">
           {pricingPlans.map((plan, index) => (
             <Card
               key={index}
-              className="w-[380px] bg-white rounded-[20px] border border-solid border-black"
+              className="max-w-xl bg-white rounded-[20px] border border-solid border-black"
             >
               <CardHeader className="pb-0">
-                <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+                <CardTitle className="text-black text-2xl font-semibold flex items-center gap-2">
                   {plan.icon && plan.icon}
                   {plan.title}
                 </CardTitle>
 
                 <div className="mt-4 flex flex-col">
                   {plan.discount && (
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="text-black flex items-center gap-2 mb-2">
                       <Badge
                         variant="outline"
-                        className="bg-[#dfdfdf] border border-solid border-black rounded-[10px] font-normal"
+                        className="text-blackbg-[#dfdfdf] border border-solid border-black rounded-[10px] font-normal"
                       >
                         {plan.discount}
                       </Badge>
                       {plan.originalPrice && (
-                        <span className="text-base line-through">
+                        <span className="text-black text-base line-through">
                           {plan.originalPrice}
                         </span>
                       )}
@@ -158,26 +185,26 @@ export default function ElementShop() {
                   )}
 
                   <div className="flex items-end">
-                    <span className="text-5xl tracking-[-3.46px] leading-[48px] font-normal">
+                    <span className="mt-3 text-black text-5xl tracking-[-3.46px] leading-[48px] font-normal">
                       {plan.price}
                     </span>
-                    <span className="text-base ml-1">{plan.period}</span>
+                    <span className="text-black text-base ml-1">&nbsp;{plan.period}</span>
                   </div>
                 </div>
               </CardHeader>
 
               <CardContent className="pt-5">
-                <p className="text-base font-medium mb-5">{plan.description}</p>
+                <p className="text-black text-base font-medium mb-3">{plan.description}</p>
 
                 <ul className="space-y-2">
                   {plan.perks.map((perk, i) => (
-                    <li key={i} className="text-base font-medium">
+                    <li key={i} className="text-black text-base font-medium">
                       • {perk}
                     </li>
                   ))}
                 </ul>
 
-                <Separator className="my-5 h-0.5" />
+                <Separator className="mt-10 mb-3 h-0.5" />
               </CardContent>
 
               <CardFooter>
@@ -190,6 +217,7 @@ export default function ElementShop() {
         </div>
       </div>
 
+      <footer className="pb-15"></footer>
     </div>
   );
 }

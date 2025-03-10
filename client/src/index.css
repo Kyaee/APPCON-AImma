@@ -107,12 +107,23 @@
     font-family: "Inter"
   }
   .bg-custom-lines { 
-    background-image: url("./assets/bg-lines.png");
+    background-image: url("./assets/bg-lines1.png");
   }
   .custom-shadow-50 {
     box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.50);
   }
   .custom-shadow-75 {
     box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.75);
+  }
+  
+  .hide-scrollbar {
+    -webkit-mask: linear-gradient(
+      90deg,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    mask: linear-gradient(90deg, transparent, white 4%, white 90%, transparent);
   }
 }
