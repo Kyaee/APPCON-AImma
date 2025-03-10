@@ -157,7 +157,7 @@ const Showcase = () => {
                 </div>
               )}
 
-              {/* Navigation button for non-last slides */}
+              {/* Navigation button for non-last slides. */}
               <div className={`${currentSlideData.logo ? 'w-full flex justify-center' : ''}`}>
                 <button 
                   onClick={handleNext}
