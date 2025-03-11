@@ -15,14 +15,14 @@ import LessonAssessment from "./routes/lesson-assessment/assessment";
 import NotFound from "./routes/NotFound";
 import Card from "./components/features/new-user-card";
 
-import EducationLevel from './routes/assessment/education-level'
-import DailyGoal from './routes/assessment/daily-goal'
-import Goals from './routes/assessment/goals'
-import Language from './routes/assessment/language'
-import Proficiency from './routes/assessment/proficiency'
-import Questions from './routes/assessment/questions'
-import Results from './routes/assessment/results'
-import UserType from './routes/assessment/user-type'
+import EducationLevel from './routes/user-assessment/education-level'
+import DailyGoal from './routes/user-assessment/daily-goal'
+import Goals from './routes/user-assessment/goals'
+import Language from './routes/user-assessment/language'
+import Proficiency from './routes/user-assessment/proficiency'
+import Questions from './routes/user-assessment/questions'
+import Results from './routes/user-assessment/results'
+import UserType from './routes/user-assessment/user-type'
 
 // Theme provider
 import { ThemeProvider } from "./components/features/theme-provider";
