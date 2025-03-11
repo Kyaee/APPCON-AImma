@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
   - Check the `Routes` folder for more pages 
 */
 import Landing from "./routes/landing"
-import IntroShowcase from "./routes/intro-showcase/showcase"
+import IntroShowcase from "./routes/showcase"
 import Dashboard from "./routes/dashboard"
 import Profile from "./routes/profile"
 import Shop from "./routes/shop"
