@@ -5,6 +5,7 @@ bouncy.register();
 import Questions from "./questions";
 import Header from "@/components/layout/lesson/header-navigator";
 import Loading from "@/components/layout/loading";
+import VideoBackground from "@/components/features/video-background";
 
 // Use Hooks
 import { useState, useEffect } from "react";
@@ -97,14 +98,8 @@ export default function Assessment() {
       {isLoading ? (
         <Loading />
       ) : (
-        <main
-          className="h-screen w-full py-5 flex flex-col justify-between select-none"
-          style={{
-            backgroundImage: "url('/static-gradient.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+        <main className="h-screen w-full py-5 flex flex-col justify-between select-none relative">
+          <VideoBackground />
           <Header />
 
           <form>
