@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Background as Hello } from '@/components/features/background';
+import { Background as Hello } from '@/components/layout/background';
 import OpportunitiesMenu from './OpportunitiesMenu';
 import StatsDisplay from '@/components/features/stats-display';
-import IconButton from '@/components/features/action-icons';
+import IconButton from '@/components/layout/action-icons';
 import MainNav from '@/components/layout/main-nav';
 import wavingCappy from '@/assets/job-opportunities/WaveCappy.png';
 

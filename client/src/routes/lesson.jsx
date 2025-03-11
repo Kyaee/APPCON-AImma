@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Gem, SmileIcon, Zap } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
-import Background from "@/components/features/background";  // Add this import
+import Background from "@/components/layout/background";  // Add this import
 
 const experienceItems = [
   { icon: <Zap className="w-4 h-4" />, text: "100 exp" },

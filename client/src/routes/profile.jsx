@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Background from "@/components/features/background";
+import Background from "@/components/layout/background";
 import MainNav from "@/components/layout/main-nav";
 import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/features/action-icons";
+import ActionIcons from "@/components/layout/action-icons";
 
 export default function Profile() {
   return (

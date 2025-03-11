@@ -11,9 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
 
 import MainNav from "@/components/layout/main-nav";
-import Background from "@/components/features/background";
+import Background from "@/components/layout/background";
 import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/features/action-icons";
+import ActionIcons from "@/components/layout/action-icons";
 
 export default function ElementShop() {
   // Data for shop items
