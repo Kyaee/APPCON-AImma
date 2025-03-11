@@ -12,8 +12,8 @@ export default function MainNav() {
   const [activeItem, setActiveItem] = useState(null);
 
   const navItems = [
-    { icon: missionImage, label: 'Roadmap', path: '/:id/dashboard', id: 'roadmap' },
-    { icon: customerImage, label: 'Profile', path: '/:id/profile', id: 'profile' },
+    { icon: missionImage, label: 'Roadmap', path: '/dashboard/:id', id: 'roadmap' },
+    { icon: customerImage, label: 'Profile', path: '/profile/:id', id: 'profile' },
     { icon: choiceImage, label: 'Opportunities', path: '/job-opportunities/:id', id: 'opportunities' },
     { icon: shoppingImage, label: 'Shop', path: '/shop/:id', id: 'shop' }
   ];
