@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Gem, SmileIcon, Zap } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
+import Background from "@/components/features/background";  // Add this import
 
 const experienceItems = [
   { icon: <Zap className="w-4 h-4" />, text: "100 exp" },
@@ -42,6 +43,7 @@ export default function ElementLesson() {
   return (
     <main className="w-full h-full overflow-hidden">
       <div className="fixed top-0 bg-custom-lines h-screen w-screen -z-10"></div>
+      <Background />  {/* Replace the custom background div */}
       <Header page="lesson" />
 
       {/* Main Content */}

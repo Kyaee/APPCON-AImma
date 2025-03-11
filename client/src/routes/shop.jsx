@@ -6,12 +6,14 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-// import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
 
-import Header from "@/components/layout/lesson/header-navigator";
+import MainNav from "@/components/layout/main-nav";
+import Background from "@/components/features/background";
+import StatsDisplay from "@/components/features/stats-display";
+import ActionIcons from "@/components/features/action-icons";
 
 export default function ElementShop() {
   // Data for shop items
@@ -102,9 +104,26 @@ export default function ElementShop() {
 
   return (
     <div className="w-full h-full text-black overflow-hidden">
-      {/* Navigation */}
-      <div className="fixed top-0 bg-custom-lines h-screen w-screen -z-10"></div>
-      <Header page="lesson" />
+      <Background />
+      <MainNav />
+
+      {/* Stats and Action Icons */}
+      <div className="fixed top-8 right-15 flex items-center gap-4">
+        <div className="flex items-center gap-4">
+          <StatsDisplay type="heart" value="10" />
+          <StatsDisplay type="gem" value="500" />
+        </div>
+        <div className="flex items-center gap-4">
+          <ActionIcons 
+            type="notification" 
+            onClick={() => console.log('Notification clicked')} 
+          />
+          <ActionIcons 
+            type="settings"
+            onClick={() => console.log('Settings clicked')} 
+          />
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="mt-32 ml-32 py-6">

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @import "tailwindcss";
 
@@ -32,7 +32,7 @@
   --chart-4: hsl(43 74% 66%);
   --chart-5: hsl(27 87% 67%);
   --radius: 0.6rem;
-  --brown: #BF8648;
+  --brown: #bf8648;
 }
 
 .dark {
@@ -102,20 +102,19 @@
   }
 }
 
-@layer utilities {  
-  body { 
-    font-family: "Inter"
+@layer utilities {
+  body {
+    font-family: "Inter";
   }
-  .bg-custom-lines { 
+  .bg-custom-lines {
     background-image: url("./assets/bg-lines1.png");
   }
   .custom-shadow-50 {
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.50);
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
   }
   .custom-shadow-75 {
     box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.75);
   }
-  
   .hide-scrollbar {
     -webkit-mask: linear-gradient(
       90deg,
@@ -126,12 +125,12 @@
     );
     mask: linear-gradient(90deg, transparent, white 4%, white 90%, transparent);
   }
- 
-.hide-navigation-and-mascot .absolute {
-  display: none;
-}
 
-.hide-navigation-and-mascot .NavigationButtons {
-  display: none;
-}
+  .hide-navigation-and-mascot .absolute {
+    display: none;
+  }
+
+  .hide-navigation-and-mascot .NavigationButtons {
+    display: none;
+  }
 }

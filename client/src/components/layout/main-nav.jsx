@@ -1,35 +1,58 @@
-import { Link } from "react-router-dom";
-import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-export default function Header() {
+// Import icons from assets
+import missionImage from '@/assets/job-opportunities/Mission.png';
+import customerImage from '@/assets/job-opportunities/Customer.png';
+import choiceImage from '@/assets/job-opportunities/Choice.png';
+import shoppingImage from '@/assets/job-opportunities/Shopping Cart.png';
+
+export default function MainNav() {
+  const location = useLocation();
+  const [activeItem, setActiveItem] = useState(null);
+
+  const navItems = [
+    { icon: missionImage, label: 'Roadmap', path: '/:id/dashboard', id: 'roadmap' },
+    { icon: customerImage, label: 'Profile', path: '/:id/profile', id: 'profile' },
+    { icon: choiceImage, label: 'Opportunities', path: '/job-opportunities/:id', id: 'opportunities' },
+    { icon: shoppingImage, label: 'Shop', path: '/shop', id: 'shop' }
+  ];
+
+  const isActive = (path) => {
+    const basePath = path.split('/:')[0];
+    // Match exact base path instead of using startsWith
+    return location.pathname.split('/')[1] === basePath.split('/')[1];
+  };
+
   return (
-    <header className="px-6 flex justify-between items-center">
-      <h1 className="text-white text-2xl">CapaCademy</h1>
-      <nav
-        className="p-3 px-4 flex items-center gap-4 bg-white text-black border border-black custom-shadow-75 rounded-lg 
-      *:text-sm *:flex *:gap-2 *:px-4 *:py-1 *:rounded-md "
-      >
-        <Link to="/:id/lesson/:id" className="hover:bg-neutral-200">
-          <Sprout size="20" />
-          Lesson
-        </Link>
-        <Link to="/:id/lesson/assessment/:id" className="hover:bg-neutral-200">
-          <Target size="19" />
-          Assessment
-        </Link>
-        <Link to="/shop/:id" className="hover:bg-neutral-200">
-          <ShoppingCart size="17  " />
-          Profile
-        </Link>
-        <Link to="/shop/:id" className="hover:bg-neutral-200">
-          <ShoppingCart size="17  " />
-          Shop
-        </Link>
-      </nav>
-      <Link to="/dashboard/:id" className="text-sm p-2 flex bg-white border border-black text-black gap-1 custom-shadow-50 rounded-md">
-        <ArrowUpRight size="20" />
-        Quit
-      </Link>
-    </header>
-  )
+    <nav className="fixed top-5 w-full px-8 flex justify-center items-center z-50">
+      <div className="w-[700px] h-[48px] rounded-lg border border-black bg-white flex custom-shadow-75">
+        {navItems.map((item) => (
+          <Link
+            key={item.id}
+            to={item.path}
+            onClick={() => setActiveItem(item.id)}
+            className={`
+              flex items-center justify-center h-full flex-1
+              first:rounded-l-lg last:rounded-r-lg
+              transition-all duration-300 cursor-pointer
+              hover:bg-[#CBB09B]
+              ${isActive(item.path) ? 'bg-[#CBB09B]' : ''}
+            `}
+          >
+            <div className="flex items-center gap-2">
+              <img
+                src={item.icon}
+                alt={item.label}
+                className="w-5 h-5 object-contain"
+              />
+              <span className="text-sm text-black font-inter">
+                {item.label}
+              </span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </nav>
+  );
 }

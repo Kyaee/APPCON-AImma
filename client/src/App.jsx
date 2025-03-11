@@ -4,6 +4,17 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
   WEB PAGES 
   - Check the `Routes` folder for more pages 
 */
+import Landing from "./routes/landing"
+import IntroShowcase from "./routes/intro-showcase/showcase"
+import IntroAssessment from "./routes/intro-assessment/intro-assessment"
+import Dashboard from "./routes/dashboard"
+import Profile from "./routes/profile"
+import Shop from "./routes/shop"
+import JobOpportunities from "./routes/job-opportunities/job-opportunities"
+import Lesson from "./routes/lesson"
+import LessonAssessment from "./routes/lesson-assessment/lesson-assessment"
+import NotFound from "./routes/NotFound"
+import Card from "./components/features/new-user-card"
 import Landing from "./routes/landing";
 import IntroShowcase from "./routes/intro-showcase/showcase";
 import Dashboard from "./routes/dashboard";
