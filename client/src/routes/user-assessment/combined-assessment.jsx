@@ -67,7 +67,7 @@ export default function CombinedAssessment() {
                 <button
                   key={option.id}
                   onClick={() => setSelectedType(option)}
-                  className={`px-10 py-25 rounded-lg border-2 text-center transition-all duration-200
+                  className={`px-10 py-25 rounded-lg border-2 transition-all duration-200
                     ${
                     selectedType?.id === option.id
                       ? 'border-white bg-amber-800/50 text-white'
