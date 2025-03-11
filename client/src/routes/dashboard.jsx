@@ -1,4 +1,4 @@
-import Background from "@/components/layout/background";
+import { Background } from "@/components/layout/background";
 import MainNav from "@/components/layout/main-nav";
 import StatsDisplay from "@/components/features/stats-display";
 import ActionIcons from "@/components/layout/action-icons";
@@ -8,7 +8,7 @@ export default function Dashboard() {
     <div className="relative w-full min-h-screen">
       <Background />
       <MainNav />
-      
+
       {/* Stats and Action Icons */}
       <div className="fixed top-8 right-15 flex items-center gap-4">
         <div className="flex items-center gap-4">
@@ -16,13 +16,13 @@ export default function Dashboard() {
           <StatsDisplay type="gem" value="500" />
         </div>
         <div className="flex items-center gap-4">
-          <ActionIcons 
-            type="notification" 
-            onClick={() => console.log('Notification clicked')} 
+          <ActionIcons
+            type="notification"
+            onClick={() => console.log("Notification clicked")}
           />
-          <ActionIcons 
+          <ActionIcons
             type="settings"
-            onClick={() => console.log('Settings clicked')} 
+            onClick={() => console.log("Settings clicked")}
           />
         </div>
       </div>

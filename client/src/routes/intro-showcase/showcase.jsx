@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import VideoBackground from "@/components/features/video-background"
+import { VideoBackground } from "@/components/layout/background"
 
 const IntroSlides = [
   {

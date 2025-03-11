@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Gem, SmileIcon, Zap } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
-import Background from "@/components/layout/background";  // Add this import
+import { Background } from "@/components/layout/background"; // Add this import
 
 const experienceItems = [
   { icon: <Zap className="w-4 h-4" />, text: "100 exp" },
@@ -37,15 +37,14 @@ nec pretium mauris. Cras vel tempor velit, quis suscipit urna. Sed mattis turpis
 placerat. Integer vel ligula arcu. Duis vitae elit ut ligula sodales congue ut non nisl. 
 Maecenas sem massa, rhoncus eget arcu et, dapibus suscipit est. Sed lectus risus, 
 convallis ac consectetur sed, eleifend non arcu. Nulla egestas malesuada pulvinar.
-` 
+`;
 
 export default function ElementLesson() {
   return (
     <main className="w-full h-full overflow-hidden">
       <div className="fixed top-0 bg-custom-lines h-screen w-screen -z-10"></div>
-      <Background />  {/* Replace the custom background div */}
+      <Background /> {/* Replace the custom background div */}
       <Header page="lesson" />
-
       {/* Main Content */}
       <section className="mt-32 max-w-2xl mx-auto overflow-hidden">
         {/* Difficulty and Experience */}
@@ -90,9 +89,15 @@ export default function ElementLesson() {
                 {children}
               </h3>
             ),
-            p: ({ children }) => <p className="text-black font-p my-6">{children}</p>,
-            ul: ({ children }) => <ul className="list-disc pl-6 space-y-2">{children}</ul>,
-            li: ({ children }) => <li className="text-black font-p">{children}</li>,
+            p: ({ children }) => (
+              <p className="text-black font-p my-6">{children}</p>
+            ),
+            ul: ({ children }) => (
+              <ul className="list-disc pl-6 space-y-2">{children}</ul>
+            ),
+            li: ({ children }) => (
+              <li className="text-black font-p">{children}</li>
+            ),
             // add for images
             // tables
           }}

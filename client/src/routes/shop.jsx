@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
 
 import MainNav from "@/components/layout/main-nav";
-import Background from "@/components/layout/background";
+import { Background } from "@/components/layout/background";
 import StatsDisplay from "@/components/features/stats-display";
 import ActionIcons from "@/components/layout/action-icons";
 
@@ -114,13 +114,13 @@ export default function ElementShop() {
           <StatsDisplay type="gem" value="500" />
         </div>
         <div className="flex items-center gap-4">
-          <ActionIcons 
-            type="notification" 
-            onClick={() => console.log('Notification clicked')} 
+          <ActionIcons
+            type="notification"
+            onClick={() => console.log("Notification clicked")}
           />
-          <ActionIcons 
+          <ActionIcons
             type="settings"
-            onClick={() => console.log('Settings clicked')} 
+            onClick={() => console.log("Settings clicked")}
           />
         </div>
       </div>
@@ -169,7 +169,6 @@ export default function ElementShop() {
         </div>
       </div>
 
-
       {/* Pricing cards */}
       <div className="mt-6 ">
         <h2 className="ml-40 text-3xl font-semibold mb-8">User Plan</h2>
@@ -207,13 +206,17 @@ export default function ElementShop() {
                     <span className="mt-3 text-black text-5xl tracking-[-3.46px] leading-[48px] font-normal">
                       {plan.price}
                     </span>
-                    <span className="text-black text-base ml-1">&nbsp;{plan.period}</span>
+                    <span className="text-black text-base ml-1">
+                      &nbsp;{plan.period}
+                    </span>
                   </div>
                 </div>
               </CardHeader>
 
               <CardContent className="pt-5">
-                <p className="text-black text-base font-medium mb-3">{plan.description}</p>
+                <p className="text-black text-base font-medium mb-3">
+                  {plan.description}
+                </p>
 
                 <ul className="space-y-2">
                   {plan.perks.map((perk, i) => (

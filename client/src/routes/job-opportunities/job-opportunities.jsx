@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Background as Hello } from '@/components/layout/background';
+import { Background } from "@/components/layout/background"
 import OpportunitiesMenu from './OpportunitiesMenu';
 import StatsDisplay from '@/components/features/stats-display';
 import IconButton from '@/components/layout/action-icons';
