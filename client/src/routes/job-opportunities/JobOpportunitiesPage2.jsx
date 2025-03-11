@@ -5,13 +5,13 @@ import choiceImage from '/src/assets/job-opportunities/Choice.png'; // Import th
 import customerImage from '/src/assets/job-opportunities/Customer.png'; // Import the image
 import shoppingImage from '/src/assets/job-opportunities/Shopping Cart.png'; // Import the image
 import missionImage from '/src/assets/job-opportunities/Mission.png'; // Import the image
-import wavingCappy from '/src/assets/job-opportunities/WaveCappy.png'; // Import the image
 import gemImage from '/src/assets/job-opportunities/gem.png'; // Import the image
 import optionImage from '/src/assets/job-opportunities/options.png'; // Import the image
 import heartImage from '/src/assets/job-opportunities/heart.png'; // Import the image
 import notificationImage from '/src/assets/job-opportunities/Notification.png'; // Import the image
+import OpportunitiesMenu from './OpportunitiesMenu'; // Import the updated component
 
-export default function JobOpportunities() {
+export default function JobOpportunitiesPage2() {
   const [isHovered, setIsHovered] = useState(false); // State to track hover on button
 
   const navigate = useNavigate();  // Initialize useNavigate hook
@@ -32,15 +32,16 @@ export default function JobOpportunities() {
     <div
       style={{
         backgroundImage: `url(${backgroundImage})`,
-        height: '100vh', // Full viewport height
-        backgroundSize: 'auto',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'repeat-y', // This will repeat the background vertically
+        backgroundSize: 'auto', // This keeps the original image size
+        backgroundPosition: 'center', // This will center the background
+        backgroundAttachment: 'fixed', // This keeps the background fixed as the user scrolls
+        height: '200vh', // Set the height to be larger than the viewport for scrolling
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative', // Make the parent relative for absolute positioning
+        overflow: 'auto', // This ensures the content is scrollable
       }}
 
 
@@ -64,7 +65,7 @@ export default function JobOpportunities() {
           fontSize: '11px',
           fontStyle: 'normal',
           fontWeight: '600',
-          lineHeight: '16px',  /* 133.333% */
+          lineHeight: '16px',
           color: '#000',
           textAlign: 'center',
         }}
@@ -170,6 +171,7 @@ export default function JobOpportunities() {
       >
         Add +
       </div>
+
 
       {/* Fixed Header */}
       <h1
@@ -434,105 +436,35 @@ export default function JobOpportunities() {
         }}
       />
 
-      {/* Cappy image and text */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column', // Stack the image and text vertically
-          justifyContent: 'center', // Center both vertically
-          alignItems: 'center', // Center horizontally
-          height: '100vh', // Full viewport height
-        }}
-      >
-        {/* Image */}
-        <img
-          src={wavingCappy}
-          alt="Centered"
-          style={{
-            maxWidth: '100%', // Make sure the image is responsive
-            maxHeight: '100%', // Ensure the image doesn't overflow
-            objectFit: 'contain', // Keep the aspect ratio intact
-            marginTop: '60px', // Adjust image top position (move it up or down)
-          }}
-        />
-
-        {/* Text Below Image */}
-        <span
-          style={{
-            color: '#4C4C4C',
-            fontFamily: 'Inter',
-            fontSize: '48px',
-            fontStyle: 'normal',
-            fontWeight: '800',
-            lineHeight: '48px', // Line height set to 48px (100%)
-            letterSpacing: '-0.576px',
-            textAlign: 'center', // Ensure text is centered
-            marginTop: '10px', // Adjust this value to move the text slightly down
-          }}
-        >
-          Gather Job Opportunities
-        </span>
-
-        <span
-          style={{
-            color: '#000',
-            fontFamily: 'Inter',
-            fontSize: '20px',
-            fontStyle: 'normal',
-            fontWeight: '400',
-            lineHeight: '28px', // Line height set to 28px (140%)
-            textAlign: 'center', // Center text horizontally
-            marginTop: '10px', // Space between the two texts
-          }}
-        >
-          Before you start,
-        </span>
-
-        {/* Rectangle Let' start*/}
-        <div
-          style={{
-            borderRadius: '20px', // Rounded corners
-            border: '1px solid #000', // Black border
-            background: '#007CE8', // Blue background
-            boxShadow: '4px 4px 0px 0px rgba(0, 0, 0, 0.75)', // Box shadow
-            width: '561px', // Set width of rectangle
-            height: '70px', // Set height of rectangle
-            flexShrink: '0', // Prevent shrinking
-            display: 'flex', // Use flexbox to center any content inside the rectangle
-            justifyContent: 'center', // Center horizontally
-            alignItems: 'center', // Center vertically
-            marginTop: '20px', // Space between the text and the rectangle
-            cursor: 'pointer', // Change cursor to indicate it's clickable
-            transition: 'background 0.3s ease', // Smooth transition for hover effect
-            backgroundColor: isHovered ? '#0056b3' : '#007CE8', // Change background color on hover
-          }}
-          onClick={handleStartClick} // Trigger click handler
-          onMouseEnter={() => setIsHovered(true)} // Set hover state to true
-          onMouseLeave={() => setIsHovered(false)} // Set hover state to false when mouse leaves
-        >
-          {/* Text Inside the Rectangle */}
-          <span
-            style={{
-              color: '#FFF', // Text color inside the rectangle
-              textAlign: 'center', // Center the text
-              fontFamily: 'Inter', // Font family
-              fontSize: '24px', // Font size
-              fontStyle: 'normal', // Normal font style
-              fontWeight: '600', // Font weight
-              lineHeight: '32px', // Line height for text inside rectangle
-              letterSpacing: '-0.144px', // Letter spacing
-              width: '386px', // Width of the text
-            }}
-          >
-            Let’s Start!
-          </span>
-        </div>
-
+      <div>
+        <OpportunitiesMenu top="350px" left="19%" />
+        <OpportunitiesMenu top="350px" left="50%" />
+        <OpportunitiesMenu top="800px" left="19%" />
+        <OpportunitiesMenu top="800px" left="50%" />
         
-
       </div>
 
+
+
+
+
+
+
+
+
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
   );
 }
