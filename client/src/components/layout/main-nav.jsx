@@ -15,7 +15,7 @@ export default function MainNav() {
     { icon: missionImage, label: 'Roadmap', path: '/:id/dashboard', id: 'roadmap' },
     { icon: customerImage, label: 'Profile', path: '/:id/profile', id: 'profile' },
     { icon: choiceImage, label: 'Opportunities', path: '/job-opportunities/:id', id: 'opportunities' },
-    { icon: shoppingImage, label: 'Shop', path: '/shop', id: 'shop' }
+    { icon: shoppingImage, label: 'Shop', path: '/shop/:id', id: 'shop' }
   ];
 
   const isActive = (path) => {
