@@ -6,21 +6,21 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 */
 import Landing from "./routes/landing"
 import IntroShowcase from "./routes/intro-showcase/showcase"
-import IntroAssessment from "./routes/intro-assessment/intro-assessment"
+import IntroAssessment from "./routes/intro-assessment/assessment"
 import Dashboard from "./routes/dashboard"
 import Profile from "./routes/profile"
 import Shop from "./routes/shop"
-import JobOpportunities from "./routes/job-opportunities"
+import JobOpportunities from "./routes/job-opportunities/job-opportunities"
+import JobOpportunitiesPage2 from "./routes/job-opportunities/JobOpportunitiesPage2" 
 import Lesson from "./routes/lesson"
-import LessonAssessment from "./routes/lesson-assessment/lesson-assessment"
+import LessonAssessment from "./routes/lesson-assessment/assessment"
 import NotFound from "./routes/NotFound"
 import Card from "./components/features/new-user-card"
 
 // Theme provider
-import { ThemeProvider } from "./components/features/theme-provider"
+import { ThemeProvider } from "./components/features/theme-provider";
 
 function App() {
-
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -36,13 +36,13 @@ function App() {
               or /2/dashboard or /3/shop.
             */}
 
-            <Route path="/dashboard/:id" element={<Dashboard/>} />
-            <Route path="/profile/:id" element={<Profile/>} />
-            <Route path="/shop/:id" element={<Shop/>} />
+            <Route path="/:id/dashboard" element={<Dashboard/>} />
+            <Route path="/:id/profile" element={<Profile/>} />
+            <Route path="/shop" element={<Shop/>} />
             <Route path="/job-opportunities/:id" element={<JobOpportunities/>} />
-            <Route path="/:id/lesson/:id" element={<Lesson/>} />
-            <Route path="/:id/lesson/assessment/:id" element={<LessonAssessment/>} />
-            <Route path="/test" element={<Card/>} />
+            <Route path="/job-opportunities-page2/:id" element={<JobOpportunitiesPage2 />} /> 
+            <Route path="/lesson/:id" element={<Lesson/>} />
+            <Route path="/lesson/:id/assessment" element={<LessonAssessment/>} />
 
             <Route path="*" element={<NotFound/>} />
           </Routes>
@@ -52,4 +52,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
