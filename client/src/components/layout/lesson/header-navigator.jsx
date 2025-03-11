@@ -4,33 +4,32 @@ import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
 export default function Header({ page }) {
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
-      <h1
-        className={`${page == "lesson" ? "text-black font-semibold" : ""} 
-        text-2xl`}
-      >
+      <h1 className={`${page == "lesson" ? "text-black font-semibold" : ""} text-2xl`}>
         CapaCademy
       </h1>
-      <nav
-        className="p-3 px-4 flex items-center gap-4 bg-white text-black border border-black custom-shadow-75 rounded-lg 
-      *:text-sm *:flex *:gap-2 *:px-4 *:py-1 *:rounded-md "
-      >
-        <Link to="/:id/lesson/:id" className="hover:bg-neutral-200">
+      <nav className="flex items-center bg-white text-black border border-black custom-shadow-75 rounded-lg h-[48px]">
+        <Link to="/lesson/:id" 
+          className="flex items-center gap-2 px-4 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300"
+        >
           <Sprout size="20" />
-          Lesson
+          <span className="text-sm">Lesson</span>
         </Link>
-        <Link to="/:id/lesson/assessment/:id" className="hover:bg-neutral-200">
-          <Target size="19" />
-          Assessment
+        <Link to="/lesson/:id/assessment" 
+          className="flex items-center gap-2 px-4 h-full hover:bg-[#CBB09B] transition-all duration-300"
+        >
+          <Target size="20" />
+          <span className="text-sm">Assessment</span>
         </Link>
-        <Link to="/shop/:id" className="hover:bg-neutral-200">
-          <ShoppingCart size="17  " />
-          Shop
+        <Link to="/shop" 
+          className="flex items-center gap-2 px-4 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300"
+        >
+          <ShoppingCart size="20" />
+          <span className="text-sm">Shop</span>
         </Link>
       </nav>
       <Link
-        to="/dashboard/:id"
-        className={`${page == "lesson" ? "" : "ml-3"} 
-        text-sm mr-8 p-2 flex bg-white border border-black text-black gap-1 custom-shadow-50 rounded-md`}
+        to="/:id/dashboard"
+        className={`${page == "lesson" ? "" : "ml-3"} text-sm mr-8 p-2 flex bg-white border border-black text-black gap-1 custom-shadow-50 rounded-md`}
       >
         <ArrowUpRight size="20" />
         Quit

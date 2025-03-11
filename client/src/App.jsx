@@ -11,7 +11,6 @@ import Dashboard from "./routes/dashboard"
 import Profile from "./routes/profile"
 import Shop from "./routes/shop"
 import JobOpportunities from "./routes/job-opportunities/job-opportunities"
-import JobOpportunitiesPage2 from "./routes/job-opportunities/JobOpportunitiesPage2" 
 import Lesson from "./routes/lesson"
 import LessonAssessment from "./routes/lesson-assessment/lesson-assessment"
 import NotFound from "./routes/NotFound"
@@ -40,7 +39,6 @@ function App() {
             <Route path="/:id/profile" element={<Profile/>} />
             <Route path="/shop" element={<Shop/>} />
             <Route path="/job-opportunities/:id" element={<JobOpportunities/>} />
-            <Route path="/job-opportunities-page2/:id" element={<JobOpportunitiesPage2 />} /> 
             <Route path="/lesson/:id" element={<Lesson/>} />
             <Route path="/lesson/:id/assessment" element={<LessonAssessment/>} />
 
