@@ -60,6 +60,7 @@ function App() {
               path="/assessment/educationlevel"
               element={<EducationLevel />}
             />
+            
             <Route path="/assessment/daily-goal" element={<DailyGoal />} />
             <Route path="/assessment/goals" element={<Goals />} />
             <Route path="/assessment/proficiency" element={<Proficiency />} />
