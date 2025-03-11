@@ -126,4 +126,12 @@
     );
     mask: linear-gradient(90deg, transparent, white 4%, white 90%, transparent);
   }
+ 
+.hide-navigation-and-mascot .absolute {
+  display: none;
+}
+
+.hide-navigation-and-mascot .NavigationButtons {
+  display: none;
+}
 }
