@@ -1,3 +1,9 @@
+import fifteenMinIcon from '@/assets/user-assessment/15min.svg';
+import thirtyMinIcon from '@/assets/user-assessment/30min.svg';
+import oneHourIcon from '@/assets/user-assessment/1hour.svg';
+import twoHoursIcon from '@/assets/user-assessment/2hour.svg';
+
+
 export const assessmentSteps = [
   {
     id: 1,
@@ -28,12 +34,12 @@ export const educationLevels = [
   { id: 4, label: 'Self-taught', value: 'self_taught' },
 ];
 
-export const dailyGoals = [
-  { id: 1, label: '15 minutes', value: 15 },
-  { id: 2, label: '30 minutes', value: 30 },
-  { id: 3, label: '1 hour', value: 60 },
-  { id: 4, label: '2 hours', value: 120 },
-];
+// export const dailyGoals = [                        NOT USED!
+//   { id: 1, label: '15 minutes', value: 15 },
+//   { id: 2, label: '30 minutes', value: 30 },
+//   { id: 3, label: '1 hour', value: 60 },
+//   { id: 4, label: '2 hours', value: 120 },
+// ];
 
 export const assessmentFlow = {
   start: {
@@ -349,10 +355,10 @@ export const assessmentFlow = {
         label: 'How much time can you commit to learning each day?',
         type: 'select',
         options: [
-          { value: 15, label: '15 minutes' },
-          { value: 30, label: '30 minutes' },
-          { value: 60, label: '1 hour' },
-          { value: 120, label: '2 hours' }
+          { value: 15, label: '15 minutes', icon: fifteenMinIcon },
+          { value: 30, label: '30 minutes', icon: thirtyMinIcon },
+          { value: 60, label: '1 hour', icon: oneHourIcon },
+          { value: 120, label: '2 hours', icon: twoHoursIcon }  
         ]
       }
     ],
