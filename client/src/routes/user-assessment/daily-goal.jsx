@@ -32,7 +32,7 @@ export default function DailyGoal() {
             <button
               key={option.value}
               onClick={() => setSelectedGoal(option.value)}
-              className={`px-18 py-15 rounded-lg border-2 text-center transition-all duration-200
+              className={`px-18 py-15 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
                 ${
                   selectedGoal === option.value
                       ? 'border-primary bg-primary/10'

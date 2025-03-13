@@ -76,7 +76,7 @@
                   <button
                     key={option.id}
                     onClick={() => setSelectedType(option)}
-                    className={`px-10 py-25 rounded-lg border-2 transition-all duration-200
+                    className={`px-10 py-25 rounded-lg border-2 transition-all duration-200 cursor-pointer
                       ${
                         selectedType?.id === option.id
                           ? 'border-primary bg-primary/10'
@@ -102,7 +102,7 @@
                   <button
                     key={option.id}
                     onClick={() => setSelectedLevel(option)}
-                    className={`px-14.5 py-25 rounded-lg border-2 text-center transition-all duration-200 
+                    className={`px-14.5 py-25 rounded-lg border-2 text-center transition-all duration-200  cursor-pointer
                       ${
                         selectedLevel?.id === option.id
                           ? 'border-primary bg-primary/10'
