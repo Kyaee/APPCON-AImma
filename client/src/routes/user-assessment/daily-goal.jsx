@@ -1,59 +1,52 @@
 'use client';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { dailyGoals } from '@/lib/assessment-flow';
-import Button from '@/components/layout/assessment/Button';
+import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
+import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
+import { assessmentFlow } from '@/lib/assessment-flow';
 
-const DailyGoal = () => {
+
+export default function DailyGoal() {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const navigate = useNavigate();
+  const { dailyGoal } = assessmentFlow;
 
   const handleNext = () => {
     if (selectedGoal) {
       localStorage.setItem('dailyGoal', selectedGoal);
-      navigate('/assessment/interests');
+      navigate(dailyGoal.nextStep); // Use the nextStep from dailyGoal
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">How much time can you dedicate daily?</h2>
-          <p className="mt-2 text-gray-600">Choose a realistic goal that fits your schedule</p>
-        </div>
-
-        <div className="grid gap-4 mt-8">
-          {dailyGoals.map((goal) => (
+    <AssessmentLayout
+      title={dailyGoal.title}
+      progress={80}
+      prevPage="/Assessment/educationlevel" // Corrected prevPage path
+      nextPage={selectedGoal ? dailyGoal.nextStep : null} // Use nextStep from dailyGoal
+      showMascot={true} // Changed to boolean
+    >
+      <AssessmentStep title={dailyGoal.title}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+          {dailyGoal.questions[0].options.map((option) => (
             <button
-              key={goal.id}
-              className={`p-4 rounded-lg border-2 text-left transition-all duration-200 ${
-                selectedGoal === goal.value
-                  ? 'border-primary bg-primary/10'
-                  : 'border-gray-200 hover:border-primary/50'
-              }`}
-              onClick={() => setSelectedGoal(goal.value)}
+              key={option.value}
+              onClick={() => setSelectedGoal(option.value)}
+              className={`px-18 py-15 rounded-lg border-2 text-center transition-all duration-200
+                ${
+                  selectedGoal === option.value
+                      ? 'border-primary bg-primary/10'
+                      : 'border-gray-200 hover:border-primary/50'
+                }`}
             >
-              <h3 className="font-medium text-gray-900">{goal.label}</h3>
+              <div className="flex justify-center space-x-4">
+                <img src={option.icon} alt={option.label} className="w-30 h-30" />
+              </div>
+              <h3 className="font-large text-white mt-5 text-lg">{option.label}</h3>
             </button>
           ))}
         </div>
-
-        <div className="flex justify-between mt-8">
-          <Button variant="outline" onClick={() => navigate(-1)}>
-            Back
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={!selectedGoal}
-            className={!selectedGoal ? 'opacity-50 cursor-not-allowed' : ''}
-          >
-            Continue
-          </Button>
-        </div>
-      </div>
-    </div>
+      </AssessmentStep>
+    </AssessmentLayout>
   );
-};
-
-export default DailyGoal;
+}

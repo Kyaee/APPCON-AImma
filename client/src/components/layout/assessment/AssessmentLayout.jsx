@@ -1,10 +1,12 @@
 import React from 'react';
 import ProgressBar from './ProgressBar';
 import NavigationButtons from './NavigationButtons';
+import { VideoBackground } from "@/components/layout/background"
 
 const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showMascot, buttonPosition }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-amber-900 to-amber-950">     {/* BACk*/}
+    <div className="min-h-screen flex flex-col">
+      <VideoBackground />
       <ProgressBar progress={progress} title={title} />
       
       <div className="flex-grow flex flex-col items-center justify-center px-4 py-6 relative">
@@ -14,7 +16,7 @@ const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showM
         {showMascot && (
           <div className="absolute bottom-0 justify-center">
             <img 
-              src="/DetectiveCapybara.png" 
+              src="../src/assets/user-assessment/DetectiveCapybara.png" 
               alt="Mascot character" 
               className="w-5/6 h-5/6 object-cover"
             />
@@ -22,11 +24,10 @@ const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showM
         )}
       </div>
       
-      <NavigationButtons prevPage={prevPage} nextPage={nextPage}  buttonPosition={buttonPosition} />
+      <NavigationButtons prevPage={prevPage} nextPage={nextPage} buttonPosition={buttonPosition} />
     </div>
   );
-}  
+};
 
 export default AssessmentLayout;
 
-    

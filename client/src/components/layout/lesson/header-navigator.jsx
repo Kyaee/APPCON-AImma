@@ -8,19 +8,19 @@ export default function Header({ page }) {
         CapaCademy
       </h1>
       <nav className="flex items-center bg-white text-black border border-black custom-shadow-75 rounded-lg h-[48px]">
-        <Link to="/lesson/:id" 
+        <Link to="/:id/lesson/:id" 
           className="flex items-center gap-2 px-4 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300"
         >
           <Sprout size="20" />
           <span className="text-sm">Lesson</span>
         </Link>
-        <Link to="/lesson/:id/assessment" 
+        <Link to="/:id/lesson/assessment/:id" 
           className="flex items-center gap-2 px-4 h-full hover:bg-[#CBB09B] transition-all duration-300"
         >
           <Target size="20" />
           <span className="text-sm">Assessment</span>
         </Link>
-        <Link to="/shop" 
+        <Link to="/shop/:id" 
           className="flex items-center gap-2 px-4 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300"
         >
           <ShoppingCart size="20" />
