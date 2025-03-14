@@ -39,7 +39,7 @@ function App() {
               you can access the page by going to /1/profile
               or /2/dashboard or /3/shop.
             */}
-
+  
             <Route path="/dashboard/:id" element={<Dashboard />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/shop/:id" element={<Shop />} />
