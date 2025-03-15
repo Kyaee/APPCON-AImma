@@ -1,26 +1,30 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import TestPage from "./routes/test-page";
 /*
   WEB PAGES 
   - Check the `Routes` folder for more pages 
 */
 import Landing from "./routes/landing"
 import IntroShowcase from "./routes/showcase"
-import Dashboard from "./routes/dashboard"
-import Profile from "./routes/profile"
-import Shop from "./routes/shop"
-import JobOpportunities from "./routes/job-opportunities/job-opportunities"
-import Lesson from "./routes/lesson"
-import LessonAssessment from "./routes/lesson-assessment/lesson-assessment"
-import NotFound from "./routes/NotFound"
-import Card from "./components/features/new-user-card"
+// INTRO ASSESSMENT
 import CombinedAssessment from "./routes/user-assessment/combined-assessment";
 import DailyGoal from './routes/user-assessment/daily-goal'
 import Goals from './routes/user-assessment/goals'
 import Proficiency from './routes/user-assessment/proficiency'
 import Questions from './routes/user-assessment/questions'
 import Results from './routes/user-assessment/results'
-
+// GENERAL PAGES
+import Dashboard from "./routes/dashboard"
+import Profile from "./routes/profile"
+import Shop from "./routes/shop"
+import Lesson from "./routes/lesson"
+import LessonAssessment from "./routes/lesson-assessment/lesson-assessment"
+import JobOpportunities from "./routes/job-opportunities/job-opportunities"
+import NotFound from "./routes/NotFound"
+// AUTHENTICATION
+import LoginPage from "./routes/auth/login";
+import RegisterPage from "./routes/auth/register";
 
 // Theme provider
 import { ThemeProvider } from "./components/features/theme-provider";
@@ -31,6 +35,9 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <BrowserRouter>
           <Routes>
+            <Route path="/auth/login" element={<LoginPage />} />
+            <Route path="/auth/register" element={<RegisterPage />} />
+
             <Route path="/" element={<Landing />} />
             <Route path="/start/showcase" element={<IntroShowcase />} />
 
@@ -52,7 +59,7 @@ function App() {
               path="/:id/lesson/assessment/:id"
               element={<LessonAssessment />}
             />
-            <Route path="/test" element={<Card />} />
+            <Route path="/test" element={<TestPage />} />
 
             {/* <Route path="/assessment/language" element={<Language />} />
             <Route
