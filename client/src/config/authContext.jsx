@@ -6,6 +6,19 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
 
+  // const signInWithGoogle = async () => {
+  //   const { user, session, error } = await supabase.auth.signIn({
+  //     provider: "google",
+  //   });  
+
+  //   if (error) {
+  //     console.error("Error signing in with Google:", error);
+  //     return { success: false, error };
+  //   }
+
+  //   return { success: true, user, session };
+  // };
+
 //-------------------- Sign up -------------------------
   const signUpNewUser = async (email, password) => {
     const { data, error } = await supabase.auth.signUp({
@@ -52,9 +65,14 @@ export const AuthContextProvider = ({ children }) => {
       setSession(session);
     });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
+    const {data: listener} = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+
   }, []);
 
   // Sign out

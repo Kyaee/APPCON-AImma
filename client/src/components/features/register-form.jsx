@@ -1,8 +1,9 @@
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/config/AuthContext";
 
@@ -44,14 +45,16 @@ export function RegisterForm({ className, ...props }) {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    if (validateForm()) return;
+    if (!validateForm()) return;
     setLoading(true);
 
     try {
       const result = await signUpNewUser(isFormData.email, isFormData.password); // Call context function
 
       if (result.success) {
-        navigate("/dashboard/:id"); // Navigate to dashboard on success
+        navigate("/auth/confirm-account", {
+          state: { email: isFormData.email },
+        });
       } else {
         setError(result.error.message); // Show error message on failure
       }

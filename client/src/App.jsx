@@ -14,6 +14,7 @@ import Landing from "./routes/landing";
 // AUTHENTICATION
 import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
+import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
 import IntroShowcase from "./routes/showcase";
 import CombinedAssessment from "./routes/user-assessment/combined-assessment";
@@ -55,6 +56,7 @@ function App() {
               <>
                 <Route path="/auth/login" element={<LoginPage />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
+                <Route path="/auth/confirm-account" element={<ConfirmAccount />} />
                 <Route path="*" element={<NotFound />} />
               </>
             ) : !isAssessed ? (

@@ -1,16 +1,15 @@
-import { useState } from "react";
 import { Background } from "@/components/layout/background";
 import MainNav from "@/components/layout/main-nav";
 import StatsDisplay from "@/components/features/stats-display";
 import ActionIcons from "@/components/layout/action-icons";
 import { Button } from "@/components/ui/button";
-
 import { useAuth } from "@/config/authContext";
 
 export default function Profile() {
   const { signOut } = useAuth();
 
   return (
+    <>
     <div className="relative w-full min-h-screen">
       <Background />
       <MainNav />
@@ -40,6 +39,7 @@ export default function Profile() {
           <Button onClick={signOut}>Log-out</Button>
       </div>
     </div>
+    </>
   );
 }
 
