@@ -2,23 +2,8 @@ import { Background } from "@/components/layout/background";
 import MainNav from "@/components/layout/main-nav";
 import StatsDisplay from "@/components/features/stats-display";
 import ActionIcons from "@/components/layout/action-icons";
-import { useAuth } from "@/config/authContext";
-
 
 export default function Dashboard() {
-  const { session } = useAuth()
-
-  // Testings
-  async function userData() {
-    // const { data: {user}, error } = await supabase.auth.getUser();
-    // console.log(user.id);
-    // console.log(session.id)
-    console.log(session.user.id)
-
-  }
-
-  async function Database() {}
-
   return (
     <>
       <div className="relative w-full min-h-screen">
@@ -39,11 +24,6 @@ export default function Dashboard() {
             />
           </div>
         </div>
-        <button
-          onClick={userData}
-        >
-          Something
-        </button>
         {/* Dashboard Content */}
         <div className="pt-32 px-[19%]">
           <h1 className="text-[#4C4C4C] text-5xl font-extrabold mb-4">
