@@ -1,3 +1,5 @@
+// THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
+
 import { ThemeProvider } from "./components/features/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
@@ -46,7 +48,6 @@ function App() {
 
             {/* GENERAL ROUTES */}
             <Route path="/" element={<Landing />} />
-            <Route path="*" element={<NotFound />} />
             <Route path="/testing" element={<TestPage />} />
 
             {!session ? (
@@ -54,6 +55,7 @@ function App() {
               <>
                 <Route path="/auth/login" element={<LoginPage />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
+                <Route path="*" element={<NotFound />} />
               </>
             ) : !isAssessed ? (
               // IF USER IS LOGGED-IN, AND NOT ASSESSED

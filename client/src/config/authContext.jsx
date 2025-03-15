@@ -36,7 +36,6 @@ export const AuthContextProvider = ({ children }) => {
       }
 
       // If no error, return success
-      console.log("Sign-in success:", data);
       return { success: true, data }; // Return the user data
     } catch (error) {
       // Handle unexpected issues
@@ -63,6 +62,9 @@ export const AuthContextProvider = ({ children }) => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Error signing out:", error);
+      return { success: false, error };
+    } else {
+      window.location.href = "/auth/login";
     }
   }
 

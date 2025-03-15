@@ -1,5 +1,5 @@
 import { GalleryVerticalEnd } from "lucide-react"
-
+import { VideoBackground } from "@/components/layout/background"
 import { RegisterForm } from "@/components/features/register-form"
 
 export default function RegisterPage() {
@@ -11,7 +11,7 @@ export default function RegisterPage() {
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <GalleryVerticalEnd className="size-4" />
             </div>
-            Acme Inc.
+            CapyCademy
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -20,12 +20,8 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
-        <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+      <div className="relative hidden lg:block">
+        <VideoBackground/>
       </div>
     </div>
   )

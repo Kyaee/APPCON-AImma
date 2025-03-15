@@ -2,6 +2,7 @@ import { Background } from "@/components/layout/background";
 import MainNav from "@/components/layout/main-nav";
 import StatsDisplay from "@/components/features/stats-display";
 import ActionIcons from "@/components/layout/action-icons";
+import { supabase } from "@/config/supabase";
 
 export default function Dashboard() {
   return (
@@ -18,7 +19,8 @@ export default function Dashboard() {
         <div className="flex items-center gap-4">
           <ActionIcons
             type="notification"
-            onClick={() => console.log("Notification clicked")}
+            onClick={() => 
+              console.log(supabase.auth.id)}
           />
           <ActionIcons
             type="settings"
