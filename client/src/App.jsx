@@ -28,6 +28,7 @@ import RegisterPage from "./routes/auth/register";
 
 // Theme provider
 import { ThemeProvider } from "./components/features/theme-provider";
+import CourseSelect from "./components/features/course-select";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="/auth/register" element={<RegisterPage />} />
 
             <Route path="/" element={<Landing />} />
+            
             <Route path="/start/showcase" element={<IntroShowcase />} />
 
             {/* 
@@ -59,13 +61,6 @@ function App() {
               path="/:id/lesson/assessment/:id"
               element={<LessonAssessment />}
             />
-            <Route path="/test" element={<TestPage />} />
-
-            {/* <Route path="/assessment/language" element={<Language />} />
-            <Route
-              path="/assessment/educationlevel"
-              element={<EducationLevel />}
-            /> */}
             
             <Route path="/assessment/daily-goal" element={<DailyGoal />} />
             <Route path="/assessment/goals" element={<Goals />} />
@@ -73,7 +68,18 @@ function App() {
             <Route path="/assessment/questions" element={<Questions />} />
             <Route path="/assessment/results" element={<Results />} />
             <Route path="/assessment" element={<CombinedAssessment />} />
+            <Route path="/select" element={<CourseSelect />} />   
+
+            {/* To access dynamic routes like /:id/profile, you can access the page by going to /1/profile  or /2/dashboard or /3/shop. */}
+            <Route path="/dashboard/:id" element={<Dashboard />} />
+            <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/job-opportunities/:id" element={<JobOpportunities />} />
+            <Route path="/shop/:id" element={<Shop />} />
+            <Route path="/:id/lesson/:id" element={<Lesson />} />
+            <Route path="/:id/lesson/assessment/:id" element={<LessonAssessment />} />
+            <Route path="/testing" element={<TestPage />} />
             <Route path="*" element={<NotFound />} />
+
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
