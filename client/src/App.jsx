@@ -40,6 +40,8 @@ import CourseSelect from "./components/features/course-select";
 function App() {
   const { session } = useAuth();
   const [ isAssessed, setAssessed ] = useState(true);
+  const [ isUserLoggedin, setUserLoggedin ] = useState(true);
+
 
   return (
     <>
@@ -51,7 +53,7 @@ function App() {
             <Route path="/ayon-testing" element={<Ayon />} />
             <Route path="/emman-testing" element={<Emman />} />
 
-            {!session ? (
+            {!isUserLoggedin ? (
               // IF USER IS NOT LOGGED-IN
               <>
                 <Route path="/auth/login" element={<LoginPage />} />
