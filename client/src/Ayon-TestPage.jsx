@@ -10,7 +10,7 @@ import RoadmapContent from '@/components/layout/dashboard-roadmap/RoadmapContent
 import { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
 
-export default function Dashboard() {
+export default function Ayon() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);
