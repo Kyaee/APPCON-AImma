@@ -38,8 +38,8 @@ import Emman from "./Emman-TestPage";
 import CourseSelect from "./components/features/course-select";
 
 function App() {
-  const { session } = useAuth();
-  const [ isAssessed, setAssessed ] = useState(true);
+  // const { session } = useAuth();
+  const [ isAssessed, setAssessed ] = useState(false);
   const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
@@ -51,6 +51,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/ayon-testing" element={<Ayon />} />
             <Route path="/emman-testing" element={<Emman />} />
+            
 
             {!isUserLoggedin ? (
               // IF USER IS NOT LOGGED-IN
@@ -67,6 +68,7 @@ function App() {
               // IF USER IS LOGGED-IN, AND NOT ASSESSED
               <>
                 <Route path="/start/showcase" element={<IntroShowcase />} />
+                <Route path="/assessment" element={<CombinedAssessment />} />
                 <Route path="/assessment/daily-goal" element={<DailyGoal />} />
                 <Route path="/assessment/goals" element={<Goals />} />
                 <Route
@@ -75,7 +77,8 @@ function App() {
                 />
                 <Route path="/assessment/questions" element={<Questions />} />
                 <Route path="/assessment/results" element={<Results />} />
-                <Route path="/assessment" element={<CombinedAssessment />} />
+                
+                
                 <Route path="/select" element={<CourseSelect />} />
               </>
             ) : (
