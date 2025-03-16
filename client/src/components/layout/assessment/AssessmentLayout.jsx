@@ -18,7 +18,7 @@ const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showM
             <img 
               src="../src/assets/user-assessment/DetectiveCapybara.png" 
               alt="Mascot character" 
-              className="w-5/6 h-5/6 object-cover"
+              className="w-5/6 h-5/6 object-cover pointer-events-none"
             />
           </div>
         )}

@@ -55,7 +55,7 @@ function App() {
             
 
             {!isUserLoggedin ? (
-              // IF USER IS NOT LOGGED-IN
+              // IF USER IS NOT LOGGED-IN       
               <>
                 <Route path="/auth/login" element={<LoginPage />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
