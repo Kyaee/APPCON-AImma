@@ -1,7 +1,7 @@
 function Background() {
   return (
     <div 
-      className="fixed top-0 -z-10 min-h-screen w-screen bg-[#ebf1f8]"
+      className="fixed top-0 -z-10 min-h-screen w-screen bg-[#FFF9F3]"
       style={{
         backgroundImage: "url('/bg-lines.png')",
         backgroundRepeat: 'repeat',
