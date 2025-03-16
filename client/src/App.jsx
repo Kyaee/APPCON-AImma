@@ -42,7 +42,6 @@ function App() {
   const [ isAssessed, setAssessed ] = useState(true);
   const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
-
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
