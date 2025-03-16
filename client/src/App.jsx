@@ -32,7 +32,7 @@ import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
 import JobOpportunities from "./routes/job-opportunities/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
-import Ayon from "./TestPage";
+import {Dashboard as Ayon} from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
 // This is not a page @Jun, but a component
 import CourseSelect from "./components/features/course-select";
