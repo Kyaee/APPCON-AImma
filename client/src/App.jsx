@@ -51,6 +51,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/ayon-testing" element={<Ayon />} />
             <Route path="/emman-testing" element={<Emman />} />
+            <Route path="*" element={<NotFound />} />
             
 
             {!isUserLoggedin ? (
@@ -62,7 +63,6 @@ function App() {
                   path="/auth/confirm-account"
                   element={<ConfirmAccount />}
                 />
-                <Route path="*" element={<NotFound />} />
               </>
             ) : !isAssessed ? (
               // IF USER IS LOGGED-IN, AND NOT ASSESSED
