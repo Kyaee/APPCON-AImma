@@ -5,16 +5,24 @@ import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
 import { assessmentFlow } from '@/lib/assessment-flow';
 
-
 export default function DailyGoal() {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const navigate = useNavigate();
   const { dailyGoal } = assessmentFlow;
 
+  const handleBack = () => {
+    const lastPath = localStorage.getItem('lastAssessmentPath');
+    if (lastPath) {
+      navigate(lastPath);
+    } else {
+      navigate('/assessment'); // Fallback to main assessment page
+    }
+  };
+
   const handleNext = () => {
     if (selectedGoal) {
-      localStorage.setItem('dailyGoal', selectedGoal);
-      navigate(dailyGoal.nextStep); // Use the nextStep from dailyGoal
+      localStorage.setItem('daily-goal', selectedGoal);
+      navigate(`/assessment/${dailyGoal.nextStep}`);
     }
   };
 
@@ -22,9 +30,9 @@ export default function DailyGoal() {
     <AssessmentLayout
       title={dailyGoal.title}
       progress={80}
-      prevPage="/Assessment/educationlevel" // Corrected prevPage path
-      nextPage={selectedGoal ? dailyGoal.nextStep : null} // Use nextStep from dailyGoal
-      showMascot={true} // Changed to boolean
+      prevPage={handleBack}
+      nextPage={selectedGoal ? handleNext : null}
+      showMascot={true}
     >
       <AssessmentStep title={dailyGoal.title}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">

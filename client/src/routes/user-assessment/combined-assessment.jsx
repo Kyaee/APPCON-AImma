@@ -40,15 +40,41 @@ export default function CombinedAssessment() {
         setCurrentStep(6);
       }
     } else if (currentStep === 3 && selectedLevel) {
-      setCurrentStep(4);
+      // Route to the appropriate questions based on education level
+      switch (selectedLevel.id) {
+        case 'highSchool':
+          navigate('/assessment/hsQuestions');
+          break;
+        case 'college':
+          navigate('/assessment/collegeQuestions');
+          break;
+        case 'graduateSchool':
+          navigate('/assessment/gradQuestions');
+          break;
+        default:
+          setCurrentStep(4);
+      }
     } else if (currentStep === 4 && selectedLevel) {
-      setCurrentStep(5);
+      // Route to the appropriate questions based on years of experience
+      switch (selectedLevel.id) {
+        case 'entryLevel':
+          navigate('/assessment/entryQuestions');
+          break;
+        case 'midLevel':
+          navigate('/assessment/midQuestions');
+          break;
+        case 'seniorLevel':
+          navigate('/assessment/seniorQuestions');
+          break;
+        default:
+          setCurrentStep(5);
+      }
     } else if (currentStep === 5 && previousExp.lastRole && previousExp.yearsExperience 
       && previousExp.reasonForChange) {
-      setCurrentStep(6);
+      navigate('/assessment/daily-goal');
     } else if (currentStep === 6 && transition.currentField && transition.desiredField 
       && transition.transitionReason) {
-      setCurrentStep(7);
+      navigate('/assessment/daily-goal');
     }
   };
 
@@ -70,10 +96,9 @@ export default function CombinedAssessment() {
     switch (currentStep) {
       case 1:
         return (
-          <AssessmentStep >
-            <h1 className='text-5xl font-bold'>Choose a language</h1>
+          <AssessmentStep title="Choose a language" className = "text-xl">        
             <p className="text-white text-center mb-10">For your convenience</p>
-            <div className="w-10/12 max-w-md mx-auto">
+            <div className="w-full max-w-md mx-auto">
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
@@ -167,7 +192,7 @@ export default function CombinedAssessment() {
                 <button
                   key={option.id}
                   onClick={() => setSelectedLevel(option)}
-                  className={`px-25 py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
+                  className={`px-14.5 py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
                     ${
                       selectedLevel?.id === option.id
                         ? 'border-primary bg-primary/10'
@@ -206,7 +231,7 @@ export default function CombinedAssessment() {
                   onChange={(e) => setPreviousExp(prev => ({...prev, yearsExperience: e.target.value}))}
                   className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
                 >
-                  <option value="" disabled="disabled">Select years of experience</option>
+                  <option value="">Select years of experience</option>
                   <option value="0-1">0-1 years</option>
                   <option value="1-3">1-3 years</option>
                   <option value="3-5">3-5 years</option>
