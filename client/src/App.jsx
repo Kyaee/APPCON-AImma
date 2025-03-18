@@ -19,6 +19,7 @@ import ConfirmAccount from "./routes/auth/confirm-account";
 import IntroShowcase from "./routes/showcase";
 import CombinedAssessment from "./routes/user-assessment/combined-assessment";
 import DailyGoal from "./routes/user-assessment/daily-goal";
+import TechInterest from "./routes/user-assessment/techInterest";
 import Goals from "./routes/user-assessment/goals";
 import Proficiency from "./routes/user-assessment/proficiency";
 import Questions from "./routes/user-assessment/questions";
@@ -70,6 +71,7 @@ function App() {
                 <Route path="/start/showcase" element={<IntroShowcase />} />
                 <Route path="/assessment" element={<CombinedAssessment />} />
                 <Route path="/assessment/daily-goal" element={<DailyGoal />} />
+                <Route path="/assessment/techInterest" element={<TechInterest />} />
                 <Route path="/assessment/goals" element={<Goals />} />
                 <Route
                   path="/assessment/proficiency"
