@@ -11,30 +11,43 @@ export default function DailyGoal() {
   const { dailyGoal } = assessmentFlow;
 
   const handleBack = () => {
-    const userType = localStorage.getItem('userType');
-    const savedStep = localStorage.getItem('currentAssessmentStep');
-    
-    // FUNCTION WHERE THE USER IS REDIRECTED TO THE LAST ASSESSMENT STEP THEY WERE ON
-    if (savedStep) {
-      navigate('/assessment');
-    } else {
-      switch (userType) {
-        case 'student':
-          navigate('/assessment');
-          break;
-        case 'professional':
-          navigate('/assessment');
-          break;
-        case 'jobSeeker':
-          navigate('/assessment');
-          break;
-        case 'careerShifter':
-          navigate('/assessment');
-          break;
-        default:
-          navigate('/assessment');
+    // Check for career transition data first
+    const transitionData = localStorage.getItem('careerTransitionData');
+    if (transitionData) {
+      navigate('/assessment', { 
+        state: { returnToStep: 6 }
+      });
+      return;
+    }
+
+    // Check for previous experience data
+    const previousExpData = localStorage.getItem('previousExpData');
+    if (previousExpData) {
+      navigate('/assessment', { 
+        state: { returnToStep: 5 }
+      });
+      return;
+    }
+
+    // Check which professional level questionnaire was last completed
+    const yearsExpChoice = localStorage.getItem('yearsOfExpSavepoint');
+    if (yearsExpChoice) {
+      const choice = JSON.parse(yearsExpChoice);
+      switch (choice.id) {
+        case 'entryLevel':
+          navigate('/assessment/entryQuestions');
+          return;
+        case 'midLevel':
+          navigate('/assessment/midQuestions');
+          return;
+        case 'seniorLevel':
+          navigate('/assessment/seniorQuestions');
+          return;
       }
     }
+
+    // Default fallback
+    navigate('/assessment');
   };
 
   const handleNext = () => {

@@ -19,18 +19,40 @@ export default function CombinedAssessment() {
     desiredField: '',
     transitionReason: ''
   });
+  const [yearsOfExpData, setYearsOfExpData] = useState(() => {
+    const saved = localStorage.getItem('yearsOfExpSavepoint');
+    return saved ? JSON.parse(saved) : null;
+  });
   const navigate = useNavigate();
   const location = useLocation();
   const { userType } = assessmentFlow;
 
+  const clearSavepoints = () => {
+    localStorage.removeItem('entryLevelSavepoint');
+    localStorage.removeItem('midLevelSavepoint');
+    localStorage.removeItem('seniorLevelSavepoint');
+    localStorage.removeItem('previousExpData');
+    localStorage.removeItem('careerTransitionData');
+  };
+
   useEffect(() => {
     if (location.state?.returnToStep) {
       setCurrentStep(location.state.returnToStep);
+      if (location.state.returnToStep === 2) {
+        clearSavepoints();
+      }
     }
     const savedStep = localStorage.getItem('currentAssessmentStep');
     if (savedStep) {
       setCurrentStep(parseInt(savedStep));
       localStorage.removeItem('currentAssessmentStep'); // Clear after restoring
+    }
+    // Load saved years of experience data if returning to step 4
+    if (location.state?.returnToStep === 4) {
+      const saved = localStorage.getItem('yearsOfExpSavepoint');
+      if (saved) {
+        setSelectedLevel(JSON.parse(saved));
+      }
     }
   }, [location]);
 
@@ -68,6 +90,8 @@ export default function CombinedAssessment() {
           setCurrentStep(4);
       }
     } else if (currentStep === 4 && selectedLevel) {
+      // Save years of experience selection before navigation
+      localStorage.setItem('yearsOfExpSavepoint', JSON.stringify(selectedLevel));
       // Route to the appropriate questions based on years of experience
       switch (selectedLevel.id) {
         case 'entryLevel':
@@ -84,10 +108,12 @@ export default function CombinedAssessment() {
       }
     } else if (currentStep === 5 && previousExp.lastRole && previousExp.yearsExperience 
       && previousExp.reasonForChange) {
+      localStorage.setItem('previousExpData', JSON.stringify(previousExp));
       localStorage.setItem('currentAssessmentStep', currentStep.toString());
       navigate('/assessment/daily-goal');
     } else if (currentStep === 6 && transition.currentField && transition.desiredField 
       && transition.transitionReason) {
+      localStorage.setItem('careerTransitionData', JSON.stringify(transition));
       localStorage.setItem('currentAssessmentStep', currentStep.toString());
       navigate('/assessment/daily-goal');
     }
@@ -95,12 +121,10 @@ export default function CombinedAssessment() {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      if (currentStep === 6) {
+      if ([4, 5, 6].includes(currentStep)) {
+        clearSavepoints();
+        localStorage.removeItem('yearsOfExpSavepoint');
         setCurrentStep(2); // Go back to Career Assessment
-      } else if (currentStep === 5) {
-        setCurrentStep(2); // Go back to Career Assessment from both Previous Experience and jobSeeker pages
-      } else if (currentStep === 4) {
-        setCurrentStep(2); // Go back to Career Assessment from Years of Experience
       } else {
         setCurrentStep(currentStep - 1);
       }
@@ -199,7 +223,7 @@ export default function CombinedAssessment() {
                 <button
                   key={option.id}
                   onClick={() => setSelectedLevel(option)}
-                  className={`p-4 sm:px-14.5 sm:py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
+                  className={`p-4 px-23 sm:py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
                     ${selectedLevel?.id === option.id ? 'border-primary bg-primary/10' : 'border-gray-200 hover:border-primary/50'}`}
                 >
                   <div className="flex justify-center space-x-4">
@@ -234,7 +258,7 @@ export default function CombinedAssessment() {
                   onChange={(e) => setPreviousExp(prev => ({...prev, yearsExperience: e.target.value}))}
                   className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
                 >
-                  <option value="">Select years of experience</option>
+                  <option value="" disabled = "disable">Select years of experience</option>
                   <option value="0-1">0-1 years</option>
                   <option value="1-3">1-3 years</option>
                   <option value="3-5">3-5 years</option>
