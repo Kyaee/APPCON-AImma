@@ -3,7 +3,7 @@ import ProgressBar from './ProgressBar';
 import NavigationButtons from './NavigationButtons';
 import { VideoBackground } from "@/components/layout/background"
 
-const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showMascot, buttonPosition }) => {
+const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showMascot, buttonPosition, mascotZIndex }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <VideoBackground />
@@ -14,11 +14,11 @@ const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showM
           {children}
         </div>
         {showMascot && (
-          <div className="absolute bottom-0 justify-center">
+          <div className="absolute bottom-0 justify-center" style={{ zIndex: mascotZIndex }}>
             <img 
               src="../src/assets/user-assessment/DetectiveCapybara.png" 
               alt="Mascot character" 
-              className="w-5/6 h-5/6 object-cover"
+              className="w-5/6 h-5/6 object-cover pointer-events-none"
             />
           </div>
         )}

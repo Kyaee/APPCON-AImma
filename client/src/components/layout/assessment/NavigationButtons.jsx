@@ -13,7 +13,8 @@ const NavigationButtons = ({ prevPage, nextPage, buttonPosition }) => {
       {prevPage && (
         <button
           onClick={prevPage}
-          className="px-25 py-2 bg-amber-500 border-2 drop-shadow-xl border-black text-black rounded-2xl hover:bg-amber-900 transition-colors my-auto w-32 text-center flex items-center justify-center"
+          className="px-25 py-2 bg-amber-500 border-2 drop-shadow-xl border-black text-black rounded-2xl hover:bg-amber-900 transition-colors
+           my-auto w-32 text-center flex items-center justify-center"
         >
           Back
         </button>
@@ -21,7 +22,8 @@ const NavigationButtons = ({ prevPage, nextPage, buttonPosition }) => {
       {nextPage && (
         <button
           onClick={nextPage}
-          className="px-25 py-2 bg-amber-500 border-2 drop-shadow-xl border-black text-black rounded-2xl hover:bg-amber-900 transition-colors my-auto w-32 text-center flex items-center justify-center"
+          className="px-25 py-2 bg-amber-500 border-2 drop-shadow-xl border-black text-black rounded-2xl hover:bg-amber-900 
+          transition-colors my-auto w-32 text-center flex items-center justify-center"
         >
           Next
         </button>

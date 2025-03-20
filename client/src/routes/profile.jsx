@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Background } from "@/components/layout/background";
 import MainNav from "@/components/layout/main-nav";
 import StatsDisplay from "@/components/features/stats-display";
@@ -10,6 +9,8 @@ import SkillTreeCareerOpportunities from "@/routes/profile/SkillTreeCareerOpport
 import LearningModule from "@/routes/profile//LearningModule";  
 
 
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/config/authContext";
 
 export default function Profile() {
 
@@ -17,7 +18,10 @@ export default function Profile() {
   const strengthDescription = 'good';
 
 
+  const { signOut } = useAuth();
+
   return (
+    <>
     <div className="relative w-full min-h-screen">
       <Background />
       <MainNav />
@@ -54,7 +58,8 @@ export default function Profile() {
       {/* graph */}        
        <div>
         <StatisticsComponent />
-       </div> 
+           <Button onClick={signOut}>Log-out</Button>
+      </div> 
      {/* Career Opportunities */}
       <SkillTreeCareerOpportunities />
   
@@ -63,5 +68,6 @@ export default function Profile() {
 
 
     </div>
+    </>
   );
 }

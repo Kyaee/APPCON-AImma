@@ -13,7 +13,7 @@ export default function ProficiencySkills() {
     <AssessmentLayout 
       title="Skill Level Assessment"
       progress={50}
-      prevPage="/assessment/education-level"
+      prevPage="/assessment"
       nextPage="/assessment/goals"
     >
       <AssessmentStep title="Proficiency Skill">

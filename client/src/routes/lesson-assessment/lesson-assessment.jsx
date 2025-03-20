@@ -52,8 +52,8 @@ export default function Assessment() {
   const [isLoading, setLoading] = useState(false);
   const [isIntroSlide, setIntroSlide] = useState(true);
   const [isCurrentSlide, setCurrentSlide] = useState(0);
-  const [isCorrect, setCorrect] = useState(false);
-  const [isQuestionData, setQuestionData] = useState([]);
+  // const [isCorrect, setCorrect] = useState(false);
+  // const [isQuestionData, setQuestionData] = useState([]);
 
   const answers = useAnswersStore((state) => state.answers);
 
@@ -61,17 +61,17 @@ export default function Assessment() {
     // fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      // questionsProvider();
-      // const response = await server.get("/api/assessment/questions");
-      // setQuestionData(response.data);
-    } catch (err) {
-      // Must return the user to the Lesson if there is any errors
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     // questionsProvider();
+  //     // const response = await server.get("/api/assessment/questions");
+  //     // setQuestionData(response.data);
+  //   } catch (err) {
+  //     // Must return the user to the Lesson if there is any errors
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleCheck = () => {
     // try {

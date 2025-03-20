@@ -32,6 +32,12 @@ completion = client.chat.completions.create(
     ],
 )
 
+@app.post('/api/generate-roadmap')
+def Roadmap():
+    return {"message": "Hello World"}
+
+
+
 print(completion.choices[0].message.content)
 
 
