@@ -1,21 +1,20 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Background } from "@/components/layout/background"
-import OpportunitiesMenu from './OpportunitiesMenu';
-import StatsDisplay from '@/components/features/stats-display';
-import IconButton from '@/components/layout/action-icons';
-import MainNav from '@/components/layout/main-nav';
-import wavingCappy from '@/assets/job-opportunities/WaveCappy.png';
-
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Background } from "@/components/layout/background";
+import OpportunitiesMenu from "./OpportunitiesMenu";
+import StatsDisplay from "@/components/features/stats-display";
+import ActionIcons from "@/components/layout/action-icons";
+import MainNav from "@/components/layout/main-nav";
+import wavingCappy from "@/assets/job-opportunities/WaveCappy.png";
 
 export default function JobOpportunities() {
   const [isNewUser, setIsNewUser] = useState(() => {
-    return localStorage.getItem('hasVisitedOpportunities') !== 'false';
+    return localStorage.getItem("hasVisitedOpportunities") !== "false";
   });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleStartClick = () => {
-    localStorage.setItem('hasVisitedOpportunities', 'true');
+    localStorage.setItem("hasVisitedOpportunities", "true");
     setIsNewUser(false);
   };
 
@@ -30,32 +29,20 @@ export default function JobOpportunities() {
     <div className="relative w-full min-h-screen">
       <Background />
       <MainNav />
-      
+
       {/* Stats and Action Icons - Simplified */}
-      <div className="fixed top-8 right-15 flex items-center gap-4">
-        <div className="flex items-center gap-4">
-          <StatsDisplay type="heart" value="10" />
-          <StatsDisplay type="gem" value="500" />
-        </div>
-        <div className="flex items-center gap-4">
-          <IconButton 
-            type="notification" 
-            onClick={() => console.log('Notification clicked')} 
-          />
-          <IconButton 
-            type="settings"
-            onClick={() => console.log('Settings clicked')} 
-          />
-        </div>
+      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
+        <StatsDisplay/>
+        <ActionIcons/>
       </div>
 
       {isNewUser ? (
         // New user welcome screen
         <div className="w-full h-full flex flex-col justify-center items-center pt-20">
           <div className="flex flex-col items-center justify-center">
-            <img 
-              src={wavingCappy} 
-              alt="Welcome" 
+            <img
+              src={wavingCappy}
+              alt="Welcome"
               className="max-w-full object-contain mt-[60px]"
             />
             <span className="text-[#4C4C4C] text-[48px] font-bold mt-[10px]">
@@ -74,7 +61,7 @@ export default function JobOpportunities() {
                 flex items-center justify-center
                 transition-colors duration-300
                 text-white font-inter text-2xl font-semibold
-                ${isHovered ? 'bg-[#0056b3]' : 'bg-[#007CE8]'}
+                ${isHovered ? "bg-[#0056b3]" : "bg-[#007CE8]"}
               `}
             >
               Let's Start!
@@ -88,7 +75,8 @@ export default function JobOpportunities() {
               Personalized for You
             </h1>
             <p className="text-black text-base font-medium mb-8 max-w-[760px]">
-              We prepared possible opportunities based on your capabilities and learning.
+              We prepared possible opportunities based on your capabilities and
+              learning.
             </p>
 
             {/* Filter Buttons */}

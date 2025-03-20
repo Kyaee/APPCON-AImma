@@ -1,30 +1,24 @@
-import heartImage from '@/assets/job-opportunities/heart.png';
-import gemImage from '@/assets/job-opportunities/gem.png';
+import { GemIcon, HeartIcon } from "@/assets/stats-icons";
 
-const STATS_CONFIG = {
-  heart: {
-    icon: heartImage,
-    alt: 'Lives'
-  },
-  gem: {
-    icon: gemImage,
-    alt: 'Gems'
-  }
-};
-
-export default function StatsDisplay({ type = 'heart', value }) {
-  const config = STATS_CONFIG[type];
+export default function StatsDisplay() {
+  const HeartValue = "10";
+  const GemValue = "500";
 
   return (
+    <>
     <div className="flex items-center gap-2">
-      <img
-        src={config.icon}
-        alt={config.alt}
-        className="w-[25px] h-[25px] object-contain"
-      />
+      <HeartIcon />
       <span className="text-black font-inter text-lg font-black leading-7">
-        {value}
+        {HeartValue}
       </span>
     </div>
+
+    <div className="flex items-center gap-2">
+      <GemIcon />
+      <span className="text-black font-inter text-lg font-black leading-7">
+        {GemValue}
+      </span>
+    </div>
+    </>
   );
 }

@@ -36,15 +36,18 @@ import Ayon from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
 // This is not a page @Jun, but a component
 import CourseSelect from "./components/features/course-select";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
-  // const { session } = useAuth();
-  const [ isAssessed, setAssessed ] = useState(false);
-  const [ isUserLoggedin, setUserLoggedin ] = useState(true);
+  const queryClient = new QueryClient();
+  const { session } = useAuth();
+  const [ isAssessed, setAssessed ] = useState(true);
+  // const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
             {/* GENERAL ROUTES */}
@@ -54,7 +57,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
             
 
-            {!isUserLoggedin ? (
+            {!session ? (
               // IF USER IS NOT LOGGED-IN       
               <>
                 <Route path="/auth/login" element={<LoginPage />} />
@@ -101,6 +104,7 @@ function App() {
             )}
           </Routes>
         </BrowserRouter>
+        </QueryClientProvider>
       </ThemeProvider>
     </>
   );

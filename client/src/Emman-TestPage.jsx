@@ -10,8 +10,8 @@ export default function TestPage() {
     // console.log(user.id);
     // console.log(session.id)
     console.log(session.user.id);
-    const { data } = await supabase.from("profiles").select();
-    console.log(data);
+    // const { data } = await supabase.from("profiles").select();
+    // console.log(data);
   }
 
   return (
