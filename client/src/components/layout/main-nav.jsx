@@ -1,18 +1,13 @@
 import { useAuth } from "@/config/authContext";
 import { Link, useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import fetchUserdata from "@/api/fetchUserData";
 
-// Import icons from assets
+// Components & Icons
 import { Leaf, UserCircle, Inspect, ShoppingBag } from "lucide-react";
-
 
 export default function MainNav() {
   const location = useLocation();
   const { session } = useAuth();  
   const userId = session.user.id;
-
-  // const { data, error, isLoading } = useQuery(fetchUserdata());
 
   const navItems = [
     { icon: <Leaf className="size-5"/>, label: 'Roadmap', path: `/dashboard/${userId}`, id: 'roadmap' },
