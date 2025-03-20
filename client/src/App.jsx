@@ -1,6 +1,6 @@
 // THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
 
-import { ThemeProvider } from "./components/features/theme-provider";
+import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "./config/authContext";

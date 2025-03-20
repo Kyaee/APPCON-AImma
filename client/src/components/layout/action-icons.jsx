@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { ModeToggle } from "../features/toggle-theme";
+
+// Components & Icons
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,10 +13,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Separator } from "@radix-ui/react-separator";
-// import
 import { Bell, Settings } from "lucide-react";
-import { useState } from "react";
+import { Separator } from "@radix-ui/react-separator";
 
 export default function IconButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,9 +37,12 @@ export default function IconButton() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Settings</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+            <AlertDialogDescription className="flex gap-2 items-center">
+              <ModeToggle className="border-2 border-black"/>
+              <p>
+                Change the theme of the app<br/>
+                Guide how. <a className="text-blue-500" href="https://ui.shadcn.com/docs/theming">https://ui.shadcn.com/docs/theming</a>
+              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <Separator
