@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useAuth } from "@/config/authContext";
 import { Link, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import fetchUserdata from "@/api/fetchUserData";
 
 // Import icons from assets
-import missionImage from '@/assets/job-opportunities/Mission.png';
-import customerImage from '@/assets/job-opportunities/Customer.png';
-import choiceImage from '@/assets/job-opportunities/Choice.png';
-import shoppingImage from '@/assets/job-opportunities/Shopping Cart.png';
+import { Leaf, UserCircle, Inspect, ShoppingBag } from "lucide-react";
+
 
 export default function MainNav() {
   const location = useLocation();
-  const [activeItem, setActiveItem] = useState(null);
+  const { session } = useAuth();  
+  const userId = session.user.id;
+
+  // const { data, error, isLoading } = useQuery(fetchUserdata());
 
   const navItems = [
-    { icon: missionImage, label: 'Roadmap', path: '/dashboard/:id', id: 'roadmap' },
-    { icon: customerImage, label: 'Profile', path: '/profile/:id', id: 'profile' },
-    { icon: choiceImage, label: 'Opportunities', path: '/job-opportunities/:id', id: 'opportunities' },
-    { icon: shoppingImage, label: 'Shop', path: '/shop/:id', id: 'shop' }
+    { icon: <Leaf className="size-5"/>, label: 'Roadmap', path: `/dashboard/${userId}`, id: 'roadmap' },
+    { icon: <UserCircle className="size-5"/>, label: 'Profile', path: `/profile/${userId}`, id: 'profile' },
+    { icon: <Inspect className="size-5"/>, label: 'Opportunities', path: `/job-opportunities/${userId}`, id: 'opportunities' },
+    { icon: <ShoppingBag className="size-5" />, label: 'Shop', path: `/shop/${userId}`, id: 'shop' }
   ];
 
   const isActive = (path) => {
@@ -25,27 +28,22 @@ export default function MainNav() {
   };
 
   return (
-    <nav className="fixed top-5 w-full px-8 flex justify-center items-center z-50">
-      <div className="w-[700px] h-[48px] rounded-lg border border-black bg-white flex custom-shadow-75">
+    <nav className="fixed top-5 w-full px-4 flex justify-center items-center z-50">
+      <div className="w-[700px] h-[48px] rounded-lg border-2 border-black bg-white flex custom-shadow-75">
         {navItems.map((item) => (
           <Link
             key={item.id}
             to={item.path}
-            onClick={() => setActiveItem(item.id)}
             className={`
               flex items-center justify-center h-full flex-1
               first:rounded-l-lg last:rounded-r-lg
               transition-all duration-300 cursor-pointer
               hover:bg-[#CBB09B]
-              ${isActive(item.path) ? 'bg-[#CBB09B]' : ''}
+              ${isActive(item.path) ? 'bg-[#CBB09B] border-x' : ''}
             `}
           >
-            <div className="flex items-center gap-2">
-              <img
-                src={item.icon}
-                alt={item.label}
-                className="w-5 h-5 object-contain"
-              />
+            <div className="flex items-center gap-2 text-black">
+              {item.icon}
               <span className="text-sm text-black font-inter">
                 {item.label}
               </span>
