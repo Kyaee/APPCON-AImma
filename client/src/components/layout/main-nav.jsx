@@ -23,8 +23,8 @@ export default function MainNav() {
   };
 
   return (
-    <nav className="fixed top-5 w-full px-4 flex justify-center items-center z-40">
-      <div className="w-[700px] h-[48px] rounded-lg border-2 border-black bg-white flex custom-shadow-75">
+    <nav className="fixed top-6 w-full px-4 flex justify-center items-center z-40">
+      <div className="w-[700px] h-[48px] rounded-lg border-2 border-black bg-card flex custom-shadow-75">
         {navItems.map((item) => (
           <Link
             key={item.id}

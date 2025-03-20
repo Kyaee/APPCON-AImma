@@ -29,7 +29,7 @@ import Profile from "./routes/profile";
 import Shop from "./routes/shop";
 import Lesson from "./routes/lesson";
 import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
-import JobOpportunities from "./routes/job-opportunities/job-opportunities";
+import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Ayon from "./Ayon-TestPage";
