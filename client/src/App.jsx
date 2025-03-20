@@ -22,6 +22,9 @@ import DailyGoal from "./routes/user-assessment/daily-goal";
 import EntryQuestions from "./routes/user-assessment/professional-types/entryQuestions";
 import MidQuestions from "./routes/user-assessment/professional-types/midQuestions";
 import SeniorQuestions from "./routes/user-assessment/professional-types/seniorQuestions";
+import HSQuestions from "./routes/user-assessment/student-types/hsQuestions";
+import CollegeQuestions from "./routes/user-assessment/student-types/collegeQuestions";
+import GradQuestions from "./routes/user-assessment/student-types/gradQuestions";
 import TechInterest from "./routes/user-assessment/techInterest";
 import Goals from "./routes/user-assessment/goals";
 import Proficiency from "./routes/user-assessment/proficiency";
@@ -74,6 +77,9 @@ function App() {
                 <Route path="/start/showcase" element={<IntroShowcase />} />
                 <Route path="/assessment" element={<CombinedAssessment />} />
                 <Route path="/assessment/daily-goal" element={<DailyGoal />} />
+                <Route path="/assessment/hsQuestions" element={<HSQuestions />} />
+                <Route path="/assessment/collegeQuestions" element={<CollegeQuestions />} />
+                <Route path="/assessment/gradQuestions" element={<GradQuestions />} />
                 <Route path="/assessment/entryQuestions" element={<EntryQuestions />} />
                 <Route path="/assessment/midQuestions" element={<MidQuestions />} />
                 <Route path="/assessment/seniorQuestions" element={<SeniorQuestions />} />

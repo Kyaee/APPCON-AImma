@@ -5,10 +5,19 @@ import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
 import { assessmentFlow } from '@/lib/assessment-flow';
 
 export default function CombinedAssessment() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(() => {
+    const saved = localStorage.getItem('currentStep');
+    return saved ? parseInt(saved) : 1;
+  });
   const [language, setLanguage] = useState('English');
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedLevel, setSelectedLevel] = useState(null);
+  const [selectedType, setSelectedType] = useState(() => {
+    const saved = localStorage.getItem('selectedType');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [selectedLevel, setSelectedLevel] = useState(() => {
+    const saved = localStorage.getItem('selectedLevel');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [previousExp, setPreviousExp] = useState({
     lastRole: '',
     yearsExperience: '',
@@ -33,13 +42,17 @@ export default function CombinedAssessment() {
     localStorage.removeItem('seniorLevelSavepoint');
     localStorage.removeItem('previousExpData');
     localStorage.removeItem('careerTransitionData');
+    localStorage.removeItem('educationLevelData');
   };
 
   useEffect(() => {
     if (location.state?.returnToStep) {
       setCurrentStep(location.state.returnToStep);
-      if (location.state.returnToStep === 2) {
-        clearSavepoints();
+      if (location.state.selectedType) {
+        setSelectedType(location.state.selectedType);
+      }
+      if (location.state.selectedLevel) {
+        setSelectedLevel(location.state.selectedLevel);
       }
     }
     const savedStep = localStorage.getItem('currentAssessmentStep');
@@ -48,13 +61,20 @@ export default function CombinedAssessment() {
       localStorage.removeItem('currentAssessmentStep'); // Clear after restoring
     }
     // Load saved years of experience data if returning to step 4
-    if (location.state?.returnToStep === 4) {
+    if (location.state?.returnToStep === 4) { 
       const saved = localStorage.getItem('yearsOfExpSavepoint');
       if (saved) {
         setSelectedLevel(JSON.parse(saved));
       }
     }
   }, [location]);
+
+  // Add new useEffect to persist state changes
+  useEffect(() => {
+    if (currentStep) localStorage.setItem('currentStep', currentStep);
+    if (selectedType) localStorage.setItem('selectedType', JSON.stringify(selectedType));
+    if (selectedLevel) localStorage.setItem('selectedLevel', JSON.stringify(selectedLevel));
+  }, [currentStep, selectedType, selectedLevel]);
 
   const handleNext = () => {
     console.log('Current Step:', currentStep);
@@ -75,6 +95,8 @@ export default function CombinedAssessment() {
         setCurrentStep(6);
       }
     } else if (currentStep === 3 && selectedLevel) {
+      // Save education level before navigation
+      localStorage.setItem('educationLevelData', JSON.stringify(selectedLevel));
       // Route to the appropriate questions based on education level
       switch (selectedLevel.id) {
         case 'highSchool':

@@ -29,9 +29,18 @@ export default function HSQuestions() {
   };
 
   const handleBack = () => {
+    const studentType = { id: 'student', label: 'Student', icon: '👨‍🎓' };
+    const hsLevel = { id: 'highSchool', label: 'High School Student', icon: '🏫' };
+    
+    // Save selections to localStorage
+    localStorage.setItem('selectedType', JSON.stringify(studentType));
+    localStorage.setItem('selectedLevel', JSON.stringify(hsLevel));
+    
     navigate('/assessment', { 
       state: { 
-        returnToStep: 3 // Return to Education Level step
+        returnToStep: 3,
+        selectedType: studentType,
+        selectedLevel: hsLevel
       }
     });
   };
@@ -40,6 +49,8 @@ export default function HSQuestions() {
     if (formData.strand && formData.planningCollege !== null && 
         formData.interestAreas.length > 0 && formData.careerGoals) {
       localStorage.setItem('hsResponses', JSON.stringify(formData));
+      localStorage.setItem('currentAssessmentStep', '3'); // Save point
+      localStorage.setItem('hsQuestionsSavepoint', 'true'); // Add this line
       navigate('/assessment/daily-goal');
     }
   };

@@ -11,6 +11,30 @@ export default function DailyGoal() {
   const { dailyGoal } = assessmentFlow;
 
   const handleBack = () => {
+    // Check for Grad Questions savepoint first
+    const gradQuestionsSavepoint = localStorage.getItem('gradQuestionsSavepoint');
+    if (gradQuestionsSavepoint) {
+      localStorage.removeItem('gradQuestionsSavepoint');
+      navigate('/assessment/gradQuestions');
+      return;
+    }
+
+    // Check for College Questions savepoint first
+    const collegeQuestionsSavepoint = localStorage.getItem('collegeQuestionsSavepoint');
+    if (collegeQuestionsSavepoint) {
+      localStorage.removeItem('collegeQuestionsSavepoint');
+      navigate('/assessment/collegeQuestions');
+      return;
+    }
+
+    // Check for HS Questions savepoint first
+    const hsQuestionsSavepoint = localStorage.getItem('hsQuestionsSavepoint');
+    if (hsQuestionsSavepoint) {
+      localStorage.removeItem('hsQuestionsSavepoint');
+      navigate('/assessment/hsQuestions');
+      return;
+    }
+
     // Check for career transition data first
     const transitionData = localStorage.getItem('careerTransitionData');
     if (transitionData) {
@@ -40,7 +64,7 @@ export default function DailyGoal() {
         case 'midLevel':
           navigate('/assessment/midQuestions');
           return;
-        case 'seniorLevel':
+        case 'seniorLevel': 
           navigate('/assessment/seniorQuestions');
           return;
       }
