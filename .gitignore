@@ -13,6 +13,8 @@ client/dist
 client/dist-ssr
 *.local
 client/.env
+client/.env.local
+
 
 *.log
 

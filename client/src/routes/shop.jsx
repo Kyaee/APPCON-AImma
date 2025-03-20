@@ -108,21 +108,9 @@ export default function ElementShop() {
       <MainNav />
 
       {/* Stats and Action Icons */}
-      <div className="fixed top-8 right-15 flex items-center gap-4">
-        <div className="flex items-center gap-4">
-          <StatsDisplay type="heart" value="10" />
-          <StatsDisplay type="gem" value="500" />
-        </div>
-        <div className="flex items-center gap-4">
-          <ActionIcons
-            type="notification"
-            onClick={() => console.log("Notification clicked")}
-          />
-          <ActionIcons
-            type="settings"
-            onClick={() => console.log("Settings clicked")}
-          />
-        </div>
+      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
+        <StatsDisplay/>
+        <ActionIcons/>
       </div>
 
       {/* Main Content */}
