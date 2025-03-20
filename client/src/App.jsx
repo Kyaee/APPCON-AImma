@@ -1,6 +1,6 @@
 // THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
 
-import { ThemeProvider } from "./components/features/theme-provider";
+import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "./config/authContext";
@@ -36,22 +36,25 @@ import Profile from "./routes/profile";
 import Shop from "./routes/shop";
 import Lesson from "./routes/lesson";
 import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
-import JobOpportunities from "./routes/job-opportunities/job-opportunities";
+import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Ayon from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
 // This is not a page @Jun, but a component
 import CourseSelect from "./components/features/course-select";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
-  // const { session } = useAuth();
+  const queryClient = new QueryClient();
+  // const { session } = useAuth(); 
   const [ isAssessed, setAssessed ] = useState(false);
   const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
             {/* GENERAL ROUTES */}
@@ -115,6 +118,7 @@ function App() {
             )}
           </Routes>
         </BrowserRouter>
+        </QueryClientProvider>
       </ThemeProvider>
     </>
   );
