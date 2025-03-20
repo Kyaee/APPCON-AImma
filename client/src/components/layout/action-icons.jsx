@@ -1,29 +1,28 @@
-import notificationImage from '@/assets/job-opportunities/Notification.png';
-import optionsImage from '@/assets/job-opportunities/options.png';
+import { Bell, Settings } from 'lucide-react';
 
 const ICON_CONFIG = {
   notification: {
-    icon: notificationImage,
+    icon: Bell,
     alt: 'Notifications'
   },
   settings: {
-    icon: optionsImage,
+    icon: Settings,
     alt: 'Settings'
   }
 };
 
 export default function IconButton({ type = 'notification', onClick }) {
   const config = ICON_CONFIG[type];
+  const Icon = config.icon;
 
   return (
     <button 
       onClick={onClick} 
       className="flex items-center justify-center hover:opacity-80 transition-opacity"
     >
-      <img
-        src={config.icon}
-        alt={config.alt}
-        className="w-[25px] h-[25px] object-contain cursor-pointer"
+      <Icon
+        className="w-[25px] h-[25px] cursor-pointer"
+        aria-label={config.alt}
       />
     </button>
   );

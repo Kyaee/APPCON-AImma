@@ -38,8 +38,8 @@ import Emman from "./Emman-TestPage";
 import CourseSelect from "./components/features/course-select";
 
 function App() {
-  // const { session } = useAuth();
-  const [ isAssessed, setAssessed ] = useState(false);
+   const { session } = useAuth();
+  const [ isAssessed, setAssessed ] = useState(true);
   const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
