@@ -68,7 +68,8 @@ export default function GradQuestions() {
       buttonPosition="center"
     >
       <AssessmentStep title="Tell us about your graduate studies">
-        <div className="w-full max-w-3xl mx-auto h-[calc(100vh-300px)] overflow-y-auto px-4 sm:px-6">
+        <div className="w-full max-w-3xl mx-auto h-[calc(100vh-300px)] overflow-y-auto px-4 sm:px-6 hide-scrollbar
+        [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
           <div className="space-y-6 mt-8 pb-8">
             {/* Field of Study */}
             <div>

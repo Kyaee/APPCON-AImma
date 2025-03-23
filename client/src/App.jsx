@@ -47,13 +47,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const queryClient = new QueryClient();
-  // const { session } = useAuth(); 
-  const [ isAssessed, setAssessed ] = useState(false);
-  const [ isUserLoggedin, setUserLoggedin ] = useState(true);
+  const { session } = useAuth(); 
+  const [ isAssessed, setAssessed ] = useState(true);
+  // const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
     <>
-      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
@@ -64,7 +64,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
             
 
-            {!isUserLoggedin ? (
+            {!session ? (
               // IF USER IS NOT LOGGED-IN       
               <>
                 <Route path="/auth/login" element={<LoginPage />} />
