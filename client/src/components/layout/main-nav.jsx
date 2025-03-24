@@ -1,4 +1,4 @@
-import { useAuth } from "@/config/authContext";
+// import { useAuth } from "@/config/authContext";
 import { Link, useLocation } from "react-router-dom";
 
 // Components & Icons
@@ -6,14 +6,14 @@ import { Leaf, UserCircle, Inspect, ShoppingBag } from "lucide-react";
 
 export default function MainNav() {
   const location = useLocation();
-  const { session } = useAuth();  
-  const userId = session.user.id;
+  // const { session } = useAuth();  
+  // const userId = session.user.id;
 
   const navItems = [
-    { icon: <Leaf className="size-5"/>, label: 'Roadmap', path: `/dashboard/${userId}`, id: 'roadmap' },
-    { icon: <UserCircle className="size-5"/>, label: 'Profile', path: `/profile/${userId}`, id: 'profile' },
-    { icon: <Inspect className="size-5"/>, label: 'Opportunities', path: `/job-opportunities/${userId}`, id: 'opportunities' },
-    { icon: <ShoppingBag className="size-5" />, label: 'Shop', path: `/shop/${userId}`, id: 'shop' }
+    { icon: <Leaf className="size-5"/>, label: 'Roadmap', path: `/dashboard/:id`, id: 'roadmap' },
+    { icon: <UserCircle className="size-5"/>, label: 'Profile', path: `/profile/:id`, id: 'profile' },
+    { icon: <Inspect className="size-5"/>, label: 'Opportunities', path: `/job-opportunities/:id`, id: 'opportunities' },
+    { icon: <ShoppingBag className="size-5" />, label: 'Shop', path: `/shop/:id`, id: 'shop' }
   ];
 
   const isActive = (path) => {
