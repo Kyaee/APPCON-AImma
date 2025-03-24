@@ -26,6 +26,7 @@ import HSQuestions from "./routes/user-assessment/student-types/hsQuestions";
 import CollegeQuestions from "./routes/user-assessment/student-types/collegeQuestions";
 import GradQuestions from "./routes/user-assessment/student-types/gradQuestions";
 import TechInterest from "./routes/user-assessment/techInterest";
+import Complete from "./routes/user-assessment/complete";
 import Goals from "./routes/user-assessment/goals";
 import Proficiency from "./routes/user-assessment/proficiency";
 import Questions from "./routes/user-assessment/questions";
@@ -47,13 +48,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const queryClient = new QueryClient();
-  const { session } = useAuth(); 
-  const [ isAssessed, setAssessed ] = useState(true);
-  // const [ isUserLoggedin, setUserLoggedin ] = useState(true);
+  // const { session } = useAuth(); 
+  const [ isAssessed, setAssessed ] = useState(false);
+  const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="Light" storageKey="vite-ui-theme">
         <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
@@ -64,7 +65,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
             
 
-            {!session ? (
+            {!isUserLoggedin ? (
               // IF USER IS NOT LOGGED-IN       
               <>
                 <Route path="/auth/login" element={<LoginPage />} />
@@ -87,6 +88,17 @@ function App() {
                 <Route path="/assessment/midQuestions" element={<MidQuestions />} />
                 <Route path="/assessment/seniorQuestions" element={<SeniorQuestions />} />
                 <Route path="/assessment/techInterest" element={<TechInterest />} />
+                <Route path="/assessment/programmingquestions" element={<TechInterest />} />
+                <Route path="/assessment/networkingquestions" element={<TechInterest />} />
+                <Route path="/assessment/webdevelopmentquestions" element={<TechInterest />} />
+                <Route path="/assessment/gamedevelopmentquestions" element={<TechInterest />} />
+                <Route path="/assessment/aimachinelearningquestions" element={<TechInterest />} />
+                <Route path="/assessment/datasciencequestions" element={<TechInterest />} />
+                <Route path="/assessment/cybersecurityquestions" element={<TechInterest />} />
+                <Route path="/assessment/roboticsquestions" element={<TechInterest />} />
+                <Route path="/assessment/humancomputerinteractionquestions" element={<TechInterest />} />
+                <Route path="/assessment/otherinterests" element={<TechInterest />} />
+                <Route path="/assessment/complete" element={<Complete />} />
                 <Route path="/assessment/goals" element={<Goals />} />
                 <Route
                   path="/assessment/proficiency"
@@ -94,7 +106,6 @@ function App() {
                 />
                 <Route path="/assessment/questions" element={<Questions />} />
                 <Route path="/assessment/results" element={<Results />} />
-                
                 
                 <Route path="/select" element={<CourseSelect />} />
               </>
