@@ -15,7 +15,7 @@ export const assessmentSteps = [
     path: '/Assessment/daily-goal',
     title: 'Daily Learning Goal',
   },
-  {
+  { 
     id: 3,
     path: '/Assessment/interests',
     title: 'Learning Interests',
