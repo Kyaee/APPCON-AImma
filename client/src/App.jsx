@@ -1,6 +1,6 @@
 // THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
 
-import { ThemeProvider } from "./components/features/theme-provider";
+import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "./config/authContext";
@@ -19,6 +19,14 @@ import ConfirmAccount from "./routes/auth/confirm-account";
 import IntroShowcase from "./routes/showcase";
 import CombinedAssessment from "./routes/user-assessment/combined-assessment";
 import DailyGoal from "./routes/user-assessment/daily-goal";
+import EntryQuestions from "./routes/user-assessment/professional-types/entryQuestions";
+import MidQuestions from "./routes/user-assessment/professional-types/midQuestions";
+import SeniorQuestions from "./routes/user-assessment/professional-types/seniorQuestions";
+import HSQuestions from "./routes/user-assessment/student-types/hsQuestions";
+import CollegeQuestions from "./routes/user-assessment/student-types/collegeQuestions";
+import GradQuestions from "./routes/user-assessment/student-types/gradQuestions";
+import TechInterest from "./routes/user-assessment/techInterest";
+import Complete from "./routes/user-assessment/complete";
 import Goals from "./routes/user-assessment/goals";
 import Proficiency from "./routes/user-assessment/proficiency";
 import Questions from "./routes/user-assessment/questions";
@@ -29,22 +37,30 @@ import Profile from "./routes/profile";
 import Shop from "./routes/shop";
 import Lesson from "./routes/lesson";
 import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
-import JobOpportunities from "./routes/job-opportunities/job-opportunities";
+import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Ayon from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
 // This is not a page @Jun, but a component
 import CourseSelect from "./components/features/course-select";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
+<<<<<<< HEAD
   // const { session } = useAuth();
   const [ isAssessed, setAssessed ] = useState(true);
+=======
+  const queryClient = new QueryClient();
+  // const { session } = useAuth(); 
+  const [ isAssessed, setAssessed ] = useState(false);
+>>>>>>> b7d4b794f85572232448fdf65d750429147bcd16
   const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="Light" storageKey="vite-ui-theme">
+        <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
             {/* GENERAL ROUTES */}
@@ -70,6 +86,24 @@ function App() {
                 <Route path="/start/showcase" element={<IntroShowcase />} />
                 <Route path="/assessment" element={<CombinedAssessment />} />
                 <Route path="/assessment/daily-goal" element={<DailyGoal />} />
+                <Route path="/assessment/hsQuestions" element={<HSQuestions />} />
+                <Route path="/assessment/collegeQuestions" element={<CollegeQuestions />} />
+                <Route path="/assessment/gradQuestions" element={<GradQuestions />} />
+                <Route path="/assessment/entryQuestions" element={<EntryQuestions />} />
+                <Route path="/assessment/midQuestions" element={<MidQuestions />} />
+                <Route path="/assessment/seniorQuestions" element={<SeniorQuestions />} />
+                <Route path="/assessment/techInterest" element={<TechInterest />} />
+                <Route path="/assessment/programmingquestions" element={<TechInterest />} />
+                <Route path="/assessment/networkingquestions" element={<TechInterest />} />
+                <Route path="/assessment/webdevelopmentquestions" element={<TechInterest />} />
+                <Route path="/assessment/gamedevelopmentquestions" element={<TechInterest />} />
+                <Route path="/assessment/aimachinelearningquestions" element={<TechInterest />} />
+                <Route path="/assessment/datasciencequestions" element={<TechInterest />} />
+                <Route path="/assessment/cybersecurityquestions" element={<TechInterest />} />
+                <Route path="/assessment/roboticsquestions" element={<TechInterest />} />
+                <Route path="/assessment/humancomputerinteractionquestions" element={<TechInterest />} />
+                <Route path="/assessment/otherinterests" element={<TechInterest />} />
+                <Route path="/assessment/complete" element={<Complete />} />
                 <Route path="/assessment/goals" element={<Goals />} />
                 <Route
                   path="/assessment/proficiency"
@@ -77,7 +111,6 @@ function App() {
                 />
                 <Route path="/assessment/questions" element={<Questions />} />
                 <Route path="/assessment/results" element={<Results />} />
-                
                 
                 <Route path="/select" element={<CourseSelect />} />
               </>
@@ -101,6 +134,7 @@ function App() {
             )}
           </Routes>
         </BrowserRouter>
+        </QueryClientProvider>
       </ThemeProvider>
     </>
   );
