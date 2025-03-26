@@ -8,7 +8,7 @@ import Sidebar from "@/components/layout/dashboard-roadmap/Sidebar";
 import RoadmapHeader from "@/components/layout/dashboard-roadmap/RoadmapHeader";
 import RoadmapContent from "@/components/layout/dashboard-roadmap/RoadmapContent";
 import { useState } from "react";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export default function Ayon() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);

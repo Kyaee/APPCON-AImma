@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 const RoadmapHeader = ({
   currentCourse = "Web Development",
@@ -24,9 +24,9 @@ const RoadmapHeader = ({
             className="relative inline-flex items-center gap-3 cursor-pointer group"
           >
             <h2 className="text-2xl font-bold text-black">{currentCourse}</h2>
-            <ChevronDown
+            <ChevronRight
               className={`w-8 h-8 text-black transition-transform duration-200 ${
-                isDropdownOpen ? "rotate-360" : "rotate-270"
+                isDropdownOpen ? "rotate-90" : ""
               }`}
             />
           </div>
