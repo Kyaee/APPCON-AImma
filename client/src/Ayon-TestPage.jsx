@@ -5,8 +5,8 @@ import ActionIcons from "@/components/layout/action-icons";
 import QuestPanel from "@/components/layout/dashboard-roadmap/QuestPanel";
 import StreakPanel from "@/components/layout/dashboard-roadmap/StreakPanel";
 import Sidebar from "@/components/layout/dashboard-roadmap/Sidebar";
-import RoadmapHeader from '@/components/layout/dashboard-roadmap/RoadmapHeader';
-import RoadmapContent from '@/components/layout/dashboard-roadmap/RoadmapContent';
+import RoadmapHeader from "@/components/layout/dashboard-roadmap/RoadmapHeader";
+import RoadmapContent from "@/components/layout/dashboard-roadmap/RoadmapContent";
 import { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
 
@@ -16,8 +16,8 @@ export default function Ayon() {
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);
 
   const handleSidebarToggle = () => {
-    console.log('Toggling sidebar');
-    setIsSidebarExpanded(prev => !prev);
+    console.log("Toggling sidebar");
+    setIsSidebarExpanded((prev) => !prev);
   };
 
   // Available courses with varied number of stages
@@ -34,7 +34,7 @@ export default function Ayon() {
         { id: 6, title: "State Management", status: "locked" },
         { id: 7, title: "API Integration", status: "locked" },
         { id: 8, title: "Deployment", status: "locked" },
-      ]
+      ],
     },
     {
       name: "Quality Assurance",
@@ -45,7 +45,7 @@ export default function Ayon() {
         { id: 3, title: "Integration Testing", status: "locked" },
         { id: 4, title: "E2E Testing", status: "locked" },
         { id: 5, title: "Test Automation", status: "locked" },
-      ]
+      ],
     },
     {
       name: "Mobile Development",
@@ -55,18 +55,20 @@ export default function Ayon() {
         { id: 2, title: "React Native", status: "locked" },
         { id: 3, title: "Native APIs", status: "locked" },
         { id: 4, title: "App Publishing", status: "locked" },
-      ]
-    }
+      ],
+    },
   ];
 
   const currentCourse = courses[currentCourseIndex];
 
   // Handle course navigation
   const handleCourseChange = (direction) => {
-    if (direction === 'next') {
-      setCurrentCourseIndex(prev => (prev + 1) % courses.length);
-    } else if (direction === 'prev') {
-      setCurrentCourseIndex(prev => (prev - 1 + courses.length) % courses.length);
+    if (direction === "next") {
+      setCurrentCourseIndex((prev) => (prev + 1) % courses.length);
+    } else if (direction === "prev") {
+      setCurrentCourseIndex(
+        (prev) => (prev - 1 + courses.length) % courses.length
+      );
     }
   };
 
@@ -76,40 +78,36 @@ export default function Ayon() {
     setIsLeftDropdownOpen(false);
   };
 
+  const handleHeaderCourseSelect = (courseName) => {
+    const newIndex = courses.findIndex((course) => course.name === courseName);
+    if (newIndex !== -1) {
+      setCurrentCourseIndex(newIndex);
+    }
+  };
+
   return (
     <div className="relative w-full min-h-screen">
       <Background />
       <MainNav />
       {/* Stats and Action Icons */}
-      <div className="fixed top-8 right-15 flex items-center gap-4">
-        <div className="flex items-center gap-4">
-          <StatsDisplay type="heart" value="10" />
-          <StatsDisplay type="gem" value="500" />
-        </div>
-        <div className="flex items-center gap-4">
-          <ActionIcons
-            type="notification"
-            onClick={() => console.log("Notification clicked")}
-          />
-          <ActionIcons
-            type="settings"
-            onClick={() => console.log("Settings clicked")}
-          />
-        </div>
+      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
+        <StatsDisplay />
+        <ActionIcons />
       </div>
 
       {/* Sidebar */}
-      <Sidebar 
-        isExpanded={isSidebarExpanded} 
-        onToggle={handleSidebarToggle} 
-      />
+      <Sidebar isExpanded={isSidebarExpanded} onToggle={handleSidebarToggle} />
 
       {/* Main Content Area - Three Column Layout */}
       <div className="flex w-full pt-20">
         {/* Left Section - Course Header (when sidebar is collapsed) */}
-        <div className={`transition-all duration-300 ${isSidebarExpanded ? 'w-0 overflow-hidden' : 'w-[25%] px-4'}`}>
+        <div
+          className={`transition-all duration-300 ${
+            isSidebarExpanded ? "w-0 overflow-hidden" : "w-[25%] px-4"
+          }`}
+        >
           {!isSidebarExpanded && (
-            <div className="pl-[80px] p-4">
+            <div className="ml-[40px] mt-[30px] p-4">
               <div className="relative inline-block">
                 <div className="relative inline-block">
                   {/* White background container - appears on dropdown open */}
@@ -131,29 +129,34 @@ export default function Ayon() {
                       </div>
                     </>
                   )}
-                  
+
                   {/* Header content with inline horizontal line */}
                   <div className="flex flex-col">
-                    <div 
+                    <div
                       onClick={() => setIsLeftDropdownOpen(!isLeftDropdownOpen)}
                       className="relative inline-flex items-center gap-3 cursor-pointer group p-0"
                     >
-                      <h2 className="text-2xl font-bold text-black">{currentCourse.name}</h2>
+                      <h2 className="text-3xl font-bold text-black">
+                        {currentCourse.name}
+                      </h2>
                       {isLeftDropdownOpen ? (
                         <ChevronDown className="w-8 h-8 text-black group-hover:text-gray-600" />
                       ) : (
                         <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
                       )}
                     </div>
-                    
+
                     {/* Horizontal Line - limited width to match content */}
-                    <div className="h-[3px] bg-black mt-3 w-auto" style={{ width: 'fit-content', minWidth: '250px' }} />
+                    <div
+                      className="h-[3px] bg-black mt-3 w-auto"
+                      style={{ width: "fit-content", minWidth: "300px" }}
+                    />
                   </div>
                 </div>
               </div>
-              
+
               {/* Progression Text */}
-              <p className="text-black font-medium mt-4 text-md">
+              <p className="text-black font-medium mt-4 text-lg">
                 Current Progression: {currentCourse.progression}%
               </p>
             </div>
@@ -161,18 +164,25 @@ export default function Ayon() {
         </div>
 
         {/* Middle Section - Roadmap Content */}
-        <div className={`transition-all duration-300 ${isSidebarExpanded ? 'ml-[20%] w-[55%]' : 'w-[50%]'}`}>
+        <div
+          className={`transition-all duration-300 ${
+            isSidebarExpanded ? "ml-[20%] w-[55%]" : "w-[50%]"
+          }`}
+        >
           {isSidebarExpanded && (
-            <RoadmapHeader 
+            <RoadmapHeader
               currentCourse={currentCourse.name}
               progression={currentCourse.progression}
-              courseOptions={courses.map(course => course.name)}
+              courseOptions={courses.map((course) => course.name)}
               className="mb-6"
               isSidebarExpanded={isSidebarExpanded}
+              onCourseSelect={handleHeaderCourseSelect}
             />
           )}
-          <RoadmapContent 
-            lessons={currentCourse.lessons} 
+
+          {/* Add RoadmapContent component */}
+          <RoadmapContent
+            lessons={currentCourse.lessons}
             currentCourse={currentCourse.name}
             onCourseChange={handleCourseChange}
             isSidebarExpanded={isSidebarExpanded}

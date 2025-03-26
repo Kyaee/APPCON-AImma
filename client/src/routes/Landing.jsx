@@ -1,9 +1,7 @@
-
 export default function Landing() {
   return (
     <>
-
-    <div>landing</div>
+      <div>landing</div>
     </>
-  )
+  );
 }
