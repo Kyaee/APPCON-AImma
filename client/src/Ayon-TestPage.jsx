@@ -99,35 +99,29 @@ export default function Ayon() {
       <Sidebar isExpanded={isSidebarExpanded} onToggle={handleSidebarToggle} />
 
       {/* Main Content Area - Three Column Layout */}
-      <div className="flex w-full pt-20">
-        {/* Left Section - Course Header (when sidebar is collapsed) */}
+      <div className="flex w-full pt-20 h-auto min-h-[calc(100vh-80px)]">
         <div
           className={`transition-all duration-300 ${
-            isSidebarExpanded ? "w-0 overflow-hidden" : "w-[25%] px-4"
-          }`}
+            isSidebarExpanded ? "w-0 " : "w-[25%] px-0"
+          } sticky top-20`}
         >
           {!isSidebarExpanded && (
-            <div className="ml-[40px] mt-[30px] p-4">
+            <div className="ml-[60px] mt-[0px] p-3 sticky top-25">
               <div className="relative inline-block">
                 <div className="relative inline-block">
-                  {/* White background container - appears on dropdown open */}
+                  {/* Popup menu - appears on right side */}
                   {isLeftDropdownOpen && (
-                    <>
-                      {/* Header background */}
-                      <div className="absolute inset-0 -m-4 pb-2 bg-white border-2 border-black rounded-t-lg shadow-md border-b-0" />
-                      {/* Dropdown container */}
-                      <div className="absolute left-0 top-full -m-4 bg-white border-2 border-black border-t-2 rounded-b-lg shadow-md w-full mt-1 z-30">
-                        {courses.map((course, index) => (
-                          <div
-                            key={course.name}
-                            className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
-                            onClick={() => handleCourseSelect(index)}
-                          >
-                            {course.name}
-                          </div>
-                        ))}
-                      </div>
-                    </>
+                    <div className="absolute left-full bg-white top-0 ml-4 border-2 border-black rounded-lg shadow-md z-30 min-w-[300px]">
+                      {courses.map((course, index) => (
+                        <div
+                          key={course.name}
+                          className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
+                          onClick={() => handleCourseSelect(index)}
+                        >
+                          {course.name}
+                        </div>
+                      ))}
+                    </div>
                   )}
 
                   {/* Header content with inline horizontal line */}
@@ -140,7 +134,7 @@ export default function Ayon() {
                         {currentCourse.name}
                       </h2>
                       {isLeftDropdownOpen ? (
-                        <ChevronDown className="w-8 h-8 text-black group-hover:text-gray-600" />
+                        <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-180" />
                       ) : (
                         <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
                       )}
@@ -162,35 +156,35 @@ export default function Ayon() {
             </div>
           )}
         </div>
-
         {/* Middle Section - Roadmap Content */}
         <div
-          className={`transition-all duration-300 ${
+          className={`transition-all duration-300 relative flex flex-col ${
             isSidebarExpanded ? "ml-[20%] w-[55%]" : "w-[50%]"
           }`}
         >
           {isSidebarExpanded && (
-            <RoadmapHeader
-              currentCourse={currentCourse.name}
-              progression={currentCourse.progression}
-              courseOptions={courses.map((course) => course.name)}
-              className="mb-6"
-              isSidebarExpanded={isSidebarExpanded}
-              onCourseSelect={handleHeaderCourseSelect}
-            />
+            <div className="z-10  pb-0 mx-auto">
+              <RoadmapHeader
+                currentCourse={currentCourse.name}
+                progression={currentCourse.progression}
+                courseOptions={courses.map((course) => course.name)}
+                className="mb-6"
+                isSidebarExpanded={isSidebarExpanded}
+                onCourseSelect={handleHeaderCourseSelect}
+              />
+            </div>
           )}
-
-          {/* Add RoadmapContent component */}
-          <RoadmapContent
-            lessons={currentCourse.lessons}
-            currentCourse={currentCourse.name}
-            onCourseChange={handleCourseChange}
-            isSidebarExpanded={isSidebarExpanded}
-          />
+          <div>
+            <RoadmapContent
+              lessons={currentCourse.lessons}
+              currentCourse={currentCourse.name}
+              onCourseChange={handleCourseChange}
+              isSidebarExpanded={isSidebarExpanded}
+            />
+          </div>
         </div>
-
         {/* Right Section - Panels */}
-        <div className="w-[25%] p-4 space-y-4 pr-8">
+        <div className="w-[25%] p-4  sticky pt-10">
           <StreakPanel />
           <QuestPanel />
         </div>

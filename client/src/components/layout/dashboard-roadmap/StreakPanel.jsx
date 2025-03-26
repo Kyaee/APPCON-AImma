@@ -17,7 +17,7 @@ const StreakPanel = ({
   const daysOfWeek = ["M", "T", "W", "TH", "F", "ST", "S"];
 
   return (
-    <div className="sticky top-[100px] z-50 bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
+    <div className="sticky top-[120px] z-50 bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
       <h2 className="text-lg font-medium mb-3 text-black">Streak</h2>
 
       <div className="flex items-center gap-2 mb-4">

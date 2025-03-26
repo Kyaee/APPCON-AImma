@@ -168,7 +168,7 @@ const RoadmapContent = ({
   };
 
   return (
-    <div className="relative w-full py-10">
+    <div className="relative w-full py-5">
       <div className="relative mx-auto" style={{ width: "90%" }}>
         {/* Render connecting lines first (behind stages) */}
         <svg

@@ -24,7 +24,7 @@ const QuestPanel = ({
   ],
 }) => {
   return (
-    <div className="sticky top-75 bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
+    <div className="sticky top-80 bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
       <h2 className="text-lg font-medium mb-3 text-black">Quests</h2>
 
       <div className="space-y-3">
