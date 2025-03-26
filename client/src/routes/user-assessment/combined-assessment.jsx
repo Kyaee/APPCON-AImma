@@ -3,13 +3,23 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
 import { assessmentFlow } from '@/lib/assessment-flow';
+import {useAssessmentStore} from '@/store/useAssessmentStore';  
 
 export default function CombinedAssessment() {
+  // Get store actions and state
+  const setLanguage = useAssessmentStore((state) => state.setLanguage);
+  const language = useAssessmentStore((state) => state.language);
+  const setUserType = useAssessmentStore((state) => state.setUserType);
+  const setEducationLevel = useAssessmentStore((state) => state.setEducationLevel);
+  const setCareerTransition = useAssessmentStore((state) => state.setCareerTransition);
+  // const previousExperience = useAssessmentStore((state) => state.previousExperience);
+  const setPreviousExperience = useAssessmentStore((state) => state.setPreviousExperience); 
+
   const [currentStep, setCurrentStep] = useState(() => {
     const saved = localStorage.getItem('currentStep');
     return saved ? parseInt(saved) : 1;
   });
-  const [language, setLanguage] = useState('English');
+
   const [selectedType, setSelectedType] = useState(() => {
     const saved = localStorage.getItem('selectedType');
     return saved ? JSON.parse(saved) : null;
@@ -18,7 +28,8 @@ export default function CombinedAssessment() {
     const saved = localStorage.getItem('selectedLevel');
     return saved ? JSON.parse(saved) : null;
   });
-  const [previousExp, setPreviousExp] = useState({
+  
+  const [previousExperience, setPreviousExp] = useState({
     lastRole: '',
     yearsExperience: '',
     reasonForChange: ''
@@ -76,10 +87,38 @@ export default function CombinedAssessment() {
     if (selectedLevel) localStorage.setItem('selectedLevel', JSON.stringify(selectedLevel));
   }, [currentStep, selectedType, selectedLevel]);
 
+  const handleLanguageChange = (value) => {
+    setLanguage(value);
+  };
+
+  const handleTypeSelection = (option) => {
+    setSelectedType(option);
+    setUserType(option);
+  };
+
+  const handleLevelSelection = (option) => {
+    setSelectedLevel(option);
+    setEducationLevel(option);
+  };
+
+  // Add validation functions
+  const isPreviousExpValid = () => {
+    return previousExperience.lastRole.trim() !== '' && 
+           previousExperience.yearsExperience.trim() !== '' && 
+           previousExperience.reasonForChange.trim() !== '';
+  };
+
+  const isTransitionValid = () => {
+    return transition.currentField.trim() !== '' && 
+           transition.desiredField.trim() !== '' && 
+           transition.transitionReason.trim() !== '';
+  };
+
   const handleNext = () => {
     console.log('Current Step:', currentStep);
     console.log('Selected Type:', selectedType);
     console.log('Selected Level:', selectedLevel);
+    
 
     if (currentStep === 1) {
       setCurrentStep(2);
@@ -128,16 +167,24 @@ export default function CombinedAssessment() {
         default:
           setCurrentStep(5);
       }
-    } else if (currentStep === 5 && previousExp.lastRole && previousExp.yearsExperience 
-      && previousExp.reasonForChange) {
-      localStorage.setItem('previousExpData', JSON.stringify(previousExp));
-      localStorage.setItem('currentAssessmentStep', currentStep.toString());
-      navigate('/assessment/daily-goal');
-    } else if (currentStep === 6 && transition.currentField && transition.desiredField 
-      && transition.transitionReason) {
-      localStorage.setItem('careerTransitionData', JSON.stringify(transition));
-      localStorage.setItem('currentAssessmentStep', currentStep.toString());
-      navigate('/assessment/daily-goal');
+    } else if (currentStep === 5) {
+      if (isPreviousExpValid()) {
+        setPreviousExperience(previousExperience);
+        localStorage.setItem('previousExpData', JSON.stringify(previousExperience));
+        localStorage.setItem('currentAssessmentStep', currentStep.toString());
+        navigate('/assessment/daily-goal');
+      } else {
+        alert('Please fill in all fields for Previous Experience');
+      }
+    } else if (currentStep === 6) {
+      if (isTransitionValid()) {
+        setCareerTransition(transition);
+        localStorage.setItem('careerTransitionData', JSON.stringify(transition));
+        localStorage.setItem('currentAssessmentStep', currentStep.toString());
+        navigate('/assessment/daily-goal');
+      } else {
+        alert('Please fill in all fields for Career Transition');
+      }
     }
   };
 
@@ -162,7 +209,7 @@ export default function CombinedAssessment() {
             <div className="w-full max-w-md mx-auto px-4 sm:px-0">
               <select
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
+                onChange={(e) => handleLanguageChange(e.target.value)}
                 className="w-full p-2 sm:p-3 rounded-2xl text-gray-800 text-center text-sm sm:text-base border-2 border-black bg-white mb-4 sm:mb-6"
               >
                 <option value="English">English</option>
@@ -187,13 +234,17 @@ export default function CombinedAssessment() {
       case 2:
         return (
           <AssessmentStep title={userType.title}>
+          
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-4 sm:mt-8 px-4 sm:px-0">
               {userType.options.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => setSelectedType(option)}
+                  onClick={() => handleTypeSelection(option)}
                   className={`p-4 sm:px-10 sm:py-25 rounded-lg border-2 transition-all duration-200 cursor-pointer
-                    ${selectedType?.id === option.id ? 'border-primary bg-primary/10' : 'border-gray-200 hover:border-primary/50'}`}
+                    ${selectedType?.id === option.id 
+                      ? 'border-primary bg-primary/10' 
+                      : 'border-gray-200 hover:border-primary/50'
+                    }`}
                 >
                   <div className="flex justify-center space-x-4">
                     <span className="text-6xl">{option.icon}</span>
@@ -209,6 +260,7 @@ export default function CombinedAssessment() {
       case 3:
         return (
           <AssessmentStep title="What's your education level?">
+            <button onClick={()=>console.log(userType)} className='border-5 border-red'>WAWA</button>
             {(() => {
               switch (selectedType?.id) {
                 case 'student':
@@ -217,7 +269,7 @@ export default function CombinedAssessment() {
                       {assessmentFlow.educationLevel.options.map((option) => (
                         <button
                           key={option.id}
-                          onClick={() => setSelectedLevel(option)}
+                          onClick={() => handleLevelSelection(option)}
                           className={`p-4 sm:px-14.5 sm:py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
                             ${selectedLevel?.id === option.id ? 'border-primary bg-primary/10' : 'border-gray-200 hover:border-primary/50'}`}
                         >
@@ -244,7 +296,7 @@ export default function CombinedAssessment() {
               {assessmentFlow.yearsExperience.options.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => setSelectedLevel(option)}
+                  onClick={() => handleLevelSelection(option)}
                   className={`p-4 px-23 sm:py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
                     ${selectedLevel?.id === option.id ? 'border-primary bg-primary/10' : 'border-gray-200 hover:border-primary/50'}`}
                 >
@@ -267,16 +319,16 @@ export default function CombinedAssessment() {
                 <label className="block text-lg mb-2">What was your last role?</label>
                 <input
                   type="text"
-                  value={previousExp.lastRole}
+                  value={previousExperience.lastRole}
                   onChange={(e) => setPreviousExp(prev => ({...prev, lastRole: e.target.value}))}
                   className="w-full p-3 rounded-lg border-2 border-gray-200"
                 />
               </div>
               
-              <div>
+              <div> 
                 <label className="block text-lg mb-2">Years of experience</label>
                 <select
-                  value={previousExp.yearsExperience}
+                  value={previousExperience.yearsExperience}
                   onChange={(e) => setPreviousExp(prev => ({...prev, yearsExperience: e.target.value}))}
                   className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
                 >
@@ -291,7 +343,7 @@ export default function CombinedAssessment() {
               <div>
                 <label className="block text-lg mb-2">Reason for seeking new opportunity</label>
                 <textarea
-                  value={previousExp.reasonForChange}
+                  value={previousExperience.reasonForChange}
                   onChange={(e) => setPreviousExp(prev => ({...prev, reasonForChange: e.target.value}))}
                   className="w-full p-3 rounded-lg border-2 border-gray-200 h-32 z-50"
                 />

@@ -3,19 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
 import { assessmentFlow } from '@/lib/assessment-flow';
+import {useAssessmentStore} from '@/store/useAssessmentStore';
 
 export default function TechInterest() {
-  const [selectedInterest, setSelectedInterest] = useState(null);
   const [showQuestions, setShowQuestions] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
-  const [answers, setAnswers] = useState({});
   const navigate = useNavigate();
   const { techInterest } = assessmentFlow;
+  const { 
+    technicalInterest, 
+    technicalAnswers, 
+    setTechnicalInterest, 
+    setTechnicalAnswers 
+  } = useAssessmentStore();
 
   const handleInterestSelect = (option) => {
-    setSelectedInterest(option);
+    setTechnicalInterest(option);
     setShowQuestions(true);
-    setAnswers({});
+    setTechnicalAnswers({});
   };
 
   const handleBack = () => {
@@ -23,7 +28,7 @@ export default function TechInterest() {
       setShowGoals(false);
     } else if (showQuestions) {
       setShowQuestions(false);
-      setSelectedInterest(null);
+      setTechnicalInterest(null);
     } else {
       navigate(-1);
     }
@@ -31,31 +36,34 @@ export default function TechInterest() {
 
   const handleNext = () => {
     if (!showQuestions) {
-      if (selectedInterest) {
+      if (technicalInterest) {
         setShowQuestions(true);
       }
     } else {
-      // After answering questions, go directly to complete
+      // Log the selected technical interest and answers
+      console.log('Selected Technical Interest:', technicalInterest);
+      console.log('Technical Answers:', technicalAnswers);    
+      
       navigate('/assessment/complete', {
-        state: { answers }
+        state: { answers: technicalAnswers }
       });
     }
   };
 
   const handleAnswerChange = (questionId, value) => {
-    setAnswers(prev => ({
-      ...prev,
+    setTechnicalAnswers({
+      ...technicalAnswers,
       [questionId]: value
-    }));
+    });
   };
 
   const renderQuestions = () => {
-    if (!selectedInterest) return null;
+    if (!technicalInterest) return null;
 
     // For "Other" interest type, we use otherInterests questions
-    const questionSet = selectedInterest.id === 'other'
+    const questionSet = technicalInterest.id === 'other'
       ? assessmentFlow.otherInterests
-      : assessmentFlow[selectedInterest.id + 'Questions'];
+      : assessmentFlow[technicalInterest.id + 'Questions'];
 
     if (!questionSet) return null;
 
@@ -73,16 +81,16 @@ export default function TechInterest() {
                     <button
                       key={option}
                       onClick={() => {
-                        const currentAnswers = answers[question.id] || [];
+                        const currentAnswers = technicalAnswers[question.id] || [];
                         const newAnswers = currentAnswers.includes(option)
                           ? currentAnswers.filter(a => a !== option)
                           : [...currentAnswers, option];
                         handleAnswerChange(question.id, newAnswers);
                       }}
                       className={`p-3 rounded-lg border-2 transition-all duration-200
-                        ${(answers[question.id] || []).includes(option)
-                          ? 'border-white bg-amber-800/50 text-white'
-                          : 'border-amber-800/30 text-white/80 hover:border-amber-800/50'
+                        ${(technicalAnswers[question.id] || []).includes(option)
+                          ? 'border-primary bg-primary/10' 
+                          : 'border-gray-200 hover:border-primary/50'
                         }`}
                     >
                       {option}
@@ -91,9 +99,9 @@ export default function TechInterest() {
                 </div>
               ) : question.type === 'text' ? (
                 <textarea
-                  value={answers[question.id] || ''}
+                  value={technicalAnswers[question.id] || ''}
                   onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                  className="w-full p-3 rounded-lg bg-white/10 border-2 border-amber-800/30 text-white"
+                  className="w-full p-3 rounded-lg bg-white/10 border-2 border-white text-white"
                   rows={4}
                   placeholder="Enter your answer..."
                 />
@@ -107,7 +115,7 @@ export default function TechInterest() {
 
   return (
     <AssessmentLayout
-      title={showQuestions ? `${selectedInterest?.label} Assessment` : "Technical Interests"}
+      title={showQuestions ? `${technicalInterest?.label} Assessment` : "Technical Interests"}
       progress={70}
       prevPage={handleBack}
       nextPage={handleNext}
@@ -123,9 +131,9 @@ export default function TechInterest() {
                 key={option.id}
                 onClick={() => handleInterestSelect(option)}
                 className={`p-6 rounded-lg border-2 transition-all duration-200 cursor-pointer
-                  ${selectedInterest?.id === option.id 
-                    ? 'border-white bg-amber-800/50 text-white'
-                    : 'border-amber-800/30 text-white/80 hover:border-amber-800/50'
+                  ${technicalInterest?.id === option.id 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-gray-200 hover:border-primary/50'
                   }`}
               >
                 <div className="flex justify-center space-x-4">
