@@ -48,8 +48,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const queryClient = new QueryClient();
-  const { session } = useAuth(); 
-  const [ isAssessed, setAssessed ] = useState(false);
+  // const { session } = useAuth(); 
+  const [ isAssessed, setAssessed ] = useState(true);
   const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
