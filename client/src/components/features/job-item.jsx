@@ -27,7 +27,7 @@ const OpportunitiesMenu = ({
     : `${fullDescription.slice(0, 150)}...`;
 
   return (
-    <div className="relative w-full h-full rounded-lg border border-foreground bg-card custom-shadow-50 p-6">
+    <div className="relative w-full h-full rounded-lg border-2 border-foreground bg-card custom-shadow-50 p-6">
       <h2 className="text-3xl text-primary font-semibold tracking-tighter">
         Opportunities
       </h2>
@@ -53,7 +53,9 @@ const OpportunitiesMenu = ({
         Arizona 123, America, Yawa Pistalsan/Hybrid Online
       </div>
 
-      <div className="mt-6 mb-2 text-primary text-xl font-semibold">
+      <Separator orientation="horizontal" className="my-4 border border-foreground"/>
+
+      <div className="mb-2 text-primary text-xl font-semibold">
         Insights
       </div>
       <p className="pb-20 text-primary text-base font-medium">
@@ -83,7 +85,7 @@ const OpportunitiesMenu = ({
 
       {/* Buttons - Updated positioning and width */}
       <div className="absolute bottom-6 left-6 right-6 flex justify-between">
-        <button className="w-[172px] h-[39px] rounded-[5px] border border-primary bg-background flex items-center gap-2 justify-center">
+        <button className="w-[172px] h-[39px] rounded-lg border border-primary bg-background flex items-center gap-2 justify-center">
           <X className="size-5" />
           <span className="text-primary text-base font-medium">
             Not-Interested
@@ -91,10 +93,11 @@ const OpportunitiesMenu = ({
         </button>
 
         <Link to="">
-          <button className="text-background w-[140px] h-[39px] rounded-[5px] border border-primary bg-blue-500 flex items-center justify-center">
+          <button className="text-background w-[140px] h-[39px] rounded-lg border border-primary bg-blue-500 flex items-center justify-center">
             Check now
           </button>
         </Link>
+        
       </div>
     </div>
   );
