@@ -65,7 +65,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
             
 
-            {!session ? (
+            {!isUserLoggedin  ? (
               // IF USER IS NOT LOGGED-IN       
               <>
                 <Route path="/auth/login" element={<LoginPage />} />

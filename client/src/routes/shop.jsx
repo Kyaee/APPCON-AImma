@@ -66,6 +66,32 @@ export default function ElementShop() {
       bgColor: "#57b2f4e6",
       icon: "++",
     },
+    {
+      id: 7,
+      title: "blalala",
+      price: "3650 Gems",
+      // image: "/image-fx-removebg-preview-1.png",
+      bgColor: "#ffcb23",
+      icon: "?!",
+    },
+    {
+      id: 8,
+      title: "Unlock lesson +10 lives",
+      price: "3650 Gems",
+      // image: "/image-fx-removebg-preview-1.png",
+      bgColor: "#ffcb23",
+      icon: "?!",
+    },
+    {
+      id: 9,
+      title: "blalala",
+      price: "3650 Gems",
+      // image: "/image-fx-removebg-preview-1.png",
+      bgColor: "#ffcb23",
+      icon: "?!",
+    },
+
+
   ];
 
   const pricingPlans = [
@@ -75,7 +101,8 @@ export default function ElementShop() {
       period: "/ mo",
       description:
         "Access to various product features that aids your interests.",
-      perks: ["Perks 1", "Perks 2", "Perks 3", "Perks 4", "Perks 5"],
+      perks: ["🚫 Limited API Calls", "✅ Basic Authentication", "🚫Minimal Storage ", " 🚫Limited Database Access", "🚫No Priority Support", "🚫No Advanced AI Features "
+      , "🚫 No Advanced AI Features"],
       icon: null,
       discount: null,
       originalPrice: null,
@@ -85,7 +112,7 @@ export default function ElementShop() {
       price: "₱ 554",
       period: "/ mo",
       description: "For casual learners, that want to progressively study.",
-      perks: ["Perks 1", "Perks 2", "Perks 3", "Perks 4", "Perks 5"],
+      perks: ["🔹 More API requests ", "✅ Full Access", "📦 5GB ", "✅ Full Access", "🔹 Community Support", "🔹 Limited Advanced AI Features"],
       icon: <Rocket size={20} />,
       discount: "Save 33%",
       originalPrice: "₱ 1,100",
@@ -95,8 +122,7 @@ export default function ElementShop() {
       price: "₱ 10,000",
       period: "/ day",
       description: "For casual learners, that want to progressively study.",
-      perks: ["Perks 1", "Perks 2", "Perks 3", "Perks 4", "Perks 5"],
-      icon: <Briefcase size={20} />,
+      perks: ["🚀 High API usage", "✅ Full Access", "📦 20GB ", "✅ Full Access", "✅ Priority", "✅ Yes Advanced AI Features"],
       discount: "Save 33%",
       originalPrice: "₱ 1,100",
     },
@@ -119,9 +145,19 @@ export default function ElementShop() {
         {/* <p className="text-p mb-5 ml-8 text-neutral-600">Whether you're looking to boost your progress, gain extra lives, or enjoy premium features, <br/>we've got you covered. Dive in and make the most of your learning journey!</p> */}
 
         <div
-          className="flex items-center w-11/12 gap-7 mb-5 px-7 pb-5 overflow-auto hide-scrollbar 
-          [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+          className="flex items-center w-11/12 gap-7 mb-5 px-7 pb-5 overflow-auto hide-scrollbar [-ms-overflow-style:'none'] [scrollbar-width:'none']
+          [&::-webkit-scrollbar]:h-4
+          [&::-webkit-scrollbar-track]:rounded-full
+          [&::-webkit-scrollbar-track]:bg-gray-200
+          [&::-webkit-scrollbar-track]:border
+          [&::-webkit-scrollbar-track]:border-gray-300
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-black
+          [&::-webkit-scrollbar-thumb]:border-2
+          [&::-webkit-scrollbar-thumb]:border-black
+          [&::-webkit-scrollbar-thumb]:hover:bg-black"
         >
+        
           {shopItems.map((item) => (
             <Card
               key={item.id}
@@ -156,7 +192,9 @@ export default function ElementShop() {
           ))}
         </div>
       </div>
+       
 
+       
       {/* Pricing cards */}
       <div className="mt-6 ">
         <h2 className="ml-40 text-3xl font-semibold mb-8">User Plan</h2>
