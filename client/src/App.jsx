@@ -48,87 +48,140 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const queryClient = new QueryClient();
-  // const { session } = useAuth(); 
-  const [ isAssessed, setAssessed ] = useState(false);
-  const [ isUserLoggedin, setUserLoggedin ] = useState(true);
+  // const { session } = useAuth();
+  const [isAssessed, setAssessed] = useState(true);
+  const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
       <ThemeProvider defaultTheme="Light" storageKey="vite-ui-theme">
         <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            {/* GENERAL ROUTES */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/ayon-testing" element={<Ayon />} />
-            <Route path="/emman-testing" element={<Emman />} />
-            <Route path="*" element={<NotFound />} />
-            
+          <BrowserRouter>
+            <Routes>
+              {/* GENERAL ROUTES */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/ayon-testing" element={<Ayon />} />
+              <Route path="/emman-testing" element={<Emman />} />
+              <Route path="*" element={<NotFound />} />
 
-            {!isUserLoggedin ? (
-              // IF USER IS NOT LOGGED-IN       
-              <>
-                <Route path="/auth/login" element={<LoginPage />} />
-                <Route path="/auth/register" element={<RegisterPage />} />
-                <Route
-                  path="/auth/confirm-account"
-                  element={<ConfirmAccount />}
-                />
-              </>
-            ) : !isAssessed ? (
-              // IF USER IS LOGGED-IN, AND NOT ASSESSED
-              <>
-                <Route path="/start/showcase" element={<IntroShowcase />} />
-                <Route path="/assessment" element={<CombinedAssessment />} />
-                <Route path="/assessment/daily-goal" element={<DailyGoal />} />
-                <Route path="/assessment/hsQuestions" element={<HSQuestions />} />
-                <Route path="/assessment/collegeQuestions" element={<CollegeQuestions />} />
-                <Route path="/assessment/gradQuestions" element={<GradQuestions />} />
-                <Route path="/assessment/entryQuestions" element={<EntryQuestions />} />
-                <Route path="/assessment/midQuestions" element={<MidQuestions />} />
-                <Route path="/assessment/seniorQuestions" element={<SeniorQuestions />} />
-                <Route path="/assessment/techInterest" element={<TechInterest />} />
-                <Route path="/assessment/programmingquestions" element={<TechInterest />} />
-                <Route path="/assessment/networkingquestions" element={<TechInterest />} />
-                <Route path="/assessment/webdevelopmentquestions" element={<TechInterest />} />
-                <Route path="/assessment/gamedevelopmentquestions" element={<TechInterest />} />
-                <Route path="/assessment/aimachinelearningquestions" element={<TechInterest />} />
-                <Route path="/assessment/datasciencequestions" element={<TechInterest />} />
-                <Route path="/assessment/cybersecurityquestions" element={<TechInterest />} />
-                <Route path="/assessment/roboticsquestions" element={<TechInterest />} />
-                <Route path="/assessment/humancomputerinteractionquestions" element={<TechInterest />} />
-                <Route path="/assessment/otherinterests" element={<TechInterest />} />
-                <Route path="/assessment/complete" element={<Complete />} />
-                <Route path="/assessment/goals" element={<Goals />} />
-                <Route
-                  path="/assessment/proficiency"
-                  element={<Proficiency />}
-                />
-                <Route path="/assessment/questions" element={<Questions />} />
-                <Route path="/assessment/results" element={<Results />} />
-                
-                <Route path="/select" element={<CourseSelect />} />
-              </>
-            ) : (
-              // IF USER IS LOGGED-IN AND ASSESSED
-              <>
-                {/* To access dynamic routes like /:id/profile, you can access the page by going to /1/profile  or /2/dashboard or /3/shop. */}
-                <Route path="/dashboard/:id" element={<Dashboard />} />
-                <Route path="/profile/:id" element={<Profile />} />
-                <Route path="/shop/:id" element={<Shop />} />
-                <Route
-                  path="/job-opportunities/:id"
-                  element={<JobOpportunities />}
-                />
-                <Route path="/:id/lesson/:id" element={<Lesson />} />
-                <Route
-                  path="/:id/lesson/assessment/:id"
-                  element={<LessonAssessment />}
-                />
-              </>
-            )}
-          </Routes>
-        </BrowserRouter>
+              {!isUserLoggedin ? (
+                // IF USER IS NOT LOGGED-IN
+                <>
+                  <Route path="/auth/login" element={<LoginPage />} />
+                  <Route path="/auth/register" element={<RegisterPage />} />
+                  <Route
+                    path="/auth/confirm-account"
+                    element={<ConfirmAccount />}
+                  />
+                </>
+              ) : !isAssessed ? (
+                // IF USER IS LOGGED-IN, AND NOT ASSESSED
+                <>
+                  <Route path="/start/showcase" element={<IntroShowcase />} />
+                  <Route path="/assessment" element={<CombinedAssessment />} />
+                  <Route
+                    path="/assessment/daily-goal"
+                    element={<DailyGoal />}
+                  />
+                  <Route
+                    path="/assessment/hsQuestions"
+                    element={<HSQuestions />}
+                  />
+                  <Route
+                    path="/assessment/collegeQuestions"
+                    element={<CollegeQuestions />}
+                  />
+                  <Route
+                    path="/assessment/gradQuestions"
+                    element={<GradQuestions />}
+                  />
+                  <Route
+                    path="/assessment/entryQuestions"
+                    element={<EntryQuestions />}
+                  />
+                  <Route
+                    path="/assessment/midQuestions"
+                    element={<MidQuestions />}
+                  />
+                  <Route
+                    path="/assessment/seniorQuestions"
+                    element={<SeniorQuestions />}
+                  />
+                  <Route
+                    path="/assessment/techInterest"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/programmingquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/networkingquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/webdevelopmentquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/gamedevelopmentquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/aimachinelearningquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/datasciencequestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/cybersecurityquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/roboticsquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/humancomputerinteractionquestions"
+                    element={<TechInterest />}
+                  />
+                  <Route
+                    path="/assessment/otherinterests"
+                    element={<TechInterest />}
+                  />
+                  <Route path="/assessment/complete" element={<Complete />} />
+                  <Route path="/assessment/goals" element={<Goals />} />
+                  <Route
+                    path="/assessment/proficiency"
+                    element={<Proficiency />}
+                  />
+                  <Route path="/assessment/questions" element={<Questions />} />
+                  <Route path="/assessment/results" element={<Results />} />
+
+                  <Route path="/select" element={<CourseSelect />} />
+                </>
+              ) : (
+                // IF USER IS LOGGED-IN AND ASSESSED
+                <>
+                  {/* To access dynamic routes like /:id/profile, you can access the page by going to /1/profile  or /2/dashboard or /3/shop. */}
+                  <Route path="/dashboard/:id" element={<Dashboard />} />
+                  <Route path="/profile/:id" element={<Profile />} />
+                  <Route path="/shop/:id" element={<Shop />} />
+                  <Route
+                    path="/job-opportunities/:id"
+                    element={<JobOpportunities />}
+                  />
+                  <Route path="/:id/lesson/:id" element={<Lesson />} />
+                  <Route
+                    path="/:id/lesson/assessment/:id"
+                    element={<LessonAssessment />}
+                  />
+                </>
+              )}
+            </Routes>
+          </BrowserRouter>
         </QueryClientProvider>
       </ThemeProvider>
     </>

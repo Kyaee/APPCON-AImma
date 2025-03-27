@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
 import { assessmentFlow } from '@/lib/assessment-flow';
+import {useAssessmentStore} from '@/store/useAssessmentStore';
   
 export default function DailyGoal() {
+  const setDailyGoal = useAssessmentStore((state) => state.setDailyGoal);
   const [selectedGoal, setSelectedGoal] = useState(null);
   const navigate = useNavigate();
   const { dailyGoal } = assessmentFlow;
@@ -17,7 +19,7 @@ export default function DailyGoal() {
       localStorage.removeItem('gradQuestionsSavepoint');
       navigate('/assessment/gradQuestions');
       return;
-    }
+    } 
 
     // Check for College Questions savepoint first
     const collegeQuestionsSavepoint = localStorage.getItem('collegeQuestionsSavepoint');
@@ -76,8 +78,10 @@ export default function DailyGoal() {
 
   const handleNext = () => {
     if (selectedGoal) {
+      setDailyGoal(selectedGoal);
       localStorage.setItem('daily-goal', selectedGoal);
       navigate(`/assessment/${dailyGoal.nextStep}`);
+      console.log('selected goal:', selectedGoal , ' minutes');
     }
   };
 

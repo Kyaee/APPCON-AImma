@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const useAssessmentStore = create(
+export const useAssessmentStore = create(
   persist(
     (set) => ({
       // User information
@@ -12,7 +12,20 @@ const useAssessmentStore = create(
       appGoals: '',
       dailyTimeCommitment: null,
       assessmentAnswers: {},
-      
+      previousExperience: {
+        lastRole: '',
+        yearsExperience: '',
+        reasonForChange: ''
+      },
+      careerTransition: {
+        currentField: '',
+        desiredField: '',
+        transitionReason: ''
+      },
+      dailyGoal: null,
+      technicalInterest: null,
+      technicalAnswers: {},
+
       // Actions
       setLanguage: (language) => set({ language }),
       setUserType: (userType) => set({ userType }),
@@ -26,6 +39,11 @@ const useAssessmentStore = create(
           [question]: answer
         }
       })),
+      transition: (data) => set({ data }),
+      setCareerTransition: (data) => set({ data }),
+      setDailyGoal: (goal) => set({ dailyGoal: goal }),
+      setTechnicalInterest: (interest) => set({ technicalInterest: interest }),
+      setTechnicalAnswers: (answers) => set({ technicalAnswers: answers }),
       
       // Reset all data
       resetAssessment: () => set({
@@ -35,7 +53,20 @@ const useAssessmentStore = create(
         proficiencySkills: [],
         appGoals: '',
         dailyTimeCommitment: null,
-        assessmentAnswers: {}
+        assessmentAnswers: {},
+        previousExperience: {
+          lastRole: '',
+          yearsExperience: '',
+          reasonForChange: ''
+        },
+        careerTransition: {
+          currentField: '',
+          desiredField: '',
+          transitionReason: ''
+        },
+        dailyGoal: null,
+        technicalInterest: null,
+        technicalAnswers: {}
       })
     }),
     {
@@ -44,4 +75,3 @@ const useAssessmentStore = create(
   )
 );
 
-export default useAssessmentStore;
