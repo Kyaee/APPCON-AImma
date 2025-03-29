@@ -22,12 +22,6 @@ export default function MainLayout({ children }) {
 
   return (
     <div>
-      <button
-        className="fixed top-0 bg-black text-white text-3xl"
-        onClick={() => console.log(userData)}
-      >
-        Click me!
-      </button>
       <Background />
       <MainNav userId={session.user.id} />
 

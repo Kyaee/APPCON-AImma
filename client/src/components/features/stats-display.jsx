@@ -13,7 +13,7 @@ export default function StatsDisplay({hearts, gems}) {
     <div className="flex items-center gap-2">
       <GemIcon />
       <span className="text-black font-inter text-lg font-black leading-7">
-        {gems || 60}
+        {gems || 50}
       </span>
     </div>
     </>
