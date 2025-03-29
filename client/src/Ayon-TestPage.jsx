@@ -86,7 +86,7 @@ export default function Ayon() {
   };
 
   return (
-    <div className="relative w-full min-h-screen">
+    <div className="relative w-full min-h-screen overflow-hidden">
       <Background />
       <MainNav />
       {/* Stats and Action Icons */}
