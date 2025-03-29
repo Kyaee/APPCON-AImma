@@ -4,6 +4,7 @@ import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "./config/authContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 /*------------------------------------------
 WEB PAGES 
@@ -11,6 +12,7 @@ WEB PAGES
 ------------------------------------------*/
 
 import Landing from "./routes/landing";
+import MainLayout from "./components/layout/main-layout";
 // AUTHENTICATION
 import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
@@ -44,13 +46,12 @@ import Ayon from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
 // This is not a page @Jun, but a component
 import CourseSelect from "./components/features/course-select";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const queryClient = new QueryClient();
-  // const { session } = useAuth();
+  const { session } = useAuth();
   const [isAssessed, setAssessed] = useState(true);
-  const [isUserLoggedin, setUserLoggedin] = useState(true);
+  // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
@@ -64,7 +65,7 @@ function App() {
               <Route path="/emman-testing" element={<Emman />} />
               <Route path="*" element={<NotFound />} />
 
-              {!isUserLoggedin ? (
+              {!session ? (
                 // IF USER IS NOT LOGGED-IN
                 <>
                   <Route path="/auth/login" element={<LoginPage />} />
@@ -79,105 +80,51 @@ function App() {
                 <>
                   <Route path="/start/showcase" element={<IntroShowcase />} />
                   <Route path="/assessment" element={<CombinedAssessment />} />
-                  <Route
-                    path="/assessment/daily-goal"
-                    element={<DailyGoal />}
-                  />
-                  <Route
-                    path="/assessment/hsQuestions"
-                    element={<HSQuestions />}
-                  />
-                  <Route
-                    path="/assessment/collegeQuestions"
-                    element={<CollegeQuestions />}
-                  />
-                  <Route
-                    path="/assessment/gradQuestions"
-                    element={<GradQuestions />}
-                  />
-                  <Route
-                    path="/assessment/entryQuestions"
-                    element={<EntryQuestions />}
-                  />
-                  <Route
-                    path="/assessment/midQuestions"
-                    element={<MidQuestions />}
-                  />
-                  <Route
-                    path="/assessment/seniorQuestions"
-                    element={<SeniorQuestions />}
-                  />
-                  <Route
-                    path="/assessment/techInterest"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/programmingquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/networkingquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/webdevelopmentquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/gamedevelopmentquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/aimachinelearningquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/datasciencequestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/cybersecurityquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/roboticsquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/humancomputerinteractionquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/otherinterests"
-                    element={<TechInterest />}
-                  />
+                  <Route path="/assessment/daily-goal" element={<DailyGoal />} />
+                  <Route path="/assessment/hsQuestions" element={<HSQuestions />} />
+                  <Route path="/assessment/collegeQuestions" element={<CollegeQuestions />} />
+                  <Route path="/assessment/gradQuestions" element={<GradQuestions />} />
+                  <Route path="/assessment/entryQuestions" element={<EntryQuestions />} />
+                  <Route path="/assessment/midQuestions" element={<MidQuestions />} />
+                  <Route path="/assessment/seniorQuestions" element={<SeniorQuestions />} />
+                  <Route path="/assessment/techInterest" element={<TechInterest />} />
+                  <Route path="/assessment/programmingquestions" element={<TechInterest />} />
+                  <Route path="/assessment/networkingquestions" element={<TechInterest />} />
+                  <Route path="/assessment/webdevelopmentquestions" element={<TechInterest />} />
+                  <Route path="/assessment/gamedevelopmentquestions" element={<TechInterest />} />
+                  <Route path="/assessment/aimachinelearningquestions" element={<TechInterest />} />
+                  <Route path="/assessment/datasciencequestions" element={<TechInterest />} />
+                  <Route path="/assessment/cybersecurityquestions" element={<TechInterest />} />
+                  <Route path="/assessment/roboticsquestions" element={<TechInterest />} />
+                  <Route path="/assessment/humancomputerinteractionquestions" element={<TechInterest />} />
+                  <Route path="/assessment/otherinterests" element={<TechInterest />} />
                   <Route path="/assessment/complete" element={<Complete />} />
                   <Route path="/assessment/goals" element={<Goals />} />
-                  <Route
-                    path="/assessment/proficiency"
-                    element={<Proficiency />}
-                  />
+                  <Route path="/assessment/proficiency" element={<Proficiency />} />
                   <Route path="/assessment/questions" element={<Questions />} />
                   <Route path="/assessment/results" element={<Results />} />
-
                   <Route path="/select" element={<CourseSelect />} />
-                </>
+                </>  
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED
                 <>
                   {/* To access dynamic routes like /:id/profile, you can access the page by going to /1/profile  or /2/dashboard or /3/shop. */}
-                  <Route path="/dashboard/:id" element={<Dashboard />} />
-                  <Route path="/profile/:id" element={<Profile />} />
-                  <Route path="/shop/:id" element={<Shop />} />
-                  <Route
-                    path="/job-opportunities/:id"
-                    element={<JobOpportunities />}
-                  />
-                  <Route path="/:id/lesson/:id" element={<Lesson />} />
-                  <Route
-                    path="/:id/lesson/assessment/:id"
-                    element={<LessonAssessment />}
-                  />
+                  <Route element={<MainLayout />}>
+                    <Route path="/dashboard/:id" element={<Dashboard />} />
+                    <Route path="/profile/:id" element={<Profile />} />
+                    <Route path="/shop/:id" element={<Shop />} />
+                    <Route
+                      path="/job-opportunities/:id"
+                      element={<JobOpportunities />}
+                    />
+                  </Route>
+                  <Route element="MainLayout">
+                    <Route path="/lesson/:id" element={<Lesson />} />
+                    <Route
+                      path="/lesson/:id/assessment/:id"
+                      element={<LessonAssessment />}
+                    />
+                  </Route>
                 </>
               )}
             </Routes>

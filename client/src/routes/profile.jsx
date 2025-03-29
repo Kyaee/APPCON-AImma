@@ -1,13 +1,8 @@
-import { useAuth } from "@/config/authContext";
+import { CategoryScale } from "chart.js"; Chart.register(CategoryScale);
 import { lineChart, radarChart } from "@/components/features/charts/sampleData";
 import Chart from "chart.js/auto";
-import { CategoryScale } from "chart.js"; Chart.register(CategoryScale);
 
 // Components & Icons
-import { Background } from "@/components/layout/background";
-import MainNav from "@/components/layout/main-nav";
-import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/layout/action-icons";
 import ProfileDetails from "@/routes/profile/ProfileDetails";
 import CareerOpportunities from "./profile/career-opportunities-profile";
 import Finished_Roadmap_Component from "./profile/finished-roadmaps";
@@ -17,8 +12,8 @@ import Badges_Component from "./profile/badges-profile";
 import Skills_Component from "./profile/skills-profile";
 
 export default function Profile() {
-  // const { session } = useAuth()
-  // const userId = session.user.id
+  // const { data: userContent } = useQuery(fetchUserdata())
+  
   const skills = [
     "React",
     "Node.js",
@@ -35,20 +30,15 @@ export default function Profile() {
   return (
     <>
       <div className="relative w-full min-h-screen overflow-x-hidden pb-20">
-        <Background />
-        <MainNav />
 
         {/* Stats and Action Icons */}
-        <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
-          <StatsDisplay />
-          <ActionIcons />
-        </div>
+
 
         {/* Profile Content */}
         <ProfileDetails
           initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-          name="Maria Priscella Aiselle C. Bautista"
-          level={1}
+          name={"Maria Priscella Aiselle C. Bautista"}
+          // level={userContent?.level}
           experience={40}
           totalExperience={100}
 

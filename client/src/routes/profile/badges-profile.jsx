@@ -25,9 +25,9 @@ export default function BadgesProfile({
 
         <AlertDialog>
           <AlertDialogTrigger>
-            <button className="px-3 py-1 bg-white text-black cursor-pointer rounded-md text-sm hover:bg-blue-400 border border-black">
+            <div className="px-3 py-1 bg-white text-black cursor-pointer rounded-md text-sm hover:bg-blue-400 border border-black">
               More
-            </button>
+            </div>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>

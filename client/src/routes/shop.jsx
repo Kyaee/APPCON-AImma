@@ -10,11 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
 
-import MainNav from "@/components/layout/main-nav";
-import { Background } from "@/components/layout/background";
-import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/layout/action-icons";
-
 export default function ElementShop() {
   // Data for shop items
   const shopItems = [
@@ -104,14 +99,6 @@ export default function ElementShop() {
 
   return (
     <div className="w-full h-full text-black overflow-hidden">
-      <Background />
-      <MainNav />
-
-      {/* Stats and Action Icons */}
-      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
-        <StatsDisplay/>
-        <ActionIcons/>
-      </div>
 
       {/* Main Content */}
       <div className="mt-32 ml-32 py-6">

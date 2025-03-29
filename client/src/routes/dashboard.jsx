@@ -1,7 +1,3 @@
-import { Background } from "@/components/layout/background";
-import MainNav from "@/components/layout/main-nav";
-import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/layout/action-icons";
 import QuestPanel from "@/components/layout/dashboard-roadmap/QuestPanel";
 import StreakPanel from "@/components/layout/dashboard-roadmap/StreakPanel";
 import Sidebar from "@/components/layout/dashboard-roadmap/Sidebar";
@@ -87,13 +83,6 @@ export default function Ayon() {
 
   return (
     <div className="relative w-full min-h-screen">
-      <Background />
-      <MainNav />
-      {/* Stats and Action Icons */}
-      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
-        <StatsDisplay />
-        <ActionIcons />
-      </div>
 
       {/* Sidebar */}
       <Sidebar isExpanded={isSidebarExpanded} onToggle={handleSidebarToggle} />
