@@ -8,14 +8,14 @@ export default function StatsDisplay() {
     <>
     <div className="flex items-center gap-2">
       <HeartIcon />
-      <span className="text-black font-inter text-lg font-black leading-7">
+      <span className="text-black dark:text-white font-inter text-lg font-black leading-7">
         {HeartValue}
       </span>
     </div>
 
     <div className="flex items-center gap-2">
       <GemIcon />
-      <span className="text-black font-inter text-lg font-black leading-7">
+      <span className="text-black dark:text-white font-inter text-lg font-black leading-7">
         {GemValue}
       </span>
     </div>
