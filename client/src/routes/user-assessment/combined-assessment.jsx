@@ -7,13 +7,17 @@ import {useAssessmentStore} from '@/store/useAssessmentStore';
 
 export default function CombinedAssessment() {
   // Get store actions and state
-  const setLanguage = useAssessmentStore((state) => state.setLanguage);
-  const language = useAssessmentStore((state) => state.language);
-  const setUserType = useAssessmentStore((state) => state.setUserType);
-  const setEducationLevel = useAssessmentStore((state) => state.setEducationLevel);
-  const setCareerTransition = useAssessmentStore((state) => state.setCareerTransition);
-  // const previousExperience = useAssessmentStore((state) => state.previousExperience);
-  const setPreviousExperience = useAssessmentStore((state) => state.setPreviousExperience); 
+  const {
+    setLanguage,
+    language,
+    setUserType,
+    setEducationLevel,
+    setCareerTransition,
+    setPreviousExperience,
+    previousExperience,
+    careerTransition,
+    resetAssessment
+  } = useAssessmentStore();
 
   const [currentStep, setCurrentStep] = useState(() => {
     const saved = localStorage.getItem('currentStep');
@@ -29,16 +33,7 @@ export default function CombinedAssessment() {
     return saved ? JSON.parse(saved) : null;
   });
   
-  const [previousExperience, setPreviousExp] = useState({
-    lastRole: '',
-    yearsExperience: '',
-    reasonForChange: ''
-  });
-  const [transition, setTransition] = useState({
-    currentField: '',
-    desiredField: '',
-    transitionReason: ''
-  });
+  
   const [yearsOfExpData, setYearsOfExpData] = useState(() => {
     const saved = localStorage.getItem('yearsOfExpSavepoint');
     return saved ? JSON.parse(saved) : null;
@@ -92,28 +87,41 @@ export default function CombinedAssessment() {
   };
 
   const handleTypeSelection = (option) => {
-    setSelectedType(option);
-    setUserType(option);
+    const selectedData = {
+      label: option.label,
+      id: option.id
+    };
+    setSelectedType(selectedData);
+    setUserType(selectedData);
   };
 
-  const handleLevelSelection = (option) => {
-    setSelectedLevel(option);
-    setEducationLevel(option);
+  const handleEducationLevel = (option) => {
+    const selectedData = {
+      label: option.label,
+      id: option.id
+    };
+    setSelectedLevel(selectedData);
+    setEducationLevel(selectedData);
+  };
+    
+  const handleExperienceLevel = (option) => {
+    const selectedData = {
+      label: option.label,
+      id: option.id
+    };
+    setSelectedLevel(selectedData);
+    // Note: We don't set education level here
   };
 
   // Add validation functions
-  const isPreviousExpValid = () => {
-    return previousExperience.lastRole.trim() !== '' && 
-           previousExperience.yearsExperience.trim() !== '' && 
-           previousExperience.reasonForChange.trim() !== '';
+  const isFormValid = (stepData, questions) => {
+    return questions.every(question => {
+      const answer = stepData[question.id];
+      return answer && (typeof answer === 'string' ? answer.trim() !== '' : true);
+    });
   };
 
-  const isTransitionValid = () => {
-    return transition.currentField.trim() !== '' && 
-           transition.desiredField.trim() !== '' && 
-           transition.transitionReason.trim() !== '';
-  };
-
+  // Add extra verification on next button press
   const handleNext = () => {
     console.log('Current Step:', currentStep);
     console.log('Selected Type:', selectedType);
@@ -167,37 +175,186 @@ export default function CombinedAssessment() {
         default:
           setCurrentStep(5);
       }
-    } else if (currentStep === 5) {
-      if (isPreviousExpValid()) {
-        setPreviousExperience(previousExperience);
+    }
+    // MEERRRR CHECK MO NGA TO 
+    else if (currentStep === 5) {
+        // Double-check the mapping between form fields and Zustand properties
+        console.log('Saving previous experience to Zustand:', previousExperience);
+        
+        // Set data in the Zustand store with explicit mapping
+        setPreviousExperience({
+          role: previousExperience.role || '',
+          experience: previousExperience.experience || '',
+          reason: previousExperience.reason || ''
+        });
+        
         localStorage.setItem('previousExpData', JSON.stringify(previousExperience));
         localStorage.setItem('currentAssessmentStep', currentStep.toString());
+        
+        // Verify data was saved correctly
+        console.log('Saved to Zustand:', useAssessmentStore.getState().previousExperience);
+        
         navigate('/assessment/daily-goal');
-      } else {
-        alert('Please fill in all fields for Previous Experience');
-      }
-    } else if (currentStep === 6) {
-      if (isTransitionValid()) {
-        setCareerTransition(transition);
+    } 
+    else if (currentStep === 6) {
+        // Double-check the mapping between form fields and Zustand properties
+        console.log('Saving career transition to Zustand:', transition);
+        
+        // Set data in the Zustand store with explicit mapping
+        setCareerTransition({
+          from: transition.from || '',
+          to: transition.to || '',
+          reason: transition.reason || ''
+        });
+        
         localStorage.setItem('careerTransitionData', JSON.stringify(transition));
         localStorage.setItem('currentAssessmentStep', currentStep.toString());
+        
+        // Verify data was saved correctly
+        console.log('Saved to Zustand:', useAssessmentStore.getState().careerTransition);
+
         navigate('/assessment/daily-goal');
-      } else {
-        alert('Please fill in all fields for Career Transition');
-      }
     }
   };
 
+  const clearLocalStorageAssessmentData = () => {
+    // Clear assessment-related localStorage items
+    localStorage.removeItem('currentStep');
+    localStorage.removeItem('selectedType');
+    localStorage.removeItem('selectedLevel');
+    localStorage.removeItem('userType');
+    localStorage.removeItem('educationLevelData');
+    localStorage.removeItem('yearsOfExpSavepoint');
+    localStorage.removeItem('previousExpData');
+    localStorage.removeItem('careerTransitionData');
+    localStorage.removeItem('entryLevelSavepoint');
+    localStorage.removeItem('midLevelSavepoint');
+    localStorage.removeItem('seniorLevelSavepoint');
+    localStorage.removeItem('hsQuestionsSavepoint');
+    localStorage.removeItem('collegeQuestionsSavepoint');
+    localStorage.removeItem('gradQuestionsSavepoint');
+    localStorage.removeItem('currentAssessmentStep');
+  };
+
+  const resetAndClearAll = () => {
+    resetAssessment();
+    clearLocalStorageAssessmentData();
+  };
+
+  // Add this enhanced reset helper function
+  const resetCurrentStepData = (step) => {
+    switch (step) {
+      case 1:
+        setLanguage('English');
+        localStorage.removeItem('language');
+        break;
+      case 2:
+        setSelectedType(null);
+        localStorage.removeItem('selectedType');
+        break;
+      case 3:
+        setSelectedLevel(null);
+        setEducationLevel({ label: '', id: '' });
+        localStorage.removeItem('selectedLevel');
+        localStorage.removeItem('educationLevelData');
+        break;
+      case 4:
+        setSelectedLevel(null); 
+        localStorage.removeItem('selectedLevel');
+        localStorage.removeItem('yearsOfExpSavepoint');         
+        break;
+      case 5:
+        setPreviousExperience({
+          label: '',
+          answer: ''
+        });
+        localStorage.removeItem('previousExpData');
+        break;
+      case 6:
+        setCareerTransition({
+          label: '',
+          answer: ''
+        });
+        localStorage.removeItem('careerTransitionData');
+        break;
+    }
+  };
+
+  // Replace the existing handleBack function with this one 
   const handleBack = () => {
     if (currentStep > 1) {
+      // Reset data for current step before going back
+      resetCurrentStepData(currentStep);
+      
       if ([4, 5, 6].includes(currentStep)) {
         clearSavepoints();
-        localStorage.removeItem('yearsOfExpSavepoint');
         setCurrentStep(2); // Go back to Career Assessment
       } else {
         setCurrentStep(currentStep - 1);
       }
     }
+  };
+
+  // Update to add verification that data is correctly formatted
+  const handlePreviousExpChange = (label, value) => {
+    setPreviousExperience(label, value);
+    
+    console.log('Updated Zustand store with:', value, label);
+  };
+
+  const handleTransitionChange = (label, value) => {
+    setCareerTransition(label, value)
+    // Log current state to verify it's working
+    console.log('Updated Zustand store with:', value, label);
+  };
+
+  const renderQuestions = (questionSet) => {
+    if (!questionSet) return null;
+
+    return (
+      <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-6 mt-4 sm:mt-8 px-4 sm:px-6">
+        {questionSet.questions.map((question) => (
+          <div key={question.id}>
+            <label className="block text-lg mb-2">{question.label}</label>
+            {question.type === 'select' ? (
+              <select
+                value={
+                  currentStep === 5 
+                    ? previousExperience[question.label] || ''
+                    : careerTransition[question.label] || ''
+                }
+                onChange={(e) => {(currentStep === 5) ?
+                    handlePreviousExpChange(question.label, e.target.value)
+                  : 
+                    handleTransitionChange(question.label, e.target.value)
+                }}
+                className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
+              >
+                <option value="" disabled>Select an option</option>
+                {question.options.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+            ) : (         
+              <textarea
+                value={
+                  currentStep === 5 
+                    ? previousExperience[question.label] || ''
+                    : careerTransition[question.label] || ''
+                }
+                onChange={(e) => {(currentStep === 5) ?
+                    handlePreviousExpChange(question.label, e.target.value)
+                  :
+                    handleTransitionChange(question.label, e.target.value)
+                  }}
+                className="w-full p-3 rounded-lg border-2 border-gray-200 h-32"
+                placeholder="Enter your answer..."
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const renderStep = () => {
@@ -269,7 +426,7 @@ export default function CombinedAssessment() {
                       {assessmentFlow.educationLevel.options.map((option) => (
                         <button
                           key={option.id}
-                          onClick={() => handleLevelSelection(option)}
+                          onClick={() => handleEducationLevel(option)}
                           className={`p-4 sm:px-14.5 sm:py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
                             ${selectedLevel?.id === option.id ? 'border-primary bg-primary/10' : 'border-gray-200 hover:border-primary/50'}`}
                         >
@@ -288,7 +445,7 @@ export default function CombinedAssessment() {
               }
             })()}
           </AssessmentStep>
-        );
+        );    
       case 4:
         return (
           <AssessmentStep title="Years of Experience">
@@ -296,7 +453,7 @@ export default function CombinedAssessment() {
               {assessmentFlow.yearsExperience.options.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => handleLevelSelection(option)}
+                  onClick={() => handleExperienceLevel(option)}
                   className={`p-4 px-23 sm:py-25 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
                     ${selectedLevel?.id === option.id ? 'border-primary bg-primary/10' : 'border-gray-200 hover:border-primary/50'}`}
                 >
@@ -314,84 +471,13 @@ export default function CombinedAssessment() {
       case 5:
         return (
           <AssessmentStep title="Previous Experience">
-            <div className="w-full max-w-3xl mx-auto space-y-4 sm:space-y-6 mt-4 sm:mt-8 px-4 sm:px-6">
-              <div>
-                <label className="block text-lg mb-2">What was your last role?</label>
-                <input
-                  type="text"
-                  value={previousExperience.lastRole}
-                  onChange={(e) => setPreviousExp(prev => ({...prev, lastRole: e.target.value}))}
-                  className="w-full p-3 rounded-lg border-2 border-gray-200"
-                />
-              </div>
-              
-              <div> 
-                <label className="block text-lg mb-2">Years of experience</label>
-                <select
-                  value={previousExperience.yearsExperience}
-                  onChange={(e) => setPreviousExp(prev => ({...prev, yearsExperience: e.target.value}))}
-                  className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
-                >
-                  <option value="" disabled = "disable">Select years of experience</option>
-                  <option value="0-1">0-1 years</option>
-                  <option value="1-3">1-3 years</option>
-                  <option value="3-5">3-5 years</option>
-                  <option value="5+">5+ years</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-lg mb-2">Reason for seeking new opportunity</label>
-                <textarea
-                  value={previousExperience.reasonForChange}
-                  onChange={(e) => setPreviousExp(prev => ({...prev, reasonForChange: e.target.value}))}
-                  className="w-full p-3 rounded-lg border-2 border-gray-200 h-32 z-50"
-                />
-              </div>
-            </div>
+            {renderQuestions(assessmentFlow.previousExperience)}
           </AssessmentStep>
         );
       case 6:
         return (
           <AssessmentStep title="Career Transition">
-            <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-6 mt-4 sm:mt-8 px-4 sm:px-6">
-              <div>
-                <label className="block text-lg mb-2">What field are you transitioning from?</label>
-                <input
-                  type="text"
-                  value={transition.currentField}
-                  onChange={(e) => setTransition(prev => ({...prev, currentField: e.target.value}))}
-                  className="w-full p-3 rounded-lg border-2 border-gray-200"
-                  placeholder="Enter your current field"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-lg mb-2">What tech field interests you most?</label>
-                <select
-                  value={transition.desiredField}
-                  onChange={(e) => setTransition(prev => ({...prev, desiredField: e.target.value}))}
-                  className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
-                >
-                  <option value="" disabled="disabled">Select desired field</option>
-                  <option value="Software Development">Software Development</option>
-                  <option value="Data Science">Data Science</option>
-                  <option value="Cybersecurity">Cybersecurity</option>
-                  <option value="Web Development">Web Development</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-lg mb-2">Why are you interested in transitioning to tech?</label>
-                <textarea
-                  value={transition.transitionReason}
-                  onChange={(e) => setTransition(prev => ({...prev, transitionReason: e.target.value}))}
-                  className="w-full p-3 rounded-lg border-2 border-gray-200 h-32"
-                  placeholder="Share your motivation"
-                />
-              </div>
-            </div>
+            {renderQuestions(assessmentFlow.transitionType)}
           </AssessmentStep>
         );
       default:

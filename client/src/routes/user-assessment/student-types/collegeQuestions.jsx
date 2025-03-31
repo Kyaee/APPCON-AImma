@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
+import { useAssessmentStore } from '@/store/useAssessmentStore';
 
 export default function CollegeQuestions() {
   const navigate = useNavigate();
+  const { setEducationDetails } = useAssessmentStore();
   const [formData, setFormData] = useState({
     course: '',
     yearLevel: '',
@@ -48,9 +50,21 @@ export default function CollegeQuestions() {
   const handleNext = () => {
     if (formData.course && formData.yearLevel && 
         formData.technicalSkills.length > 0 && formData.careerPath) {
+      // Store in localStorage
       localStorage.setItem('collegeResponses', JSON.stringify(formData));
       localStorage.setItem('currentAssessmentStep', '3');
       localStorage.setItem('collegeQuestionsSavepoint', 'true');
+      
+      // Save to Zustand store
+      setEducationDetails({
+        currentEducation: 'College',
+        fieldOfStudy: formData.course,
+        academicInterests: formData.technicalSkills,
+        educationType: 'college',
+        yearLevel: formData.yearLevel,
+        careerPath: formData.careerPath
+      });
+      
       navigate('/assessment/daily-goal');
     }
   };

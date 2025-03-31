@@ -109,9 +109,9 @@ export const assessmentFlow = {
   yearsExperience: {
     title: 'Years of Experience',
     options: [
-      { id: 'entryLevel', label: '0-2 years', icon: '1️⃣', nextStep: 'entryQuestions' },
-      { id: 'midLevel', label: '3-5 years', icon: '2️⃣', nextStep: 'midQuestions' },
-      { id: 'seniorLevel', label: '5+ years', icon: '3️⃣', nextStep: 'seniorQuestions' }
+      { id: 'entryLevel', label: 'Entry Level Track', icon: '1️⃣', nextStep: 'entryQuestions' },
+      { id: 'midLevel', label: 'Middle Level Track', icon: '2️⃣', nextStep: 'midQuestions' },
+      { id: 'seniorLevel', label: 'Senior Level Track', icon: '3️⃣', nextStep: 'seniorQuestions' }    
     ]
   },
 
@@ -370,7 +370,7 @@ export const assessmentFlow = {
     questions: [
       { id: 'lastRole', label: 'What was your last role?', type: 'text' },
       { id: 'yearsExperience', label: 'Years of experience', type: 'select',
-        options: ['0-1', '1-3', '3-5', '5+'] },
+        options: ['0-1', '1-3', '3-5', '5+'] },         
       { id: 'reasonForChange', label: 'Reason for seeking new opportunity', type: 'text' }
     ],
     nextStep: 'dailyGoal'

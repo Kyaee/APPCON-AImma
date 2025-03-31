@@ -14,8 +14,15 @@ export default function TechInterest() {
     technicalInterest, 
     technicalAnswers, 
     setTechnicalInterest, 
-    setTechnicalAnswers 
+    setTechnicalAnswers,
+    resetAssessment
   } = useAssessmentStore();
+
+  const clearLocalStorageAssessmentData = () => {
+    // Clear all technical interest related localStorage items
+    localStorage.removeItem('technicalInterest');
+    localStorage.removeItem('technicalAnswers');
+  };
 
   const handleInterestSelect = (option) => {
     setTechnicalInterest(option);

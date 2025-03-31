@@ -3,33 +3,67 @@ import { persist } from 'zustand/middleware';
 
 export const useAssessmentStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       // User information
       language: 'English',
-      userType: null,
-      educationLevel: null,
+      userType: {
+        label: '',
+        id: ''
+      },
+      educationLevel: {
+        label: '',
+        id: ''
+      },
       proficiencySkills: [],
       appGoals: '',
       dailyTimeCommitment: null,
       assessmentAnswers: {},
       previousExperience: {
-        lastRole: '',
-        yearsExperience: '',
-        reasonForChange: ''
+        label: '',
+        answer: ''
       },
       careerTransition: {
-        currentField: '',
-        desiredField: '',
-        transitionReason: ''
+        label: '',
+        answer: ''
       },
       dailyGoal: null,
       technicalInterest: null,
       technicalAnswers: {},
+      experienceDetails: {
+        currentRole: '',
+        companyIndustry: '',
+        skillsUsed: []
+      },
+      educationDetails: {
+        currentEducation: '',
+        fieldOfStudy: '',
+        academicInterests: []
+      },
 
-      // Actions
+      // Add a debugging function
+      getAssessmentData: () => {
+        const state = get();
+        return {
+          previousExperience: state.previousExperience,
+          careerTransition: state.careerTransition,
+          // Add any other fields you want to debug
+        };
+      },
+      
+      // Actions      
       setLanguage: (language) => set({ language }),
-      setUserType: (userType) => set({ userType }),
-      setEducationLevel: (level) => set({ educationLevel: level }),
+      setUserType: (type) => set({ 
+        userType: {
+          label: type.label,
+          id: type.id
+        }
+      }),
+      setEducationLevel: (level) => set({ 
+        educationLevel: {
+          label: level.label,
+          id: level.id
+        }
+      }),
       setProficiencySkills: (skills) => set({ proficiencySkills: skills }),
       setAppGoals: (goals) => set({ appGoals: goals }),
       setDailyTimeCommitment: (time) => set({ dailyTimeCommitment: time }),
@@ -39,34 +73,85 @@ export const useAssessmentStore = create(
           [question]: answer
         }
       })),
-      transition: (data) => set({ data }),
-      setCareerTransition: (data) => set({ data }),
+      setPreviousExperience: (exp) => {
+        console.log('Setting previous experience in Zustand:', exp);
+        set({
+          previousExperience: {
+            label: exp.label,
+            answer: exp.answer
+          }}
+        );
+        // Log to confirm it was set
+        const newState = get().previousExperience;
+        console.log('Previous experience after setting:', newState);
+      },
+      setCareerTransition: (transition) => {
+        console.log('Setting career transition in Zustand:', transition);
+        set({
+          previousExperience: {
+            label: transition.label,
+            answer: transition.answer
+          }}
+        );
+        // Log to confirm it was set
+        const newState = get().careerTransition;
+        console.log('Career transition after setting:', newState);
+      },
       setDailyGoal: (goal) => set({ dailyGoal: goal }),
       setTechnicalInterest: (interest) => set({ technicalInterest: interest }),
       setTechnicalAnswers: (answers) => set({ technicalAnswers: answers }),
+      setExperienceDetails: (details) => set(state => ({
+        experienceDetails: {
+          ...state.experienceDetails,
+          ...details
+        }
+      })),
+      
+      setEducationDetails: (details) => set(state => ({
+        educationDetails: {
+          ...state.educationDetails,
+          ...details
+        }
+      })),
       
       // Reset all data
       resetAssessment: () => set({
         language: 'English',
-        userType: null,
-        educationLevel: null,
+        userType: {
+          label: '',
+          id: ''
+        },
+        educationLevel: {
+          label: '',
+          id: ''
+        },
         proficiencySkills: [],
         appGoals: '',
         dailyTimeCommitment: null,
         assessmentAnswers: {},
         previousExperience: {
-          lastRole: '',
-          yearsExperience: '',
-          reasonForChange: ''
+          role: '',
+          experience: '',
+          reason: ''
         },
         careerTransition: {
-          currentField: '',
-          desiredField: '',
-          transitionReason: ''
+          from: '',
+          to: '',
+          reason: ''
         },
         dailyGoal: null,
         technicalInterest: null,
-        technicalAnswers: {}
+        technicalAnswers: {},
+        experienceDetails: {
+          currentRole: '',
+          companyIndustry: '',
+          skillsUsed: []
+        },
+        educationDetails: {
+          currentEducation: '',
+          fieldOfStudy: '',
+          academicInterests: []
+        }
       })
     }),
     {
@@ -74,4 +159,13 @@ export const useAssessmentStore = create(
     }
   )
 );
+
+// Add a utility debug function that can be called anywhere
+// export const debugZustandStore = () => {
+//   const state = useAssessmentStore.getState();
+//   console.log('Current Zustand store state:');
+//   console.log('- Previous Experience:', state.previousExperience);
+//   console.log('- Career Transition:', state.careerTransition);
+//   return state;
+// };
 

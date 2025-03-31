@@ -7,10 +7,15 @@ import { assessmentFlow } from '@/lib/assessment-flow';
 import {useAssessmentStore} from '@/store/useAssessmentStore';
   
 export default function DailyGoal() {
-  const setDailyGoal = useAssessmentStore((state) => state.setDailyGoal);
+  const { setDailyGoal, resetAssessment } = useAssessmentStore();
   const [selectedGoal, setSelectedGoal] = useState(null);
   const navigate = useNavigate();
   const { dailyGoal } = assessmentFlow;
+
+  const clearLocalStorageAssessmentData = () => {
+    // Clear daily goal related localStorage item
+    localStorage.removeItem('daily-goal');
+  };
 
   const handleBack = () => {
     // Check for Grad Questions savepoint first
@@ -80,8 +85,8 @@ export default function DailyGoal() {
     if (selectedGoal) {
       setDailyGoal(selectedGoal);
       localStorage.setItem('daily-goal', selectedGoal);
-      navigate(`/assessment/${dailyGoal.nextStep}`);
       console.log('selected goal:', selectedGoal , ' minutes');
+      navigate(`/assessment/${dailyGoal.nextStep}`);
     }
   };
 

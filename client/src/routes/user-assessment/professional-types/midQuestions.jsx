@@ -1,54 +1,33 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
+import { useAssessmentStore } from '@/store/useAssessmentStore';    
 
 export default function MidQuestions() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(() => {
-    const saved = localStorage.getItem('midLevelSavepoint');
-    return saved ? JSON.parse(saved) : {
-      currentRole: '',
-      companyIndustry: '',
-      skillsUsed: []
-    };
-  });
+  const { experienceDetails, setExperienceDetails } = useAssessmentStore();
 
   const handleInputChange = (field, value) => {
-    const newFormData = {
-      ...formData,
-      [field]: value
-    };
-    setFormData(newFormData);
-    localStorage.setItem('midLevelSavepoint', JSON.stringify(newFormData));
+    setExperienceDetails({ [field]: value });
   };
 
   const handleSkillsChange = (skill) => {
-    const newSkills = formData.skillsUsed.includes(skill)
-      ? formData.skillsUsed.filter(s => s !== skill)
-      : [...formData.skillsUsed, skill];
+    const newSkills = experienceDetails.skillsUsed.includes(skill)
+      ? experienceDetails.skillsUsed.filter(s => s !== skill)
+      : [...experienceDetails.skillsUsed, skill];
     
-    const newFormData = {
-      ...formData,
-      skillsUsed: newSkills
-    };
-    setFormData(newFormData);
-    localStorage.setItem('midLevelSavepoint', JSON.stringify(newFormData));
+    setExperienceDetails({ skillsUsed: newSkills });
   };
 
   const handleBack = () => {
-    localStorage.removeItem('midLevelSavepoint');
     navigate('/assessment', { 
-      state: { 
-        returnToStep: 4 // Return to Years of Experience step
-      }
+      state: { returnToStep: 4 }
     });
   };
 
   const handleNext = () => {
-    if (formData.currentRole && formData.companyIndustry && formData.skillsUsed.length > 0) {
-      localStorage.setItem('midLevelResponses', JSON.stringify(formData));
-      navigate('/assessment/daily-goal');
+    if (experienceDetails.currentRole && experienceDetails.companyIndustry && experienceDetails.skillsUsed.length > 0) {
+            navigate('/assessment/daily-goal');
     }
   };
 
@@ -68,7 +47,7 @@ export default function MidQuestions() {
             <label className="block text-lg mb-2">What is your current role?</label>
             <input
               type="text"
-              value={formData.currentRole}
+              value={experienceDetails.currentRole}
               onChange={(e) => handleInputChange('currentRole', e.target.value)}
               className="w-full p-3 rounded-lg border-2 border-gray-200"
               placeholder="Enter your current role"
@@ -79,7 +58,7 @@ export default function MidQuestions() {
           <div>
             <label className="block text-lg mb-2">What industry is your company in?</label>
             <select
-              value={formData.companyIndustry}
+              value={experienceDetails.companyIndustry}
               onChange={(e) => handleInputChange('companyIndustry', e.target.value)}
               className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
             >
@@ -100,7 +79,7 @@ export default function MidQuestions() {
                   key={skill}
                   onClick={() => handleSkillsChange(skill)}
                   className={`p-3 rounded-lg border-2 text-left transition-all duration-200
-                    ${formData.skillsUsed.includes(skill) 
+                    ${experienceDetails.skillsUsed.includes(skill) 
                       ? 'border-primary bg-primary/10' 
                       : 'border-gray-200 hover:border-primary/50'}`}
                 >

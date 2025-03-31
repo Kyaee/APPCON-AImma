@@ -1,17 +1,89 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
 import { assessmentFlow } from '@/lib/assessment-flow';
+import { useAssessmentStore } from '@/store/useAssessmentStore';    
 
 export default function Complete() {
   const [feedback, setFeedback] = useState('');
   const navigate = useNavigate();
   const { complete } = assessmentFlow;
 
+  const { 
+    language,
+    userType,
+    educationLevel,
+    previousExperience,
+    careerTransition,
+    dailyGoal,
+    technicalInterest,
+    technicalAnswers,
+    experienceDetails,
+    educationDetails,
+    resetAssessment
+  } = useAssessmentStore();
+
+
+  // const clearLocalStorageAssessmentData = () => {
+  //   // Clear all assessment-related localStorage items
+  //   localStorage.removeItem('currentStep');
+  //   localStorage.removeItem('selectedType');
+  //   localStorage.removeItem('selectedLevel');
+  //   localStorage.removeItem('userType');
+  //   localStorage.removeItem('educationLevelData');
+  //   localStorage.removeItem('yearsOfExpSavepoint');
+  //   localStorage.removeItem('previousExpData');
+  //   localStorage.removeItem('careerTransitionData');
+  //   localStorage.removeItem('entryLevelSavepoint');
+  //   localStorage.removeItem('midLevelSavepoint');
+  //   localStorage.removeItem('seniorLevelSavepoint');
+  //   localStorage.removeItem('hsQuestionsSavepoint');
+  //   localStorage.removeItem('collegeQuestionsSavepoint');
+  //   localStorage.removeItem('gradQuestionsSavepoint');
+  //   localStorage.removeItem('daily-goal');
+  //   localStorage.removeItem('currentAssessmentStep');
+  // };
+
   const handleNext = () => {
-    // Navigate to dashboard or wherever you want after completion
-    navigate('/dashboard');
+    // Ensure data exists before logging
+    const safeLog = (label, data, defaultMessage = 'Not provided') => {
+      console.log(label, data || defaultMessage);
+    };
+
+    console.log('=== Assessment Summary ===');
+    safeLog('Language:', language); 
+    safeLog('User Type:', userType);
+    safeLog('Education Level:', educationLevel);
+    safeLog('Education Details:', educationDetails);
+    safeLog('Experience Details:', experienceDetails);
+
+    // Specifically log each property to avoid undefined issues
+    console.log('Previous Experience:');
+    safeLog('- Role:', previousExperience?.role);
+    safeLog('- Experience:', previousExperience?.experience);
+    safeLog('- Reason:', previousExperience?.reason);
+
+    console.log('Career Transition:');
+    safeLog('- From:', careerTransition?.from);
+    safeLog('- To:', careerTransition?.to);
+    safeLog('- Reason:', careerTransition?.reason);
+
+    safeLog('Daily Goal:', dailyGoal, '0');
+    safeLog('Technical Interest:', technicalInterest);
+    safeLog('Technical Answers:', technicalAnswers);
+    safeLog('Feedback:', feedback);
+    console.log('========================');
+
+    // Wait a brief moment to ensure console logs are visible before resetting
+    setTimeout(() => {
+      // Reset all assessment data
+      resetAssessment();
+      // clearLocalStorageAssessmentData();
+
+      // Navigate to dashboard or wherever you want after completion
+      navigate('/dashboard');
+    }, 500);
   };
 
   const handleBack = () => {
@@ -56,4 +128,4 @@ export default function Complete() {
       </AssessmentStep>
     </AssessmentLayout>
   );
-} 
+}

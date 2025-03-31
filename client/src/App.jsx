@@ -38,7 +38,7 @@ import Shop from "./routes/shop";
 import Lesson from "./routes/lesson";
 import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
 import JobOpportunities from "./routes/job-opportunities";
-import NotFound from "./routes/NotFound";
+import NotFound from "./routes/NotFound";   
 // TESTING PAGE
 import Ayon from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
@@ -48,12 +48,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const queryClient = new QueryClient();
-  // const { session } = useAuth(); 
-  const [ isAssessed, setAssessed ] = useState(true);
+  const { session } = useAuth(); 
+  const [ isAssessed, setAssessed ] = useState(false);
   const [ isUserLoggedin, setUserLoggedin ] = useState(true);
 
   return (
-    <>
+    <>  
       <ThemeProvider defaultTheme="Light" storageKey="vite-ui-theme">
         <QueryClientProvider client={queryClient}>
         <BrowserRouter>

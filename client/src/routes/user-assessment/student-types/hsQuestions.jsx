@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
+import { useAssessmentStore } from '@/store/useAssessmentStore';
 
 export default function HSQuestions() {
   const navigate = useNavigate();
+  const { setEducationDetails } = useAssessmentStore();
   const [formData, setFormData] = useState({
     strand: '',
     planningCollege: null,
@@ -48,9 +50,21 @@ export default function HSQuestions() {
   const handleNext = () => {
     if (formData.strand && formData.planningCollege !== null && 
         formData.interestAreas.length > 0 && formData.careerGoals) {
+      // Store in localStorage
       localStorage.setItem('hsResponses', JSON.stringify(formData));
       localStorage.setItem('currentAssessmentStep', '3'); // Save point
-      localStorage.setItem('hsQuestionsSavepoint', 'true'); // Add this line
+      localStorage.setItem('hsQuestionsSavepoint', 'true');
+      
+      // Save to Zustand store
+      setEducationDetails({
+        currentEducation: 'High School',
+        fieldOfStudy: formData.strand,
+        academicInterests: formData.interestAreas,
+        educationType: 'highSchool',
+        planningCollege: formData.planningCollege,
+        careerGoals: formData.careerGoals
+      });
+      
       navigate('/assessment/daily-goal');
     }
   };

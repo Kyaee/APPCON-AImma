@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
 import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
+import { useAssessmentStore } from '@/store/useAssessmentStore';
 
 export default function GradQuestions() {
   const navigate = useNavigate();
+  const { setEducationDetails } = useAssessmentStore();
   const [formData, setFormData] = useState({
     fieldStudy: '',
     researchFocus: '',
@@ -51,9 +53,23 @@ export default function GradQuestions() {
     if (formData.fieldStudy && formData.researchFocus && 
         formData.industryExperience !== null && formData.careerPlans && 
         formData.researchInterests.length > 0) {
+      // Store in localStorage
       localStorage.setItem('gradResponses', JSON.stringify(formData));
       localStorage.setItem('currentAssessmentStep', '3');
       localStorage.setItem('gradQuestionsSavepoint', 'true');
+      
+      // Save to Zustand store
+      setEducationDetails({
+        currentEducation: 'Graduate School',
+        fieldOfStudy: formData.fieldStudy,
+        academicInterests: formData.researchInterests, 
+        educationType: 'graduateSchool',
+        researchFocus: formData.researchFocus,
+        industryExperience: formData.industryExperience,
+        careerPlans: formData.careerPlans,
+        technicalExpertise: formData.technicalExpertise
+      });
+      
       navigate('/assessment/daily-goal');
     }
   };
