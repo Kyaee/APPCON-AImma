@@ -2,11 +2,7 @@ import { useState } from "react";
 
 // Components & Icons
 import { Button } from "@/components/ui/button";
-import { Background } from "@/components/layout/background";
 import OpportunitiesMenu from "../components/features/job-item";
-import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/layout/action-icons";
-import MainNav from "@/components/layout/main-nav";
 import wavingCappy from "@/assets/job-opportunities/WaveCappy.png";
 
 export default function JobOpportunities() {
@@ -28,14 +24,6 @@ export default function JobOpportunities() {
 
   return (
     <div className="relative flex items-center w-full min-h-screen pb-20">
-      <Background />
-      <MainNav />
-
-      {/* Stats and Action Icons - Simplified */}
-      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
-        <StatsDisplay/>
-        <ActionIcons/>
-      </div>
 
       {isNewUser ? (
         // New user welcome screen

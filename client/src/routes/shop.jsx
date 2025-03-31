@@ -99,14 +99,6 @@ export default function ElementShop() {
 
   return (
     <div className="w-full h-full text-black overflow-hidden">
-      <Background />
-      <MainNav />
-
-      {/* Stats and Action Icons */}
-      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
-        <StatsDisplay/>
-        <ActionIcons/>
-      </div>
 
       {/* Main Content */}
       <div className="mt-32 ml-32 py-6">

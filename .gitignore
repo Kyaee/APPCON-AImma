@@ -24,6 +24,8 @@ client/.env.local
 server/logs
 server/.venv
 server/.env
+server/__pycache__
+server/.pytest_cache
 
 # Editor directories and files
 .vscode/*
