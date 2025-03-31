@@ -15,7 +15,7 @@ export const assessmentSteps = [
     path: '/Assessment/daily-goal',
     title: 'Daily Learning Goal',
   },
-  {
+  { 
     id: 3,
     path: '/Assessment/interests',
     title: 'Learning Interests',
@@ -357,7 +357,7 @@ export const assessmentFlow = {
         options: [
           { value: 15, label: '15 minutes', icon: fifteenMinIcon },
           { value: 30, label: '30 minutes', icon: thirtyMinIcon },
-          { value: 60, label: '1 hour', icon: oneHourIcon },
+          { value: 60 , label: '1 hour', icon: oneHourIcon },
           { value: 120, label: '2 hours', icon: twoHoursIcon }  
         ]
       }

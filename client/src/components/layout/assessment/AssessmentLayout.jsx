@@ -14,7 +14,7 @@ const AssessmentLayout = ({ children, title, progress, prevPage, nextPage, showM
           {children}
         </div>
         {showMascot && (
-          <div className="absolute bottom-0 justify-center" style={{ zIndex: mascotZIndex }}>
+          <div className="absolute bottom-0 justify-center" style={{ zIndex: -1 }}>
             <img 
               src="../src/assets/user-assessment/DetectiveCapybara.png" 
               alt="Mascot character" 

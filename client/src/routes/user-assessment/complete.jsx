@@ -47,7 +47,7 @@ export default function Complete() {
             <textarea
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
-              className="w-full p-3 rounded-lg bg-white/10 border-2 border-amber-800/30 text-white"
+              className="w-full p-3 rounded-lg bg-white/10 border-2 border-white text-white"
               rows={4}
               placeholder="Share your thoughts with us..."
             />

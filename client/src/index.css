@@ -32,8 +32,13 @@
   --chart-4: hsl(43 74% 66%);
   --chart-5: hsl(27 87% 67%);
   --radius: 0.6rem;
-  --brown: hsl(27 47% 51%);       /* Converting from #bf8648 */
-  --gray: hsl(0 0% 96%);          /* Converting from #f5f5f5 */
+
+  --brown: #bf8648;
+  --light-brown: #CBB09B;
+  --dark-brown: #936440;
+  --blue: #2d9cdb;
+  --gray: #f5f5f5;
+
 }
 
 .dark {
@@ -61,6 +66,11 @@
   --chart-3: hsl(30 80% 55%);
   --chart-4: hsl(280 65% 60%);
   --chart-5: hsl(340 75% 55%);
+  --brown: #bf8648;
+  --dark-brown: #936440;
+  --blue: #241415;
+  --light-brown: #CBB09B;
+  --gray: #f5f5f5;
 }
 
 @theme inline {
@@ -88,6 +98,11 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-brown: var(--brown);
+  --color-dark-brown: var(--dark-brown);
+  --color-light-brown: var(--light-brown);
+  --color-gray: var(--gray);
+  --color-blue: var(--blue);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
