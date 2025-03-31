@@ -126,35 +126,3 @@ export const courseData = [
     ],
   },
 ];
-
-export const generateExtendedLessons = (lessons) => {
-  // Helper function to generate additional lessons if needed
-  if (lessons.length >= 30) return lessons;
-
-  const extended = [...lessons];
-  const lastId = lessons.length > 0 ? lessons[lessons.length - 1].id : 0;
-
-  // Add supplementary lessons to reach 30 if needed
-  const supplementaryLessons = [
-    "Advanced Techniques",
-    "Best Practices",
-    "Design Patterns",
-    "Performance Tuning",
-    "Industry Applications",
-    "Case Studies",
-    "Future Trends",
-    "Capstone Project",
-  ];
-
-  for (let i = lessons.length; i < 30; i++) {
-    extended.push({
-      id: lastId + i - lessons.length + 1,
-      title: `${supplementaryLessons[i % supplementaryLessons.length]} ${
-        Math.floor(i / supplementaryLessons.length) + 1
-      }`,
-      status: "locked",
-    });
-  }
-
-  return extended;
-};

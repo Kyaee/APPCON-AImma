@@ -6,7 +6,6 @@ import RoadmapContent from "@/components/layout/dashboard-roadmap/RoadmapContent
 import { useState, useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { courseData } from "@/components/layout/dashboard-roadmap/CourseData";
-import { generateExtendedLessons } from "@/components/layout/dashboard-roadmap/CourseData";
 
 export default function Ayon() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -46,10 +45,6 @@ export default function Ayon() {
       setCurrentCourseIndex(newIndex);
     }
   };
-
-  const extendedLessons = useMemo(() => {
-    return generateExtendedLessons(currentCourse.lessons);
-  }, [currentCourse.lessons]);
 
   return (
     <div className="relative w-full min-h-screen">
