@@ -36,50 +36,8 @@ const RoadmapContent = ({
   // Create a ref for the canvas
   const canvasRef = useRef(null);
 
-  // Extend the lessons array if needed to reach 30 stages
-  const extendedLessons = useMemo(() => {
-    // If we already have 30 lessons, just return them
-    if (lessons.length >= 30) return lessons;
-
-    // Otherwise, extend the array up to 30 items
-    const extended = [...lessons];
-    const baseNames = [
-      "Advanced Components",
-      "State Management",
-      "Routing",
-      "API Integration",
-      "Authentication",
-      "Testing",
-      "Performance Optimization",
-      "Deployment",
-      "CI/CD",
-      "Monitoring",
-      "Accessibility",
-      "Internationalization",
-      "Data Visualization",
-      "Mobile Responsiveness",
-      "Security",
-      "Advanced State Patterns",
-      "Animation",
-      "Server-Side Rendering",
-      "Progressive Web Apps",
-      "Web Workers",
-      "WebSockets",
-      "Microservices",
-    ];
-
-    for (let i = lessons.length; i < 30; i++) {
-      extended.push({
-        id: i + 1,
-        title: `${baseNames[i % baseNames.length]} ${
-          Math.floor(i / baseNames.length) + 1
-        }`,
-        status: "locked",
-      });
-    }
-
-    return extended;
-  }, [lessons]);
+  // Modify the useMemo with shouldExtend = false
+  const extendedLessons = lessons; // Just use the original lessons array directly
 
   // Find the current lesson index (the one with status "in_progress")
   const currentLessonIndex = extendedLessons.findIndex(
