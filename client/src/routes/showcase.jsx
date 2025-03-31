@@ -1,59 +1,64 @@
-import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { VideoBackground } from "@/components/layout/background"
+import React, { useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { VideoBackground } from "@/components/layout/background";
 
 const IntroSlides = [
   {
-    id: 'welcome',
+    id: "welcome",
     logo: true,
-    title: 'Welcome to',
+    title: "Welcome to",
     subtitle: "Here's how our platform helps you grow professionally.",
-    brandName: 'Capacademy!',
-    button: "Let's Go!"
+    brandName: "Capacademy!",
+    button: "Let's Go!",
   },
   {
-    id: 'learning-paths',
-    title: 'Personalized Learning Paths',
-    subtitle: 'AI tailors courses based on your assessment results, ensuring you learn exactly what you need.',
-    image: '/learning.png',
-    button: "Next"
+    id: "learning-paths",
+    title: "Personalized Learning Paths",
+    subtitle:
+      "AI tailors courses based on your assessment results, ensuring you learn exactly what you need.",
+    image: "/learning.png",
+    button: "Next",
   },
   {
-    id: 'quizzes',
-    title: 'Interactive Quizzes',
-    subtitle: 'Test your knowledge and track your progress with interactive quizzes.',
-    image: '/quiz.png',
-    button: "Next"
+    id: "quizzes",
+    title: "Interactive Quizzes",
+    subtitle:
+      "Test your knowledge and track your progress with interactive quizzes.",
+    image: "/quiz.png",
+    button: "Next",
   },
   {
-    id: 'gamified',
-    title: 'Gamified Experience',
-    subtitle: 'Earn badges, level up, and compete on leaderboards to stay motivated.',
-    image: '/game.png',
-    button: "Next"
+    id: "gamified",
+    title: "Gamified Experience",
+    subtitle:
+      "Earn badges, level up, and compete on leaderboards to stay motivated.",
+    image: "/game.png",
+    button: "Next",
   },
   {
-    id: 'opportunities',
-    title: 'Opportunities Hub',
-    subtitle: 'Access exclusive job offers, internships, and networking opportunities.',
-    image: '/opportunity.png',
-    button: "Next"
+    id: "opportunities",
+    title: "Opportunities Hub",
+    subtitle:
+      "Access exclusive job offers, internships, and networking opportunities.",
+    image: "/opportunity.png",
+    button: "Next",
   },
   {
-    id: 'analytics',
-    title: 'Real-Time Analytics',
-    subtitle: 'Monitor your skill development with detailed analytics and insights.',
-    image: '/analytics.png',
-    button: "Next"
+    id: "analytics",
+    title: "Real-Time Analytics",
+    subtitle:
+      "Monitor your skill development with detailed analytics and insights.",
+    image: "/analytics.png",
+    button: "Next",
   },
   {
-    id: 'assessment',
-    title: 'Before we begin',
-    subtitle: 'Let us start by assessing you to know about you more.',
-    button: 'Begin Assessment',
-    isLast: true
-  }
+    id: "assessment",
+    title: "Before we begin",
+    subtitle: "Let us start by assessing you to know about you more.",
+    button: "Begin Assessment",
+    isLast: true,
+  },
 ];
 
 const Showcase = () => {
@@ -101,22 +106,40 @@ const Showcase = () => {
             </div>
           </div>
         )}
-        
+
         {/* Slide image - Larger size */}
         {currentSlideData.image && (
           <div className="w-full flex justify-center mb-8">
-            <img 
-              src={currentSlideData.image} 
-              alt={currentSlideData.title} 
+            <img
+              src={currentSlideData.image}
+              alt={currentSlideData.title}
               className="w-full max-w-4xl h-auto rounded-lg shadow-lg" // Increased max-width
             />
           </div>
         )}
-        
+
         {/* Content - Aligned with image width */}
-        <div className={`w-full max-w-4xl space-y-2 ${(currentSlideData.logo || currentSlideData.isLast) ? 'items-center text-center' : ''}`}>
-          <div className={`w-full ${(currentSlideData.logo || currentSlideData.isLast) ? 'flex flex-col items-center' : ''}`}>
-            <h1 className={`text-white text-5xl font-bold ${(currentSlideData.logo || currentSlideData.isLast) ? 'text-center' : ''}`}>
+        <div
+          className={`w-full max-w-4xl space-y-2 ${
+            currentSlideData.logo || currentSlideData.isLast
+              ? "items-center text-center"
+              : ""
+          }`}
+        >
+          <div
+            className={`w-full ${
+              currentSlideData.logo || currentSlideData.isLast
+                ? "flex flex-col items-center"
+                : ""
+            }`}
+          >
+            <h1
+              className={`text-white text-5xl font-bold ${
+                currentSlideData.logo || currentSlideData.isLast
+                  ? "text-center"
+                  : ""
+              }`}
+            >
               {currentSlideData.title}
             </h1>
             {currentSlideData.brandName && (
@@ -124,12 +147,18 @@ const Showcase = () => {
                 {currentSlideData.brandName}
               </h1>
             )}
-            <p className={`text-gray-200 text-xl mt-4 ${(currentSlideData.logo || currentSlideData.isLast) ? 'text-center' : ''}`}>
+            <p
+              className={`text-gray-200 text-xl mt-4 ${
+                currentSlideData.logo || currentSlideData.isLast
+                  ? "text-center"
+                  : ""
+              }`}
+            >
               {currentSlideData.subtitle}
             </p>
           </div>
         </div>
-        
+
         {/* Footer with navigation and progress indicators - Aligned with image */}
         <div className="w-full max-w-4xl mt-8">
           {!currentSlideData.isLast ? (
@@ -141,11 +170,11 @@ const Showcase = () => {
                     <div
                       key={index}
                       className={`w-5 h-5 rounded-full border-black border-2 transition-colors duration-200 ${
-                        index + 1 === currentSlide 
-                          ? 'bg-amber-500' 
-                          : index + 1 < currentSlide 
-                            ? 'bg-gray-300' 
-                            : 'bg-gray-300/50'
+                        index + 1 === currentSlide
+                          ? "bg-amber-500"
+                          : index + 1 < currentSlide
+                          ? "bg-gray-300"
+                          : "bg-gray-300/50"
                       }`}
                     />
                   ))}
@@ -153,8 +182,12 @@ const Showcase = () => {
               )}
 
               {/* Navigation button for non-last slides. */}
-              <div className={`${currentSlideData.logo ? 'w-full flex justify-center' : ''}`}>
-                <button 
+              <div
+                className={`${
+                  currentSlideData.logo ? "w-full flex justify-center" : ""
+                }`}
+              >
+                <button
                   onClick={handleNext}
                   className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg 
                   shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
@@ -167,8 +200,8 @@ const Showcase = () => {
           ) : (
             // Only last slide gets Link component
             <div className="w-full flex justify-center">
-              <Link 
-                to="/assessment/language"
+              <Link
+                to="/assessment"
                 className="bg-[#BF9566] border-black border-2 text-white px-8 py-3 rounded-lg text-lg 
                 shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
               >

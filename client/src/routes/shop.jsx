@@ -9,6 +9,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
+// Fix image imports from public directory
+import BlueCappy from "/src/assets/shop/BlueCappy.svg";
+import RedCappy from "/src/assets/shop/RedCappy.svg";
+import MainNav from "@/components/layout/main-nav";
+import { Background } from "@/components/layout/background";
+import StatsDisplay from "@/components/features/stats-display";
+import ActionIcons from "@/components/layout/action-icons";
 
 export default function ElementShop() {
   // Data for shop items
@@ -17,7 +24,7 @@ export default function ElementShop() {
       id: 1,
       title: "+1 Life",
       price: "50 Gems",
-      // image: "/image-fx-removebg-preview-1.png",
+      image: RedCappy,
       bgColor: "#ffcb23",
       icon: "?!",
     },
@@ -25,7 +32,7 @@ export default function ElementShop() {
       id: 2,
       title: "Unlock a lesson",
       price: "250 Gems",
-      // image: "/image.png",
+      image: BlueCappy,
       bgColor: "#57b2f4e6",
       icon: "++",
     },
@@ -33,7 +40,7 @@ export default function ElementShop() {
       id: 3,
       title: "EXP Boost 2xp for 1 hour",
       price: "300 Gems",
-      // image: "/image-fx-removebg-preview-1-2.png",
+      image: RedCappy,
       bgColor: "#ffcb23",
       icon: "?!",
     },
@@ -41,23 +48,15 @@ export default function ElementShop() {
       id: 4,
       title: "Free trial for 6 hours",
       price: "500 Gems",
-      // image: "/image-fx-removebg-preview-1-3.png",
+      image: BlueCappy,
       bgColor: "#57b2f4e6",
       icon: "++",
     },
     {
       id: 5,
-      title: "Free trial for 6 hours",
-      price: "500 Gems",
-      // image: "/image-fx-removebg-preview-1-3.png",
-      bgColor: "#57b2f4e6",
-      icon: "++",
-    },
-    {
-      id: 6,
-      title: "Free trial for 6 hours",
-      price: "500 Gems",
-      // image: "/image-fx-removebg-preview-1-3.png",
+      title: "Free trial for 3 hours",
+      price: "250 Gems",
+      image: BlueCappy,
       bgColor: "#57b2f4e6",
       icon: "++",
     },
@@ -70,7 +69,15 @@ export default function ElementShop() {
       period: "/ mo",
       description:
         "Access to various product features that aids your interests.",
-      perks: ["Perks 1", "Perks 2", "Perks 3", "Perks 4", "Perks 5"],
+      perks: [
+        "🚫 Limited API Calls",
+        "✅ Basic Authentication",
+        "🚫Minimal Storage ",
+        " 🚫Limited Database Access",
+        "🚫No Priority Support",
+        "🚫No Advanced AI Features ",
+        "🚫 No Advanced AI Features",
+      ],
       icon: null,
       discount: null,
       originalPrice: null,
@@ -80,7 +87,14 @@ export default function ElementShop() {
       price: "₱ 554",
       period: "/ mo",
       description: "For casual learners, that want to progressively study.",
-      perks: ["Perks 1", "Perks 2", "Perks 3", "Perks 4", "Perks 5"],
+      perks: [
+        "🔹 More API requests ",
+        "✅ Full Access",
+        "📦 5GB ",
+        "✅ Full Access",
+        "🔹 Community Support",
+        "🔹 Limited Advanced AI Features",
+      ],
       icon: <Rocket size={20} />,
       discount: "Save 33%",
       originalPrice: "₱ 1,100",
@@ -90,8 +104,14 @@ export default function ElementShop() {
       price: "₱ 10,000",
       period: "/ day",
       description: "For casual learners, that want to progressively study.",
-      perks: ["Perks 1", "Perks 2", "Perks 3", "Perks 4", "Perks 5"],
-      icon: <Briefcase size={20} />,
+      perks: [
+        "🚀 High API usage",
+        "✅ Full Access",
+        "📦 20GB ",
+        "✅ Full Access",
+        "✅ Priority",
+        "✅ Yes Advanced AI Features",
+      ],
       discount: "Save 33%",
       originalPrice: "₱ 1,100",
     },
@@ -99,37 +119,56 @@ export default function ElementShop() {
 
   return (
     <div className="w-full h-full text-black overflow-hidden">
-
       {/* Main Content */}
       <div className="mt-32 ml-32 py-6">
         <h1 className="text-3xl font-semibold mb-2 ml-8">In-App Purchases</h1>
         {/* <p className="text-p mb-5 ml-8 text-neutral-600">Whether you're looking to boost your progress, gain extra lives, or enjoy premium features, <br/>we've got you covered. Dive in and make the most of your learning journey!</p> */}
 
         <div
-          className="flex items-center w-11/12 gap-7 mb-5 px-7 pb-5 overflow-auto hide-scrollbar 
-          [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+          className=" flex items-center w-11/12 gap-7 mb-5 px-7 pb-5 pt-5 overflow-auto hide-scrollbar [-ms-overflow-style:'none'] [scrollbar-width:'none']
+          [&::-webkit-scrollbar]:h-4
+          [&::-webkit-scrollbar-track]:rounded-full
+          [&::-webkit-scrollbar-track]:bg-gray-200
+          [&::-webkit-scrollbar-track]:border
+          [&::-webkit-scrollbar-track]:border-gray-300
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-[#f6cb4f]
+          [&::-webkit-scrollbar-thumb]:border-2
+          [&::-webkit-scrollbar-thumb]:border-[#f6cb4f]
+          [&::-webkit-scrollbar-thumb]:hover:bg-[#ffcb23]
+          before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-20 
+          before:bg-gradient-to-r before:from-white before:via-white before:to-transparent before:z-20
+          after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-20 
+          after:bg-gradient-to-l after:from-white after:via-white after:to-transparent after:z-20"
         >
           {shopItems.map((item) => (
             <Card
               key={item.id}
               className="border border-black rounded-[20px] bg-white transform transition-transform hover:scale-105"
             >
-              <CardContent className="flex flex-col items-center justify-center gap-1">
+              <CardContent className="flex flex-col items-center justify-center gap-1 h-[280px]">
+                {" "}
+                {/* Fixed height for content */}
                 <div className="relative w-56 h-56 ">
                   <div
                     className="absolute size-35 top-9 left-9 rounded-full"
                     style={{ backgroundColor: item.bgColor }}
                   />
-                  {/* <img
-                  className="absolute w-[178px] h-[177px] top-0 left-0"
-                  alt={item.title}
-                  src={item.image}
-                /> */}
-                  <div className="absolute top-12 left-[117px] font-extrabold text-black text-2xl">
+                  {item.image && (
+                    <img
+                      className="absolute w-[178px] h-[177px] top-0 left-0"
+                      alt={item.title}
+                      src={item.image}
+                    />
+                  )}
+                  <div className="absolute top-12 left-[117px] font-extrabold text-black text-sm">
                     {item.icon}
                   </div>
                 </div>
-                <h3 className="font-extrabold text-[#444444] text-2xl tracking-tight">
+                <h3
+                  className="font-extrabold text-[#444444] text-[1.5rem] tracking-tight text-center overflow-hidden"
+                  style={{ height: "5rem" }} // Fixed height instead of minHeight
+                >
                   {item.title}
                 </h3>
               </CardContent>
