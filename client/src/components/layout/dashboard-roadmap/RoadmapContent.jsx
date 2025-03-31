@@ -290,7 +290,9 @@ const RoadmapContent = ({
         />
 
         {/* Stages with higher z-index to appear in front of canvas */}
-        {stagePositions.map((position, index) => (
+        {stagePositions.map((position, index) => { 
+          
+          return (
           <div
             key={index}
             className="absolute transform -translate-x-1/2"
@@ -355,7 +357,7 @@ const RoadmapContent = ({
               </div>
             )}
           </div>
-        ))}
+        )})}
 
         {/* Calculate total height needed for the roadmap */}
         <div

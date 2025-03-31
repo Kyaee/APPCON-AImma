@@ -1,3 +1,5 @@
+import { useTheme } from "@/config/theme-provider";
+
 export default function loading() {
   const tips = [
     "Capybaras can hold their breath underwater for up to 5 minutes!",
@@ -13,24 +15,20 @@ export default function loading() {
   ];
 
   const randomTip = tips[Math.floor(Math.random() * tips.length)];
+  const { theme } = useTheme();
 
   return (
     <main
       className="h-screen w-full py-5 flex flex-col justify-center items-center select-none"
-      style={{
-        backgroundImage: "url('/static-gradient.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
     >
       <l-bouncy
         size="80"
         speed="1.75"
-        color="white"
+        color={theme === "dark" ? "#fff" : "#000"}
         className="mb-8"
       ></l-bouncy>
       <h3 className="font-extrabold text-xl mb-2">Tip:</h3>
-      <p className="max-w-1/4 text-center text-white">{randomTip}</p>
+      <p className="max-w-1/4 text-center text-foreground">{randomTip}</p>
     </main>
   );
 }

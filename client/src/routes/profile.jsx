@@ -1,5 +1,6 @@
 import { CategoryScale } from "chart.js"; Chart.register(CategoryScale);
 import { lineChart, radarChart } from "@/components/features/charts/sampleData";
+import { useUserDataStore } from "@/store/useUserData";
 import Chart from "chart.js/auto";
 
 // Components & Icons
@@ -10,10 +11,11 @@ import Streak_Component from "./profile/streak-profile";
 import Tabs_Component from "./profile/tabs-profile";
 import Badges_Component from "./profile/badges-profile";
 import Skills_Component from "./profile/skills-profile";
+import { useEffect } from "react";
 
 export default function Profile() {
-  // const { data: userContent } = useQuery(fetchUserdata())
-  
+  const userContent = useUserDataStore((state) => state.userData);
+
   const skills = [
     "React",
     "Node.js",
@@ -37,8 +39,8 @@ export default function Profile() {
         {/* Profile Content */}
         <ProfileDetails
           initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-          name={"Maria Priscella Aiselle C. Bautista"}
-          // level={userContent?.level}
+          name={userContent.name + " " + userContent.surname}
+          level={userContent.level}
           experience={40}
           totalExperience={100}
 

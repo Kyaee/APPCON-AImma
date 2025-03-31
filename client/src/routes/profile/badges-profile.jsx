@@ -45,6 +45,7 @@ export default function BadgesProfile({
       </div>
       <div className="bg-background p-5 rounded-lg border-2 border-foreground">
         <div className="flex gap-3 overflow-x-auto overflow-y-hidden py-1 pl-3 pb-3 [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+
           <div className="group transition">
             <img
               src="something"
@@ -93,6 +94,8 @@ export default function BadgesProfile({
             </div>
           </div>
         </div>
+
+                      
         <p className="pl-3 text-sm text-black mt-1">
           Complete more lessons to gain badges!
         </p>

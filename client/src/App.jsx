@@ -41,10 +41,7 @@ import Lesson from "./routes/lesson";
 import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
 import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
-// TESTING PAGE
-import Emman from "./Emman-TestPage";
-// This is not a page @Jun, but a component
-import CourseSelect from "./components/features/course-select";
+
 
 function App() {
   const queryClient = new QueryClient();
@@ -60,7 +57,6 @@ function App() {
             <Routes>
               {/* GENERAL ROUTES */}
               <Route path="/" element={<Landing />} />
-              <Route path="/emman-testing" element={<Emman />} />
               <Route path="*" element={<NotFound />} />
 
               {!session ? (
@@ -101,7 +97,6 @@ function App() {
                   <Route path="/assessment/proficiency" element={<Proficiency />} />
                   <Route path="/assessment/questions" element={<Questions />} />
                   <Route path="/assessment/results" element={<Results />} />
-                  <Route path="/select" element={<CourseSelect />} />
                 </>  
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED
