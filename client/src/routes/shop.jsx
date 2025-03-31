@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
 // Fix image imports from public directory
-import BlueCappy from "/public/BlueCappy.svg";
-import RedCappy from "/public/RedCappy.svg";
+import BlueCappy from "/src/assets/shop/BlueCappy.svg";
+import RedCappy from "/src/assets/shop/RedCappy.svg";
 import MainNav from "@/components/layout/main-nav";
 import { Background } from "@/components/layout/background";
 import StatsDisplay from "@/components/features/stats-display";
@@ -60,7 +60,6 @@ export default function ElementShop() {
       bgColor: "#57b2f4e6",
       icon: "++",
     },
-  
   ];
 
   const pricingPlans = [
@@ -70,8 +69,15 @@ export default function ElementShop() {
       period: "/ mo",
       description:
         "Access to various product features that aids your interests.",
-      perks: ["🚫 Limited API Calls", "✅ Basic Authentication", "🚫Minimal Storage ", " 🚫Limited Database Access", "🚫No Priority Support", "🚫No Advanced AI Features "
-      , "🚫 No Advanced AI Features"],
+      perks: [
+        "🚫 Limited API Calls",
+        "✅ Basic Authentication",
+        "🚫Minimal Storage ",
+        " 🚫Limited Database Access",
+        "🚫No Priority Support",
+        "🚫No Advanced AI Features ",
+        "🚫 No Advanced AI Features",
+      ],
       icon: null,
       discount: null,
       originalPrice: null,
@@ -81,7 +87,14 @@ export default function ElementShop() {
       price: "₱ 554",
       period: "/ mo",
       description: "For casual learners, that want to progressively study.",
-      perks: ["🔹 More API requests ", "✅ Full Access", "📦 5GB ", "✅ Full Access", "🔹 Community Support", "🔹 Limited Advanced AI Features"],
+      perks: [
+        "🔹 More API requests ",
+        "✅ Full Access",
+        "📦 5GB ",
+        "✅ Full Access",
+        "🔹 Community Support",
+        "🔹 Limited Advanced AI Features",
+      ],
       icon: <Rocket size={20} />,
       discount: "Save 33%",
       originalPrice: "₱ 1,100",
@@ -91,7 +104,14 @@ export default function ElementShop() {
       price: "₱ 10,000",
       period: "/ day",
       description: "For casual learners, that want to progressively study.",
-      perks: ["🚀 High API usage", "✅ Full Access", "📦 20GB ", "✅ Full Access", "✅ Priority", "✅ Yes Advanced AI Features"],
+      perks: [
+        "🚀 High API usage",
+        "✅ Full Access",
+        "📦 20GB ",
+        "✅ Full Access",
+        "✅ Priority",
+        "✅ Yes Advanced AI Features",
+      ],
       discount: "Save 33%",
       originalPrice: "₱ 1,100",
     },
@@ -99,7 +119,6 @@ export default function ElementShop() {
 
   return (
     <div className="w-full h-full text-black overflow-hidden">
-
       {/* Main Content */}
       <div className="mt-32 ml-32 py-6">
         <h1 className="text-3xl font-semibold mb-2 ml-8">In-App Purchases</h1>
@@ -122,14 +141,14 @@ export default function ElementShop() {
           after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-20 
           after:bg-gradient-to-l after:from-white after:via-white after:to-transparent after:z-20"
         >
-        
           {shopItems.map((item) => (
             <Card
               key={item.id}
               className="border border-black rounded-[20px] bg-white transform transition-transform hover:scale-105"
-              
             >
-              <CardContent className="flex flex-col items-center justify-center gap-1 h-[280px]"> {/* Fixed height for content */}
+              <CardContent className="flex flex-col items-center justify-center gap-1 h-[280px]">
+                {" "}
+                {/* Fixed height for content */}
                 <div className="relative w-56 h-56 ">
                   <div
                     className="absolute size-35 top-9 left-9 rounded-full"
@@ -163,9 +182,7 @@ export default function ElementShop() {
           ))}
         </div>
       </div>
-       
 
-       
       {/* Pricing cards */}
       <div className="mt-6 ">
         <h2 className="ml-40 text-3xl font-semibold mb-8">User Plan</h2>

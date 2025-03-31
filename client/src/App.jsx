@@ -42,7 +42,6 @@ import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
 import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
-import Ayon from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
 // This is not a page @Jun, but a component
 import CourseSelect from "./components/features/course-select";
@@ -61,7 +60,6 @@ function App() {
             <Routes>
               {/* GENERAL ROUTES */}
               <Route path="/" element={<Landing />} />
-              <Route path="/ayon-testing" element={<Ayon />} />
               <Route path="/emman-testing" element={<Emman />} />
               <Route path="*" element={<NotFound />} />
 

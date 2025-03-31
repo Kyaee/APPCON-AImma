@@ -83,7 +83,6 @@ export default function Ayon() {
 
   return (
     <div className="relative w-full min-h-screen">
-
       {/* Sidebar */}
       <Sidebar isExpanded={isSidebarExpanded} onToggle={handleSidebarToggle} />
 
