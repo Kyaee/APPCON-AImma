@@ -1,9 +1,12 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export const useUserDataStore = create(
-  persist(
-    (set) => ({
-      userData: [],
-      setUserData: (data) => set({ userData: data }),
-})))
+export const useFetchStore = create(
+  persist((set) => ({
+    fetch: null,
+    setFetch: (data) => set({ fetch: data }),
+
+    roadmap: null,
+    setRoadmap: (data) => set({ roadmap: data }),
+  }))
+);

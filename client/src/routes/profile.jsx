@@ -1,7 +1,9 @@
-import { CategoryScale } from "chart.js"; Chart.register(CategoryScale);
-import { lineChart, radarChart } from "@/components/features/charts/sampleData";
-import { useUserDataStore } from "@/store/useUserData";
+import { CategoryScale } from "chart.js";
+Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
+import { useQuery } from "@tanstack/react-query";
+import { useFetchStore } from "@/store/useUserData";
+import { fetchProfile, fetchRoadmap } from "@/api/fetch";
 
 // Components & Icons
 import ProfileDetails from "@/routes/profile/ProfileDetails";
@@ -11,10 +13,16 @@ import Streak_Component from "./profile/streak-profile";
 import Tabs_Component from "./profile/tabs-profile";
 import Badges_Component from "./profile/badges-profile";
 import Skills_Component from "./profile/skills-profile";
-import { useEffect } from "react";
 
 export default function Profile() {
-  const userContent = useUserDataStore((state) => state.userData);
+  const fetch = useFetchStore((state) => state.fetch);
+  const {
+    data: profile,
+    isLoading: load_profile,
+    isError,
+  } = useQuery(fetchProfile(fetch.id));
+
+  if (load_profile) return <div>Loading...</div>;
 
   const skills = [
     "React",
@@ -24,6 +32,7 @@ export default function Profile() {
     "GraphQL",
     "TypeScript",
   ];
+
   const badges = [
     { id: 1, title: "Badge 1", description: "Description 1", image: "image1" },
     { id: 2, title: "Badge 2", description: "Description 2", image: "image2" },
@@ -32,18 +41,15 @@ export default function Profile() {
   return (
     <>
       <div className="relative w-full min-h-screen overflow-x-hidden pb-20">
-
         {/* Stats and Action Icons */}
-
 
         {/* Profile Content */}
         <ProfileDetails
           initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-          name={userContent.name + " " + userContent.surname}
-          level={userContent.level}
+          name={fetch.first_name + " " + fetch.last_name}
+          level={fetch.level}
           experience={40}
           totalExperience={100}
-
           continueLearning="JavaScript Basics"
           hours={2}
           withAssessment={true}
@@ -65,8 +71,8 @@ export default function Profile() {
             Charts Section 
           ****************/}
           <Tabs_Component
-            linechartData={lineChart}
-            radarData={radarChart}
+            linechartData={profile.line_chart_data}
+            radarData={profile.radar_chart_data}
             summary="Summary of your progress"
           />
 
@@ -74,8 +80,8 @@ export default function Profile() {
             Streak Section 
           ****************/}
           <Streak_Component
-            streak={5}
-            previous_best={14}
+            streak={fetch.streaks}
+            previous_best={profile.best_streak}
             quests_finished={12}
             skill_progress={[
               { title: "Data Analysis with Python", progress: 75 },
