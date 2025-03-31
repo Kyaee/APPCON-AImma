@@ -3,7 +3,7 @@ Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
-import { fetchProfile, fetchRoadmap } from "@/api/fetch";
+import { fetchProfile, fetchRoadmap } from "@/api/FETCH";
 
 // Components & Icons
 import ProfileDetails from "@/routes/profile/ProfileDetails";

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/config/authContext";
 import { useFetchStore } from "@/store/useUserData";
 import { useEffect } from "react";
-import { fetchUserdata } from "@/api/fetch";
+import { fetchUserdata } from "@/api/FETCH";
 
 import { Background } from "@/components/layout/background";
 import MainNav from "@/components/layout/main-nav";
