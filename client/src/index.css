@@ -9,7 +9,7 @@
 :root {
   --background: hsl(0 0% 100%);
   --foreground: hsl(20 14.3% 4.1%);
-  --card: #FBFAF9;
+  --card: hsl(40 12% 98%);        /* Converting from #FBFAF9 */
   --card-foreground: hsl(20 14.3% 4.1%);
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(20 14.3% 4.1%);
@@ -32,11 +32,13 @@
   --chart-4: hsl(43 74% 66%);
   --chart-5: hsl(27 87% 67%);
   --radius: 0.6rem;
+
   --brown: #bf8648;
   --light-brown: #CBB09B;
   --dark-brown: #936440;
   --blue: #2d9cdb;
   --gray: #f5f5f5;
+
 }
 
 .dark {
@@ -124,20 +126,26 @@
     background-image: url("./assets/bg-lines1.png");
   }
   .custom-shadow-50 {
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 4px 0px 0px hsl(0 0% 0% / 0.5);  /* Converting from rgba(0, 0, 0, 0.5) */
   }
   .custom-shadow-75 {
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 4px 4px 0px 0px hsl(0 0% 0% / 0.75);  /* Converting from rgba(0, 0, 0, 0.75) */
   }
   .hide-scrollbar {
     -webkit-mask: linear-gradient(
       90deg,
       transparent,
-      white 20%,
-      white 80%,
+      hsl(0 0% 100%) 20%,        /* Converting from white */
+      hsl(0 0% 100%) 80%,        /* Converting from white */
       transparent
     );
-    mask: linear-gradient(90deg, transparent, white 4%, white 90%, transparent);
+    mask: linear-gradient(
+      90deg, 
+      transparent,
+      hsl(0 0% 100%) 4%,         /* Converting from white */
+      hsl(0 0% 100%) 90%,        /* Converting from white */
+      transparent
+    );
   }
 
   .hide-navigation-and-mascot .absolute {
