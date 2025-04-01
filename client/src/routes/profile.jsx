@@ -3,7 +3,7 @@ Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
-import { fetchProfile, fetchRoadmap } from "@/api/FETCH";
+import { fetchProfile, fetchRoadmapAIdata } from "@/api/FETCH";
 
 // Components & Icons
 import ProfileDetails from "@/routes/profile/ProfileDetails";
@@ -16,6 +16,7 @@ import Skills_Component from "./profile/skills-profile";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
+
   const {
     data: profile,
     isLoading: load_profile,

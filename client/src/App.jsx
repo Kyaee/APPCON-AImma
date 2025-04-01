@@ -42,6 +42,7 @@ import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
 import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 
+import ApiTEST from "./routes/api-test";
 
 function App() {
   const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ function App() {
               {/* GENERAL ROUTES */}
               <Route path="/" element={<Landing />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/api-testing" element={<ApiTEST />} />
 
               {!session ? (
                 // IF USER IS NOT LOGGED-IN
