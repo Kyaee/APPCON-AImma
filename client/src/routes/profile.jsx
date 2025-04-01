@@ -48,7 +48,7 @@ export default function Profile() {
           progress={40}
         />
 
-        <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
+        <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25 [&_*]:dark:border-[#3b3b41]">
           {/****************  
             Skills Section 
           ******************/}
