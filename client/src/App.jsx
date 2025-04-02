@@ -42,11 +42,7 @@ import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
 import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
-import Ayon from "./Ayon-TestPage";
-import Emman from "./Emman-TestPage";
 import LevelRewardsTest from "./routes/level-rewards-test";
-// This is not a page @Jun, but a component
-import CourseSelect from "./components/features/course-select";
 
 function App() {
   const queryClient = new QueryClient();
@@ -62,8 +58,6 @@ function App() {
             <Routes>
               {/* GENERAL ROUTES */}
               <Route path="/" element={<Landing />} />
-              <Route path="/ayon-testing" element={<Ayon />} />
-              <Route path="/emman-testing" element={<Emman />} />
               <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
 
@@ -105,7 +99,6 @@ function App() {
                   <Route path="/assessment/proficiency" element={<Proficiency />} />
                   <Route path="/assessment/questions" element={<Questions />} />
                   <Route path="/assessment/results" element={<Results />} />
-                  <Route path="/select" element={<CourseSelect />} />
                 </>  
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED

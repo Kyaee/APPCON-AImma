@@ -3,8 +3,9 @@ import StreakPanel from "@/components/layout/dashboard-roadmap/StreakPanel";
 import Sidebar from "@/components/layout/dashboard-roadmap/Sidebar";
 import RoadmapHeader from "@/components/layout/dashboard-roadmap/RoadmapHeader";
 import RoadmapContent from "@/components/layout/dashboard-roadmap/RoadmapContent";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronRight } from "lucide-react";
+import { courseData } from "@/components/layout/dashboard-roadmap/CourseData";
 
 export default function Ayon() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -17,43 +18,7 @@ export default function Ayon() {
   };
 
   // Available courses with varied number of stages
-  const courses = [
-    {
-      name: "Web Development",
-      progression: 10,
-      lessons: [
-        { id: 1, title: "HTML Basics", status: "completed" },
-        { id: 2, title: "CSS Fundamentals", status: "in_progress" },
-        { id: 3, title: "JavaScript Intro", status: "locked" },
-        { id: 4, title: "DOM Manipulation", status: "locked" },
-        { id: 5, title: "React Basics", status: "locked" },
-        { id: 6, title: "State Management", status: "locked" },
-        { id: 7, title: "API Integration", status: "locked" },
-        { id: 8, title: "Deployment", status: "locked" },
-      ],
-    },
-    {
-      name: "Quality Assurance",
-      progression: 5,
-      lessons: [
-        { id: 1, title: "Testing Fundamentals", status: "completed" },
-        { id: 2, title: "Unit Testing", status: "in_progress" },
-        { id: 3, title: "Integration Testing", status: "locked" },
-        { id: 4, title: "E2E Testing", status: "locked" },
-        { id: 5, title: "Test Automation", status: "locked" },
-      ],
-    },
-    {
-      name: "Mobile Development",
-      progression: 0,
-      lessons: [
-        { id: 1, title: "Mobile Basics", status: "locked" },
-        { id: 2, title: "React Native", status: "locked" },
-        { id: 3, title: "Native APIs", status: "locked" },
-        { id: 4, title: "App Publishing", status: "locked" },
-      ],
-    },
-  ];
+  const courses = courseData;
 
   const currentCourse = courses[currentCourseIndex];
 
@@ -83,7 +48,6 @@ export default function Ayon() {
 
   return (
     <div className="relative w-full min-h-screen">
-
       {/* Sidebar */}
       <Sidebar isExpanded={isSidebarExpanded} onToggle={handleSidebarToggle} />
 

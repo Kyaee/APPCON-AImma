@@ -4,7 +4,7 @@ import { bouncy } from "ldrs";
 bouncy.register();
 import Questions from "./questions";
 import Header from "@/components/layout/lesson/header-navigator";
-import Loading from "@/components/layout/loading";
+import Loading from "@/routes/loading";
 import { VideoBackground } from "@/components/layout/background";
 
 // Use Hooks

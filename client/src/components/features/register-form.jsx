@@ -29,11 +29,15 @@ export function RegisterForm({ className, ...props }) {
 
     // Use a single regex pattern for all password requirements
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
     if (!passwordRegex.test(isFormData.password)) {
       setPasswordError(
-        "Password must be at least 6 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)"
+      "Password must be:<br />" +
+      " - At least 6 characters<br />" +
+      " - Contain at least one uppercase letter<br />" +
+      " - One lowercase letter<br />" +
+      " - One number"
       );
       return false;
     }
@@ -116,7 +120,10 @@ export function RegisterForm({ className, ...props }) {
             }
           />
           {isPasswordError && (
-            <p className="text-sm text-red-600">{isPasswordError}</p>
+            <p
+              className="text-sm text-red-600"
+              dangerouslySetInnerHTML={{ __html: isPasswordError }}
+            ></p>
           )}
         </div>
         <Button

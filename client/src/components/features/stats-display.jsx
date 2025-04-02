@@ -7,8 +7,7 @@ export default function StatsDisplay({hearts, gems}) {
       <HeartIcon />
 
       <span className="text-black font-inter text-lg font-black leading-7">
-        {hearts || 5}
-
+        {hearts || "Error"}
       </span>
     </div>
 
@@ -16,8 +15,7 @@ export default function StatsDisplay({hearts, gems}) {
       <GemIcon />
 
       <span className="text-black font-inter text-lg font-black leading-7">
-        {gems || 50}
-
+        {gems || "Error"}
       </span>
     </div>
     </>

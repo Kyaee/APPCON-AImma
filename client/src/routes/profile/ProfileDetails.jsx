@@ -102,7 +102,7 @@ const ProfileDetails = ({
           </p>
           <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700 border-2 border-foreground">
             <div
-              className="bg-blue-500 h-2.5 rounded-full border-r-2 border-foreground"
+              className="bg-blue-500 h-full rounded-full border-r-2 border-foreground"
               style={{ width: `${(experience / totalExperience) * 100}%` }}
             ></div>
           </div>
