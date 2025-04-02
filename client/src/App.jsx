@@ -44,6 +44,7 @@ import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Ayon from "./Ayon-TestPage";
 import Emman from "./Emman-TestPage";
+import LevelRewardsTest from "./routes/level-rewards-test";
 // This is not a page @Jun, but a component
 import CourseSelect from "./components/features/course-select";
 
@@ -63,6 +64,7 @@ function App() {
               <Route path="/" element={<Landing />} />
               <Route path="/ayon-testing" element={<Ayon />} />
               <Route path="/emman-testing" element={<Emman />} />
+              <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
 
               {!session ? (
