@@ -41,7 +41,6 @@ export function fetchRoadmap(id) {
         .eq("user_id", id)
         .order("roadmap_name", { ascending: false });
       if (error) throw new Error(error.message);
-      console.log("roadmap data", data);
       return data;
     },
   });
@@ -72,6 +71,7 @@ export const fetchLesson = async (lessonId) => {
     .select("*")
     .eq("roadmap_id", lessonId)
   if (error) throw new Error(error.message);
+  console.log("lesson data: ", data);
   return data;
 }
 

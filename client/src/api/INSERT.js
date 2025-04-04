@@ -6,7 +6,7 @@ import axios from "axios";
  **************************************/
 const prompt_roadmap = {
   prompt_roadmap_generate: `
-    Generate a javascript roadmap including the following details:
+    Generate a {name} roadmap including the following details:
     - Difficulty (Easy, Intermediate, Hard)
     - Lesson duration
     - Whether it includes an assessment (answer in true/false)
@@ -19,11 +19,22 @@ const prompt_roadmap = {
     Format:
     - Name
     - Difficulty
-    - Duration
+    - Duration with time unit (e.g., 30 minutes, 1 hour)
     - Daily goal
-    - Assessment(returns true/false)
+    - status (returns "locked", "in_progress", or no output if unlocked)
+    - Assessment(returns true or false)
   `,
 };
+
+/**************************************
+ *        POST LESSON PROMPT
+ **************************************/
+const prompt_lesson = {
+  prompt_lesson_generate: `
+    Generate a {name} lesson including the following details:
+  `
+}
+
 
 export const postPrompt1 = async () => {
   try {
@@ -68,6 +79,8 @@ export const createNewRoadmap = async (roadmaps, userId) => {
         lesson_difficulty: lesson.difficulty,
         lesson_duration: lesson.duration,
         assessment: lesson.assessment,
+        status: lesson.status,
+        lesson_description: lesson.description,
       }));
 
       const { error: lessonsError } = await supabase
