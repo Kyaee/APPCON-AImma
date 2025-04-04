@@ -41,7 +41,8 @@ import Lesson from "./routes/lesson";
 import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
 import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
-
+// TESTING PAGE
+import LevelRewardsTest from "./routes/level-rewards-test";
 import ApiTEST from "./routes/api-test";
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
             <Routes>
               {/* GENERAL ROUTES */}
               <Route path="/" element={<Landing />} />
+              <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/api-testing" element={<ApiTEST />} />
 
