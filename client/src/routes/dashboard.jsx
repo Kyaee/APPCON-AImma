@@ -50,6 +50,8 @@ export default function Ayon() {
     setIsLeftDropdownOpen(false);
   };
 
+  const condition = roadmapError || (!roadmapData || roadmapData.length === 0);
+
   // const handleHeaderCourseSelect = (courseName) => {
   //   const newIndex = courses.findIndex((course) => course.name === courseName);
   //   if (newIndex !== -1) {
@@ -79,23 +81,23 @@ export default function Ayon() {
                   {/* Popup menu - appears on right side */}
                   {isLeftDropdownOpen && (
                     <div className="absolute left-full bg-white top-0 ml-4 border-2 border-black rounded-lg shadow-md z-30 min-w-[300px]">
-                      {!roadmapError
-                        ? roadmapData.map((roadmap, index) => (
-                            <div
-                              key={roadmap.roadmap_id}
-                              className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
-                              onClick={() => handleCourseSelect(roadmap)}
-                            >
-                              - {roadmap.roadmap_name}
-                            </div>
-                          ))
-                        : "Error Occured"}
+                      {condition
+                        ? "Error Occured"
+                        : roadmapData.map((roadmap, index) => (
+                          <div
+                            key={roadmap.roadmap_id}
+                            className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
+                            onClick={() => handleCourseSelect(roadmap)}
+                          >
+                            - {roadmap.roadmap_name}
+                          </div>
+                        ))}
                     </div>
                   )}
 
                   {/* Header content with inline horizontal line */}
                   <div className="flex flex-col">
-                    {roadmapError ? (
+                    {condition ? (
                       <div className="relative inline-flex items-center gap-3 p-0">
                         <h2 className="text-3xl font-bold text-red-500">
                           Failed to load roadmap
@@ -129,13 +131,13 @@ export default function Ayon() {
               </div>
 
               {/* Progression Text */}
-              {!roadmapError ? (
-                <p className="text-black font-medium mt-4 text-lg">
-                  Current Progression: {currentRoadmap?.progress || 0}%
-                </p>
-              ) : (
+              {condition ? (
                 <p className="text-red-500 font-medium mt-4 text-lg">
                   Unable to load progression data
+                </p>
+              ) : (
+                <p className="text-black font-medium mt-4 text-lg">
+                  Current Progression: {currentRoadmap?.progress || 0}%
                 </p>
               )}
             </div>
@@ -147,10 +149,15 @@ export default function Ayon() {
             isSidebarExpanded ? "ml-[20%] w-[55%]" : "w-[50%]"
           }`}
         >
-          {roadmapError ? (
+          {condition ? (
             <div className="flex flex-col items-center justify-center h-full p-8">
-              <h2 className="text-2xl font-bold text-red-500 mb-4">Failed to load roadmap</h2>
-              <p className="text-gray-700">Please try again later or contact support if the problem persists.</p>
+              <h2 className="text-2xl font-bold text-red-500 mb-4">
+                Failed to load roadmap
+              </h2>
+              <p className="text-gray-700">
+                Please try again later or contact support if the problem
+                persists.
+              </p>
             </div>
           ) : (
             <>
