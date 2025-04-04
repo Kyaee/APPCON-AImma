@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
 import os
-from classformats import RoadmapRequest, GenerateRoadmap
+from classformats import RoadmapRequest, GenerateRoadmap, GenerateLesson
 
 # --------------------------------------------------------------
 #  Initialize FastAPI, supabase and OpenAI client
@@ -41,11 +41,12 @@ system_prompt = (
     "6. Design content for 30-minute daily learning goals."
 )
 
-user_content = {}
+roadmap_content = {}
+lesson_content = {}
 
 @app.post('/api/generate-roadmap')
 def POST_generate_roadmap(request: RoadmapRequest = None):
-    global user_content
+    global roadmap_content
     if request:
         Roadmap_completion = client.beta.chat.completions.parse(
             # model="deepseek/deepseek-r1:free",
@@ -58,7 +59,7 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
             )
 
         event = Roadmap_completion.choices[0].message.parsed
-        user_content = {
+        roadmap_content = {
             "roadmap_name": event.roadmap_name,
             "description": event.description,
             "lessons": [
@@ -74,12 +75,37 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
     else: 
         return {"message": "data was not posted"}
     
+@app.post('/api/generate-lesson')
+def POST_generate_lesson(request: GenerateLesson = None):
+    global lesson_content
+    if request:
+        Lesson_completion = client.chat.completions.create(
+            model="gemini-2.0-flash",
+            messages=[
+            {"role": "user", "content": request.prompt_lesson_generate}
+                ],
+            )
+
+        event = Lesson_completion.choices[0].message.content
+        lesson_content = { 
+            "lesson": event,
+        }
+    else: 
+        return {"message": "data was not posted"}
+
 @app.get('/api/get-roadmap')
 def GET_generate_roadmap():
-    if user_content:
-        return [user_content]
+    if roadmap_content:
+        return [roadmap_content]
     else:
         return {"message": "No roadmap generated yet"}
+    
+@app.get('/api/get-lesson')
+def GET_generate_lesson():
+    if lesson_content:
+        return lesson_content
+    else:
+        return {"message": "No lesson generated yet"}
     
 # --------------------------------------------------------------
 #  Prompt engineering
