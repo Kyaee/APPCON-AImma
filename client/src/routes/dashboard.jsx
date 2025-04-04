@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { courseData } from "@/components/layout/dashboard-roadmap/CourseData";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRoadmap, fetchLesson } from "@/api/FETCH";
+import Loading from "@/routes/loading";
 
 export default function Ayon() {
   const { id } = useParams();
@@ -32,9 +33,7 @@ export default function Ayon() {
     enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
   });
 
-  if (loadingRoadmap) return <div>Loading roadmap data...</div>;
-  if (roadmapError) return <div>Error loading roadmap data</div>;
-  if (loadingLessons) return <div>Loading lessons...</div>;
+  if (loadingRoadmap || loadingLessons) return <Loading />;
 
   // Handle course navigation
   const handleCourseChange = (direction) => {
@@ -80,33 +79,45 @@ export default function Ayon() {
                   {/* Popup menu - appears on right side */}
                   {isLeftDropdownOpen && (
                     <div className="absolute left-full bg-white top-0 ml-4 border-2 border-black rounded-lg shadow-md z-30 min-w-[300px]">
-                      {roadmapData.map((roadmap, index) => (
-                        <div
-                          key={roadmap.roadmap_id}
-                          className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
-                          onClick={() => handleCourseSelect(roadmap)}
-                        >
-                          - {roadmap.roadmap_name}
-                        </div>
-                      ))}
+                      {!roadmapError
+                        ? roadmapData.map((roadmap, index) => (
+                            <div
+                              key={roadmap.roadmap_id}
+                              className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
+                              onClick={() => handleCourseSelect(roadmap)}
+                            >
+                              - {roadmap.roadmap_name}
+                            </div>
+                          ))
+                        : "Error Occured"}
                     </div>
                   )}
 
                   {/* Header content with inline horizontal line */}
                   <div className="flex flex-col">
-                    <div
-                      onClick={() => setIsLeftDropdownOpen(!isLeftDropdownOpen)}
-                      className="relative inline-flex items-center gap-3 cursor-pointer group p-0"
-                    >
-                      <h2 className="text-3xl font-bold text-black">
-                        {currentRoadmap.roadmap_name}
-                      </h2>
-                      {isLeftDropdownOpen ? (
-                        <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-180" />
-                      ) : (
-                        <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
-                      )}
-                    </div>
+                    {roadmapError ? (
+                      <div className="relative inline-flex items-center gap-3 p-0">
+                        <h2 className="text-3xl font-bold text-red-500">
+                          Failed to load roadmap
+                        </h2>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() =>
+                          setIsLeftDropdownOpen(!isLeftDropdownOpen)
+                        }
+                        className="relative inline-flex items-center gap-3 cursor-pointer group p-0"
+                      >
+                        <h2 className="text-3xl font-bold text-black">
+                          {currentRoadmap?.roadmap_name || "Select a roadmap"}
+                        </h2>
+                        {isLeftDropdownOpen ? (
+                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-180" />
+                        ) : (
+                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
+                        )}
+                      </div>
+                    )}
 
                     {/* Horizontal Line - limited width to match content */}
                     <div
@@ -118,9 +129,15 @@ export default function Ayon() {
               </div>
 
               {/* Progression Text */}
-              <p className="text-black font-medium mt-4 text-lg">
-                Current Progression: {currentRoadmap.progress}%
-              </p>
+              {!roadmapError ? (
+                <p className="text-black font-medium mt-4 text-lg">
+                  Current Progression: {currentRoadmap?.progress || 0}%
+                </p>
+              ) : (
+                <p className="text-red-500 font-medium mt-4 text-lg">
+                  Unable to load progression data
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -130,26 +147,37 @@ export default function Ayon() {
             isSidebarExpanded ? "ml-[20%] w-[55%]" : "w-[50%]"
           }`}
         >
-          {isSidebarExpanded && (
-            <div className="z-10  pb-0 mx-auto">
-              <RoadmapHeader
-                currentCourse={currentRoadmap.roadmap_name}
-                progression={currentRoadmap.progress}
-                // courseOptions={lessonData.map((course) => course.lesson_name)}
-                className="mb-6"
-                isSidebarExpanded={isSidebarExpanded}
-                // onCourseSelect={handleHeaderCourseSelect}
-              />
+          {roadmapError ? (
+            <div className="flex flex-col items-center justify-center h-full p-8">
+              <h2 className="text-2xl font-bold text-red-500 mb-4">Failed to load roadmap</h2>
+              <p className="text-gray-700">Please try again later or contact support if the problem persists.</p>
             </div>
+          ) : (
+            <>
+              {isSidebarExpanded && currentRoadmap && (
+                <div className="z-10 pb-0 mx-auto">
+                  <RoadmapHeader
+                    currentCourse={currentRoadmap.roadmap_name}
+                    progression={currentRoadmap.progress}
+                    // courseOptions={lessonData.map((course) => course.lesson_name)}
+                    className="mb-6"
+                    isSidebarExpanded={isSidebarExpanded}
+                    // onCourseSelect={handleHeaderCourseSelect}
+                  />
+                </div>
+              )}
+              <div>
+                {currentRoadmap && lessonData && (
+                  <RoadmapContent
+                    lessons={lessonData}
+                    currentCourse={currentRoadmap.roadmap_name}
+                    onCourseChange={handleCourseChange}
+                    isSidebarExpanded={isSidebarExpanded}
+                  />
+                )}
+              </div>
+            </>
           )}
-          <div>
-            <RoadmapContent
-              lessons={lessonData}
-              currentCourse={currentRoadmap.roadmap_name}
-              onCourseChange={handleCourseChange}
-              isSidebarExpanded={isSidebarExpanded}
-            />
-          </div>
         </div>
         {/* Right Section - Panels */}
         <div className="w-[25%] p-4 sticky pt-10">
