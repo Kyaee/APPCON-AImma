@@ -225,4 +225,40 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #0b0800;
     }
+
+    .animated-gradient-bg {
+      background: linear-gradient(
+        -45deg,
+        var(--brown),
+        var(--light-brown),
+        var(--blue),
+        var(--dark-brown)
+      );
+      background-size: 400% 400%;
+      animation: gradient-animation 15s ease infinite;
+    }
+
+    .animated-gradient-bg-subtle {
+      background: linear-gradient(
+        -45deg,
+        var(--background),
+        var(--card),
+        var(--secondary),
+        var(--muted)
+      );
+      background-size: 400% 400%;
+      animation: gradient-animation 15s ease infinite;
+    }
+
+    @keyframes gradient-animation {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
 }

@@ -60,7 +60,7 @@ export default function Ayon() {
   // };
 
   return (
-    <div className="relative w-full min-h-screen select-none">
+    <div className="relative w-full min-h-screen select-none overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         isExpanded={isSidebarExpanded}

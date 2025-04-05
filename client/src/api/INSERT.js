@@ -44,16 +44,23 @@ export const postPrompt1 = async () => {
 /**************************************
  *        POST LESSON PROMPT
  **************************************/
-
-/**************************************
- *        LESSON PROMPT TEMPLATE
- **************************************/
-
-export const postPrompt2 = async (name, id) => {
+export const postPrompt2 = async (
+  lesson_name, 
+  id, 
+  lesson_category, 
+  lesson_difficulty, 
+  lesson_gems,
+  lesson_expierence
+) => {
   try {
     const requestBody = {
-      prompt_lesson_generate: `Generate a ${name} lesson plan for the following topic`,
-      lesson_id: id
+      prompt_lesson_generate: `Generate a ${lesson_name} lesson plan for the following topic`,
+      lesson_id: id,
+      lesson_name: lesson_name,
+      category: lesson_category,
+      difficulty: lesson_difficulty,
+      gems: lesson_gems,
+      exp: lesson_expierence,
     };
 
     const response = await axios.post(
