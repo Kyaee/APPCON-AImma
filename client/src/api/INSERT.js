@@ -26,16 +26,6 @@ const prompt_roadmap = {
   `,
 };
 
-/**************************************
- *        POST LESSON PROMPT
- **************************************/
-const prompt_lesson = {
-  prompt_lesson_generate: `
-    Generate a {name} lesson including the following details:
-  `
-}
-
-
 export const postPrompt1 = async () => {
   try {
     const response = await axios.post(
@@ -48,6 +38,34 @@ export const postPrompt1 = async () => {
     }
   } catch (error) {
     console.error("Error:", error);
+  }
+};
+
+/**************************************
+ *        POST LESSON PROMPT
+ **************************************/
+
+/**************************************
+ *        LESSON PROMPT TEMPLATE
+ **************************************/
+
+export const postPrompt2 = async (name, id) => {
+  try {
+    const requestBody = {
+      prompt_lesson_generate: `Generate a ${name} lesson plan for the following topic`,
+      lesson_id: id
+    };
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/generate-lesson",
+      requestBody
+    );
+
+    if (response.data?.error) console.error("Error:", response.data.error);
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    window.location.href = `/lesson/${id}`;
   }
 };
 

@@ -21,7 +21,11 @@ class RoadmapRequest(BaseModel):
   STEP 2: Generate lesson content based on roadmap
 ==================================================="""
 class GenerateLesson(BaseModel):
-    lesson_content: str
+    prompt_lesson_generate: str
+    lesson_id: str
+
+class LessonContent(BaseModel):
+    content: str
 
 """======================================
   STEP 3: Generate questions from lesson

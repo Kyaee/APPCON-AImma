@@ -115,13 +115,13 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
-                  <Route element="MainLayout">
+                  {/* <Route element="MainLayout"> */}
                     <Route path="/lesson/:id" element={<Lesson />} />
                     <Route
                       path="/lesson/:id/assessment/:id"
                       element={<LessonAssessment />}
                     />
-                  </Route>
+                  {/* </Route> */}
                 </>
               )}
             </Routes>

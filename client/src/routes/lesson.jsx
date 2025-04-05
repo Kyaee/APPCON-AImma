@@ -5,6 +5,8 @@ import { Gem, SmileIcon, Zap } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
 import { Background } from "@/components/layout/background"; // Add this import
+import { useQuery } from "@tanstack/react-query";
+import { fetchLessonAIdata } from "@/api/FETCH"; // Adjust the import path as needed
 
 const experienceItems = [
   { icon: <Zap className="w-4 h-4" />, text: "100 exp" },
@@ -40,6 +42,9 @@ convallis ac consectetur sed, eleifend non arcu. Nulla egestas malesuada pulvina
 `;
 
 export default function ElementLesson() {
+  const { data: lessonData, isLoading } = useQuery(fetchLessonAIdata());
+  if (isLoading) return <div>Loading...</div>; // Handle loading state
+
   return (
     <main className="w-full h-full overflow-hidden">
       <div className="fixed top-0 bg-custom-lines h-screen w-screen -z-10"></div>
@@ -47,8 +52,13 @@ export default function ElementLesson() {
       <Header page="lesson" />
       {/* Main Content */}
       <section className="mt-32 max-w-2xl mx-auto overflow-hidden">
+        {/* Title */}
+        <h1 className="text-5xl font-extrabold text-[#464646] tracking-[-0.58px] leading-[48px] mb-6 [font-family:'Poppins-ExtraBold',Helvetica]">
+          JavaScript Introduction
+        </h1>
+
         {/* Difficulty and Experience */}
-        <div className="flex items-center gap-8 mb-6">
+        <div className="flex items-center gap-8 mb-8">
           <Badge
             variant="outline"
             className="h-9 w-[90px] rounded-[5px] border-2 border-emerald-500 flex items-center justify-center gap-2"
@@ -70,12 +80,7 @@ export default function ElementLesson() {
           </div>
         </div>
 
-        {/* Title */}
-        <h1 className="text-5xl font-extrabold text-[#464646] tracking-[-0.58px] leading-[48px] mb-8 [font-family:'Poppins-ExtraBold',Helvetica]">
-          JavaScript Introduction
-        </h1>
-
-        <Separator className="mb-10" />
+        <Separator className="border border-foreground mb-10" />
 
         <Markdown
           components={{
@@ -102,7 +107,8 @@ export default function ElementLesson() {
             // tables
           }}
         >
-          {content}
+          {/* {content} */}
+          {lessonData.message ? lessonData.message : lessonData.lesson}
         </Markdown>
       </section>
       <footer className="pb-10"></footer>

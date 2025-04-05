@@ -8,9 +8,10 @@ import {
   X,
 } from "lucide-react";
 import React from "react";
+import { postPrompt2 } from "@/api/INSERT";
 
 export default function OpenLesson({ lesson, setOpenLesson }) {
-  
+  const createLesson = () => postPrompt2(lesson.lesson_name, lesson.id); 
 
   return (
     <div className="transition animate-panel-in fixed transform left-0 top-0 h-full w-full lg:max-w-lg z-30 bg-gray-50 border-1 border-solid border-black">
@@ -18,11 +19,11 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
         {/* Header with title and actions */}
         <div className="mt-15 flex w-full items-start justify-between">
           <div className="space-y-8">
-            <h1 className="font-extrabold text-[#464646] text-3xl tracking-[-1px] leading-8 font-['Poppins-ExtraBold',Helvetica]">
+            <h1 className="transition animate-text-reveal  font-extrabold text-[#464646] text-3xl tracking-[-1px] leading-8 font-['Poppins-ExtraBold',Helvetica]">
               {lesson.lesson_name}
             </h1>
 
-            <div className="flex items-center gap-2">
+            <div className="transition animate-text-fade flex items-center gap-2">
               {lesson.lesson_category?.map((tag, index) => (
                 <Badge
                   key={index}
@@ -37,7 +38,7 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
               <h2 className="text-[#4b4b4b] font-bold text-base mb-3">
                 Description
               </h2>
-              <p className=" text-[#7b7b7b] text-base font-normal font-['Inter-Regular',Helvetica] leading-[22px]">
+              <p className="transition animate-text-fade text-[#7b7b7b] text-base font-normal font-['Inter-Regular',Helvetica] leading-[22px]">
                 {lesson.lesson_description
                   ? lesson.lesson_description
                   : "No description available. Sorry! :(("}
@@ -65,7 +66,7 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
         </div>
 
         {/* Main content area */}
-        <div className="flex justify-center gap-20 w-full">
+        <div className="transition animate-text-fade flex justify-center gap-20 w-full">
           {/* Left column - Description and Outline */}
           <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
@@ -105,7 +106,10 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
                 </CardContent>
               </Card>
 
-              <Button className="w-full h-12 bg-light-brown text-foreground text-lg font-semibold border border-solid border-black shadow-[4px_4px_0px_#00000080] rounded-md hover:bg-[#fff7f7] hover:text-[#444444]">
+              <Button 
+                onClick={createLesson}
+                className="w-full h-12 bg-light-brown text-foreground text-lg font-semibold border border-solid border-black shadow-[4px_4px_0px_#00000080] rounded-md hover:bg-[#fff7f7] hover:text-[#444444]"
+              >
                 Start Learning
               </Button>
               {/* Difficulty and rewards */}

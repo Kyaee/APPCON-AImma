@@ -4,7 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
 import os
-from classformats import RoadmapRequest, GenerateRoadmap, GenerateLesson
+from classformats import RoadmapRequest, GenerateRoadmap
+from pydantic import BaseModel
+import json
 
 # --------------------------------------------------------------
 #  Initialize FastAPI, supabase and OpenAI client
@@ -22,8 +24,8 @@ app.add_middleware(
 )
 
 client = OpenAI(
-    api_key=os.environ['GEMINI_API_KEY'],
-    base_url=os.environ['GEMINI_URL'],
+    api_key=os.environ["GEMINI_API_KEY"],
+    base_url=os.environ["GEMINI_URL"],
 )
 
 # --------------------------------------------------------------
@@ -44,7 +46,8 @@ system_prompt = (
 roadmap_content = {}
 lesson_content = {}
 
-@app.post('/api/generate-roadmap')
+
+@app.post("/api/generate-roadmap")
 def POST_generate_roadmap(request: RoadmapRequest = None):
     global roadmap_content
     if request:
@@ -54,9 +57,9 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
             messages=[
                 # {"role": "system", "content": system_prompt},
                 {"role": "user", "content": request.prompt_roadmap_generate}
-                ],
+            ],
             response_format=GenerateRoadmap,
-            )
+        )
 
         event = Roadmap_completion.choices[0].message.parsed
         roadmap_content = {
@@ -67,46 +70,89 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
                     "lesson_name": lesson.lesson_name,
                     "category": lesson.category,
                     "difficulty": lesson.difficulty,
-                    "duration": lesson.duration
+                    "duration": lesson.duration,
                 }
                 for lesson in event.lessons
-            ]
+            ],
         }
-    else: 
+    else:
         return {"message": "data was not posted"}
-    
-@app.post('/api/generate-lesson')
-def POST_generate_lesson(request: GenerateLesson = None):
+
+
+class GenerateLesson(BaseModel):
+    prompt_lesson_generate: str
+    lesson_id: int
+
+
+# @app.post("/api/generate-lesson")
+# def POST_generate_lesson(request_data: str = None):  # Changed to receive raw string
+#     print(f"DEBUG: Received request_data: {request_data}")  # Debug log
+#     print(f"DEBUG: Type of data: {type(request_data)}")
+#     global lesson_content
+#     if request_data:
+#         try:
+#             # Deserialize the JSON string into a Python dictionary
+#             request = json.loads(request_data)
+#             print(f"DEBUG: Successfully parsed JSON: {request.keys()}")
+
+#             # Now access properties using dictionary syntax
+#             Lesson_completion = client.chat.completions.create(
+#                 model="gemini-2.0-flash",
+#                 messages=[
+#                     {"role": "user", "content": request["prompt_lesson_generate"]}
+#                 ],
+#             )
+#             content = Lesson_completion.choices[0].message.content
+#             lesson_content = {
+#                 "lesson": content,
+#                 "id": request["lesson_id"],
+#             }
+#             return lesson_content
+#         except json.JSONDecodeError:
+#             return {"message": "Invalid JSON data received"}  # Handle invalid JSON
+#     else:
+#         return {"message": "data was not posted"}
+
+
+@app.post("/api/generate-lesson")
+def POST_generate_lesson(
+    request: GenerateLesson = None,
+):  # Changed to receive raw string
+    print(f"DEBUG: Received request_data: {request}")  # Debug log
+    print(f"DEBUG: Type of data: {type(request)}")
     global lesson_content
     if request:
         Lesson_completion = client.chat.completions.create(
             model="gemini-2.0-flash",
-            messages=[
-            {"role": "user", "content": request.prompt_lesson_generate}
-                ],
-            )
-
-        event = Lesson_completion.choices[0].message.content
-        lesson_content = { 
-            "lesson": event,
+            messages=[{"role": "user", "content": request.prompt_lesson_generate}],
+        )
+        content = Lesson_completion.choices[0].message.content
+        lesson_content = {
+            "lesson": content,
+            "id": request.lesson_id,
         }
-    else: 
+    else:
         return {"message": "data was not posted"}
 
-@app.get('/api/get-roadmap')
+
+@app.get("/api/get-lesson")
+def GET_generate_lesson():
+    if lesson_content:
+        print(lesson_content)
+        return lesson_content
+    else:
+        print("No lesson generated yet")
+        return {"message": "No lesson generated yet"}
+
+
+@app.get("/api/get-roadmap")
 def GET_generate_roadmap():
     if roadmap_content:
         return [roadmap_content]
     else:
-        return {"message": "No roadmap generated yet"}
-    
-@app.get('/api/get-lesson')
-def GET_generate_lesson():
-    if lesson_content:
-        return lesson_content
-    else:
-        return {"message": "No lesson generated yet"}
-    
+        return {"No roadmap generated yet"}
+
+
 # --------------------------------------------------------------
 #  Prompt engineering
 # --------------------------------------------------------------
@@ -122,7 +168,6 @@ def GET_generate_lesson():
 # @app.post('/api/generate-roadmap')
 # def Roadmap():
 #     return {"message": "Hello World"}
-
 
 
 # print(completion.choices[0].message.content)
