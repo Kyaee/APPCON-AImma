@@ -50,7 +50,9 @@ export const postPrompt2 = async (
   lesson_category, 
   lesson_difficulty, 
   lesson_gems,
-  lesson_expierence
+  lesson_expierence,
+  lesson_duration,
+  lesson_assessment
 ) => {
   try {
     const requestBody = {
@@ -61,6 +63,8 @@ export const postPrompt2 = async (
       difficulty: lesson_difficulty,
       gems: lesson_gems,
       exp: lesson_expierence,
+      duration: lesson_duration,
+      assessment: lesson_assessment,
     };
 
     const response = await axios.post(

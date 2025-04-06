@@ -23,7 +23,9 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
       lesson.lesson_category,
       lesson.lesson_difficulty,
       lesson.gems,
-      lesson.exp
+      lesson.exp,
+      lesson.lesson_duration,
+      lesson.assessment
     )};
 
   return (

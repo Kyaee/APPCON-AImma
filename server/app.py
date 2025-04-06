@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
 import os
-from classformats import RoadmapRequest, GenerateRoadmap
+from classformats import RoadmapRequest, GenerateRoadmap, GenerateLesson
 from pydantic import BaseModel
 import json
 
@@ -79,41 +79,6 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
         return {"message": "data was not posted"}
 
 
-class GenerateLesson(BaseModel):
-    prompt_lesson_generate: str
-    lesson_id: int
-
-
-# @app.post("/api/generate-lesson")
-# def POST_generate_lesson(request_data: str = None):  # Changed to receive raw string
-#     print(f"DEBUG: Received request_data: {request_data}")  # Debug log
-#     print(f"DEBUG: Type of data: {type(request_data)}")
-#     global lesson_content
-#     if request_data:
-#         try:
-#             # Deserialize the JSON string into a Python dictionary
-#             request = json.loads(request_data)
-#             print(f"DEBUG: Successfully parsed JSON: {request.keys()}")
-
-#             # Now access properties using dictionary syntax
-#             Lesson_completion = client.chat.completions.create(
-#                 model="gemini-2.0-flash",
-#                 messages=[
-#                     {"role": "user", "content": request["prompt_lesson_generate"]}
-#                 ],
-#             )
-#             content = Lesson_completion.choices[0].message.content
-#             lesson_content = {
-#                 "lesson": content,
-#                 "id": request["lesson_id"],
-#             }
-#             return lesson_content
-#         except json.JSONDecodeError:
-#             return {"message": "Invalid JSON data received"}  # Handle invalid JSON
-#     else:
-#         return {"message": "data was not posted"}
-
-
 @app.post("/api/generate-lesson")
 def POST_generate_lesson(
     request: GenerateLesson = None,
@@ -130,6 +95,13 @@ def POST_generate_lesson(
         lesson_content = {
             "lesson": content,
             "id": request.lesson_id,
+            "name": request.lesson_name,
+            "category": request.category,
+            "difficulty": request.difficulty,
+            "gems": request.gems,
+            "exp": request.exp,
+            "duration": request.duration,
+            "assessment" : request.assessment
         }
     else:
         return {"message": "data was not posted"}

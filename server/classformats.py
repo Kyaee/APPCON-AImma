@@ -22,10 +22,14 @@ class RoadmapRequest(BaseModel):
 ==================================================="""
 class GenerateLesson(BaseModel):
     prompt_lesson_generate: str
-    lesson_id: str
-
-class LessonContent(BaseModel):
-    content: str
+    lesson_id: int
+    lesson_name: str
+    category: list[str]
+    difficulty: str
+    gems: int
+    exp: int
+    duration: str
+    assessment: bool
 
 """======================================
   STEP 3: Generate questions from lesson

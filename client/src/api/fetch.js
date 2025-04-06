@@ -49,21 +49,6 @@ export function fetchRoadmap(id) {
 /***********************************
 3*        FETCH LESSON DATA
  ************************************/
-// export function fetchLesson(lessonId) {
-//   return queryOptions({
-//     queryKey: ["lesson"],
-//     queryFn: async () => {
-//       const { data, error } = await supabase
-//         .from("lessons")
-//         .select("*")
-//         .eq("roadmap_id", lessonId)
-//         .single();
-//       console.log("lesson data: ", data);
-//       if (error) throw new Error(error.message);
-//       return data;
-//     },
-//   });
-// }
 
 export const fetchLesson = async (lessonId) => {
   const { data, error } = await supabase
@@ -104,6 +89,10 @@ export function fetchAll() {
   });
 }
 
+
+/***********************************
+ *        FETCH FROM AI DATA
+ ************************************/
 export function fetchRoadmapAIdata() {
   return queryOptions({
     queryKey: ["roadmapAi"],
@@ -120,5 +109,24 @@ export function fetchRoadmapAIdata() {
       console.log("roadmap AI data", response.data);
       return response.data;
     },
+  });
+}
+
+export function fetchLessonAIdata() {
+  return queryOptions({
+    queryKey: ["lessonAi"],
+    queryFn: async () => {
+      const response = await axios
+      .get("http://127.0.0.1:8000/api/get-lesson")
+      .catch((error) => {
+        console.error("Error fetching roadmap AI data:", error);
+        throw error;
+      });
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch roadmap AI data");
+    }
+    console.log("roadmap AI data", response.data);
+    return response.data;
+    }
   });
 }
