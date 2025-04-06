@@ -36,6 +36,10 @@ SERVER:
 - [Jin Anthony Pradas](https://github.com/salierii1)
 - [Charls Jensen Abad](https://github.com/rafnamourcesca)
 - [Emmanuel Espiritu](https://github.com/EmmesSpirit02)
+- [Diana Torres]()
+- [Catherine Notado]()
+- [Jogiofernesto Ardales]()
+  
 ## Feedback
 
 If you have any feedback, please reach out to us emmanuelfabella606@gmail.com
