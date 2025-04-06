@@ -43,6 +43,7 @@ import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import LevelRewardsTest from "./routes/level-rewards-test";
+import CapySkin from "./routes/profile/capyskin";
 
 function App() {
   const queryClient = new QueryClient();
@@ -120,6 +121,7 @@ function App() {
                       element={<LessonAssessment />}
                     />
                   </Route>
+                  <Route path="/capyskin/:id" element={<CapySkin />} />
                 </>
               )}
             </Routes>
