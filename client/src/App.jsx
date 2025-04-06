@@ -50,6 +50,7 @@ function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
   const [isAssessed, setAssessed] = useState(true);
+  
   // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
@@ -119,7 +120,7 @@ function App() {
                   <Route element={<LessonLayout/>}>
                     <Route path="/lesson/:id" element={<Lesson />} />
                     <Route
-                      path="/l/:id/assessment/:id"
+                      path="/l/:id/assessment"
                       element={<LessonAssessment />}
                     />
                   </Route>

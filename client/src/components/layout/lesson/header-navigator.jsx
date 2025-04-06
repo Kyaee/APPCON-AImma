@@ -20,7 +20,7 @@ export default function Header({ id, isAssessment, userId }) {
 
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
-      <h1 className={`text-2xl ${location.pathname.split("/")[1] === "lesson" ? "text-foreground" : ""}`}>
+      <h1 className={`text-2xl ${location.pathname.split("/")[1] === "lesson" ? "text-foreground" : "text-background"}`}>
         CapaCademy
       </h1>
       <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px]">

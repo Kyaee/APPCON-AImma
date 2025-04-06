@@ -1,9 +1,7 @@
 import { useState } from "react"
 import { useAnswersStore } from "@/store/useAnswersStore"
 
-const Questions = ({questionNumber, type, question, options=[], correct}) => {
-  // const answers = useAnswersStore((state) => state.answers)
-  // const setAnswer = useAnswersStore((state) => state.setAnswers)
+const Questions = ({lesson_name, questionNumber, type, question, options=[], correct}) => {
   const [isSelectedAnswer, setSelectedAnswer] = useState("");
   const [isSHORT_Answer_Value, setSHORT_Answer_Value] = useState("")
 

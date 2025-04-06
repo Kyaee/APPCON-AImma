@@ -14,6 +14,7 @@ import { Background } from "@/components/layout/background"; // Add this import
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useEffect, useRef } from "react";
+import { postPrompt3 } from "@/api/INSERT";
 
 export default function ElementLesson() {
   const { id } = useParams(); // Get the lesson ID from the URL parameters
@@ -32,7 +33,7 @@ export default function ElementLesson() {
   // Set up scroll animations
   useEffect(() => {
     if (!contentRef.current) return;
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -45,29 +46,35 @@ export default function ElementLesson() {
       },
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
-    
+
     const animatedElements = contentRef.current.querySelectorAll(
       "h1, h2, h3, p, ul, .badge-container, code"
     );
-    
+
     animatedElements.forEach((el) => {
       el.style.opacity = "0";
       el.style.transform = "translateY(20px)";
       el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
       observer.observe(el);
     });
-    
+
     return () => observer.disconnect();
   }, [lessonFetch]);
 
+  const handleAssessment = () =>
+    postPrompt3(lessonFetch.id, lessonFetch.name, lessonFetch.lesson);
+
   return (
-  <main className="w-full h-full overflow-hidden">
+    <main className="w-full h-full overflow-hidden">
       <div className="animated-progress-bar fixed left-0 top-0 h-2 border-b border-black w-full bg-light-brown z-50"></div>
       <div className="fixed left-0 top-0 h-2 w-full bg-gray border-b border-black z-40"></div>
-      
+
       <Background />
       {/* Main Content */}
-      <section ref={contentRef} className="mt-32 max-w-2xl mx-auto overflow-hidden">
+      <section
+        ref={contentRef}
+        className="mt-32 max-w-2xl mx-auto overflow-hidden"
+      >
         {/* Title */}
         <h1 className="text-5xl font-extrabold text-[#464646] tracking-tighter leading-[48px] mb-6 [font-family:'Poppins-ExtraBold',Helvetica]">
           {lessonFetch.name}

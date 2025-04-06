@@ -11,10 +11,10 @@ import { VideoBackground } from "@/components/layout/background";
 import { useState, useEffect } from "react";
 import { useAnswersStore } from "@/store/useAnswersStore";
 import { useGSAP } from "@gsap/react";
+import { fetchLessonAssessmentData } from "@/api/FETCH";
+import { useQuery } from "@tanstack/react-query";
 
 // Utilities
-import { questionsProvider } from "@/config/deepseek";
-import { AI_Server as server } from "@/config/axiosConfig";
 import { gsap } from "gsap";
 gsap.registerPlugin(useGSAP);
 
@@ -49,29 +49,12 @@ const sampleData = [
 ];
 
 export default function Assessment() {
-  const [isLoading, setLoading] = useState(false);
   const [isIntroSlide, setIntroSlide] = useState(true);
   const [isCurrentSlide, setCurrentSlide] = useState(0);
   // const [isCorrect, setCorrect] = useState(false);
   // const [isQuestionData, setQuestionData] = useState([]);
-
+  const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData())
   const answers = useAnswersStore((state) => state.answers);
-
-  useEffect(() => {
-    // fetchData();
-  }, []);
-
-  // const fetchData = async () => {
-  //   try {
-  //     // questionsProvider();
-  //     // const response = await server.get("/api/assessment/questions");
-  //     // setQuestionData(response.data);
-  //   } catch (err) {
-  //     // Must return the user to the Lesson if there is any errors
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleCheck = () => {
     // try {
@@ -88,84 +71,83 @@ export default function Assessment() {
     // if (fetchedData === "TRUE") THINK OF THIS LATER
     // LEARN DEEPSEEKK CUH
     handleNext();
+    console.log(lessonData)
   };
 
   const handleNext = () => setCurrentSlide(isCurrentSlide + 1);
   const handleBack = () => setCurrentSlide(isCurrentSlide - 1);
 
+  if (isLoading) return <Loading />;
+
   return (
     <>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <main className="h-screen w-full py-5 flex flex-col justify-between select-none relative">
-          <VideoBackground />
-          <Header />
+      <main className="h-screen w-full py-5 flex flex-col justify-between select-none relative">
+        <VideoBackground />
+        <Header />
 
-          <form>
-            {isIntroSlide ? (
-              <article className="flex flex-col items-center justify-center p-8 mt-22 md:p-12 relative">
-                <img src={Image} alt="capybara superhero" />
-                <h1 className="text-4xl font-extrabold mb-4">
-                  Start Your Assessment?
-                </h1>
-                <p>
-                  Before you start, make sure to understand the previous
-                  material
-                </p>
-                <button
-                  className="py-3 w-1/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                hover:bg-neutral-300"
-                  onClick={() => setIntroSlide(false)}
-                >
-                  Start
-                </button>
-              </article>
-            ) : (
-              <Questions
-                type={sampleData[isCurrentSlide].type}
-                question={sampleData[isCurrentSlide].question}
-                options={sampleData[isCurrentSlide].options}
-                questionNumber={isCurrentSlide + 1}
-                // correct={STATE}
-              />
-            )}
-          </form>
-
+        <form>
           {isIntroSlide ? (
-            <footer
-              className="pt-4 flex items-center justify-around border-t border-white
-            *:flex *:py-3 *:rounded-lg *:gap-2 opacity-0"
-            >
-              <div className="px-18" />
-            </footer>
+            <article className="flex flex-col items-center justify-center p-8 mt-22 md:p-12 relative text-background">
+              <img src={Image} alt="capybara superhero" />
+              <h1 className="text-4xl font-extrabold mb-4">
+                Start Your Assessment?
+              </h1>
+              <p>
+                Before you start, make sure to understand the previous material
+              </p>
+              <button
+                className="py-3 w-1/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
+                hover:bg-neutral-300"
+                onClick={() => setIntroSlide(false)}
+              >
+                Start
+              </button>
+            </article>
           ) : (
-            <footer
-              className="pt-4 flex items-center justify-around border-t border-white
-            *:flex *:py-3 *:rounded-lg *:gap-2 "
-            >
-              <button
-                className="border-white border px-10"
-                onClick={() =>
-                  isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
-                }
-              >
-                <ArrowLeft />
-                Back
-              </button>
-              <button
-                className="bg-[#BF8648] border-2 border-black px-6 custom-shadow-50"
-                onClick={handleCheck}
-                disabled={isCurrentSlide === sampleData.length - 1}
-              >
-                {/* You can create a ternary operator for this {STATE ? } */}
-                Check
-                <ArrowRight />
-              </button>
-            </footer>
+            <Questions
+              lessson_name={lessonData.name}
+              type={"multiple-choice"}
+              question={lessonData.questions[isCurrentSlide].text}
+              options={lessonData.questions[isCurrentSlide].options}
+              questionNumber={isCurrentSlide + 1}
+              // correct={STATE}
+            />
           )}
-        </main>
-      )}
+        </form>
+
+        {isIntroSlide ? (
+          <footer
+            className="pt-4 flex items-center justify-around border-t border-white
+            *:flex *:py-3 *:rounded-lg *:gap-2 opacity-0"
+          >
+            <div className="px-18" />
+          </footer>
+        ) : (
+          <footer
+            className="pt-4 flex items-center justify-around border-t border-white
+            *:flex *:py-3 *:rounded-lg *:gap-2 "
+          >
+            <button
+              className="border-white border px-10"
+              onClick={() =>
+                isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
+              }
+            >
+              <ArrowLeft />
+              Back
+            </button>
+            <button
+              className="bg-[#BF8648] border-2 border-black px-6 custom-shadow-50"
+              onClick={handleCheck}
+              disabled={isCurrentSlide === sampleData.length - 1}
+            >
+              {/* You can create a ternary operator for this {STATE ? } */}
+              Check
+              <ArrowRight />
+            </button>
+          </footer>
+        )}
+      </main>
     </>
   );
 }
