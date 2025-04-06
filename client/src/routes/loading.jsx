@@ -19,7 +19,7 @@ export default function loading() {
 
   return (
     <main
-      className="h-screen w-full py-5 flex flex-col justify-center items-center select-none"
+      className="absolute top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50"
     >
       <l-bouncy
         size="80"

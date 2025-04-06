@@ -44,6 +44,7 @@ import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import LevelRewardsTest from "./routes/level-rewards-test";
 import CapySkin from "./routes/profile/capyskin";
+import ApiTEST from "./routes/api-test";
 
 function App() {
   const queryClient = new QueryClient();
@@ -61,6 +62,7 @@ function App() {
               <Route path="/" element={<Landing />} />
               <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/api-testing" element={<ApiTEST />} />
 
               {!session ? (
                 // IF USER IS NOT LOGGED-IN
@@ -114,13 +116,13 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
-                  <Route element="MainLayout">
+                  {/* <Route element="MainLayout"> */}
                     <Route path="/lesson/:id" element={<Lesson />} />
                     <Route
                       path="/lesson/:id/assessment/:id"
                       element={<LessonAssessment />}
                     />
-                  </Route>
+                  {/* </Route> */}
                   <Route path="/capyskin/:id" element={<CapySkin />} />
                 </>
               )}

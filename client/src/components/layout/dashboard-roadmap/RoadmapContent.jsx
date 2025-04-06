@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Import SVG assets
@@ -13,6 +13,7 @@ import lastTrophySvg from "@/assets/dashboard/last-trophy.svg";
 import fruitOneSvg from "@/assets/dashboard/fruit-1.svg";
 import fruitTwoSvg from "@/assets/dashboard/fruit-2.svg";
 import fruitThreeSvg from "@/assets/dashboard/fruit-3.svg";
+import OpenLesson from "@/components/features/open-lesson-card";
 
 // Generate a pseudo-random number based on a seed
 const seededRandom = (seed) => {
@@ -32,17 +33,14 @@ const RoadmapContent = ({
   pathDashGap = 6, // Slightly more gap between dashes
   pathBorderRadius = 30,
 }) => {
+  const [isOpenLesson, setOpenLesson] = useState(false);
+  const [currentLessonId, setCurrentLessonId] = useState(null)
   const navigate = useNavigate();
   // Create a ref for the canvas
   const canvasRef = useRef(null);
 
   // Modify the useMemo with shouldExtend = false
   const extendedLessons = lessons; // Just use the original lessons array directly
-
-  // Find the current lesson index (the one with status "in_progress")
-  const currentLessonIndex = extendedLessons.findIndex(
-    (lesson) => lesson.status === "in_progress"
-  );
 
   // Generate positions for each stage in a wave-like pattern
   const stagePositions = useMemo(() => {
@@ -69,9 +67,10 @@ const RoadmapContent = ({
       isLocked: extendedLessons[0]?.status === "locked",
       iconSrc: iconFirstSvg,
       fruitSrc: fruitOneSvg,
-      difficulty: Math.floor(seededRandom(1) * 3) + 1,
+      difficulty: extendedLessons[0]?.lesson_difficulty,
       lessonId: extendedLessons[0]?.id,
-      lessonTitle: extendedLessons[0]?.title,
+      lessonTitle: extendedLessons[0].lesson_name,
+      category: extendedLessons[0]?.lesson_category,
       isFirstStage: true,
     });
 
@@ -92,9 +91,10 @@ const RoadmapContent = ({
       isLocked: extendedLessons[1]?.status === "locked",
       iconSrc: iconSecondSvg,
       fruitSrc: fruitOneSvg,
-      difficulty: Math.floor(seededRandom(2) * 3) + 1,
+      difficulty: extendedLessons[1]?.lesson_difficulty,
       lessonId: extendedLessons[1]?.id,
-      lessonTitle: extendedLessons[1]?.title,
+      lessonTitle: extendedLessons[1].lesson_name,
+      category: extendedLessons[1]?.lesson_category,
     });
 
     // Update the current position and direction after placing the second stage
@@ -142,14 +142,13 @@ const RoadmapContent = ({
       positions.push({
         horizontalPosition: currentPosition,
         verticalPosition: VERTICAL_GAP + i * VERTICAL_GAP,
-        isCurrentStage: stageStatus === "in_progress",
-        isCompleted: stageStatus === "completed",
-        isLocked: stageStatus === "locked",
+        status: extendedLessons[i].status,
         iconSrc,
         fruitSrc,
-        difficulty,
+        difficulty: extendedLessons[i].lesson_difficulty,
         lessonId: extendedLessons[i].id,
-        lessonTitle: extendedLessons[i].title,
+        lessonTitle: extendedLessons[i].lesson_name,
+        category: extendedLessons[i]?.lesson_category,
         isLastStage: i === extendedLessons.length - 1,
       });
     }
@@ -272,92 +271,105 @@ const RoadmapContent = ({
     pathBorderRadius,
   ]);
 
-  const handleStageClick = (lessonId, isLocked) => {
-    if (!isLocked) {
+  const findIndexOfLessonId = stagePositions.findIndex(
+    (position) => position.lessonId === currentLessonId
+  );
+
+  const handleStageClick = (position) => {
+    if (!position.isLocked) {
       // Navigate to the lesson page or trigger some action
-      navigate(`/lesson/${lessonId}`);
+      setCurrentLessonId(position.lessonId)
+      setOpenLesson(true);
+      console.log(findIndexOfLessonId)
+      // return (
+      //   <OpenLesson />
+      // )
     }
   };
 
   return (
     <div className="relative w-full py-5">
-      <div className="relative mx-auto" style={{ width: "90%" }}>
+      <div className="relative mx-auto w-[90%]">
         {/* Canvas positioning fixed - make sure it's full width/height and behind stages */}
         <canvas
           ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full pointer-events-none"
-          style={{ zIndex: 1 }} // Explicit z-index
+          className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
         />
 
         {/* Stages with higher z-index to appear in front of canvas */}
-        {stagePositions.map((position, index) => { 
-          
+        {stagePositions.map((position, index) => {
           return (
-          <div
-            key={index}
-            className="absolute transform -translate-x-1/2"
-            style={{
-              left: `${position.horizontalPosition}%`,
-              top: `${position.verticalPosition}px`,
-              zIndex: 10, // Higher than canvas
-            }}
-          >
-            {position.isCapy ? (
-              // Render capy for first position
-              <div className="w-40 h-40 flex items-center justify-center">
-                <img src={capySvg} alt="Capy" className="w-full h-full" />
-              </div>
-            ) : (
-              // Render stage
               <div
-                className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 ${
-                  position.isLocked ? "opacity-90" : ""
-                }`}
-                onClick={() =>
-                  handleStageClick(position.lessonId, position.isLocked)
-                }
-                title={position.lessonTitle}
+                key={index}
+                className="absolute transform -translate-x-1/2"
+                style={{
+                  left: `${position.horizontalPosition}%`,
+                  top: `${position.verticalPosition}px`,
+                  zIndex: 10, // Higher than canvas
+                }}
               >
-                {/* Stage image - increased size */}
-                <img
-                  src={position.isLocked ? lockedStageSvg : stageSvg}
-                  alt={position.isLocked ? "Locked Stage" : "Stage"}
-                  className="w-[120px] h-[120px]" // Increased from 90px
-                />
-
-                {/* Icon in center of stage - increased size */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {position.isCurrentStage ? (
+                {position.isCapy ? (
+                  // Render capy for first position
+                  <div className="w-40 h-40 flex items-center justify-center">
+                    <img src={capySvg} alt="Capy" className="w-full h-full" />
+                  </div>
+                ) : (
+                  // Render stage
+                  <div
+                    className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 ${
+                      position.isLocked ? "opacity-90" : ""
+                    }`}
+                    onClick={() =>
+                      handleStageClick(position)
+                    }
+                    title={position.lessonTitle}
+                  >
+                    {/* Stage image - increased size */}
                     <img
-                      src={currentPlaySvg}
-                      alt="Current Stage"
-                      className="w-16 h-16 mb-4" // Increased from 12
+                      src={position.isLocked ? lockedStageSvg : stageSvg}
+                      alt={position.isLocked ? "Locked Stage" : "Stage"}
+                      className="w-[120px] h-[120px]" // Increased from 90px
                     />
-                  ) : (
-                    <img
-                      src={position.iconSrc}
-                      alt={`Icon ${position.isLastStage ? "Trophy" : index}`}
-                      className={`w-16 h-16 mb-4 ${
-                        position.isLocked ? "filter grayscale opacity-50" : ""
-                      }`} // Increased from 12
-                    />
-                  )}
-                </div>
 
-                {/* Difficulty indicator - increased size */}
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-20">
-                  <img
-                    src={position.fruitSrc}
-                    alt={`Difficulty ${position.difficulty}`}
-                    className={`w-20 h-12 ${
-                      position.isLocked ? "opacity-50" : ""
-                    }`} // Increased from 14x8
-                  />
-                </div>
+                    {/* Icon in center of stage - increased size */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {position.isCurrentStage ? (
+                        <img
+                          src={currentPlaySvg}
+                          alt="Current Stage"
+                          className="w-16 h-16 mb-4" // Increased from 12
+                        />
+                      ) : (
+                        <img
+                          src={position.iconSrc}
+                          alt={`Icon ${
+                            position.isLastStage ? "Trophy" : index
+                          }`}
+                          className={`w-16 h-16 mb-4 ${
+                            position.isLocked
+                              ? "filter grayscale opacity-50"
+                              : ""
+                          }`} // Increased from 12
+                        />
+                      )}
+                    </div>
+
+                    {/* Difficulty indicator - increased size */}
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-20">
+                      <img
+                        src={position.fruitSrc}
+                        alt={`Difficulty ${position.difficulty}`}
+                        className={`w-20 h-12 ${
+                          position.isLocked ? "opacity-50" : ""
+                        }`} // Increased from 14x8
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )})}
+          );
+        })}
+        {isOpenLesson && <OpenLesson lesson={lessons[findIndexOfLessonId]} setOpenLesson={setOpenLesson}/>}
 
         {/* Calculate total height needed for the roadmap */}
         <div

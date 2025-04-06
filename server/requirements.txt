@@ -5,3 +5,4 @@ jsonify
 fastapi
 pydantic
 json
+uvicorn

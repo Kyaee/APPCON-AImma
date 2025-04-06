@@ -1,45 +1,35 @@
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/layout/lesson/header-navigator";
 import { Separator } from "@/components/ui/separator";
-import { Gem, SmileIcon, Zap } from "lucide-react";
+import {
+  Gem,
+  SmileIcon,
+  AngryIcon,
+  BicepsFlexed,
+  Zap,
+  ZapIcon,
+} from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
 import { Background } from "@/components/layout/background"; // Add this import
-
-const experienceItems = [
-  { icon: <Zap className="w-4 h-4" />, text: "100 exp" },
-  { icon: <Gem className="w-5 h-5" />, text: "100 exp" },
-];
-
-const content = `
-## Second Header
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam condimentum, ex sit amet 
-sollicitudin lacinia, odio mauris pharetra libero, vel vestibulum diam nunc ac orci. Aenean 
-nec pretium mauris.
-
-- Cras vel tempor velit, quis suscipit urna. Sed mattis turpis eu aliquet placerat. Integer vel ligula arcu.
-- Duis vitae elit ut ligula sodales congue ut non nisl.
-- Maecenas sem massa, rhoncus eget arcu et, dapibus suscipit est. Sed lectus risus, convallis ac consectetur sed, eleifend non arcu. Nulla egestas malesuada pulvinar.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam condimentum, ex sit amet 
-sollicitudin lacinia, odio mauris pharetra libero, vel vestibulum diam nunc ac orci. Aenean 
-nec pretium mauris. Cras vel tempor velit, quis suscipit urna. Sed mattis turpis eu aliquet 
-placerat. Integer vel ligula arcu. Duis vitae elit ut ligula sodales congue ut non nisl. 
-Maecenas sem massa, rhoncus eget arcu et, dapibus suscipit est. Sed lectus risus, 
-convallis ac consectetur sed, eleifend non arcu. Nulla egestas malesuada pulvinar.
-
-### Third Header (Smaller Header)
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam condimentum, ex sit amet s
-ollicitudin lacinia, odio mauris pharetra libero, vel vestibulum diam nunc ac orci. Aenean 
-nec pretium mauris. Cras vel tempor velit, quis suscipit urna. Sed mattis turpis eu aliquet 
-placerat. Integer vel ligula arcu. Duis vitae elit ut ligula sodales congue ut non nisl. 
-Maecenas sem massa, rhoncus eget arcu et, dapibus suscipit est. Sed lectus risus, 
-convallis ac consectetur sed, eleifend non arcu. Nulla egestas malesuada pulvinar.
-`;
+import { useQuery } from "@tanstack/react-query";
+import { fetchLessonAIdata } from "@/api/FETCH"; // Adjust the import path as needed
+import { useParams } from "react-router-dom";
 
 export default function ElementLesson() {
+  const { id } = useParams(); // Get the lesson ID from the URL parameters
+  const { data: lessonData, isLoading } = useQuery(fetchLessonAIdata());
+  if (isLoading) return <div>Loading...</div>; // Handle loading state
+
+  if (lessonData && lessonData.id !== parseInt(id)) {
+    return (
+      <div className="mt-32 max-w-2xl mx-auto text-center">
+        <h2 className="text-3xl font-bold">Lesson not found</h2>
+        <p className="mt-4">The lesson you requested could not be found.</p>
+      </div>
+    );
+  }
+
   return (
     <main className="w-full h-full overflow-hidden">
       <div className="fixed top-0 bg-custom-lines h-screen w-screen -z-10"></div>
@@ -47,40 +37,64 @@ export default function ElementLesson() {
       <Header page="lesson" />
       {/* Main Content */}
       <section className="mt-32 max-w-2xl mx-auto overflow-hidden">
-        {/* Difficulty and Experience */}
-        <div className="flex items-center gap-8 mb-6">
-          <Badge
-            variant="outline"
-            className="h-9 w-[90px] rounded-[5px] border-2 border-emerald-500 flex items-center justify-center gap-2"
-          >
-            <SmileIcon className="w-[17px] h-[17px] text-emerald-600" />
-            <span className="text-emerald-600">Easy</span>
-          </Badge>
+        {/* Title */}
+        <h1 className="text-5xl font-extrabold text-[#464646] tracking-tighter leading-[48px] mb-6 [font-family:'Poppins-ExtraBold',Helvetica]">
+          {lessonData.name}
+        </h1>
 
+        {/* Difficulty and Experience */}
+        <div className="flex items-center gap-8 mb-8">
+          {lessonData.difficulty === "Easy" && (
+            <Badge
+              variant="outline"
+              className="h-9 w-[90px] rounded-[5px] border-2 border-emerald-500 flex items-center justify-center gap-2"
+            >
+              <SmileIcon className="w-[17px] h-[17px] text-emerald-600" />
+              <span className="text-emerald-600 text-base">
+                {lessonData.difficulty}
+              </span>
+            </Badge>
+          )}
+          {lessonData.difficulty === "Intermediate" && (
+            <Badge
+              variant="outline"
+              className="h-9 w-[90px] rounded-[5px] border-2 text-amber-500 flex items-center justify-center gap-2"
+            >
+              <AngryIcon className="w-[17px] h-[17px] text-amber-500" />
+              <span className="text-amber-500 text-base">
+                {lessonData.difficulty}
+              </span>
+            </Badge>
+          )}
+          {lessonData.difficulty === "Hard" && (
+            <Badge
+              variant="outline"
+              className="h-9 w-[90px] rounded-[5px] border-2 border-red-600 flex items-center justify-center gap-2"
+            >
+              <BicepsFlexed className="w-[17px] h-[17px] text-red-600" />
+              <span className="text-red-600 text-base">
+                {lessonData.difficulty}
+              </span>
+            </Badge>
+          )}
           <div className="flex items-center gap-8">
-            {experienceItems.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 text-[#7b7b7b] font-p"
-              >
-                {item.icon}
-                <span>{item.text}</span>
-              </div>
-            ))}
+            <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
+              <ZapIcon className="w-4 h-4" />
+              <span>{lessonData.exp} exp</span>
+            </div>
+            <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
+              <Gem className="w-4 h-4" />
+              <span>{lessonData.gems} gems</span>
+            </div>
           </div>
         </div>
 
-        {/* Title */}
-        <h1 className="text-5xl font-extrabold text-[#464646] tracking-[-0.58px] leading-[48px] mb-8 [font-family:'Poppins-ExtraBold',Helvetica]">
-          JavaScript Introduction
-        </h1>
-
-        <Separator className="mb-10" />
+        <Separator className="border border-foreground mb-10" />
 
         <Markdown
           components={{
             h2: ({ children }) => (
-              <h2 className="mt-9 text-3xl font-semibold text-black tracking-[-0.23px] leading-9 mb-4 [font-family:'Poppins-SemiBold',Helvetica]">
+              <h2 className="mt-9 tracking-tight text-3xl font-semibold text-black leading-9 mb-4 [font-family:'Poppins-SemiBold',Helvetica]">
                 {children}
               </h2>
             ),
@@ -98,11 +112,18 @@ export default function ElementLesson() {
             li: ({ children }) => (
               <li className="text-black font-p">{children}</li>
             ),
+            code: ({ children }) => (
+              <code className="inline-block bg-foreground text-white border border-background rounded-md p-3 mb-4 text-wrap">
+                {children}
+              </code>
+            ),
+
             // add for images
             // tables
           }}
         >
-          {content}
+          {/* {content} */}
+          {lessonData.message ? lessonData.message : lessonData.lesson}
         </Markdown>
       </section>
       <footer className="pb-10"></footer>
