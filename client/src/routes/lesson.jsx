@@ -1,27 +1,26 @@
 import { Badge } from "@/components/ui/badge";
-import Header from "@/components/layout/lesson/header-navigator";
 import { Separator } from "@/components/ui/separator";
 import {
   Gem,
   SmileIcon,
   AngryIcon,
   BicepsFlexed,
-  Zap,
+  Hourglass,
   ZapIcon,
 } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
 import { Background } from "@/components/layout/background"; // Add this import
-import { useQuery } from "@tanstack/react-query";
-import { fetchLessonAIdata } from "@/api/FETCH"; // Adjust the import path as needed
 import { useParams } from "react-router-dom";
+import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
+import { useEffect, useRef } from "react";
 
 export default function ElementLesson() {
   const { id } = useParams(); // Get the lesson ID from the URL parameters
-  const { data: lessonData, isLoading } = useQuery(fetchLessonAIdata());
-  if (isLoading) return <div>Loading...</div>; // Handle loading state
+  const lessonFetch = useLessonFetchStore((state) => state.fetch); // Get the lesson data from the store
+  const contentRef = useRef(null); // Create a ref for the content section
 
-  if (lessonData && lessonData.id !== parseInt(id)) {
+  if (lessonFetch && lessonFetch.id !== parseInt(id)) {
     return (
       <div className="mt-32 max-w-2xl mx-auto text-center">
         <h2 className="text-3xl font-bold">Lesson not found</h2>
@@ -30,62 +29,103 @@ export default function ElementLesson() {
     );
   }
 
+  // Set up scroll animations
+  useEffect(() => {
+    if (!contentRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+    
+    const animatedElements = contentRef.current.querySelectorAll(
+      "h1, h2, h3, p, ul, .badge-container, code"
+    );
+    
+    animatedElements.forEach((el) => {
+      el.style.opacity = "0";
+      el.style.transform = "translateY(20px)";
+      el.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+      observer.observe(el);
+    });
+    
+    return () => observer.disconnect();
+  }, [lessonFetch]);
+
   return (
-    <main className="w-full h-full overflow-hidden">
-      <div className="fixed top-0 bg-custom-lines h-screen w-screen -z-10"></div>
-      <Background /> {/* Replace the custom background div */}
-      <Header page="lesson" />
+  <main className="w-full h-full overflow-hidden">
+      <div className="animated-progress-bar fixed left-0 top-0 h-2 border-b border-black w-full bg-light-brown z-50"></div>
+      <div className="fixed left-0 top-0 h-2 w-full bg-gray border-b border-black z-40"></div>
+      
+      <Background />
       {/* Main Content */}
-      <section className="mt-32 max-w-2xl mx-auto overflow-hidden">
+      <section ref={contentRef} className="mt-32 max-w-2xl mx-auto overflow-hidden">
         {/* Title */}
         <h1 className="text-5xl font-extrabold text-[#464646] tracking-tighter leading-[48px] mb-6 [font-family:'Poppins-ExtraBold',Helvetica]">
-          {lessonData.name}
+          {lessonFetch.name}
         </h1>
 
         {/* Difficulty and Experience */}
-        <div className="flex items-center gap-8 mb-8">
-          {lessonData.difficulty === "Easy" && (
+        <div className="badge-container flex items-center gap-8 mb-8">
+          {lessonFetch.difficulty === "Easy" && (
             <Badge
               variant="outline"
               className="h-9 w-[90px] rounded-[5px] border-2 border-emerald-500 flex items-center justify-center gap-2"
             >
               <SmileIcon className="w-[17px] h-[17px] text-emerald-600" />
               <span className="text-emerald-600 text-base">
-                {lessonData.difficulty}
+                {lessonFetch.difficulty}
               </span>
             </Badge>
           )}
-          {lessonData.difficulty === "Intermediate" && (
+          {lessonFetch.difficulty === "Intermediate" && (
             <Badge
               variant="outline"
               className="h-9 w-[90px] rounded-[5px] border-2 text-amber-500 flex items-center justify-center gap-2"
             >
               <AngryIcon className="w-[17px] h-[17px] text-amber-500" />
               <span className="text-amber-500 text-base">
-                {lessonData.difficulty}
+                {lessonFetch.difficulty}
               </span>
             </Badge>
           )}
-          {lessonData.difficulty === "Hard" && (
+          {lessonFetch.difficulty === "Hard" && (
             <Badge
               variant="outline"
               className="h-9 w-[90px] rounded-[5px] border-2 border-red-600 flex items-center justify-center gap-2"
             >
               <BicepsFlexed className="w-[17px] h-[17px] text-red-600" />
               <span className="text-red-600 text-base">
-                {lessonData.difficulty}
+                {lessonFetch.difficulty}
               </span>
             </Badge>
           )}
           <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2 text-foreground font-p">
+              <Hourglass className="w-4 h-4" />
+              <span>{lessonFetch.duration}</span>
+            </div>
             <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
               <ZapIcon className="w-4 h-4" />
-              <span>{lessonData.exp} exp</span>
+              <span>{lessonFetch.exp} exp</span>
             </div>
             <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
               <Gem className="w-4 h-4" />
-              <span>{lessonData.gems} gems</span>
+              <span>{lessonFetch.gems} gems</span>
             </div>
+            {lessonFetch.assessment && (
+              <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
+                <span className="text-red-500">w/ Assessment</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -117,15 +157,12 @@ export default function ElementLesson() {
                 {children}
               </code>
             ),
-
-            // add for images
-            // tables
           }}
         >
-          {/* {content} */}
-          {lessonData.message ? lessonData.message : lessonData.lesson}
+          {lessonFetch.message ? lessonFetch.message : lessonFetch.lesson}
         </Markdown>
       </section>
+      {/* CREATE FRONTEND SECTION FOR ASSESSMENT */}
       <footer className="pb-10"></footer>
     </main>
   );

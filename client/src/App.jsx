@@ -13,6 +13,7 @@ WEB PAGES
 
 import Landing from "./routes/landing";
 import MainLayout from "./components/layout/main-layout";
+import LessonLayout from "./components/layout/lesson-layout";
 // AUTHENTICATION
 import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
@@ -115,13 +116,13 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
-                  {/* <Route element="MainLayout"> */}
+                  <Route element={<LessonLayout/>}>
                     <Route path="/lesson/:id" element={<Lesson />} />
                     <Route
-                      path="/lesson/:id/assessment/:id"
+                      path="/l/:id/assessment/:id"
                       element={<LessonAssessment />}
                     />
-                  {/* </Route> */}
+                  </Route>
                 </>
               )}
             </Routes>
