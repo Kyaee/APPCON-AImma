@@ -14,21 +14,21 @@ import { Button } from "@/components/ui/button";
 export default function ProfileTabs({linechartData, radarData, summary}) {
   return (
     <Tabs defaultValue="strengthNQualities">
-      <TabsList className="grid w-full h-14 grid-cols-2 bg-foreground *:font-bold *:h-11 *:tracking-tight *:text-md">
-        <TabsTrigger value="strengthNQualities" className="text-background">
+      <TabsList className="grid w-full h-14 grid-cols-2 bg-white dark:bg-dark-inner-bg *:font-bold *:h-11 *:tracking-tight *:text-md">
+        <TabsTrigger value="strengthNQualities" className="text-foreground dark:text-primary data-[state=active]:bg-light-brown dark:data-[state=active]:bg-dark-nav-bg">
           Strength & Qualities
         </TabsTrigger>
-        <TabsTrigger value="Growth" className="text-background">
+        <TabsTrigger value="Growth" className="text-foreground dark:text-primary data-[state=active]:bg-light-brown dark:data-[state=active]:bg-dark-nav-bg">
           Growth
         </TabsTrigger>
       </TabsList>
       <TabsContent value="strengthNQualities">
-        <Card className="mt-2 border-2 border-foreground h-full">
+        <Card className="mt-2 border-2 border-foreground dark:border-dark-mode-highlight h-full bg-background dark:bg-dark-mode-bg">
           <CardContent className="flex gap-4 justify-between h-85">
             <RadarChart chartData={radarData}/>  
-            <div className="w-full h-full border-2 border-foreground p-5 rounded-md *:text-black">
-              <CardTitle>Your Stats</CardTitle>
-              <CardDescription>
+            <div className="w-full h-full border-2 border-foreground dark:border-dark-mode-highlight p-5 rounded-md bg-background dark:bg-dark-mode-bg">
+              <CardTitle className="text-black dark:text-primary">Your Stats</CardTitle>
+              <CardDescription className="text-black dark:text-primary">
                 {summary}
               </CardDescription>
             </div>
@@ -36,7 +36,7 @@ export default function ProfileTabs({linechartData, radarData, summary}) {
         </Card>
       </TabsContent>
       <TabsContent value="Growth">
-        <Card className="mt-2 border-2 border-foreground">
+        <Card className="mt-2 border-2 border-foreground dark:border-dark-mode-highlight bg-background dark:bg-dark-mode-bg">
           <CardContent className="space-y-2">
             <LineChart chartData={linechartData}/>
           </CardContent>
