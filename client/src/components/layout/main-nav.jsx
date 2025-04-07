@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 // Components & Icons
 import { Leaf, UserCircle, Inspect, ShoppingBag } from "lucide-react";
 
-export default function MainNav({userId}) {
+export default function MainNav({ userId }) {
   const location = useLocation();
 
   const navItems = [
@@ -34,11 +34,9 @@ export default function MainNav({userId}) {
   ];
 
   const isActive = (path) => {
-
     const basePath = path.split("/:")[0];
     // Match exact base path instead of using startsWith
     return location.pathname.split("/")[1] === basePath.split("/")[1];
-
   };
 
   return (
@@ -59,9 +57,17 @@ export default function MainNav({userId}) {
 
             `}
           >
-            <div className={`flex items-center gap-2 text-black dark:text-[#64646a] dark:group-hover:text-white ${isActive(item.path) ? 'dark:!text-white' : ''}`}>
+            <div
+              className={`flex items-center gap-2 text-black dark:text-[#64646a] dark:group-hover:text-white ${
+                isActive(item.path) ? "dark:!text-white" : ""
+              }`}
+            >
               {item.icon}
-              <span className={`text-sm text-black dark:text-[#64646a] dark:group-hover:text-white font-inter ${isActive(item.path) ? 'dark:!text-white' : ''}`}>
+              <span
+                className={`text-sm text-black dark:text-[#64646a] dark:group-hover:text-white font-inter ${
+                  isActive(item.path) ? "dark:!text-white" : ""
+                }`}
+              >
                 {item.label}
               </span>
             </div>
