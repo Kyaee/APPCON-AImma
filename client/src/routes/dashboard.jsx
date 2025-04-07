@@ -49,7 +49,7 @@ export default function Ayon() {
     setIsLeftDropdownOpen(false);
   };
 
-  const condition = roadmapError || (!roadmapData || roadmapData.length === 0);
+  const condition = roadmapError || !roadmapData || roadmapData.length === 0;
 
   // const handleHeaderCourseSelect = (courseName) => {
   //   const newIndex = courses.findIndex((course) => course.name === courseName);
@@ -67,7 +67,7 @@ export default function Ayon() {
       />
 
       {/* Main Content Area - Three Column Layout */}
-      <div className="flex w-full pt-20 h-auto min-h-[calc(100vh-80px)]">
+      <div className="flex w-full pt-20 h-auto min-h-[calc(100vh-80px)] relative">
         <div
           className={`transition-all duration-300 ${
             isSidebarExpanded ? "w-0 " : "w-[25%] px-0"
@@ -83,14 +83,14 @@ export default function Ayon() {
                       {condition
                         ? "Error Occured"
                         : roadmapData.map((roadmap, index) => (
-                          <div
-                            key={roadmap.roadmap_id}
-                            className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
-                            onClick={() => handleCourseSelect(roadmap)}
-                          >
-                            - {roadmap.roadmap_name}
-                          </div>
-                        ))}
+                            <div
+                              key={roadmap.roadmap_id}
+                              className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
+                              onClick={() => handleCourseSelect(roadmap)}
+                            >
+                              - {roadmap.roadmap_name}
+                            </div>
+                          ))}
                     </div>
                   )}
 

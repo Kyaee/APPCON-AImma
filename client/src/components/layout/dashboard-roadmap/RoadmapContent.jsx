@@ -291,10 +291,11 @@ const RoadmapContent = ({
     <div
       className="relative w-full py-5"
       style={{
+        // Updated mask image with more transparent area at top
         maskImage:
-          "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.5) 60px, black 100px)",
+          "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.2) 0px, black 120px)",
         WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.5) 60px, black 100px)",
+          "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.2) 40px, black 120px)",
       }}
     >
       <div className="relative mx-auto" style={{ width: "90%" }}>

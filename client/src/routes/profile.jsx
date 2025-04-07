@@ -96,10 +96,14 @@ export default function Profile() {
           ****************/}
           <Tabs_Component
             linechartData={
-              !isError && profile?.line_chart_data ? profile.line_chart_data : []
+              !isError && profile?.line_chart_data
+                ? profile.line_chart_data
+                : []
             }
             radarData={
-              !isError && profile?.radar_chart_data ? profile.radar_chart_data : []
+              !isError && profile?.radar_chart_data
+                ? profile.radar_chart_data
+                : []
             }
             summary="Summary of your progress"
           />
