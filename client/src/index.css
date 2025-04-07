@@ -42,6 +42,7 @@
   --dark-mode-highlight: hsl(240 4% 24%);    /* Converting from #3b3b41 */
   --dark-nav-bg: hsl(240 3% 7%);     /* Converting from #121214 */
   --dark-nav-text: hsl(240 3% 41%);   /* Converting from #64646a */
+  --dark-inner-bg: hsl(240 3% 15%);   /* Converting from #242429 */
 }
 
 .dark {
@@ -78,6 +79,7 @@
   --dark-mode-highlight: hsl(240 4% 24%);    /* Converting from #3b3b41 */
   --dark-nav-bg: hsl(240 3% 7%);      /* Converting from #121214 */
   --dark-nav-text: hsl(240 3% 41%);    /* Converting from #64646a */
+  --dark-inner-bg: hsl(240 3% 15%);   /* Converting from #242429 */
 }
 
 @theme inline {
@@ -116,6 +118,7 @@
   --radius-xl: calc(var(--radius) + 4px);
   --color-dark-mode-bg: var(--dark-mode-bg);
   --color-dark-mode-highlight: var(--dark-mode-highlight);
+  --color-dark-inner-bg: var(--dark-inner-bg);
 }
 
 @layer base {
