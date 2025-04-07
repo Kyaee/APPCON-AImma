@@ -288,109 +288,97 @@ const RoadmapContent = ({
   };
 
   return (
-    <div
-      className="relative w-full py-5"
-      style={{
-        // Updated mask image with more transparent area at top
-        maskImage:
-          "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.2) 0px, black 120px)",
-        WebkitMaskImage:
-          "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.2) 40px, black 120px)",
-      }}
-    >
-      <div className="relative mx-auto" style={{ width: "90%" }}>
-        {/* Canvas positioning fixed - make sure it's full width/height and behind stages */}
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
-        />
+    <div className="relative mx-auto mb-[50px]" style={{ width: "90%" }}>
+      {/* Canvas positioning fixed - make sure it's full width/height and behind stages */}
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
+      />
 
-        {/* Stages with higher z-index to appear in front of canvas */}
-        {stagePositions.map((position, index) => {
-          return (
-            <div
-              key={index}
-              className="absolute transform -translate-x-1/2"
-              style={{
-                left: `${position.horizontalPosition}%`,
-                top: `${position.verticalPosition}px`,
-                zIndex: 10, // Higher than canvas
-              }}
-            >
-              {position.isCapy ? (
-                // Render capy for first position
-                <div className="w-40 h-40 flex items-center justify-center">
-                  <img src={capySvg} alt="Capy" className="w-full h-full" />
-                </div>
-              ) : (
-                // Render stage
-                <div
-                  className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 ${
-                    position.isLocked ? "opacity-90" : ""
-                  }`}
-                  onClick={() => handleStageClick(position)}
-                  title={position.lessonTitle}
-                >
-                  {/* Stage image - increased size */}
-                  <img
-                    src={position.isLocked ? lockedStageSvg : stageSvg}
-                    alt={position.isLocked ? "Locked Stage" : "Stage"}
-                    className="w-[120px] h-[120px]" // Increased from 90px
-                  />
+      {/* Stages with higher z-index to appear in front of canvas */}
+      {stagePositions.map((position, index) => {
+        return (
+          <div
+            key={index}
+            className="absolute transform -translate-x-1/2"
+            style={{
+              left: `${position.horizontalPosition}%`,
+              top: `${position.verticalPosition}px`,
+              zIndex: 10, // Higher than canvas
+            }}
+          >
+            {position.isCapy ? (
+              // Render capy for first position
+              <div className="w-40 h-40 flex items-center justify-center">
+                <img src={capySvg} alt="Capy" className="w-full h-full" />
+              </div>
+            ) : (
+              // Render stage
+              <div
+                className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 ${
+                  position.isLocked ? "opacity-90" : ""
+                }`}
+                onClick={() => handleStageClick(position)}
+                title={position.lessonTitle}
+              >
+                {/* Stage image - increased size */}
+                <img
+                  src={position.isLocked ? lockedStageSvg : stageSvg}
+                  alt={position.isLocked ? "Locked Stage" : "Stage"}
+                  className="w-[120px] h-[120px]" // Increased from 90px
+                />
 
-                  {/* Icon in center of stage - increased size */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    {position.isCurrentStage ? (
-                      <img
-                        src={currentPlaySvg}
-                        alt="Current Stage"
-                        className="w-16 h-16 mb-4" // Increased from 12
-                      />
-                    ) : (
-                      <img
-                        src={position.iconSrc}
-                        alt={`Icon ${position.isLastStage ? "Trophy" : index}`}
-                        className={`w-16 h-16 mb-4 ${
-                          position.isLocked ? "filter grayscale opacity-50" : ""
-                        }`} // Increased from 12
-                      />
-                    )}
-                  </div>
-
-                  {/* Difficulty indicator - increased size */}
-                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-20">
+                {/* Icon in center of stage - increased size */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {position.isCurrentStage ? (
                     <img
-                      src={position.fruitSrc}
-                      alt={`Difficulty ${position.difficulty}`}
-                      className={`w-20 h-12 ${
-                        position.isLocked ? "opacity-50" : ""
-                      }`} // Increased from 14x8
+                      src={currentPlaySvg}
+                      alt="Current Stage"
+                      className="w-16 h-16 mb-4" // Increased from 12
                     />
-                  </div>
+                  ) : (
+                    <img
+                      src={position.iconSrc}
+                      alt={`Icon ${position.isLastStage ? "Trophy" : index}`}
+                      className={`w-16 h-16 mb-4 ${
+                        position.isLocked ? "filter grayscale opacity-50" : ""
+                      }`} // Increased from 12
+                    />
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })}
-        {isOpenLesson && (
-          <OpenLesson
-            lesson={lessons[findIndexOfLessonId]}
-            setOpenLesson={setOpenLesson}
-          />
-        )}
 
-        {/* Calculate total height needed for the roadmap */}
-        <div
-          style={{
-            height: `${
-              stagePositions.length > 0
-                ? stagePositions[stagePositions.length - 1].verticalPosition +
-                  100
-                : 0
-            }px`,
-          }}
+                {/* Difficulty indicator - increased size */}
+                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-20">
+                  <img
+                    src={position.fruitSrc}
+                    alt={`Difficulty ${position.difficulty}`}
+                    className={`w-20 h-12 ${
+                      position.isLocked ? "opacity-50" : ""
+                    }`} // Increased from 14x8
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      {isOpenLesson && (
+        <OpenLesson
+          lesson={lessons[findIndexOfLessonId]}
+          setOpenLesson={setOpenLesson}
         />
-      </div>
+      )}
+
+      {/* Calculate total height needed for the roadmap */}
+      <div
+        style={{
+          height: `${
+            stagePositions.length > 0
+              ? stagePositions[stagePositions.length - 1].verticalPosition + 100
+              : 0
+          }px`,
+        }}
+      />
     </div>
   );
 };

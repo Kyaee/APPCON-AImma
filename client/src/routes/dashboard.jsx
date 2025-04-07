@@ -67,33 +67,16 @@ export default function Ayon() {
       />
 
       {/* Main Content Area - Three Column Layout */}
-      <div className="flex w-full pt-20 h-auto min-h-[calc(100vh-80px)] relative">
+      <div className="flex w-full pt-20 h-auto min-h-[calc(100vh-80px)]">
         <div
           className={`transition-all duration-300 ${
             isSidebarExpanded ? "w-0 " : "w-[25%] px-0"
           } sticky top-20`}
         >
           {!isSidebarExpanded && (
-            <div className="ml-[60px] mt-[0px] p-3 sticky top-25">
+            <div className="ml-[60px] mt-[0px] p-3 fixed top-25">
               <div className="relative inline-block">
                 <div className="relative inline-block">
-                  {/* Popup menu - appears on right side */}
-                  {isLeftDropdownOpen && (
-                    <div className="absolute left-full bg-white top-0 ml-4 border-2 border-black rounded-lg shadow-md z-30 min-w-[300px]">
-                      {condition
-                        ? "Error Occured"
-                        : roadmapData.map((roadmap, index) => (
-                            <div
-                              key={roadmap.roadmap_id}
-                              className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
-                              onClick={() => handleCourseSelect(roadmap)}
-                            >
-                              - {roadmap.roadmap_name}
-                            </div>
-                          ))}
-                    </div>
-                  )}
-
                   {/* Header content with inline horizontal line */}
                   <div className="flex flex-col">
                     {condition ? (
@@ -113,7 +96,7 @@ export default function Ayon() {
                           {currentRoadmap?.roadmap_name || "Select a roadmap"}
                         </h2>
                         {isLeftDropdownOpen ? (
-                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-180" />
+                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-90" />
                         ) : (
                           <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
                         )}
@@ -138,6 +121,21 @@ export default function Ayon() {
                 <p className="text-black font-medium mt-4 text-lg">
                   Current Progression: {currentRoadmap?.progress || 0}%
                 </p>
+              )}
+
+              {/* Dropdown menu moved here - below the progression text */}
+              {isLeftDropdownOpen && !condition && (
+                <div className="mt-4 border-2 border-black rounded-lg shadow-md bg-white z-30 min-w-[300px]">
+                  {roadmapData.map((roadmap, index) => (
+                    <div
+                      key={roadmap.roadmap_id}
+                      className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
+                      onClick={() => handleCourseSelect(index)}
+                    >
+                      {roadmap.roadmap_name}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}
