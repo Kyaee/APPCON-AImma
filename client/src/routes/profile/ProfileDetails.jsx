@@ -55,7 +55,7 @@ const ProfileDetails = ({
   };
 
   return (
-    <section className="relative flex justify-between h-80 w-full pt-50 px-10 lg:px-30 xl:px-40 rounded-md border-b-2 border-foreground">
+    <section className="relative flex justify-between h-80 w-full pt-50 px-10 lg:px-30 xl:px-40 rounded-md border-b-2 border-foreground dark:border-dark-mode-bg">
       {/* BACKGROUND */}
       <img
         src={isCoverImageUrl}
@@ -78,7 +78,7 @@ const ProfileDetails = ({
           className="relative mr-7 cursor-pointer"
           onClick={() => FileInputProfile.current.click()}
         >
-          <div className="size-37 rounded-full overflow-hidden border-3 border-foreground">
+          <div className="size-37 rounded-full overflow-hidden border-3 border-foreground dark:border-dark-mode-bg">
             <img
               src={isProfileImageUrl}
               alt="profile"
@@ -100,9 +100,9 @@ const ProfileDetails = ({
               {experience} exp.
             </span>
           </p>
-          <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700 border-2 border-foreground">
+          <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700 border-2 border-foreground dark:border-dark-mode-bg">
             <div
-              className="bg-blue-500 h-2.5 rounded-full border-r-2 border-foreground"
+              className="bg-blue-500 h-2.5 rounded-full border-r-2 border-foreground dark:border-dark-mode-bg"
               style={{ width: `${(experience / totalExperience) * 100}%` }}
             ></div>
           </div>
@@ -111,8 +111,8 @@ const ProfileDetails = ({
 
       {/* CONTINUE LEARNING */}
       <div className="relative w-full">
-        <Card className="absolute min-w-xs max-w-sm right-0 top-3 shadow-2xl p-0 gap-0 bg-dark-brown hover:bg-brown transition ease-in">
-          <div className="relative flex items-center justify-between rounded-t-xl bg-card border-b-2 border-foreground">
+        <Card className="absolute min-w-xs max-w-sm right-0 top-3 shadow-2xl p-0 gap-0 bg-dark-brown dark:bg-dark-mode-highlight">
+          <div className="relative flex items-center justify-between rounded-t-xl bg-card dark:bg-dark-mode-highlight border-b-2 border-foreground dark:border-dark-mode-bg">
             <CardHeader className="pt-5 pb-2 *:py-0.5">
               <CardTitle className="text-wrap leading-tight">
                 {continueLearning}
@@ -135,7 +135,7 @@ const ProfileDetails = ({
               className="h-35 absolute -left-21 -bottom-10"
             />
           </div>
-          <div className="text-center py-3 *:text-sm *:text-white">
+          <div className="text-center py-3 *:text-sm *:text-white bg-dark-brown dark:bg-dark-brown hover:bg-brown dark:hover:bg-brown cursor-pointer transition-colors rounded-b-xl">
             <p>CONTINUE LEARNING</p>
           </div>
         </Card>
