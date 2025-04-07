@@ -34,10 +34,10 @@ export default function JobOpportunities() {
               alt="Welcome"
               className="max-w-2/4 object-contain mt-[70px]"
             />
-            <span className="text-[#4C4C4C] text-[48px] font-bold tracking-tighter">
+            <span className="text-[#4C4C4C] dark:text-primary text-[48px] font-bold tracking-tighter">
               Gather Job Opportunities
             </span>
-            <span className="text-black text-[20px] ">
+            <span className="text-black dark:text-primary text-[20px]">
               We will find job opportunities for you!
             </span>
             <button
@@ -59,12 +59,14 @@ export default function JobOpportunities() {
         <div className="relative w-full min-h-screen pt-35">
           <div className="px-55">
             <div className="flex justify-between">
-              <h1 className="text-[#4C4C4C] text-5xl font-extrabold mb-4 tracking-tight">
+              <h1 className="text-[#4C4C4C] dark:text-primary text-5xl font-extrabold mb-4 tracking-tight">
                 Personalized for You
               </h1>
-              <Button className="">Generate Again</Button>
+              <Button className="bg-light-brown hover:bg-light-brown/80 dark:bg-light-brown dark:hover:bg-light-brown/80">
+                Generate Again
+              </Button>
             </div>
-            <p className="text-black text-base font-medium mb-8 max-w-[760px]">
+            <p className="text-black dark:text-primary text-base font-medium mb-8 max-w-[760px]">
               We prepared possible opportunities based on your capabilities and
               learning.
             </p>

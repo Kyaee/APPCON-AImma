@@ -33,11 +33,16 @@
   --chart-5: hsl(27 87% 67%);
   --radius: 0.6rem;
 
-  --brown: #bf8648;
-  --light-brown: #cbb09b;
-  --dark-brown: #936440;
-  --blue: #2d9cdb;
-  --gray: #f5f5f5;
+  --brown: hsl(27 47% 51%); /* Converting from #bf8648 */
+  --light-brown: hsl(25 30% 70%); /* Converting from #CBB09B */
+  --dark-brown: hsl(27 39% 42%); /* Converting from #936440 */
+  --blue: hsl(201 71% 52%); /* Converting from #2d9cdb */
+  --gray: hsl(0 0% 96%); /* Converting from #f5f5f5 */
+  --dark-mode-bg: hsl(240 2% 11%); /* Converting from #1a1a1e */
+  --dark-mode-highlight: hsl(240 4% 24%); /* Converting from #3b3b41 */
+  --dark-nav-bg: hsl(240 3% 7%); /* Converting from #121214 */
+  --dark-nav-text: hsl(240 3% 41%); /* Converting from #64646a */
+  --dark-inner-bg: hsl(240 3% 15%); /* Converting from #242429 */
 }
 
 .dark {
@@ -65,11 +70,16 @@
   --chart-3: hsl(30 80% 55%);
   --chart-4: hsl(280 65% 60%);
   --chart-5: hsl(340 75% 55%);
-  --brown: #bf8648;
-  --dark-brown: #936440;
-  --blue: #241415;
-  --light-brown: #cbb09b;
-  --gray: #f5f5f5;
+  --brown: hsl(27 47% 51%); /* Converting from #bf8648 */
+  --dark-brown: hsl(27 39% 42%); /* Converting from #936440 */
+  --blue: hsl(0 4% 11%); /* Converting from #241415 */
+  --light-brown: hsl(25 30% 70%); /* Converting from #CBB09B */
+  --gray: hsl(0 0% 96%); /*Converting from #f5f5f5 */
+  --dark-mode-bg: hsl(240 2% 11%); /* Converting from #1a1a1e */
+  --dark-mode-highlight: hsl(240 4% 24%); /* Converting from #3b3b41 */
+  --dark-nav-bg: hsl(240 3% 7%); /* Converting from #121214 */
+  --dark-nav-text: hsl(240 3% 41%); /* Converting from #64646a */
+  --dark-inner-bg: hsl(240 3% 15%); /* Converting from #242429 */
 }
 
 @theme inline {
@@ -106,6 +116,75 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-panel-in: slide-in 0.3s ease-out;
+  --animate-text-fade: fade-in 1s ease forwards;
+  --animate-text-type: typewriter 2.5s steps(40, end);
+  --animate-text-cursor: blink-cursor 0.75s step-end infinite;
+  --animate-text-bounce: bounce 1s ease infinite;
+  --animate-text-reveal: text-reveal 1s cubic-bezier(0.77, 0, 0.18, 1);
+
+  @keyframes slide-in {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes typewriter {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  @keyframes blink-cursor {
+    from,
+    to {
+      border-color: transparent;
+    }
+    50% {
+      border-color: var(--foreground);
+    }
+  }
+
+  @keyframes bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes text-reveal {
+    0% {
+      clip-path: inset(0 100% 0 0);
+    }
+    100% {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  --color-dark-mode-bg: var(--dark-mode-bg);
+  --color-dark-mode-highlight: var(--dark-mode-highlight);
+  --color-dark-inner-bg: var(--dark-inner-bg);
 }
 
 @layer base {
@@ -153,5 +232,66 @@
 
   .hide-navigation-and-mascot .NavigationButtons {
     display: none;
+  }
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #000000 #f1f1f1;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+    margin: 0 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #060000;
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #0b0800;
+  }
+
+  .animated-gradient-bg {
+    background: linear-gradient(
+      -45deg,
+      var(--brown),
+      var(--light-brown),
+      var(--blue),
+      var(--dark-brown)
+    );
+    background-size: 400% 400%;
+    animation: gradient-animation 15s ease infinite;
+  }
+
+  .animated-gradient-bg-subtle {
+    background: linear-gradient(
+      -45deg,
+      var(--background),
+      var(--card),
+      var(--secondary),
+      var(--muted)
+    );
+    background-size: 400% 400%;
+    animation: gradient-animation 15s ease infinite;
+  }
+
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 }

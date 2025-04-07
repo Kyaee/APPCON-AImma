@@ -19,13 +19,13 @@ export default function BadgesProfile({
   return (
     <section>
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-semibold mb-5 text-black tracking-tight">
+        <h2 className="text-3xl font-semibold mb-5 text-black dark:text-primary tracking-tight">
           Badges
         </h2>
 
         <AlertDialog>
           <AlertDialogTrigger>
-            <div className="px-3 py-1 bg-white text-black cursor-pointer rounded-md text-sm hover:bg-blue-400 border border-black">
+            <div className="px-3 py-1 bg-white dark:bg-dark-mode-bg text-black dark:text-primary cursor-pointer rounded-md text-sm hover:bg-blue-400 dark:hover:bg-dark-mode-highlight border border-black dark:border-dark-mode-highlight">
               More
             </div>
           </AlertDialogTrigger>
@@ -43,7 +43,7 @@ export default function BadgesProfile({
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="bg-background p-5 rounded-lg border-2 border-foreground">
+      <div className="bg-background dark:bg-dark-mode-bg p-5 rounded-lg border-2 border-foreground">
         <div className="flex gap-3 overflow-x-auto overflow-y-hidden py-1 pl-3 pb-3 [-ms-overflow-style:'none'] [scrollbar-width:'none']">
 
           <div className="group transition">
@@ -57,7 +57,7 @@ export default function BadgesProfile({
               h-150 w-150 p-10 rounded-xl shadow-2xl
               invisible group-hover:visible group-hover:opacity-100 transition-opacity ease-in duration-300 opacity-0   
               flex flex-col justify-center gap-6 items-center border border-foreground
-              bg-background"
+              bg-background dark:bg-dark-mode-bg"
             >
               <img
                 src="something"
@@ -95,8 +95,12 @@ export default function BadgesProfile({
           </div>
         </div>
 
+
                       
         <p className="pl-3 text-sm text-black mt-1">
+
+        <p className="pl-3 text-sm text-black dark:text-primary mt-1">
+
           Complete more lessons to gain badges!
         </p>
       </div>

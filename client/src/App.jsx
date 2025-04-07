@@ -43,12 +43,14 @@ import JobOpportunities from "./routes/job-opportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import LevelRewardsTest from "./routes/level-rewards-test";
+import CapySkin from "./routes/profile/capyskin";
+import ApiTEST from "./routes/api-test";
 
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(false);
-  // const [isUserLoggedin, setUserLoggedin] = useState(true);
+  const [isAssessed, setAssessed] = useState(true);
+  const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
@@ -60,6 +62,7 @@ function App() {
               <Route path="/" element={<Landing />} />
               <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/api-testing" element={<ApiTEST />} />
 
               {!session ? (
                 // IF USER IS NOT LOGGED-IN
@@ -170,13 +173,14 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
-                  <Route element="MainLayout">
-                    <Route path="/lesson/:id" element={<Lesson />} />
-                    <Route
-                      path="/lesson/:id/assessment/:id"
-                      element={<LessonAssessment />}
-                    />
-                  </Route>
+                  {/* <Route element="MainLayout"> */}
+                  <Route path="/lesson/:id" element={<Lesson />} />
+                  <Route
+                    path="/lesson/:id/assessment/:id"
+                    element={<LessonAssessment />}
+                  />
+                  {/* </Route> */}
+                  <Route path="/capyskin/:id" element={<CapySkin />} />
                 </>
               )}
             </Routes>

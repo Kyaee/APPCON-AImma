@@ -41,7 +41,7 @@ export default function MainNav({ userId }) {
 
   return (
     <nav className="fixed top-6 w-full px-4 flex justify-center items-center z-40">
-      <div className="w-[700px] h-[48px] rounded-lg border-2 border-black dark:border-background bg-card dark:bg-[#121214] flex custom-shadow-75">
+      <div className="w-[700px] h-[48px] rounded-lg border-2 border-black dark:border-background bg-card dark:bg-dark-nav-bg flex custom-shadow-75">
         {navItems.map((item) => (
           <Link
             key={item.id}
@@ -52,9 +52,11 @@ export default function MainNav({ userId }) {
               first:rounded-l-lg last:rounded-r-lg
               transition-all duration-300 cursor-pointer
 
-              hover:bg-[#CBB09B]
-              ${isActive(item.path) ? "bg-[#CBB09B] border-x" : ""}
-
+              ${
+                isActive(item.path)
+                  ? "bg-light-brown dark:bg-dark-mode-highlight border-x"
+                  : "hover:bg-light-brown dark:hover:bg-dark-mode-bg"
+              }
             `}
           >
             <div
