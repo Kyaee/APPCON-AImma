@@ -14,6 +14,8 @@ import Tabs_Component from "./profile/tabs-profile";
 import Badges_Component from "./profile/badges-profile";
 import Skills_Component from "./profile/skills-profile";
 import Loading from "@/routes/loading";
+import CapySkin from "./profile/capyskin";
+import SkinBadgesTabs from "./profile/skin_tab";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
@@ -81,28 +83,12 @@ export default function Profile() {
         )}
 
         <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
-          {/****************  
-              Skills Section 
-          ******************/}
-          <Badges_Component />
+          
 
           {/****************  
             Badges Section 
           ****************/}
           <Skills_Component titles={skills} />
-
-          {/**************** 
-            Charts Section 
-          ****************/}
-          <Tabs_Component
-            linechartData={
-              !isError && profile?.line_chart_data ? profile.line_chart_data : []
-            }
-            radarData={
-              !isError && profile?.radar_chart_data ? profile.radar_chart_data : []
-            }
-            summary="Summary of your progress"
-          />
 
           {/**************** 
               Streak Section 
@@ -123,6 +109,26 @@ export default function Profile() {
                 : []
             }
           />
+
+          {/****************  
+              Skills Section 
+          ******************/}
+          <SkinBadgesTabs/>
+          
+          {/**************** 
+            Charts Section 
+          ****************/}
+          <Tabs_Component
+            linechartData={
+              !isError && profile?.line_chart_data ? profile.line_chart_data : []
+            }
+            radarData={
+              !isError && profile?.radar_chart_data ? profile.radar_chart_data : []
+            }
+            summary="Summary of your progress"
+          />
+
+          
 
           {/********************** 
               Skill Trees Section 
