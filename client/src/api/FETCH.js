@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/config/supabase";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 /*      TABLE OF CONTENTS
@@ -128,6 +129,40 @@ export function fetchLessonAIdata() {
       return response.data;
     },
   });
+}
+
+export function useLessonAIData() {
+  const fetchLessonAI = async () => {
+    const response = await axios
+      .get("http://127.0.0.1:8000/api/get-lesson")
+      .catch((error) => {
+        console.error("Error fetching roadmap AI data:", error);
+        throw error;
+      });
+    if (!response.ok) throw new Error("Failed to fetch roadmap AI data");
+    return response.data;
+  };
+
+  const { data: lessonData, isLoading: isLessonAILoading } = useQuery({
+    queryKey: ["lessonAI"],
+    queryFn: fetchLessonAI,
+  });
+
+  const insertToDatabase = async (passData, userId) => {
+    const { error } = await supabase
+      .from("lessons")
+      .update({ content: passData.lesson })
+      .eq("user_id", userId)
+      .eq("id", passData.id);
+    if (error) throw new Error(error.message);
+    console.log("Data inserted successfully:", passData);
+  };
+
+  return {
+    lessonData,
+    isLessonAILoading,
+    insertToDatabase,
+  };
 }
 
 export function fetchLessonAssessmentData() {
