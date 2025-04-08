@@ -81,6 +81,30 @@ export const postPrompt2 = async (
 };
 
 /**************************************
+ *       POST ASSESSMENT PROMPT
+ **************************************/
+export const postPrompt3 = async (lesson_id, lesson_name, lesson_content) => {
+  try {
+    const requestBody = { 
+      prompt_assessment_generate: `Generate 7 assessment questions for ${lesson_name} with the following content: ${lesson_content}`,
+      id: lesson_id,
+      name: lesson_name,
+    }
+
+    const response = await axios.post("http://127.0.0.1:8000/api/generate-assessment",
+      requestBody
+    );
+    
+    if (response.data?.error) console.error("Error:", response.data.error);
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    window.location.href = `/l/${lesson_id}/assessment`;
+  }
+}
+
+
+/**************************************
  *   POST ROADMAP DATA TO SUPABASE
  **************************************/
 export const createNewRoadmap = async (roadmaps, userId) => {

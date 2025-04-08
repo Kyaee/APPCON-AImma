@@ -1,35 +1,60 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
+import { useAuth } from "@/config/authContext";
 
-export default function Header({ page }) {
+export default function Header({ id, isAssessment }) {
+  const { session } = useAuth(); // Get the session from the auth contex
+  const navItems = [
+    { icon: <Sprout size="20" />, label: "Lesson", path: `/lesson/${id}` },
+    {
+      icon: <Target size="20" />,
+      label: "Assessment",
+      path: `/l/${id}/assessment`,
+    },
+    { icon: <ShoppingCart size="20" />, label: "Shop", path: `/shop/${id}` },
+  ];
+
+  const location = useLocation();
+  const isActive = (path) => {
+    const basePath = path.split("/:")[0];
+    return location.pathname.split("/")[1] === basePath.split("/")[1];
+  };
+
+  const filteredNavItems = isAssessment
+    ? navItems
+    : navItems.filter((item) => item.label !== "Assessment");
+
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
-      <h1 className={`${page == "lesson" ? "text-foreground font-semibold" : ""} text-2xl`}>
+      <h1
+        className={`text-2xl ${
+          location.pathname.split("/")[1] === "lesson"
+            ? "text-foreground"
+            : "text-background"
+        }`}
+      >
         CapaCademy
       </h1>
       <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px]">
-        <Link to="/:id/lesson/:id" 
-          className="flex items-center gap-2 px-4 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-accent transition-all duration-300"
-        >
-          <Sprout size="20" />
-          <span className="text-sm">Lesson</span>
-        </Link>
-        <Link to="/:id/lesson/assessment/:id" 
-          className="flex items-center gap-2 px-4 h-full hover:bg-[#CBB09B] transition-all duration-300"
-        >
-          <Target size="20" />
-          <span className="text-sm">Assessment</span>
-        </Link>
-        <Link to="/shop/:id" 
-          className="flex items-center gap-2 px-4 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300"
-        >
-          <ShoppingCart size="20" />
-          <span className="text-sm">Shop</span>
-        </Link>
+        {filteredNavItems.map((item) => (
+          <Link
+            key={item.label}
+            to={item.path}
+            className={`
+              flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300
+              ${isActive(item.path) ? "bg-[#CBB09B] border-x" : ""}
+            `}
+          >
+            {item.icon}
+            <span className="ml-2">{item.label}</span>
+          </Link>
+        ))}
       </nav>
       <Link
-        to="/:id/dashboard"
-        className={`${page == "lesson" ? "" : "ml-3"} text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md`}
+        to={`/dashboard/${session.user.id}`}
+        className={`${
+          location.pathname.split("/")[1] === "lesson" ? "ml-6" : ""
+        } text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md`}
       >
         <ArrowUpRight size="20" />
         Quit

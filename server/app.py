@@ -4,7 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
 import os
-from classformats import RoadmapRequest, GenerateRoadmap, GenerateLesson
+from classformats import (
+    RoadmapRequest,
+    GenerateRoadmap,
+    GenerateLesson,
+    QuestionRequest,
+    GenerateQuestions,
+)
 from pydantic import BaseModel
 import json
 
@@ -45,6 +51,7 @@ system_prompt = (
 
 roadmap_content = {}
 lesson_content = {}
+asssessment_content = {}
 
 
 @app.post("/api/generate-roadmap")
@@ -82,8 +89,8 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
 @app.post("/api/generate-lesson")
 def POST_generate_lesson(
     request: GenerateLesson = None,
-):  # Changed to receive raw string
-    print(f"DEBUG: Received request_data: {request}")  # Debug log
+):
+    print(f"DEBUG: Received request_data: {request}")
     print(f"DEBUG: Type of data: {type(request)}")
     global lesson_content
     if request:
@@ -101,20 +108,38 @@ def POST_generate_lesson(
             "gems": request.gems,
             "exp": request.exp,
             "duration": request.duration,
-            "assessment" : request.assessment
+            "assessment": request.assessment,
         }
     else:
         return {"message": "data was not posted"}
 
 
-@app.get("/api/get-lesson")
-def GET_generate_lesson():
-    if lesson_content:
-        print(lesson_content)
-        return lesson_content
+@app.post("/api/generate-assessment")
+def POST_generate_assessment(request: QuestionRequest = None):
+    global assessment_content
+    if request:
+        Assessment_completion = client.beta.chat.completions.parse(
+            model="gemini-2.0-flash",
+            messages=[{"role": "user", "content": request.prompt_assessment_generate}],
+            response_format=GenerateQuestions,
+        )
+        content = Assessment_completion.choices[0].message.parsed
+        assessment_content = {
+            "id": request.id,
+            "name": request.name,
+            "questions": [
+                {
+                    "question_type": question.question_type,
+                    "text": question.text,
+                    "options": question.options,
+                    "correct_answer": question.correct_answer,
+                    "explanation": question.explanation,
+                }
+                for question in content.questions
+            ],
+        }
     else:
-        print("No lesson generated yet")
-        return {"message": "No lesson generated yet"}
+        return {"message": "data was not posted"}
 
 
 @app.get("/api/get-roadmap")
@@ -124,6 +149,20 @@ def GET_generate_roadmap():
     else:
         return {"No roadmap generated yet"}
 
+
+@app.get("/api/get-lesson")
+def GET_generate_lesson():
+    if lesson_content:
+        return lesson_content
+    else:
+        return {"message": "No lesson generated yet"}
+
+@app.get("/api/get-assessment")
+def GET_generate_assessment():
+    if assessment_content:
+        return assessment_content
+    else:
+        return {"message": "No assessment generated yet"}   
 
 # --------------------------------------------------------------
 #  Prompt engineering

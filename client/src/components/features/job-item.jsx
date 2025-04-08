@@ -27,7 +27,7 @@ const OpportunitiesMenu = ({
     : `${fullDescription.slice(0, 150)}...`;
 
   return (
-    <div className="relative w-full h-full rounded-lg border-2 border-foreground bg-card custom-shadow-50 p-6">
+    <div className="relative w-full h-full rounded-lg border-2 border-foreground dark:border-dark-mode-highlight bg-card dark:bg-dark-inner-bg custom-shadow-50 p-6">
       <h2 className="text-3xl text-primary font-semibold tracking-tighter">
         Opportunities
       </h2>
@@ -85,7 +85,7 @@ const OpportunitiesMenu = ({
 
       {/* Buttons - Updated positioning and width */}
       <div className="absolute bottom-6 left-6 right-6 flex justify-between">
-        <button className="w-[172px] h-[39px] rounded-lg border border-primary bg-background flex items-center gap-2 justify-center">
+        <button className="w-[172px] h-[39px] rounded-lg border border-primary bg-background dark:bg-dark-inner-bg flex items-center gap-2 justify-center">
           <X className="size-5" />
           <span className="text-primary text-base font-medium">
             Not-Interested
@@ -97,7 +97,6 @@ const OpportunitiesMenu = ({
             Check now
           </button>
         </Link>
-        
       </div>
     </div>
   );
