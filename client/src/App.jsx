@@ -49,8 +49,8 @@ import ApiTEST from "./routes/api-test";
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth(); // false;
-  const [isAssessed, setAssessed] = useState(false);
-  const [isUserLoggedin, setUserLoggedin] = useState(false);
+  const [isAssessed, setAssessed] = useState(true);
+  const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>

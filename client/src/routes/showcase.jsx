@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { VideoBackground } from "@/components/layout/background";
+import brandIcon from "@/assets/general/brandicon.png";
 
 const IntroSlides = [
   {
@@ -99,7 +100,7 @@ const Showcase = () => {
           <div className="w-full flex justify-center mb-8">
             <div className="flex items-center justify-center">
               <img
-                src="/src/assets/intro-showcase/brandicon.png"
+                src={brandIcon}
                 alt="Brand icon"
                 className="w-48 h-48 object-contain rounded-full" // Increased size
               />
