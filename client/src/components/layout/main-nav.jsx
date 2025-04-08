@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 // Components & Icons
 import { Leaf, UserCircle, Inspect, ShoppingBag } from "lucide-react";
 
-export default function MainNav({userId}) {
+export default function MainNav({ userId }) {
   const location = useLocation();
 
   const navItems = [
@@ -34,16 +34,14 @@ export default function MainNav({userId}) {
   ];
 
   const isActive = (path) => {
-
     const basePath = path.split("/:")[0];
     // Match exact base path instead of using startsWith
     return location.pathname.split("/")[1] === basePath.split("/")[1];
-
   };
 
   return (
     <nav className="fixed top-6 w-full px-4 flex justify-center items-center z-40">
-      <div className="w-[700px] h-[48px] rounded-lg border-2 border-black dark:border-background bg-card dark:bg-[#121214] flex custom-shadow-75">
+      <div className="w-[700px] h-[48px] rounded-lg border-2 border-black dark:border-background bg-card dark:bg-dark-nav-bg flex custom-shadow-75">
         {navItems.map((item) => (
           <Link
             key={item.id}
@@ -54,14 +52,24 @@ export default function MainNav({userId}) {
               first:rounded-l-lg last:rounded-r-lg
               transition-all duration-300 cursor-pointer
 
-              hover:bg-[#CBB09B]
-              ${isActive(item.path) ? "bg-[#CBB09B] border-x" : ""}
-
+              ${
+                isActive(item.path)
+                  ? "bg-light-brown dark:bg-dark-mode-highlight border-x"
+                  : "hover:bg-light-brown dark:hover:bg-dark-mode-bg"
+              }
             `}
           >
-            <div className={`flex items-center gap-2 text-black dark:text-[#64646a] dark:group-hover:text-white ${isActive(item.path) ? 'dark:!text-white' : ''}`}>
+            <div
+              className={`flex items-center gap-2 text-black dark:text-[#64646a] dark:group-hover:text-white ${
+                isActive(item.path) ? "dark:!text-white" : ""
+              }`}
+            >
               {item.icon}
-              <span className={`text-sm text-black dark:text-[#64646a] dark:group-hover:text-white font-inter ${isActive(item.path) ? 'dark:!text-white' : ''}`}>
+              <span
+                className={`text-sm text-black dark:text-[#64646a] dark:group-hover:text-white font-inter ${
+                  isActive(item.path) ? "dark:!text-white" : ""
+                }`}
+              >
                 {item.label}
               </span>
             </div>

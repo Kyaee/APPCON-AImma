@@ -54,11 +54,11 @@ export const fetchLesson = async (lessonId) => {
   const { data, error } = await supabase
     .from("lessons")
     .select("*")
-    .eq("roadmap_id", lessonId)
+    .eq("roadmap_id", lessonId);
   if (error) throw new Error(error.message);
   console.log("lesson data: ", data);
   return data;
-}
+};
 
 /***********************************
  *          FETCH PROFILE
@@ -89,7 +89,6 @@ export function fetchAll() {
   });
 }
 
-
 /***********************************
  *        FETCH FROM AI DATA
  ************************************/
@@ -117,16 +116,35 @@ export function fetchLessonAIdata() {
     queryKey: ["lessonAi"],
     queryFn: async () => {
       const response = await axios
-      .get("http://127.0.0.1:8000/api/get-lesson")
-      .catch((error) => {
-        console.error("Error fetching roadmap AI data:", error);
-        throw error;
-      });
-    if (response.status !== 200) {
-      throw new Error("Failed to fetch roadmap AI data");
-    }
-    console.log("roadmap AI data", response.data);
-    return response.data;
-    }
+        .get("http://127.0.0.1:8000/api/get-lesson")
+        .catch((error) => {
+          console.error("Error fetching roadmap AI data:", error);
+          throw error;
+        });
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch roadmap AI data");
+      }
+      console.log("roadmap AI data", response.data);
+      return response.data;
+    },
+  });
+}
+
+export function fetchLessonAssessmentData() {
+  return queryOptions({
+    queryKey: ["lessonAssessment"],
+    queryFn: async () => {
+      const response = await axios
+        .get("http://127.0.1:8000/api/get-assessment")
+        .catch((error) => {
+          console.error("Error fetching lesson assessment data:", error);
+          throw error;
+        });
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch lesson assessment data");
+      }
+      console.log("lesson assessment data", response.data);
+      return response.data;
+    },
   });
 }
