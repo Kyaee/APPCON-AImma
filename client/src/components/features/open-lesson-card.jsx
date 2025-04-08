@@ -13,10 +13,15 @@ import {
 import React from "react";
 import { postPrompt2 } from "@/api/INSERT";
 
-export default function OpenLesson({ lesson, setOpenLesson }) {
-  const [loading, setLoading] = React.useState(false);
+
+export default function OpenLesson({
+  lesson,
+  setOpenLesson,
+  setLoading,
+}) {
+
   const createLesson = () => {
-    setLoading(true)
+    setLoading(true);
     postPrompt2(
       lesson.lesson_name,
       lesson.id,
@@ -25,8 +30,9 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
       lesson.gems,
       lesson.exp,
       lesson.lesson_duration,
-      lesson.assessment
-    )};
+      lesson.assessment,
+    )
+  };
 
   return (
     <div className="transition animate-panel-in fixed transform left-0 top-0 h-full w-full lg:max-w-lg z-30 bg-gray-50 border-1 border-solid border-black">
@@ -121,7 +127,7 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
           <p className="mb-5 pr-2 transition animate-text-fade text-[#7b7b7b] text-base font-normal font-['Inter-Regular',Helvetica] leading-[22px]">
             {lesson.lesson_description
               ? lesson.lesson_description
-              : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt"}
+              : "No description available. Sorry! :(("}
           </p>
         </section>
 
@@ -144,17 +150,15 @@ export default function OpenLesson({ lesson, setOpenLesson }) {
                 </div>
               </CardContent>
             </Card>
-
-            <Button
-              onClick={createLesson}
-              disabled={loading}
-              className="disabled:animated-gradient-bg-subtle disabled:cursor-loading w-full h-12 bg-light-brown text-foreground text-lg font-semibold border border-solid border-black shadow-[4px_4px_0px_#00000080] rounded-md hover:bg-[#fff7f7] hover:text-[#444444]"
-            >
-              Start Learning
-            </Button>
-            {/* Difficulty and rewards */}
+            <div>
+              <Button
+                onClick={createLesson}
+                className="disabled:animated-gradient-bg-subtle disabled:cursor-loading w-full h-12 bg-light-brown text-foreground text-lg font-semibold border border-solid border-black shadow-[4px_4px_0px_#00000080] rounded-md hover:bg-[#fff7f7] hover:text-[#444444]"
+              >
+                Start Learning
+              </Button>
+            </div>
           </div>
-
         </div>
       </div>
     </div>

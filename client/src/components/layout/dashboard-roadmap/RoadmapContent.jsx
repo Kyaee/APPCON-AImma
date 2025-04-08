@@ -32,6 +32,8 @@ const RoadmapContent = ({
   pathDashLength = 8, // Shorter dashes
   pathDashGap = 6, // Slightly more gap between dashes
   pathBorderRadius = 30,
+  isLoading,
+  setLoading
 }) => {
   const [isOpenLesson, setOpenLesson] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState(null);
@@ -277,13 +279,9 @@ const RoadmapContent = ({
 
   const handleStageClick = (position) => {
     if (!position.isLocked) {
-      // Navigate to the lesson page or trigger some action
       setCurrentLessonId(position.lessonId);
       setOpenLesson(true);
       console.log(findIndexOfLessonId);
-      // return (
-      //   <OpenLesson />
-      // )
     }
   };
 
@@ -366,6 +364,7 @@ const RoadmapContent = ({
         <OpenLesson
           lesson={lessons[findIndexOfLessonId]}
           setOpenLesson={setOpenLesson}
+          setLoading={setLoading}
         />
       )}
 

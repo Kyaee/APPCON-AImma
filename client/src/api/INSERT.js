@@ -4,29 +4,28 @@ import axios from "axios";
 /**************************************
  *        POST ROADMAP PROMPT
  **************************************/
-const prompt_roadmap = {
-  prompt_roadmap_generate: `
-    Generate a {name} roadmap including the following details:
-    - Difficulty (Easy, Intermediate, Hard)
-    - Lesson duration
-    - Whether it includes an assessment (answer in true/false)
-
-    The roadmap should be tailored for a {User_classification} {User_Type} user, 
-    who has a daily goal of {daily_goal}. 
-    The lessons should be based on interests such as {interests}. 
-    Do not include the actual content but provide a structure to generate the lesson in the next prompt.
-
-    Format:
-    - Name
-    - Difficulty
-    - Duration with time unit (e.g., 30 minutes, 1 hour)
-    - Daily goal
-    - status (returns "locked", "in_progress", or no output if unlocked)
-    - Assessment(returns true or false)
-  `,
-};
-
 export const postPrompt1 = async () => {
+  const prompt_roadmap = {
+    prompt_roadmap_generate: `
+      Generate a {name} roadmap including the following details:
+      - Difficulty (Easy, Intermediate, Hard)
+      - Lesson duration
+      - Whether it includes an assessment (answer in true/false)
+  
+      The roadmap should be tailored for a {User_classification} {User_Type} user, 
+      who has a daily goal of {daily_goal}. 
+      The lessons should be based on interests such as {interests}. 
+      Do not include the actual content but provide a structure to generate the lesson in the next prompt.
+  
+      Format:
+      - Name
+      - Difficulty
+      - Duration with time unit (e.g., 30 minutes, 1 hour)
+      - Daily goal
+      - status (returns "locked", "in_progress", or no output if unlocked)
+      - Assessment(returns true or false)
+    `,
+  };
   try {
     const response = await axios.post(
       "http://127.0.0.1:8000/api/generate-roadmap",
@@ -44,19 +43,23 @@ export const postPrompt1 = async () => {
 /**************************************
  *        POST LESSON PROMPT
  **************************************/
+
 export const postPrompt2 = async (
-  lesson_name, 
-  id, 
-  lesson_category, 
-  lesson_difficulty, 
+  lesson_name,
+  id,
+  lesson_category,
+  lesson_difficulty,
   lesson_gems,
   lesson_expierence,
   lesson_duration,
   lesson_assessment
 ) => {
+  const prompt_lesson = `
+    Generate a ${lesson_name} lesson plan for the following topic
+  `;
   try {
     const requestBody = {
-      prompt_lesson_generate: `Generate a ${lesson_name} lesson plan for the following topic`,
+      prompt_lesson_generate: prompt_lesson,
       lesson_id: id,
       lesson_name: lesson_name,
       category: lesson_category,
@@ -75,9 +78,10 @@ export const postPrompt2 = async (
     if (response.data?.error) console.error("Error:", response.data.error);
   } catch (error) {
     console.error("Error:", error);
-  } finally {
-    window.location.href = `/lesson/${id}`;
-  }
+  } 
+  // finally {
+  //   window.location.href = `/lesson/${id}`;
+  // }
 };
 
 /**************************************
@@ -85,24 +89,24 @@ export const postPrompt2 = async (
  **************************************/
 export const postPrompt3 = async (lesson_id, lesson_name, lesson_content) => {
   try {
-    const requestBody = { 
+    const requestBody = {
       prompt_assessment_generate: `Generate 7 assessment questions for ${lesson_name} with the following content: ${lesson_content}`,
       id: lesson_id,
       name: lesson_name,
-    }
+    };
 
-    const response = await axios.post("http://127.0.0.1:8000/api/generate-assessment",
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/generate-assessment",
       requestBody
     );
-    
+
     if (response.data?.error) console.error("Error:", response.data.error);
   } catch (error) {
     console.error("Error:", error);
   } finally {
     window.location.href = `/l/${lesson_id}/assessment`;
   }
-}
-
+};
 
 /**************************************
  *   POST ROADMAP DATA TO SUPABASE
@@ -134,6 +138,7 @@ export const createNewRoadmap = async (roadmaps, userId) => {
         assessment: lesson.assessment,
         status: lesson.status,
         lesson_description: lesson.description,
+        user_id: userId,
       }));
 
       const { error: lessonsError } = await supabase
@@ -144,3 +149,27 @@ export const createNewRoadmap = async (roadmaps, userId) => {
     }
   });
 };
+
+/**************************************
+ *   POST LESSON DATA TO SUPABASE
+ **************************************/
+export const createNewLesson = async (lesson, userId) => {
+  const { data: lessonData, error: lessonError } = await supabase
+    .from("lessons")
+    .insert([
+      {
+        user_id: userId,
+        lesson_name: lesson.lesson_name,
+        lesson_category: lesson.category,
+        lesson_difficulty: lesson.difficulty,
+        lesson_duration: lesson.duration,
+        assessment: lesson.assessment,
+        status: lesson.status,
+        lesson_description: lesson.description,
+      },
+    ])
+    .select("*");
+
+  if (lessonError) throw lessonError; 
+  return lessonData[0].lesson_id;
+}
