@@ -110,7 +110,7 @@
   --animate-text-fade: fade-in 1s ease forwards;
   --animate-text-type: typewriter 2.5s steps(40, end);
   --animate-text-cursor: blink-cursor 0.75s step-end infinite;
-  --animate-text-bounce: bounce 1s ease infinite;
+  --animate-text-bounce: bounce 0.75s ease;
   --animate-text-reveal: text-reveal 1s cubic-bezier(0.77, 0, 0.18, 1);
 
   @keyframes slide-in {
@@ -153,12 +153,20 @@
   }
 
   @keyframes bounce {
-    0%,
-    100% {
-      transform: translateY(0);
+    0% { 
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-20px);
     }
     50% {
-      transform: translateY(-10px);
+      transform: translateX(40px);
+    }
+    75% {
+      transform: translateX(-20px);
+    }
+    100% {
+      transform: translateX(0);
     }
   }
 

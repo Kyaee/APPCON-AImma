@@ -1,26 +1,38 @@
 import { Link, useLocation } from "react-router-dom";
 import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
+import { useAuth } from "@/config/authContext";
 
-export default function Header({ id, isAssessment, userId }) {
+export default function Header({ id, isAssessment }) {
+  const { session } = useAuth(); // Get the session from the auth contex
   const navItems = [
     { icon: <Sprout size="20" />, label: "Lesson", path: `/lesson/${id}` },
-    { icon: <Target size="20" />, label: "Assessment", path: `/l/${id}/assessment` },
+    {
+      icon: <Target size="20" />,
+      label: "Assessment",
+      path: `/l/${id}/assessment`,
+    },
     { icon: <ShoppingCart size="20" />, label: "Shop", path: `/shop/${id}` },
   ];
 
-  const location = useLocation(); 
+  const location = useLocation();
   const isActive = (path) => {
     const basePath = path.split("/:")[0];
     return location.pathname.split("/")[1] === basePath.split("/")[1];
   };
-  
-  const filteredNavItems = isAssessment 
-    ? navItems 
-    : navItems.filter(item => item.label !== "Assessment");
+
+  const filteredNavItems = isAssessment
+    ? navItems
+    : navItems.filter((item) => item.label !== "Assessment");
 
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
-      <h1 className={`text-2xl ${location.pathname.split("/")[1] === "lesson" ? "text-foreground" : "text-background"}`}>
+      <h1
+        className={`text-2xl ${
+          location.pathname.split("/")[1] === "lesson"
+            ? "text-foreground"
+            : "text-background"
+        }`}
+      >
         CapaCademy
       </h1>
       <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px]">
@@ -39,8 +51,10 @@ export default function Header({ id, isAssessment, userId }) {
         ))}
       </nav>
       <Link
-        to={`/dashboard/${userId}`}
-        className={`${location.pathname.split("/")[1] === "lesson" ? "ml-6" : ""} text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md`}
+        to={`/dashboard/${session.user.id}`}
+        className={`${
+          location.pathname.split("/")[1] === "lesson" ? "ml-6" : ""
+        } text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md`}
       >
         <ArrowUpRight size="20" />
         Quit

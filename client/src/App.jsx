@@ -45,6 +45,7 @@ import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import LevelRewardsTest from "./routes/level-rewards-test";
 import ApiTEST from "./routes/api-test";
+import Testing from './routes/testing'
 
 function App() {
   const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ function App() {
               <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/api-testing" element={<ApiTEST />} />
+              <Route path="/testing" element={<Testing />} />
 
               {!session ? (
                 // IF USER IS NOT LOGGED-IN

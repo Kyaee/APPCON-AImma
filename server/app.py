@@ -160,10 +160,9 @@ def GET_generate_lesson():
 @app.get("/api/get-assessment")
 def GET_generate_assessment():
     if assessment_content:
-        print(assessment_content)
         return assessment_content
     else:
-        return {"message": "No assessment generated yet"}
+        return {"message": "No assessment generated yet"}   
 
 # --------------------------------------------------------------
 #  Prompt engineering

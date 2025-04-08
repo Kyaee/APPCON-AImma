@@ -21,16 +21,6 @@ export default function ElementLesson() {
   const lessonFetch = useLessonFetchStore((state) => state.fetch); // Get the lesson data from the store
   const contentRef = useRef(null); // Create a ref for the content section
 
-  if (lessonFetch && lessonFetch.id !== parseInt(id)) {
-    return (
-      <div className="mt-32 max-w-2xl mx-auto text-center">
-        <h2 className="text-3xl font-bold">Lesson not found</h2>
-        <p className="mt-4">The lesson you requested could not be found.</p>
-      </div>
-    );
-  }
-
-  // Set up scroll animations
   useEffect(() => {
     if (!contentRef.current) return;
 
@@ -61,8 +51,17 @@ export default function ElementLesson() {
     return () => observer.disconnect();
   }, [lessonFetch]);
 
-  const handleAssessment = () =>
-    postPrompt3(lessonFetch.id, lessonFetch.name, lessonFetch.lesson);
+  if (lessonFetch && lessonFetch.id !== parseInt(id)) {
+    return (
+      <div className="mt-32 max-w-2xl mx-auto text-center">
+        <h2 className="text-3xl font-bold">Lesson not found</h2>
+        <p className="mt-4">The lesson you requested could not be found.</p>
+      </div>
+    );
+  }
+
+  // Set up scroll animations
+  const handleAssessment = () => postPrompt3(lessonFetch.id, lessonFetch.name, lessonFetch.lesson);
 
   return (
     <main className="w-full h-full overflow-hidden">
@@ -70,6 +69,7 @@ export default function ElementLesson() {
       <div className="fixed left-0 top-0 h-2 w-full bg-gray border-b border-black z-40"></div>
 
       <Background />
+      <button onClick={handleAssessment} className="fixed bg-black py-1 px-2 bottom-0 text-3xl text-white">Click me!!!!</button>
       {/* Main Content */}
       <section
         ref={contentRef}

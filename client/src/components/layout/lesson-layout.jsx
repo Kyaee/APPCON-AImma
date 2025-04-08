@@ -5,7 +5,6 @@ import { fetchLessonAIdata } from "@/api/FETCH"; // Adjust the import path as ne
 import Loading from "@/routes/loading";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useEffect } from "react";
-import { useAuth } from "@/config/authContext";
 
 export default function LessonLayout({ children }) {
   const setLessonFetch = useLessonFetchStore((state) => state.setFetch);
@@ -14,10 +13,8 @@ export default function LessonLayout({ children }) {
     isLoading,
     isError,
   } = useQuery(fetchLessonAIdata());
-  const { session } = useAuth(); // Get the session from the auth context
 
   useEffect(() => {
-    console.log("User data:", lessonData);
     if (lessonData) setLessonFetch(lessonData);
   }, [lessonData]);
 
@@ -29,7 +26,6 @@ export default function LessonLayout({ children }) {
       <Header 
         id={lessonData.id} 
         isAssessment={lessonData.assessment} 
-        userId={session?.user?.id} // Pass the user ID to the Header component
       />
       <Outlet />
       {children}

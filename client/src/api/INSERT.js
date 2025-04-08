@@ -98,6 +98,8 @@ export const postPrompt3 = async (lesson_id, lesson_name, lesson_content) => {
     if (response.data?.error) console.error("Error:", response.data.error);
   } catch (error) {
     console.error("Error:", error);
+  } finally {
+    window.location.href = `/l/${lesson_id}/assessment`;
   }
 }
 
