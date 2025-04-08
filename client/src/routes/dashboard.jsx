@@ -16,6 +16,7 @@ export default function Ayon() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [roadmapIndex, setRoadmapIndex] = useState(0);
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);
+  const [getLoading, setLoading] = useState(false);
 
   const {
     data: roadmapData,
@@ -51,12 +52,9 @@ export default function Ayon() {
 
   const condition = roadmapError || !roadmapData || roadmapData.length === 0;
 
-  // const handleHeaderCourseSelect = (courseName) => {
-  //   const newIndex = courses.findIndex((course) => course.name === courseName);
-  //   if (newIndex !== -1) {
-  //     setRoadmapIndex(newIndex);
-  //   }
-  // };
+  if (getLoading) {
+    return <Loading generate_lesson={true}/>;
+  }
 
   return (
     <div className="relative w-full min-h-screen select-none overflow-hidden">
@@ -177,6 +175,8 @@ export default function Ayon() {
                     currentCourse={currentRoadmap.roadmap_name}
                     onCourseChange={handleCourseChange}
                     isSidebarExpanded={isSidebarExpanded}
+                    isLoading={getLoading}
+                    setLoading={setLoading}
                   />
                 )}
               </div>

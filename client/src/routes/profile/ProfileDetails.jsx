@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CircleProgressBar } from "@/components/layout/profile/circle-progress";
-import Capybara from "@/assets/profile/capybara.png";
+import useSkinStore from "@/store/useSkinStore";
 
 const ProfileDetails = ({
   initialImageUrl,
@@ -27,6 +27,9 @@ const ProfileDetails = ({
     initialImageUrl ||
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
+  
+  // Get the selected skin from the store
+  const { selectedSkin } = useSkinStore();
 
   const handleImageProfileChange = (event) => {
     const file = event.target.files[0];
@@ -130,9 +133,9 @@ const ProfileDetails = ({
             </CardHeader>
             <CircleProgressBar className="size-12" value={progress} />
             <img
-              src={Capybara}
+              src={selectedSkin.image}
               alt="capybara"
-              className="h-35 absolute -left-21 -bottom-10"
+              className="h-35 absolute -left-21 -bottom-10 z-0"
             />
           </div>
           <div className="text-center py-3 *:text-sm *:text-white">

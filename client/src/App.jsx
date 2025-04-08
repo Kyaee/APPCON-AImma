@@ -13,6 +13,7 @@ WEB PAGES
 
 import Landing from "./routes/landing";
 import MainLayout from "./components/layout/main-layout";
+import LessonLayout from "./components/layout/lesson-layout";
 // AUTHENTICATION
 import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
@@ -45,12 +46,19 @@ import NotFound from "./routes/NotFound";
 import LevelRewardsTest from "./routes/level-rewards-test";
 import CapySkin from "./routes/profile/capyskin";
 import ApiTEST from "./routes/api-test";
+import Testing from './routes/testing'
 
 function App() {
   const queryClient = new QueryClient();
+<<<<<<< HEAD
   const { session } = useAuth(); // false;
   const [isAssessed, setAssessed] = useState(true);
   const [isUserLoggedin, setUserLoggedin] = useState(true);
+=======
+  const { session } = useAuth();
+  const [isAssessed, setAssessed] = useState(true);
+  // const [isUserLoggedin, setUserLoggedin] = useState(true);
+>>>>>>> 73f4c42d2f3c11735fbc81ae501d6e438aea82f2
 
   return (
     <>
@@ -63,6 +71,7 @@ function App() {
               <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/api-testing" element={<ApiTEST />} />
+              <Route path="/testing" element={<Testing />} />
 
               {!session ? (
                 // IF USER IS NOT LOGGED-IN
@@ -173,14 +182,13 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
-                  {/* <Route element="MainLayout"> */}
-                  <Route path="/lesson/:id" element={<Lesson />} />
-                  <Route
-                    path="/lesson/:id/assessment/:id"
-                    element={<LessonAssessment />}
-                  />
-                  {/* </Route> */}
-                  <Route path="/capyskin/:id" element={<CapySkin />} />
+                  <Route element={<LessonLayout/>}>
+                    <Route path="/lesson/:id" element={<Lesson />} />
+                    <Route
+                      path="/l/:id/assessment"
+                      element={<LessonAssessment />}
+                    />
+                  </Route>
                 </>
               )}
             </Routes>

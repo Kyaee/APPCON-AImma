@@ -1,3 +1,5 @@
-python -m venv .venv
+# python -m venv .venv
+cd server
 ./.venv/Scripts/activate
-pip install -r requirements.txt
+uvicorn app:app --reload
+# pip install -r requirements.txt
