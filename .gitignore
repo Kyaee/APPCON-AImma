@@ -1,10 +1,11 @@
 # Logs
+*.log
+.vscode
 
 ##################
 #    Client
 ##################
 client/logs
-*.log
 client/npm-debug.log*
 
 node_modules
@@ -15,8 +16,6 @@ client/dist-ssr
 client/.env
 client/.env.local
 
-
-*.log
 
 ##################
 #    Server

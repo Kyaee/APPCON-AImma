@@ -144,7 +144,7 @@ export default function ElementShop() {
           {shopItems.map((item) => (
             <Card
               key={item.id}
-              className="border border-black rounded-[20px] bg-white transform transition-transform hover:scale-105"
+              className="border border-black rounded-[20px] bg-white transform transition-transform hover:scale-105 custom-shadow-50"
             >
               <CardContent className="flex flex-col items-center justify-center gap-1 h-[280px]">
                 {" "}
@@ -173,7 +173,7 @@ export default function ElementShop() {
                 </h3>
               </CardContent>
               <CardFooter>
-                <Button className="h-10 w-full bg-[#f6cb4f] text-[#444444] rounded-[10px] border-2 border-black shadow-[2px_2px_0px_2px_#00000080] font-extrabold">
+                <Button className="h-10 w-full bg-[#f6cb4f] text-[#444444] rounded-[10px] border-2 border-black font-extrabold custom-shadow-50">
                   <Gem className="w-6 h-6 mr-2" />
                   {item.price}
                 </Button>
@@ -191,7 +191,7 @@ export default function ElementShop() {
           {pricingPlans.map((plan, index) => (
             <Card
               key={index}
-              className="max-w-xl bg-white rounded-[20px] border border-solid border-black"
+              className="max-w-xl bg-white rounded-[20px] border border-solid border-black custom-shadow-50"
             >
               <CardHeader className="pb-0">
                 <CardTitle className="text-black text-2xl font-semibold flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function ElementShop() {
               </CardContent>
 
               <CardFooter>
-                <Button className="w-full h-[53px] bg-[#dfdfdf] text-[#444444] font-extrabold rounded-[10px] border border-solid border-black shadow-[4px_4px_0px_#00000080]">
+                <Button className="w-full h-[53px] bg-[#dfdfdf] text-[#444444] font-extrabold rounded-[10px] border border-solid border-black custom-shadow-50">
                   Buy Now
                 </Button>
               </CardFooter>

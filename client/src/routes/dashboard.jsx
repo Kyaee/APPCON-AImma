@@ -3,53 +3,66 @@ import StreakPanel from "@/components/layout/dashboard-roadmap/StreakPanel";
 import Sidebar from "@/components/layout/dashboard-roadmap/Sidebar";
 import RoadmapHeader from "@/components/layout/dashboard-roadmap/RoadmapHeader";
 import RoadmapContent from "@/components/layout/dashboard-roadmap/RoadmapContent";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { courseData } from "@/components/layout/dashboard-roadmap/CourseData";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { fetchRoadmap, fetchLesson } from "@/api/FETCH";
+import Loading from "@/routes/loading";
 
 export default function Ayon() {
+  const { id } = useParams();
+
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
+  const [roadmapIndex, setRoadmapIndex] = useState(0);
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);
+  const [getLoading, setLoading] = useState(false);
 
-  const handleSidebarToggle = () => {
-    console.log("Toggling sidebar");
-    setIsSidebarExpanded((prev) => !prev);
-  };
+  const {
+    data: roadmapData,
+    isLoading: loadingRoadmap,
+    isError: roadmapError,
+  } = useQuery(fetchRoadmap(id));
 
-  // Available courses with varied number of stages
-  const courses = courseData;
+  const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
+  const roadmapId = currentRoadmap?.roadmap_id;
 
-  const currentCourse = courses[currentCourseIndex];
+  const { data: lessonData, isLoading: loadingLessons } = useQuery({
+    queryKey: ["lessons"],
+    queryFn: () => fetchLesson(roadmapId),
+    enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
+  });
+
+  if (loadingRoadmap || loadingLessons) return <Loading />;
 
   // Handle course navigation
   const handleCourseChange = (direction) => {
     if (direction === "next") {
-      setCurrentCourseIndex((prev) => (prev + 1) % courses.length);
+      setRoadmapIndex((prev) => (prev + 1) % courses.length);
     } else if (direction === "prev") {
-      setCurrentCourseIndex(
-        (prev) => (prev - 1 + courses.length) % courses.length
-      );
+      setRoadmapIndex((prev) => (prev - 1 + courses.length) % courses.length);
     }
   };
 
   // Handle course selection from dropdown
   const handleCourseSelect = (index) => {
-    setCurrentCourseIndex(index);
+    setRoadmapIndex(index);
     setIsLeftDropdownOpen(false);
   };
 
-  const handleHeaderCourseSelect = (courseName) => {
-    const newIndex = courses.findIndex((course) => course.name === courseName);
-    if (newIndex !== -1) {
-      setCurrentCourseIndex(newIndex);
-    }
-  };
+  const condition = roadmapError || !roadmapData || roadmapData.length === 0;
+
+  if (getLoading) {
+    return <Loading generate_lesson={true}/>;
+  }
 
   return (
-    <div className="relative w-full min-h-screen">
+    <div className="relative w-full min-h-screen select-none overflow-hidden">
       {/* Sidebar */}
-      <Sidebar isExpanded={isSidebarExpanded} onToggle={handleSidebarToggle} />
+      <Sidebar
+        isExpanded={isSidebarExpanded}
+        onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
+      />
 
       {/* Main Content Area - Three Column Layout */}
       <div className="flex w-full pt-20 h-auto min-h-[calc(100vh-80px)]">
@@ -59,39 +72,34 @@ export default function Ayon() {
           } sticky top-20`}
         >
           {!isSidebarExpanded && (
-            <div className="ml-[60px] mt-[0px] p-3 sticky top-25">
+            <div className="ml-[60px] mt-[0px] p-3 fixed top-25">
               <div className="relative inline-block">
                 <div className="relative inline-block">
-                  {/* Popup menu - appears on right side */}
-                  {isLeftDropdownOpen && (
-                    <div className="absolute left-full bg-white top-0 ml-4 border-2 border-black rounded-lg shadow-md z-30 min-w-[300px]">
-                      {courses.map((course, index) => (
-                        <div
-                          key={course.name}
-                          className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
-                          onClick={() => handleCourseSelect(index)}
-                        >
-                          {course.name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Header content with inline horizontal line */}
                   <div className="flex flex-col">
-                    <div
-                      onClick={() => setIsLeftDropdownOpen(!isLeftDropdownOpen)}
-                      className="relative inline-flex items-center gap-3 cursor-pointer group p-0"
-                    >
-                      <h2 className="text-3xl font-bold text-black">
-                        {currentCourse.name}
-                      </h2>
-                      {isLeftDropdownOpen ? (
-                        <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-180" />
-                      ) : (
-                        <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
-                      )}
-                    </div>
+                    {condition ? (
+                      <div className="relative inline-flex items-center gap-3 p-0">
+                        <h2 className="text-3xl font-bold text-red-500">
+                          Failed to load roadmap
+                        </h2>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() =>
+                          setIsLeftDropdownOpen(!isLeftDropdownOpen)
+                        }
+                        className="relative inline-flex items-center gap-3 cursor-pointer group p-0"
+                      >
+                        <h2 className="text-3xl font-bold text-black">
+                          {currentRoadmap?.roadmap_name || "Select a roadmap"}
+                        </h2>
+                        {isLeftDropdownOpen ? (
+                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-90" />
+                        ) : (
+                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
+                        )}
+                      </div>
+                    )}
 
                     {/* Horizontal Line - limited width to match content */}
                     <div
@@ -103,9 +111,30 @@ export default function Ayon() {
               </div>
 
               {/* Progression Text */}
-              <p className="text-black font-medium mt-4 text-lg">
-                Current Progression: {currentCourse.progression}%
-              </p>
+              {condition ? (
+                <p className="text-red-500 font-medium mt-4 text-lg">
+                  Unable to load progression data
+                </p>
+              ) : (
+                <p className="text-black font-medium mt-4 text-lg">
+                  Current Progression: {currentRoadmap?.progress || 0}%
+                </p>
+              )}
+
+              {/* Dropdown menu moved here - below the progression text */}
+              {isLeftDropdownOpen && !condition && (
+                <div className="mt-4 border-2 border-black rounded-lg shadow-md bg-white z-30 min-w-[300px]">
+                  {roadmapData.map((roadmap, index) => (
+                    <div
+                      key={roadmap.roadmap_id}
+                      className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
+                      onClick={() => handleCourseSelect(index)}
+                    >
+                      {roadmap.roadmap_name}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -115,26 +144,44 @@ export default function Ayon() {
             isSidebarExpanded ? "ml-[20%] w-[55%]" : "w-[50%]"
           }`}
         >
-          {isSidebarExpanded && (
-            <div className="z-10  pb-0 mx-auto">
-              <RoadmapHeader
-                currentCourse={currentCourse.name}
-                progression={currentCourse.progression}
-                courseOptions={courses.map((course) => course.name)}
-                className="mb-6"
-                isSidebarExpanded={isSidebarExpanded}
-                onCourseSelect={handleHeaderCourseSelect}
-              />
+          {condition ? (
+            <div className="flex flex-col items-center justify-center h-full p-8">
+              <h2 className="text-2xl font-bold text-red-500 mb-4">
+                Failed to load roadmap
+              </h2>
+              <p className="text-gray-700">
+                Please try again later or contact support if the problem
+                persists.
+              </p>
             </div>
+          ) : (
+            <>
+              {isSidebarExpanded && currentRoadmap && (
+                <div className="z-10 pb-0 mx-auto">
+                  <RoadmapHeader
+                    currentCourse={currentRoadmap.roadmap_name}
+                    progression={currentRoadmap.progress}
+                    // courseOptions={lessonData.map((course) => course.lesson_name)}
+                    className="mb-6"
+                    isSidebarExpanded={isSidebarExpanded}
+                    // onCourseSelect={handleHeaderCourseSelect}
+                  />
+                </div>
+              )}
+              <div>
+                {currentRoadmap && lessonData && (
+                  <RoadmapContent
+                    lessons={lessonData}
+                    currentCourse={currentRoadmap.roadmap_name}
+                    onCourseChange={handleCourseChange}
+                    isSidebarExpanded={isSidebarExpanded}
+                    isLoading={getLoading}
+                    setLoading={setLoading}
+                  />
+                )}
+              </div>
+            </>
           )}
-          <div>
-            <RoadmapContent
-              lessons={currentCourse.lessons}
-              currentCourse={currentCourse.name}
-              onCourseChange={handleCourseChange}
-              isSidebarExpanded={isSidebarExpanded}
-            />
-          </div>
         </div>
         {/* Right Section - Panels */}
         <div className="w-[25%] p-4 sticky pt-10">

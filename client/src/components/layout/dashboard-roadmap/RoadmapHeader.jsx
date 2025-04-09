@@ -26,7 +26,7 @@ const RoadmapHeader = ({
             <h2 className="text-2xl font-bold text-black">{currentCourse}</h2>
             <ChevronRight
               className={`w-8 h-8 text-black transition-transform duration-200 ${
-                isDropdownOpen ? "rotate-90" : ""
+                isDropdownOpen ? "rotate-0" : "rotate-90"
               }`}
             />
           </div>
