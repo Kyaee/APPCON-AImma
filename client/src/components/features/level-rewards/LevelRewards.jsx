@@ -1,5 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { updateGems, getUserGems } from '../../../api/updateGems';
+import { useParams } from 'react-router-dom';
 
 const calculateGems = (level) => {
   if (level >= 1 && level <= 10) return 50;
@@ -9,9 +11,39 @@ const calculateGems = (level) => {
   return 0;
 };
 
-const LevelRewards = ({ currentLevel = 1 }) => {
+const LevelRewards = () => {  
+  const { id } = useParams(); // Get user ID from URL params
+  const [currentLevel, setCurrentLevel] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const scrollContainerRef = useRef(null);
+
+  // Load user's current level on component mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!id) return;
+      
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("level")
+          .eq("user_id", id)
+          .single();
+        
+        if (!error && data) {
+          setCurrentLevel(data.level || 1);
+        }
+      } catch (err) {
+        console.error("Error loading user level:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadUserData();
+  }, [id]);
 
   // Generate levels up to currentLevel + 10 to show upcoming rewards
   const levels = Array.from({ length: Math.max(60, currentLevel + 10) }, (_, i) => i + 1);
@@ -28,6 +60,35 @@ const LevelRewards = ({ currentLevel = 1 }) => {
     }
   };
 
+  // Handle level update and claim rewards
+  const handleClaimRewards = async (level) => {
+    if (!id) {
+      setMessage("User ID is required");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const result = await updateGems(id, level);
+      
+      if (result.success) {
+        setMessage(`Level ${level} rewards claimed! You received ${result.gemsAwarded} gems.`);
+        setCurrentLevel(level);
+      } else {
+        setMessage("Failed to claim rewards. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error claiming rewards:", error);
+      setMessage("An error occurred while claiming rewards.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && !levels.length) {
+    return <div className="text-white text-center py-8">Loading rewards...</div>;
+  }
+
   return (
     <div className="relative bg-gray-900/50 rounded-lg p-4 max-w-md mx-auto">
       <div className="flex justify-between items-center mb-4">
@@ -39,6 +100,12 @@ const LevelRewards = ({ currentLevel = 1 }) => {
           {isExpanded ? 'Show Less' : 'Show More'}
         </button>
       </div>
+
+      {message && (
+        <div className="bg-green-500/20 border border-green-500 text-green-300 p-3 rounded mb-4">
+          {message}
+        </div>
+      )}
 
       <div className="relative">
         <button
@@ -56,7 +123,9 @@ const LevelRewards = ({ currentLevel = 1 }) => {
           {levels.map((level) => {
             const gems = calculateGems(level);
             const isCurrentLevel = level === currentLevel;
+            const isPastLevel = level < currentLevel;
             const isLocked = level > currentLevel;
+            const canClaim = level === currentLevel;
 
             return (
               <div
@@ -78,6 +147,22 @@ const LevelRewards = ({ currentLevel = 1 }) => {
                       <span className="text-amber-400">💎</span>
                     </div>
                   </div>
+
+                  {canClaim && (
+                    <button
+                      onClick={() => handleClaimRewards(level)}
+                      disabled={loading}
+                      className="mt-2 px-3 py-1 bg-primary hover:bg-primary/80 text-black text-sm rounded transition-colors"
+                    >
+                      {loading ? "Claiming..." : "Claim Rewards"}
+                    </button>
+                  )}
+
+                  {isPastLevel && (
+                    <div className="mt-1 text-sm text-green-500">
+                      Claimed ✓
+                    </div>
+                  )}
 
                   {isLocked && (
                     <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
@@ -101,4 +186,4 @@ const LevelRewards = ({ currentLevel = 1 }) => {
   );
 };
 
-export default LevelRewards; 
+export default LevelRewards;

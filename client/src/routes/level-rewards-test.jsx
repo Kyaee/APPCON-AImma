@@ -1,5 +1,7 @@
 import LevelRewards from '@/components/features/level-rewards/LevelRewards';
 
+
+
 export default function LevelRewardsTest() {
   return (
     <div className="min-h-screen bg-gray-900 p-8">
