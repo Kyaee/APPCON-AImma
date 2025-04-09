@@ -46,19 +46,13 @@ import NotFound from "./routes/NotFound";
 import LevelRewardsTest from "./routes/level-rewards-test";
 import CapySkin from "./routes/profile/capyskin";
 import ApiTEST from "./routes/api-test";
-import Testing from './routes/testing'
+import Testing from "./routes/testing";
 
 function App() {
   const queryClient = new QueryClient();
-<<<<<<< HEAD
   const { session } = useAuth(); // false;
   const [isAssessed, setAssessed] = useState(true);
   const [isUserLoggedin, setUserLoggedin] = useState(true);
-=======
-  const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(true);
-  // const [isUserLoggedin, setUserLoggedin] = useState(true);
->>>>>>> 73f4c42d2f3c11735fbc81ae501d6e438aea82f2
 
   return (
     <>
@@ -182,7 +176,7 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
-                  <Route element={<LessonLayout/>}>
+                  <Route element={<LessonLayout />}>
                     <Route path="/lesson/:id" element={<Lesson />} />
                     <Route
                       path="/l/:id/assessment"

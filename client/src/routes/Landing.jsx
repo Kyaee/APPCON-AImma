@@ -17,26 +17,42 @@ export default function Landing() {
         <img src={landingBg} alt="" className="w-full h-full object-cover" />
       </div>
 
+      {/* Background capybara image - moved earlier in the structure with lower z-index */}
+      <div className="absolute bottom-0 right-0 z-10 pointer-events-none select-none">
+        <img
+          src={landingBgCapy}
+          alt=""
+          className="w-[1500px] h-auto object-contain"
+          style={{
+            transform: "translateY(-15%) translateX(0%)",
+            maxHeight: "190vh",
+            userSelect: "none",
+            pointerEvents: "none",
+          }}
+          draggable="false"
+        />
+      </div>
+
       {/* Content positioned above the background */}
       <div className="relative z-20">
         <LandingNav />
         <HeroSection />
         <FeatureSlider />
 
-        {/* Position capy background starting from FAQ section */}
+        {/* Improved structure with better z-index control */}
         <div className="relative">
-          {/* Capy background positioned to cover only FAQ to footer */}
-          <div className="absolute inset-0 bottom-0 left-0 right-0 z-0 pointer-events-none">
-            <img
-              src={landingBgCapy}
-              alt=""
-              className="w-full object-contain"
-              style={{ maxHeight: "60vh" }}
-            />
-          </div>
-          <div className="relative z-10">
-            <FAQSection />
-            <CTASection />
+          {/* Content sections with higher z-index */}
+          <div className="relative z-30">
+            {/* Ensure FAQ has its own z-index layer */}
+            <div className="relative z-15">
+              <FAQSection />
+            </div>
+
+            {/* CTA Section */}
+            <div className="relative z-10">
+              <CTASection />
+            </div>
+
             <LandingFooter />
           </div>
         </div>

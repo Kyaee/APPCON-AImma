@@ -4,13 +4,13 @@ import brandIcon from "@/assets/general/brandicon.png";
 
 export default function CTASection() {
   return (
-    <section className="py-20">
+    <section className="py-20 mb-25">
       <div className="w-4/5 mx-auto text-center">
         <div className="flex flex-col items-center">
           <img
             src={brandIcon}
             alt="Capacademy Brand"
-            className="w-32 h-32 mb-6"
+            className="w-62 h-62 mb-6"
           />
           <h2 className="text-4xl font-bold text-foreground mb-6">
             Ready to start your coding journey?
@@ -23,7 +23,7 @@ export default function CTASection() {
           <Link to="/auth/register">
             <Button
               size="lg"
-              className="bg-primary hover:bg-primary/80 text-white"
+              className="bg-[#F4CB57] custom-shadow-50 border-2 border-black px-8 py-8 hover:bg-[#e7b21d] text-black text-lg"
             >
               Create Your Free Account
             </Button>

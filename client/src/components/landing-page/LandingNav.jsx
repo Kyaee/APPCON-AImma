@@ -15,7 +15,7 @@ const MainNav = () => {
             alt="Capacademy Logo"
             className="h-10 w-10 object-contain"
           />
-          <span className="text-2xl font-bold text-foreground">CapyCademy</span>
+          <span className="text-2xl font-bold text-foreground">CapaCademy</span>
         </div>
 
         {/* Mobile menu button */}
@@ -47,7 +47,7 @@ const MainNav = () => {
             FAQ
           </a>
           <Link to="/auth/login">
-            <Button className="bg-primary text-white hover:bg-primary/80">
+            <Button className="px-8 py-5 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-md">
               Log In
             </Button>
           </Link>
