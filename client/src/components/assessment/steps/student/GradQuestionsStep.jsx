@@ -27,21 +27,21 @@ export default function GradQuestionsStep({ formData, setFormData }) {
         <div className="space-y-6 mt-8 pb-8">
           {/* Field of Study */}
           <div>
-            <label className="block text-lg mb-2">
+            <label className="block text-lg mb-2 text-white">
               What is your field of study?
             </label>
             <input
               type="text"
               value={formData.fieldStudy}
               onChange={(e) => handleInputChange("fieldStudy", e.target.value)}
-              className="w-full p-3 rounded-lg border-2 border-gray-200"
+              className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
               placeholder="Enter your field of study"
             />
           </div>
 
           {/* Research Focus */}
           <div>
-            <label className="block text-lg mb-2">
+            <label className="block text-lg mb-2 text-white">
               What is your research focus?
             </label>
             <input
@@ -50,14 +50,14 @@ export default function GradQuestionsStep({ formData, setFormData }) {
               onChange={(e) =>
                 handleInputChange("researchFocus", e.target.value)
               }
-              className="w-full p-3 rounded-lg border-2 border-gray-200"
+              className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
               placeholder="Enter your research focus"
             />
           </div>
 
           {/* Industry Experience */}
           <div>
-            <label className="block text-lg mb-2">
+            <label className="block text-lg mb-2 text-white">
               Do you have industry experience?
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -70,14 +70,14 @@ export default function GradQuestionsStep({ formData, setFormData }) {
                   onClick={() =>
                     handleInputChange("industryExperience", option.value)
                   }
-                  className={`p-3 rounded-lg border-2 text-center transition-all duration-200
+                  className={`p-3 rounded-lg transition-all duration-200 bg-white
                     ${
                       formData.industryExperience === option.value
-                        ? "border-primary bg-primary/10"
-                        : "border-gray-200 hover:border-primary/50"
+                        ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                        : "border-black border-2 hover:border-black hover:border-3"
                     }`}
                 >
-                  {option.label}
+                  <span className="text-black">{option.label}</span>
                 </button>
               ))}
             </div>
@@ -85,20 +85,20 @@ export default function GradQuestionsStep({ formData, setFormData }) {
 
           {/* Career Plans */}
           <div>
-            <label className="block text-lg mb-2">
+            <label className="block text-lg mb-2 text-white">
               What are your career plans after graduation?
             </label>
             <textarea
               value={formData.careerPlans}
               onChange={(e) => handleInputChange("careerPlans", e.target.value)}
-              className="w-full p-3 rounded-lg border-2 border-gray-200 h-32"
+              className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
               placeholder="Describe your career plans"
             />
           </div>
 
           {/* Technical Expertise */}
           <div>
-            <label className="block text-lg mb-2">
+            <label className="block text-lg mb-2 text-white">
               Rate your technical expertise level
             </label>
             <div className="flex items-center space-x-2">
@@ -112,13 +112,15 @@ export default function GradQuestionsStep({ formData, setFormData }) {
                 }
                 className="w-full"
               />
-              <span className="text-lg">{formData.technicalExpertise}</span>
+              <span className="text-lg text-white">
+                {formData.technicalExpertise}
+              </span>
             </div>
           </div>
 
           {/* Research Interests */}
           <div>
-            <label className="block text-lg mb-2">
+            <label className="block text-lg mb-2 text-white">
               What are your research interests?
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -134,14 +136,14 @@ export default function GradQuestionsStep({ formData, setFormData }) {
                 <button
                   key={interest}
                   onClick={() => handleInterestChange(interest)}
-                  className={`p-3 rounded-lg border-2 text-left transition-all duration-200
+                  className={`p-3 rounded-lg transition-all duration-200 bg-white
                     ${
                       formData.researchInterests.includes(interest)
-                        ? "border-primary bg-primary/10"
-                        : "border-gray-200 hover:border-primary/50"
+                        ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                        : "border-black border-2 hover:border-black hover:border-3"
                     }`}
                 >
-                  {interest}
+                  <span className="text-black">{interest}</span>
                 </button>
               ))}
             </div>

@@ -30,8 +30,7 @@ export default function LanguageStep({ language, onLanguageChange, onNext }) {
         <div className="flex justify-center">
           <button
             onClick={onNext}
-            className="px-25 py-2 bg-amber-500 border-2 drop-shadow-xl border-black text-black rounded-2xl hover:bg-amber-900 
-            transition-colors w-full sm:w-32 text-sm sm:text-base flex items-center justify-center"
+            className="mt-6 px-35 py-3 bg-brown hover:bg-dark-brown text-white rounded-md transition-colors border-2 border-black"
           >
             Next
           </button>

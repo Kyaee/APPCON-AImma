@@ -8,7 +8,6 @@ export default function MidQuestionsStep({ formData, setFormData }) {
       [field]: value,
     };
     setFormData(newFormData);
-    localStorage.setItem("midLevelSavepoint", JSON.stringify(newFormData));
   };
 
   const handleSkillsChange = (skill) => {
@@ -21,7 +20,6 @@ export default function MidQuestionsStep({ formData, setFormData }) {
       skillsUsed: newSkills,
     };
     setFormData(newFormData);
-    localStorage.setItem("midLevelSavepoint", JSON.stringify(newFormData));
   };
 
   return (
@@ -29,21 +27,21 @@ export default function MidQuestionsStep({ formData, setFormData }) {
       <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
         {/* Current Role */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             What is your current role?
           </label>
           <input
             type="text"
             value={formData.currentRole}
             onChange={(e) => handleInputChange("currentRole", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-gray-200"
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
             placeholder="Enter your current role"
           />
         </div>
 
         {/* Company Industry */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             What industry is your company in?
           </label>
           <select
@@ -51,7 +49,7 @@ export default function MidQuestionsStep({ formData, setFormData }) {
             onChange={(e) =>
               handleInputChange("companyIndustry", e.target.value)
             }
-            className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
           >
             <option value="" disabled>
               Select industry
@@ -74,7 +72,7 @@ export default function MidQuestionsStep({ formData, setFormData }) {
 
         {/* Skills Used */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             What skills have you used in your current role?
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -92,14 +90,14 @@ export default function MidQuestionsStep({ formData, setFormData }) {
               <button
                 key={skill}
                 onClick={() => handleSkillsChange(skill)}
-                className={`p-3 rounded-lg border-2 text-left transition-all duration-200
+                className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
                     formData.skillsUsed.includes(skill)
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-200 hover:border-primary/50"
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      : "border-black border-2 hover:border-black hover:border-3"
                   }`}
               >
-                {skill}
+                <span className="text-black">{skill}</span>
               </button>
             ))}
           </div>

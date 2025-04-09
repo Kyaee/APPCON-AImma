@@ -12,7 +12,7 @@ export default function TextInput({
   return (
     <div>
       {label && (
-        <label className="block text-lg mb-2">
+        <label className="block text-lg mb-2 text-white">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -21,7 +21,7 @@ export default function TextInput({
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full p-3 rounded-lg border-2 border-gray-200 h-32"
+          className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
           placeholder={placeholder}
           rows={rows}
         />
@@ -30,7 +30,7 @@ export default function TextInput({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full p-3 rounded-lg border-2 border-gray-200"
+          className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
           placeholder={placeholder}
         />
       )}

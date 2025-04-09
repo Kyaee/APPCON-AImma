@@ -3,12 +3,13 @@ import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function EntryQuestionsStep({ formData, setFormData }) {
   const handleInputChange = (field, value) => {
+    // Only update React state, don't write to localStorage here
     const newFormData = {
       ...formData,
       [field]: value,
     };
     setFormData(newFormData);
-    localStorage.setItem("entryLevelSavepoint", JSON.stringify(newFormData));
+    // Remove the localStorage.setItem call here
   };
 
   const handleSkillsChange = (skill) => {
@@ -21,7 +22,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
       skillsUsed: newSkills,
     };
     setFormData(newFormData);
-    localStorage.setItem("entryLevelSavepoint", JSON.stringify(newFormData));
+    // Remove the localStorage.setItem call here
   };
 
   return (

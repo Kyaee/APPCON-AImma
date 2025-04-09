@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 function Background() {
   return (
@@ -19,42 +20,47 @@ function Background() {
   );
 }
 
-function VideoBackground() {
-  // Used canvas instead of video element to avoid IDM Detection
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const video = document.createElement("video");
-
-    video.autoplay = true;
-    video.loop = true;
-    video.muted = true;
-    video.src = "/background/dark-gradient-bg.mp4";
-    video.style.display = "none";
-    document.body.appendChild(video);
-
-    video.onplay = () => {
-      const renderFrame = () => {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        requestAnimationFrame(renderFrame);
-      };
-      requestAnimationFrame(renderFrame);
-    };
-
-    return () => {
-      video.pause();
-      document.body.removeChild(video);
-    };
-  }, []);
-
+// Static gradient background for performance-sensitive pages
+function StaticBackground() {
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+    <div
+      className="absolute top-0 left-0 w-full h-full -z-10"
+      style={{
+        background:
+          "linear-gradient(135deg, #1a1a1e 0%, #242429 50%, #1a1a1e 100%)",
+      }}
     />
   );
 }
 
-export { Background, VideoBackground };
+// Direct video element approach - simpler and more performant
+function VideoBackground() {
+  const location = useLocation();
+  const [fallbackActive, setFallbackActive] = useState(false);
+
+  const handleVideoError = () => {
+    console.log("Video failed to load, using fallback");
+    setFallbackActive(true);
+  };
+
+  if (fallbackActive) {
+    return <StaticBackground />;
+  }
+
+  return (
+    <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        onError={handleVideoError}
+        className="absolute w-full h-full object-cover"
+      >
+        <source src="/background/dark-gradient-bg.mp4" type="video/mp4" />
+      </video>
+    </div>
+  );
+}
+
+export { Background, VideoBackground, StaticBackground };

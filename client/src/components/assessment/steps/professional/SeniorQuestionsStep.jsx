@@ -8,7 +8,6 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
       [field]: value,
     };
     setFormData(newFormData);
-    localStorage.setItem("seniorLevelSavepoint", JSON.stringify(newFormData));
   };
 
   const handleSkillsChange = (skill) => {
@@ -21,7 +20,6 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
       skillsUsed: newSkills,
     };
     setFormData(newFormData);
-    localStorage.setItem("seniorLevelSavepoint", JSON.stringify(newFormData));
   };
 
   return (

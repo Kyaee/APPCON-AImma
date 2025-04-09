@@ -11,7 +11,7 @@ export default function SelectInput({
   return (
     <div>
       {label && (
-        <label className="block text-lg mb-2">
+        <label className="block text-lg mb-2 text-white">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -19,7 +19,7 @@ export default function SelectInput({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
+        className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
       >
         <option value="" disabled>
           {placeholder}

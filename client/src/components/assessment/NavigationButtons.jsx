@@ -7,14 +7,17 @@ const NavigationButtons = ({ prevPage, nextPage, buttonPosition }) => {
   return (
     <div
       className={`fixed container mx-auto my-auto items-center flex 
-      ${buttonPosition === 'center' ? 'justify-center gap-180' : 'justify-between px-32'} 
+      ${
+        buttonPosition === "center"
+          ? "justify-center gap-180"
+          : "justify-between px-32"
+      } 
       place-self-center bottom-20 p-2`}
     >
       {prevPage && (
         <button
           onClick={prevPage}
-          className="px-25 py-2 bg-amber-500 border-2 drop-shadow-xl border-black text-black rounded-2xl hover:bg-amber-900 transition-colors
-           my-auto w-32 text-center flex items-center justify-center"
+          className="mt-6 px-20 py-3 bg-brown hover:bg-dark-brown text-white rounded-md transition-colors border-2 border-black"
         >
           Back
         </button>
@@ -22,8 +25,7 @@ const NavigationButtons = ({ prevPage, nextPage, buttonPosition }) => {
       {nextPage && (
         <button
           onClick={nextPage}
-          className="px-25 py-2 bg-amber-500 border-2 drop-shadow-xl border-black text-black rounded-2xl hover:bg-amber-900 
-          transition-colors my-auto w-32 text-center flex items-center justify-center"
+          className="mt-6 px-20 py-3 bg-brown hover:bg-dark-brown text-white rounded-md transition-colors border-2 border-black"
         >
           Next
         </button>

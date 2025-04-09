@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function TechInterestStep({
-  technicalInterest,
-  technicalAnswers,
-  onInterestSelect,
-  onAnswerChange,
+  technicalInterest, // Was expecting selectedInterest from parent
+  technicalAnswers, // This is fine
+  onInterestSelect, // This is fine
+  onAnswerChange, // This is fine
 }) {
-  // Track multiple selections
+  // Instead of hiding/showing, we'll always show the options
+  // and conditionally show questions based on selection
   const [selectedInterests, setSelectedInterests] = useState([]);
 
-  // Initialize from existing selection if any
-  useEffect(() => {
-    if (technicalInterest) {
+  // Set initial selected interest from props
+  React.useEffect(() => {
+    if (
+      technicalInterest &&
+      !selectedInterests.some((i) => i.id === technicalInterest.id)
+    ) {
       setSelectedInterests([technicalInterest]);
     }
-  }, []);
+  }, [technicalInterest]);
 
   const handleInterestSelect = (option) => {
     // Check if option is already selected
@@ -34,8 +38,7 @@ export default function TechInterestStep({
 
     setSelectedInterests(updatedInterests);
 
-    // If we have selections, pass the first one to parent component
-    // (to maintain compatibility with existing code that expects a single selection)
+    // Always call parent's onInterestSelect with the first selection
     if (updatedInterests.length > 0) {
       onInterestSelect(updatedInterests[0]);
     } else {
@@ -79,14 +82,14 @@ export default function TechInterestStep({
                           : [...currentAnswers, option];
                         onAnswerChange(question.id, newAnswers);
                       }}
-                      className={`p-3 rounded-lg border-2 transition-all duration-200
+                      className={`p-3 rounded-lg transition-all duration-200 bg-white
                         ${
                           (technicalAnswers[question.id] || []).includes(option)
-                            ? "border-primary bg-primary/10"
-                            : "border-gray-200 hover:border-primary/50"
+                            ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                            : "border-black border-2 hover:border-black hover:border-3"
                         }`}
                     >
-                      {option}
+                      <span className="text-black">{option}</span>
                     </button>
                   ))}
                 </div>
@@ -94,7 +97,7 @@ export default function TechInterestStep({
                 <textarea
                   value={technicalAnswers[question.id] || ""}
                   onChange={(e) => onAnswerChange(question.id, e.target.value)}
-                  className="w-full p-3 rounded-lg bg-white/10 border-2 border-white text-white"
+                  className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
                   rows={4}
                   placeholder="Enter your answer..."
                 />
@@ -125,30 +128,34 @@ export default function TechInterestStep({
               <button
                 key={option.id}
                 onClick={() => handleInterestSelect(option)}
-                className={`p-6 rounded-lg border-2 transition-all duration-200 cursor-pointer
+                className={`p-6 rounded-lg transition-all duration-200 cursor-pointer bg-white
                   ${
                     isSelected
-                      ? "border-amber-500 bg-amber-500/20 ring-2 ring-amber-500"
-                      : "border-gray-200 hover:border-amber-300"
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      : "border-black border-2 hover:border-black hover:border-3"
                   }`}
               >
                 <div className="flex justify-center space-x-4">
                   <span className="text-4xl">{option.icon}</span>
                 </div>
                 <div>
-                  <h3 className="mt-5 font-medium text-l">{option.label}</h3>
+                  <h3 className="mt-5 font-medium text-l text-black">
+                    {option.label}
+                  </h3>
                 </div>
                 {/* Visual indicator for selected state */}
                 {isSelected && (
-                  <div className="mt-2 text-amber-500">✓ Selected</div>
+                  <div className="mt-2 text-[#3F6CFF] font-bold">
+                    ✓ Selected
+                  </div>
                 )}
               </button>
             );
           })}
         </div>
 
-        {/* Show questions for primary selected interest (first in array) */}
-        {selectedInterests.length > 0 && renderQuestions()}
+        {/* Show questions for primary selected interest */}
+        {technicalInterest && renderQuestions()}
       </div>
     </AssessmentStep>
   );

@@ -23,11 +23,13 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
       <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
         {/* Course Selection */}
         <div>
-          <label className="block text-lg mb-2">What's your course?</label>
+          <label className="block text-lg mb-2 text-white">
+            What's your course?
+          </label>
           <select
             value={formData.course}
             onChange={(e) => handleInputChange("course", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
+            className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
           >
             <option value="" disabled>
               Select course
@@ -47,11 +49,11 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
 
         {/* Year Level */}
         <div>
-          <label className="block text-lg mb-2">Year Level</label>
+          <label className="block text-lg mb-2 text-white">Year Level</label>
           <select
             value={formData.yearLevel}
             onChange={(e) => handleInputChange("yearLevel", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
+            className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
           >
             <option value="" disabled>
               Select year level
@@ -68,7 +70,7 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
 
         {/* Technical Skills */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             What technical skills do you have?
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -83,14 +85,14 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
               <button
                 key={skill}
                 onClick={() => handleSkillChange(skill)}
-                className={`p-3 rounded-lg border-2 text-left transition-all duration-200
+                className={`p-3 rounded-lg transition-all duration-200 bg-white
                   ${
                     formData.technicalSkills.includes(skill)
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-200 hover:border-primary/50"
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      : "border-black border-2 hover:border-black hover:border-3"
                   }`}
               >
-                {skill}
+                <span className="text-black">{skill}</span>
               </button>
             ))}
           </div>
@@ -98,13 +100,13 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
 
         {/* Career Path */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             What's your intended career path?
           </label>
           <textarea
             value={formData.careerPath}
             onChange={(e) => handleInputChange("careerPath", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-gray-200 h-32"
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
             placeholder="Describe your career goals"
           />
         </div>

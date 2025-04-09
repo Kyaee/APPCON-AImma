@@ -468,6 +468,11 @@ export default function UserAssessment() {
           entryFormData.companyIndustry &&
           entryFormData.skillsUsed.length > 0
         ) {
+          // Save to localStorage only when moving to the next step
+          localStorage.setItem(
+            "entryLevelSavepoint",
+            JSON.stringify(entryFormData)
+          );
           localStorage.setItem(
             "entryLevelResponses",
             JSON.stringify(entryFormData)
@@ -532,20 +537,20 @@ export default function UserAssessment() {
   // Determine the progress based on currentStep
   const getProgress = () => {
     const stepProgressMap = {
-      language: 10,
-      userType: 20,
-      educationLevel: 30,
-      experience: 30,
-      previousExperience: 30,
-      careerTransition: 30,
-      hsQuestions: 40,
-      collegeQuestions: 40,
-      gradQuestions: 40,
-      entryQuestions: 40,
-      midQuestions: 40,
-      seniorQuestions: 40,
-      dailyGoal: 60,
-      techInterest: 80,
+      language: 0,
+      userType: 10,
+      educationLevel: 20,
+      experience: 20,
+      previousExperience: 20,
+      careerTransition: 20,
+      hsQuestions: 35,
+      collegeQuestions: 35,
+      gradQuestions: 35,
+      entryQuestions: 35,
+      midQuestions: 35,
+      seniorQuestions: 35,
+      dailyGoal: 50,
+      techInterest: 75,
       complete: 100,
     };
 

@@ -11,11 +11,11 @@ export default function OptionCard({
   return (
     <button
       onClick={() => onClick(option)}
-      className={`${padding} rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
+      className={`${padding} rounded-lg transition-all duration-200 cursor-pointer bg-white
         ${
           isSelected
-            ? "border-primary bg-primary/10"
-            : "border-gray-200 hover:border-primary/50"
+            ? "border-[#3F6CFF] border-3 custom-shadow-75"
+            : "border-black border-2 hover:border-black hover:border-3"
         }`}
     >
       {option.icon && (
@@ -32,7 +32,7 @@ export default function OptionCard({
         </div>
       )}
       <div>
-        <h3 className="mt-3 sm:mt-5 font-medium text-base sm:text-lg">
+        <h3 className="mt-3 sm:mt-5 font-medium text-base sm:text-lg text-black">
           {option.label}
         </h3>
       </div>

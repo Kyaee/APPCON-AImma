@@ -7,6 +7,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
       ...prev,
       [field]: value,
     }));
+    // No localStorage writes here
   };
 
   const handleInterestChange = (area) => {
@@ -16,6 +17,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
         ? prev.interestAreas.filter((a) => a !== area)
         : [...prev.interestAreas, area],
     }));
+    // No localStorage writes here
   };
 
   return (
@@ -23,13 +25,13 @@ export default function HSQuestionsStep({ formData, setFormData }) {
       <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
         {/* Strand Selection */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             Which strand are you currently in?
           </label>
           <select
             value={formData.strand}
             onChange={(e) => handleInputChange("strand", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-gray-200 text-black bg-white"
+            className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
           >
             <option value="" disabled>
               Select strand
@@ -44,7 +46,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
 
         {/* College Plans */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             Are you planning to go to college?
           </label>
           <div className="grid grid-cols-2 gap-3">
@@ -57,14 +59,14 @@ export default function HSQuestionsStep({ formData, setFormData }) {
                 onClick={() =>
                   handleInputChange("planningCollege", option.value)
                 }
-                className={`p-3 rounded-lg border-2 text-center transition-all duration-200
+                className={`p-3 rounded-lg text-center transition-all duration-200 bg-white
                   ${
                     formData.planningCollege === option.value
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-200 hover:border-primary/50"
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      : "border-black border-2 hover:border-black hover:border-3"
                   }`}
               >
-                {option.label}
+                <span className="text-black">{option.label}</span>
               </button>
             ))}
           </div>
@@ -72,7 +74,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
 
         {/* Interest Areas */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             What are your areas of interest in technology?
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -86,14 +88,14 @@ export default function HSQuestionsStep({ formData, setFormData }) {
               <button
                 key={area}
                 onClick={() => handleInterestChange(area)}
-                className={`p-3 rounded-lg border-2 text-left transition-all duration-200
+                className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
                     formData.interestAreas.includes(area)
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-200 hover:border-primary/50"
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      : "border-black border-2 hover:border-black hover:border-3"
                   }`}
               >
-                {area}
+                <span className="text-black">{area}</span>
               </button>
             ))}
           </div>
@@ -101,13 +103,13 @@ export default function HSQuestionsStep({ formData, setFormData }) {
 
         {/* Career Goals */}
         <div>
-          <label className="block text-lg mb-2">
+          <label className="block text-lg mb-2 text-white">
             What are your career goals?
           </label>
           <textarea
             value={formData.careerGoals}
             onChange={(e) => handleInputChange("careerGoals", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-gray-200 h-32"
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
             placeholder="Share your career aspirations"
           />
         </div>

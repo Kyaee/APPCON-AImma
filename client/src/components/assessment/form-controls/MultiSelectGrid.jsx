@@ -24,14 +24,16 @@ export default function MultiSelectGrid({
         <button
           key={typeof option === "object" ? option.value || option.id : option}
           onClick={() => handleToggleOption(option)}
-          className={`p-3 rounded-lg border-2 text-left transition-all duration-200
+          className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
             ${
               selected.includes(option)
-                ? "border-primary bg-primary/10"
-                : "border-gray-200 hover:border-primary/50"
+                ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                : "border-black border-2 hover:border-black hover:border-3"
             }`}
         >
-          {typeof option === "object" ? option.label : option}
+          <span className="text-black">
+            {typeof option === "object" ? option.label : option}
+          </span>
         </button>
       ))}
     </div>
