@@ -79,9 +79,9 @@ export const postPrompt2 = async (
   } catch (error) {
     console.error("Error:", error);
   } 
-  // finally {
-  //   window.location.href = `/lesson/${id}`;
-  // }
+  finally {
+    window.location.href = `/lesson/${id}`;
+  }
 };
 
 /**************************************
