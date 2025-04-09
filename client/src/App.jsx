@@ -46,9 +46,9 @@ import LevelRewardsTest from "./routes/level-rewards-test";
 
 function App() {
   const queryClient = new QueryClient();
-  const { session } = useAuth();
+  // const { session } = useAuth();
   const [isAssessed, setAssessed] = useState(true);
-  // const [isUserLoggedin, setUserLoggedin] = useState(true);
+  const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
@@ -61,7 +61,7 @@ function App() {
               <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="*" element={<NotFound />} />
 
-              {!session ? (
+              {!isUserLoggedin ? (
                 // IF USER IS NOT LOGGED-IN
                 <>
                   <Route path="/auth/login" element={<LoginPage />} />
