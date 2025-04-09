@@ -1,5 +1,4 @@
 // THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
-
 import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
@@ -19,7 +18,7 @@ import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
 import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
-import IntroShowcase from "./routes/showcase";
+import IntroShowcase from "./routes/Showcase";
 import CombinedAssessment from "./routes/user-assessment/combined-assessment";
 import DailyGoal from "./routes/user-assessment/daily-goal";
 import EntryQuestions from "./routes/user-assessment/professional-types/entryQuestions";
@@ -35,23 +34,22 @@ import Proficiency from "./routes/user-assessment/proficiency";
 import Questions from "./routes/user-assessment/questions";
 import Results from "./routes/user-assessment/results";
 // GENERAL PAGES
-import Dashboard from "./routes/dashboard";
-import Profile from "./routes/profile";
-import Shop from "./routes/shop";
-import Lesson from "./routes/lesson";
-import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
-import JobOpportunities from "./routes/job-opportunities";
+import Dashboard from "./routes/Dashboard";
+import Profile from "./routes/Profile";
+import Shop from "./routes/Shop";
+import Lesson from "./routes/Lesson";
+import LessonAssessment from "./routes/LessonAssessment";
+import JobOpportunities from "./routes/JobOpportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
-import LevelRewardsTest from "./routes/level-rewards-test";
-import CapySkin from "./routes/profile/capyskin";
+import Testing from "./routes/Testing/TestingPage";
+import LevelRewardsTest from "./routes/Testing/LevelRewards";
 // import ApiTEST from "./routes/api-test";
-import Testing from "./routes/testing";
 
 function App() {
   const queryClient = new QueryClient();
-  const { session } = useAuth(); // false;
-  const [isAssessed, setAssessed] = useState(false);
+  const { session } = useAuth();
+  const [isAssessed, setAssessed] = useState(true);
   const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
@@ -168,7 +166,6 @@ function App() {
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED
                 <>
-                  {/* To access dynamic routes like /:id/profile, you can access the page by going to /1/profile  or /2/dashboard or /3/shop. */}
                   <Route element={<MainLayout />}>
                     <Route path="/dashboard/:id" element={<Dashboard />} />
                     <Route path="/profile/:id" element={<Profile />} />
@@ -178,6 +175,7 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
+
                   <Route element={<LessonLayout />}>
                     <Route path="/lesson/:id" element={<Lesson />} />
                     <Route

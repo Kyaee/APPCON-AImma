@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils";
 
-export function CircleProgressBar({className, value, ...props}) {
+export function CircleProgressBar({ className, value, ...props }) {
   return (
     <div className={cn("relative mr-5", className)} {...props}>
       <svg

@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
-import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
-import { assessmentFlow } from '@/lib/assessment-flow';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AssessmentLayout from "@/components/assessment/AssessmentLayout";
+import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function Complete() {
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState("");
   const navigate = useNavigate();
   const { complete } = assessmentFlow;
 
   const handleNext = () => {
     // Navigate to dashboard or wherever you want after completion
-    navigate('/dashboard/:id');
+    navigate("/dashboard/:id");
   };
 
   const handleBack = () => {
@@ -36,11 +36,11 @@ export default function Complete() {
               🎉 Congratulations! 🎉
             </h2>
             <p className="text-lg text-white/90 mb-8">
-              Thank you for completing the assessment! Your personalized 
+              Thank you for completing the assessment! Your personalized
               learning path is being generated.
             </p>
           </div>
-          
+
           <div className="space-y-4">
             <label className="block text-lg font-medium text-white">
               {complete.questions[0].label}
@@ -57,4 +57,4 @@ export default function Complete() {
       </AssessmentStep>
     </AssessmentLayout>
   );
-} 
+}

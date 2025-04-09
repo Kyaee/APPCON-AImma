@@ -1,15 +1,14 @@
-'use client';
-import { useState } from 'react';
+"use client";
+import { useState } from "react";
 
-import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
-import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
-
+import AssessmentLayout from "@/components/assessment/AssessmentLayout";
+import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function AppGoals() {
-  const [goalText, setGoalText] = useState('');
-  
+  const [goalText, setGoalText] = useState("");
+
   return (
-    <AssessmentLayout 
+    <AssessmentLayout
       title="Skill Level Assessment"
       progress={65}
       prevPage="/assessment/proficiency"

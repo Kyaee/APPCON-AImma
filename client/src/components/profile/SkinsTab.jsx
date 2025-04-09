@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import CapySkin from './capyskin';
-import BadgesProfile from './badges-profile';
+import CapySkin from "./CapySkins";
+import BadgesProfile from "./BadgesProfile";
 
 export default function SkinBadgesTabs() {
   return (
@@ -15,7 +15,7 @@ export default function SkinBadgesTabs() {
           Badges
         </TabsTrigger>
       </TabsList>
-      
+
       <TabsContent value="skins">
         <Card className="mt-2 border-2 border-foreground">
           <CardContent className="p-4">
@@ -23,14 +23,14 @@ export default function SkinBadgesTabs() {
           </CardContent>
         </Card>
       </TabsContent>
-      
+
       <TabsContent value="badges">
         <Card className="mt-2 border-2 border-foreground">
           <CardContent className="p-4">
-            <BadgesProfile 
+            <BadgesProfile
               badges={{
                 name: "Example badge here",
-                description: "You put the description here"
+                description: "You put the description here",
               }}
             />
           </CardContent>

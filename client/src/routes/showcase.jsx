@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { VideoBackground } from "@/components/layout/background";
+import { VideoBackground } from "@/components/layout/Background";
 import brandIcon from "@/assets/general/brandicon.png";
 
 const IntroSlides = [
@@ -18,7 +18,7 @@ const IntroSlides = [
     title: "Personalized Learning Paths",
     subtitle:
       "AI tailors courses based on your assessment results, ensuring you learn exactly what you need.",
-    image: "/learning.png",
+    image: "/showcase-features/learning.png",
     button: "Next",
   },
   {
@@ -26,7 +26,7 @@ const IntroSlides = [
     title: "Interactive Quizzes",
     subtitle:
       "Test your knowledge and track your progress with interactive quizzes.",
-    image: "/quiz.png",
+    image: "/showcase-features/quiz.png",
     button: "Next",
   },
   {
@@ -34,7 +34,7 @@ const IntroSlides = [
     title: "Gamified Experience",
     subtitle:
       "Earn badges, level up, and compete on leaderboards to stay motivated.",
-    image: "/game.png",
+    image: "/showcase-features/gamification.png",
     button: "Next",
   },
   {
@@ -42,7 +42,7 @@ const IntroSlides = [
     title: "Opportunities Hub",
     subtitle:
       "Access exclusive job offers, internships, and networking opportunities.",
-    image: "/opportunity.png",
+    image: "/showcase-features/opportunity.png",
     button: "Next",
   },
   {
@@ -50,7 +50,7 @@ const IntroSlides = [
     title: "Real-Time Analytics",
     subtitle:
       "Monitor your skill development with detailed analytics and insights.",
-    image: "/analytics.png",
+    image: "/showcase-features/analytics.png",
     button: "Next",
   },
   {

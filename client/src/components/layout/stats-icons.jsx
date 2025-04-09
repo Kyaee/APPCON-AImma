@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export function GemIcon({className, ...props}) {
+export function GemIcon({ className, ...props }) {
   return (
     <div className={cn("w-6 h-6", className)} {...props}>
       <svg
@@ -15,7 +15,7 @@ export function GemIcon({className, ...props}) {
         <path
           d="M7.49996 3.25H20.5L24.8333 9.75L14 23.8333L3.16663 9.75L7.49996 3.25Z"
           stroke="#020617"
-          strokeWidth="0.8"  
+          strokeWidth="0.8"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -62,7 +62,7 @@ export function GemIcon({className, ...props}) {
   );
 }
 
-export function HeartIcon({className, ...props}) {
+export function HeartIcon({ className, ...props }) {
   return (
     <div className={cn("w-6 h-6", className)} {...props}>
       <svg

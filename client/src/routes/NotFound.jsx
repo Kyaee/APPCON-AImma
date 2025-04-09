@@ -1,4 +1,4 @@
-import { VideoBackground } from "@/components/layout/background";
+import { VideoBackground } from "@/components/layout/Background";
 import detectiveCapybara from "@/assets/user-assessment/DetectiveCapybara.png";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -10,7 +10,7 @@ export default function NotFound() {
     // Simulate loading time for all elements
     const timer = setTimeout(() => {
       setContentLoaded(true);
-    }, 1000);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);

@@ -1,5 +1,5 @@
 // import { GalleryVerticalEnd } from "lucide-react";
-import { VideoBackground } from "@/components/layout/background";
+import { VideoBackground } from "@/components/layout/Background";
 import { RegisterForm } from "@/components/features/register-form";
 import brandIcon from "@/assets/general/brandicon.png";
 

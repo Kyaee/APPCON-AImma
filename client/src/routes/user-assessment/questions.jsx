@@ -1,23 +1,23 @@
-'use client';
-import { useState } from 'react';
-import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
+"use client";
+import { useState } from "react";
+import AssessmentLayout from "@/components/assessment/AssessmentLayout";
 
 export default function AssessmentQuestions() {
   const [answers, setAnswers] = useState({
-    question1: '',
-    question2: '',
-    question3: ''
+    question1: "",
+    question2: "",
+    question3: "",
   });
-  
+
   const handleChange = (question, value) => {
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
-      [question]: value
+      [question]: value,
     }));
   };
-  
+
   return (
-    <AssessmentLayout 
+    <AssessmentLayout
       title="Assessment"
       progress={90}
       prevPage="/assessment/daily-goal"
@@ -29,29 +29,29 @@ export default function AssessmentQuestions() {
           <input
             type="text"
             value={answers.question1}
-            onChange={(e) => handleChange('question1', e.target.value)}
+            onChange={(e) => handleChange("question1", e.target.value)}
             placeholder="Your Answer"
             className="w-full p-3 rounded-md text-gray-800"
           />
         </div>
-        
+
         <div className="mb-6">
           <label className="block mb-2">Question 2</label>
           <input
             type="text"
             value={answers.question2}
-            onChange={(e) => handleChange('question2', e.target.value)}
+            onChange={(e) => handleChange("question2", e.target.value)}
             placeholder="Your Answer"
             className="w-full p-3 rounded-md text-gray-800"
           />
         </div>
-        
+
         <div className="mb-6">
           <label className="block mb-2">Question 3</label>
           <input
             type="text"
             value={answers.question3}
-            onChange={(e) => handleChange('question3', e.target.value)}
+            onChange={(e) => handleChange("question3", e.target.value)}
             placeholder="Your Answer"
             className="w-full p-3 rounded-md text-gray-800"
           />

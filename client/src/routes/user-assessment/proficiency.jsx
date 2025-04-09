@@ -1,16 +1,16 @@
-'use client';
-import { useState } from 'react';
-import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
-import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
+"use client";
+import { useState } from "react";
+import AssessmentLayout from "@/components/assessment/AssessmentLayout";
+import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function ProficiencySkills() {
   const [skills, setSkills] = useState([]);
-  
+
   // This would be replaced with actual skills assessment UI
   // Maybe skill ratings, checkboxes, or interactive elements
-  
+
   return (
-    <AssessmentLayout 
+    <AssessmentLayout
       title="Skill Level Assessment"
       progress={50}
       prevPage="/assessment"

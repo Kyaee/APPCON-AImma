@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import AssessmentLayout from '@/components/layout/assessment/AssessmentLayout';
-import AssessmentStep from '@/components/layout/assessment/AssessmentStep';
-import { assessmentFlow } from '@/lib/assessment-flow';
-import {useAssessmentStore} from '@/store/useAssessmentStore';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AssessmentLayout from "@/components/assessment/AssessmentLayout";
+import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
+import { useAssessmentStore } from "@/store/useAssessmentStore";
 
 export default function TechInterest() {
   const [showQuestions, setShowQuestions] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
   const navigate = useNavigate();
   const { techInterest } = assessmentFlow;
-  const { 
-    technicalInterest, 
-    technicalAnswers, 
-    setTechnicalInterest, 
-    setTechnicalAnswers 
+  const {
+    technicalInterest,
+    technicalAnswers,
+    setTechnicalInterest,
+    setTechnicalAnswers,
   } = useAssessmentStore();
 
   const handleInterestSelect = (option) => {
@@ -41,11 +41,11 @@ export default function TechInterest() {
       }
     } else {
       // Log the selected technical interest and answers
-      console.log('Selected Technical Interest:', technicalInterest);
-      console.log('Technical Answers:', technicalAnswers);    
-      
-      navigate('/assessment/complete', {
-        state: { answers: technicalAnswers }
+      console.log("Selected Technical Interest:", technicalInterest);
+      console.log("Technical Answers:", technicalAnswers);
+
+      navigate("/assessment/complete", {
+        state: { answers: technicalAnswers },
       });
     }
   };
@@ -53,7 +53,7 @@ export default function TechInterest() {
   const handleAnswerChange = (questionId, value) => {
     setTechnicalAnswers({
       ...technicalAnswers,
-      [questionId]: value
+      [questionId]: value,
     });
   };
 
@@ -61,9 +61,10 @@ export default function TechInterest() {
     if (!technicalInterest) return null;
 
     // For "Other" interest type, we use otherInterests questions
-    const questionSet = technicalInterest.id === 'other'
-      ? assessmentFlow.otherInterests
-      : assessmentFlow[technicalInterest.id + 'Questions'];
+    const questionSet =
+      technicalInterest.id === "other"
+        ? assessmentFlow.otherInterests
+        : assessmentFlow[technicalInterest.id + "Questions"];
 
     if (!questionSet) return null;
 
@@ -75,32 +76,36 @@ export default function TechInterest() {
               <label className="block text-lg font-medium text-white">
                 {question.label}
               </label>
-              {question.type === 'multiselect' ? (
+              {question.type === "multiselect" ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {question.options.map((option) => (
                     <button
                       key={option}
                       onClick={() => {
-                        const currentAnswers = technicalAnswers[question.id] || [];
+                        const currentAnswers =
+                          technicalAnswers[question.id] || [];
                         const newAnswers = currentAnswers.includes(option)
-                          ? currentAnswers.filter(a => a !== option)
+                          ? currentAnswers.filter((a) => a !== option)
                           : [...currentAnswers, option];
                         handleAnswerChange(question.id, newAnswers);
                       }}
                       className={`p-3 rounded-lg border-2 transition-all duration-200
-                        ${(technicalAnswers[question.id] || []).includes(option)
-                          ? 'border-primary bg-primary/10' 
-                          : 'border-gray-200 hover:border-primary/50'
+                        ${
+                          (technicalAnswers[question.id] || []).includes(option)
+                            ? "border-primary bg-primary/10"
+                            : "border-gray-200 hover:border-primary/50"
                         }`}
                     >
                       {option}
                     </button>
                   ))}
                 </div>
-              ) : question.type === 'text' ? (
+              ) : question.type === "text" ? (
                 <textarea
-                  value={technicalAnswers[question.id] || ''}
-                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  value={technicalAnswers[question.id] || ""}
+                  onChange={(e) =>
+                    handleAnswerChange(question.id, e.target.value)
+                  }
                   className="w-full p-3 rounded-lg bg-white/10 border-2 border-white text-white"
                   rows={4}
                   placeholder="Enter your answer..."
@@ -115,7 +120,11 @@ export default function TechInterest() {
 
   return (
     <AssessmentLayout
-      title={showQuestions ? `${technicalInterest?.label} Assessment` : "Technical Interests"}
+      title={
+        showQuestions
+          ? `${technicalInterest?.label} Assessment`
+          : "Technical Interests"
+      }
       progress={70}
       prevPage={handleBack}
       nextPage={handleNext}
@@ -131,9 +140,10 @@ export default function TechInterest() {
                 key={option.id}
                 onClick={() => handleInterestSelect(option)}
                 className={`p-6 rounded-lg border-2 transition-all duration-200 cursor-pointer
-                  ${technicalInterest?.id === option.id 
-                    ? 'border-primary bg-primary/10' 
-                    : 'border-gray-200 hover:border-primary/50'
+                  ${
+                    technicalInterest?.id === option.id
+                      ? "border-primary bg-primary/10"
+                      : "border-gray-200 hover:border-primary/50"
                   }`}
               >
                 <div className="flex justify-center space-x-4">

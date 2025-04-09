@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CircleProgressBar } from "@/components/layout/profile/circle-progress";
+import { CircleProgressBar } from "@/components/profile/CircleProgress";
 import useSkinStore from "@/store/useSkinStore";
 
 const ProfileDetails = ({
@@ -27,7 +27,7 @@ const ProfileDetails = ({
     initialImageUrl ||
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
-  
+
   // Get the selected skin from the store
   const { selectedSkin } = useSkinStore();
 

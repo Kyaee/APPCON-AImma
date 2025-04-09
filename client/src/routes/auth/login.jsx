@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { VideoBackground } from "@/components/layout/background";
+import { VideoBackground } from "@/components/layout/Background";
 import { LoginForm } from "@/components/features/login-form";
 import brandIcon from "@/assets/general/brandicon.png";
 
