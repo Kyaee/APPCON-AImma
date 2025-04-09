@@ -1,62 +1,49 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AssessmentLayout from "@/components/assessment/AssessmentLayout";
+import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 import { assessmentFlow } from "@/lib/assessment-flow";
-import { useAssessmentStore } from "@/store/useAssessmentStore";
 
-export default function TechInterest() {
-  const [showQuestions, setShowQuestions] = useState(false);
-  const [showGoals, setShowGoals] = useState(false);
-  const navigate = useNavigate();
-  const { techInterest } = assessmentFlow;
-  const {
-    technicalInterest,
-    technicalAnswers,
-    setTechnicalInterest,
-    setTechnicalAnswers,
-  } = useAssessmentStore();
+export default function TechInterestStep({
+  technicalInterest,
+  technicalAnswers,
+  onInterestSelect,
+  onAnswerChange,
+}) {
+  // Track multiple selections
+  const [selectedInterests, setSelectedInterests] = useState([]);
+
+  // Initialize from existing selection if any
+  useEffect(() => {
+    if (technicalInterest) {
+      setSelectedInterests([technicalInterest]);
+    }
+  }, []);
 
   const handleInterestSelect = (option) => {
-    setTechnicalInterest(option);
-    setShowQuestions(true);
-    setTechnicalAnswers({});
-  };
+    // Check if option is already selected
+    const isSelected = selectedInterests.some((item) => item.id === option.id);
 
-  const handleBack = () => {
-    if (showGoals) {
-      setShowGoals(false);
-    } else if (showQuestions) {
-      setShowQuestions(false);
-      setTechnicalInterest(null);
+    // Toggle selection
+    let updatedInterests;
+    if (isSelected) {
+      updatedInterests = selectedInterests.filter(
+        (item) => item.id !== option.id
+      );
     } else {
-      navigate(-1);
+      updatedInterests = [...selectedInterests, option];
+    }
+
+    setSelectedInterests(updatedInterests);
+
+    // If we have selections, pass the first one to parent component
+    // (to maintain compatibility with existing code that expects a single selection)
+    if (updatedInterests.length > 0) {
+      onInterestSelect(updatedInterests[0]);
+    } else {
+      onInterestSelect(null);
     }
   };
 
-  const handleNext = () => {
-    if (!showQuestions) {
-      if (technicalInterest) {
-        setShowQuestions(true);
-      }
-    } else {
-      // Log the selected technical interest and answers
-      console.log("Selected Technical Interest:", technicalInterest);
-      console.log("Technical Answers:", technicalAnswers);
-
-      navigate("/assessment/complete", {
-        state: { answers: technicalAnswers },
-      });
-    }
-  };
-
-  const handleAnswerChange = (questionId, value) => {
-    setTechnicalAnswers({
-      ...technicalAnswers,
-      [questionId]: value,
-    });
-  };
-
+  // Function to render questions for the selected interest
   const renderQuestions = () => {
     if (!technicalInterest) return null;
 
@@ -69,8 +56,11 @@ export default function TechInterest() {
     if (!questionSet) return null;
 
     return (
-      <AssessmentStep title={questionSet.title}>
-        <div className="space-y-6 mt-8">
+      <div className="mt-8 border-t border-white/30 pt-6">
+        <h3 className="text-2xl font-bold text-white mb-4">
+          {questionSet.title}
+        </h3>
+        <div className="space-y-6">
           {questionSet.questions.map((question) => (
             <div key={question.id} className="space-y-4">
               <label className="block text-lg font-medium text-white">
@@ -87,7 +77,7 @@ export default function TechInterest() {
                         const newAnswers = currentAnswers.includes(option)
                           ? currentAnswers.filter((a) => a !== option)
                           : [...currentAnswers, option];
-                        handleAnswerChange(question.id, newAnswers);
+                        onAnswerChange(question.id, newAnswers);
                       }}
                       className={`p-3 rounded-lg border-2 transition-all duration-200
                         ${
@@ -103,9 +93,7 @@ export default function TechInterest() {
               ) : question.type === "text" ? (
                 <textarea
                   value={technicalAnswers[question.id] || ""}
-                  onChange={(e) =>
-                    handleAnswerChange(question.id, e.target.value)
-                  }
+                  onChange={(e) => onAnswerChange(question.id, e.target.value)}
                   className="w-full p-3 rounded-lg bg-white/10 border-2 border-white text-white"
                   rows={4}
                   placeholder="Enter your answer..."
@@ -114,36 +102,34 @@ export default function TechInterest() {
             </div>
           ))}
         </div>
-      </AssessmentStep>
+      </div>
     );
   };
 
   return (
-    <AssessmentLayout
-      title={
-        showQuestions
-          ? `${technicalInterest?.label} Assessment`
-          : "Technical Interests"
-      }
-      progress={70}
-      prevPage={handleBack}
-      nextPage={handleNext}
-      showMascot={true}
-      buttonPosition="center"
-      mascotZIndex="-1"
-    >
-      {!showQuestions ? (
-        <AssessmentStep title={techInterest.title}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 mt-4 sm:mt-8 px-4 sm:px-0">
-            {techInterest.options.map((option) => (
+    <AssessmentStep title={assessmentFlow.techInterest.title}>
+      <div>
+        <p className="text-white text-center mb-4">
+          Select your technical interest areas (multiple selection allowed):
+        </p>
+
+        {/* Always show the interest options with clear visual indicators */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 px-4 sm:px-0">
+          {assessmentFlow.techInterest.options.map((option) => {
+            // Check if this option is in our selectedInterests array
+            const isSelected = selectedInterests.some(
+              (item) => item.id === option.id
+            );
+
+            return (
               <button
                 key={option.id}
                 onClick={() => handleInterestSelect(option)}
                 className={`p-6 rounded-lg border-2 transition-all duration-200 cursor-pointer
                   ${
-                    technicalInterest?.id === option.id
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-200 hover:border-primary/50"
+                    isSelected
+                      ? "border-amber-500 bg-amber-500/20 ring-2 ring-amber-500"
+                      : "border-gray-200 hover:border-amber-300"
                   }`}
               >
                 <div className="flex justify-center space-x-4">
@@ -152,13 +138,18 @@ export default function TechInterest() {
                 <div>
                   <h3 className="mt-5 font-medium text-l">{option.label}</h3>
                 </div>
+                {/* Visual indicator for selected state */}
+                {isSelected && (
+                  <div className="mt-2 text-amber-500">✓ Selected</div>
+                )}
               </button>
-            ))}
-          </div>
-        </AssessmentStep>
-      ) : (
-        renderQuestions()
-      )}
-    </AssessmentLayout>
+            );
+          })}
+        </div>
+
+        {/* Show questions for primary selected interest (first in array) */}
+        {selectedInterests.length > 0 && renderQuestions()}
+      </div>
+    </AssessmentStep>
   );
 }

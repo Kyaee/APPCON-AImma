@@ -1,0 +1,38 @@
+import React from "react";
+import AssessmentStep from "@/components/assessment/AssessmentStep";
+
+export default function DailyGoalStep({
+  dailyGoalOptions,
+  selectedGoal,
+  onGoalSelect,
+}) {
+  return (
+    <AssessmentStep title="Daily Learning Goal">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 mt-4 sm:mt-8 px-4 sm:px-6">
+        {dailyGoalOptions.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => onGoalSelect(option.value)}
+            className={`p-4 sm:px-18 sm:py-15 rounded-lg border-2 text-center transition-all duration-200 cursor-pointer
+              ${
+                selectedGoal === option.value
+                  ? "border-primary bg-primary/10"
+                  : "border-gray-200 hover:border-primary/50"
+              }`}
+          >
+            <div className="flex justify-center space-x-2 sm:space-x-4">
+              <img
+                src={option.icon}
+                alt={option.label}
+                className="w-20 h-20 sm:w-30 sm:h-30"
+              />
+            </div>
+            <h3 className="font-large text-white mt-3 sm:mt-5 text-base sm:text-lg">
+              {option.label}
+            </h3>
+          </button>
+        ))}
+      </div>
+    </AssessmentStep>
+  );
+}

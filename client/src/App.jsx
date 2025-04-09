@@ -19,20 +19,7 @@ import RegisterPage from "./routes/auth/register";
 import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
 import IntroShowcase from "./routes/Showcase";
-import CombinedAssessment from "./routes/user-assessment/combined-assessment";
-import DailyGoal from "./routes/user-assessment/daily-goal";
-import EntryQuestions from "./routes/user-assessment/professional-types/entryQuestions";
-import MidQuestions from "./routes/user-assessment/professional-types/midQuestions";
-import SeniorQuestions from "./routes/user-assessment/professional-types/seniorQuestions";
-import HSQuestions from "./routes/user-assessment/student-types/hsQuestions";
-import CollegeQuestions from "./routes/user-assessment/student-types/collegeQuestions";
-import GradQuestions from "./routes/user-assessment/student-types/gradQuestions";
-import TechInterest from "./routes/user-assessment/techInterest";
-import Complete from "./routes/user-assessment/complete";
-import Goals from "./routes/user-assessment/goals";
-import Proficiency from "./routes/user-assessment/proficiency";
-import Questions from "./routes/user-assessment/questions";
-import Results from "./routes/user-assessment/results";
+import UserAssessment from "./routes/UserAssessment";
 // GENERAL PAGES
 import Dashboard from "./routes/Dashboard";
 import Profile from "./routes/Profile";
@@ -44,12 +31,11 @@ import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Testing from "./routes/Testing/TestingPage";
 import LevelRewardsTest from "./routes/Testing/LevelRewards";
-// import ApiTEST from "./routes/api-test";
 
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(true);
+  const [isAssessed, setAssessed] = useState(false);
   const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
@@ -79,89 +65,9 @@ function App() {
                 <>
                   <Route path="/start/showcase" element={<IntroShowcase />} />
                   <Route
-                    path="/start/assessment"
-                    element={<CombinedAssessment />}
+                    path="/start/assessment/*"
+                    element={<UserAssessment />}
                   />
-                  <Route
-                    path="/assessment/daily-goal"
-                    element={<DailyGoal />}
-                  />
-                  <Route
-                    path="/assessment/hsQuestions"
-                    element={<HSQuestions />}
-                  />
-                  <Route
-                    path="/assessment/collegeQuestions"
-                    element={<CollegeQuestions />}
-                  />
-                  <Route
-                    path="/assessment/gradQuestions"
-                    element={<GradQuestions />}
-                  />
-                  <Route
-                    path="/assessment/entryQuestions"
-                    element={<EntryQuestions />}
-                  />
-                  <Route
-                    path="/assessment/midQuestions"
-                    element={<MidQuestions />}
-                  />
-                  <Route
-                    path="/assessment/seniorQuestions"
-                    element={<SeniorQuestions />}
-                  />
-                  <Route
-                    path="/assessment/techInterest"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/programmingquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/networkingquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/webdevelopmentquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/gamedevelopmentquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/aimachinelearningquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/datasciencequestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/cybersecurityquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/roboticsquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/humancomputerinteractionquestions"
-                    element={<TechInterest />}
-                  />
-                  <Route
-                    path="/assessment/otherinterests"
-                    element={<TechInterest />}
-                  />
-                  <Route path="/assessment/complete" element={<Complete />} />
-                  <Route path="/assessment/goals" element={<Goals />} />
-                  <Route
-                    path="/assessment/proficiency"
-                    element={<Proficiency />}
-                  />
-                  <Route path="/assessment/questions" element={<Questions />} />
-                  <Route path="/assessment/results" element={<Results />} />
                 </>
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED
