@@ -202,7 +202,7 @@ const Showcase = () => {
             // Only last slide gets Link component
             <div className="w-full flex justify-center">
               <Link
-                to="/assessment"
+                to="/start/assessment"
                 className="bg-[#BF9566] border-black border-2 text-white px-8 py-3 rounded-lg text-lg 
                 shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
               >

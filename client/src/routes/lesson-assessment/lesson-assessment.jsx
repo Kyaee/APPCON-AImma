@@ -6,7 +6,7 @@ import Questions from "./questions";
 import Header from "@/components/layout/lesson/header-navigator";
 import Loading from "@/routes/loading";
 import { VideoBackground } from "@/components/layout/background";
-import { HeartIcon } from "@/assets/stats-icons";
+import { HeartIcon } from "@/assets/general/stats-icons";
 import { Link } from "react-router-dom";
 
 // Use Hooks

@@ -51,7 +51,7 @@ import Testing from "./routes/testing";
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth(); // false;
-  const [isAssessed, setAssessed] = useState(true);
+  const [isAssessed, setAssessed] = useState(false);
   const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
@@ -80,7 +80,10 @@ function App() {
                 // IF USER IS LOGGED-IN, AND NOT ASSESSED
                 <>
                   <Route path="/start/showcase" element={<IntroShowcase />} />
-                  <Route path="/assessment" element={<CombinedAssessment />} />
+                  <Route
+                    path="/start/assessment"
+                    element={<CombinedAssessment />}
+                  />
                   <Route
                     path="/assessment/daily-goal"
                     element={<DailyGoal />}
