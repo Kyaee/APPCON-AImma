@@ -1,0 +1,119 @@
+import React from "react";
+import AssessmentStep from "@/components/assessment/AssessmentStep";
+
+export default function HSQuestionsStep({ formData, setFormData }) {
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    // No localStorage writes here
+  };
+
+  const handleInterestChange = (area) => {
+    setFormData((prev) => ({
+      ...prev,
+      interestAreas: prev.interestAreas.includes(area)
+        ? prev.interestAreas.filter((a) => a !== area)
+        : [...prev.interestAreas, area],
+    }));
+    // No localStorage writes here
+  };
+
+  return (
+    <AssessmentStep title="Tell us about your academic path">
+      <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
+        {/* Strand Selection */}
+        <div>
+          <label className="block text-lg mb-2 text-white">
+            Which strand are you currently in?
+          </label>
+          <select
+            value={formData.strand}
+            onChange={(e) => handleInputChange("strand", e.target.value)}
+            className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
+          >
+            <option value="" disabled>
+              Select strand
+            </option>
+            {["STEM", "ICT", "Other"].map((strand) => (
+              <option key={strand} value={strand}>
+                {strand}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* College Plans */}
+        <div>
+          <label className="block text-lg mb-2 text-white">
+            Are you planning to go to college?
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ].map((option) => (
+              <button
+                key={option.label}
+                onClick={() =>
+                  handleInputChange("planningCollege", option.value)
+                }
+                className={`p-3 rounded-lg text-center transition-all duration-200 bg-white
+                  ${
+                    formData.planningCollege === option.value
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      : "border-black border-2 hover:border-black hover:border-3"
+                  }`}
+              >
+                <span className="text-black">{option.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Interest Areas */}
+        <div>
+          <label className="block text-lg mb-2 text-white">
+            What are your areas of interest in technology?
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[
+              "Programming",
+              "Networking",
+              "Web Development",
+              "Game Development",
+              "AI/Machine Learning",
+            ].map((area) => (
+              <button
+                key={area}
+                onClick={() => handleInterestChange(area)}
+                className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
+                  ${
+                    formData.interestAreas.includes(area)
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      : "border-black border-2 hover:border-black hover:border-3"
+                  }`}
+              >
+                <span className="text-black">{area}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Career Goals */}
+        <div>
+          <label className="block text-lg mb-2 text-white">
+            What are your career goals?
+          </label>
+          <textarea
+            value={formData.careerGoals}
+            onChange={(e) => handleInputChange("careerGoals", e.target.value)}
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
+            placeholder="Share your career aspirations"
+          />
+        </div>
+      </div>
+    </AssessmentStep>
+  );
+}

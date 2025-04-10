@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import React from "react";
 import Markdown from "react-markdown";
-import { Background } from "@/components/layout/background"; // Add this import
+import { Background } from "@/components/layout/Background"; // Add this import
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useEffect, useRef } from "react";
@@ -61,7 +61,8 @@ export default function ElementLesson() {
   }
 
   // Set up scroll animations
-  const handleAssessment = () => postPrompt3(lessonFetch.id, lessonFetch.name, lessonFetch.lesson);
+  const handleAssessment = () =>
+    postPrompt3(lessonFetch.id, lessonFetch.name, lessonFetch.lesson);
 
   return (
     <main className="w-full h-full overflow-hidden">
@@ -69,7 +70,12 @@ export default function ElementLesson() {
       <div className="fixed left-0 top-0 h-2 w-full bg-gray border-b border-black z-40"></div>
 
       <Background />
-      <button onClick={handleAssessment} className="fixed bg-black py-1 px-2 bottom-0 text-3xl text-white">Click me!!!!</button>
+      <button
+        onClick={handleAssessment}
+        className="fixed bg-black py-1 px-2 bottom-0 text-3xl text-white"
+      >
+        Click me!!!!
+      </button>
       {/* Main Content */}
       <section
         ref={contentRef}

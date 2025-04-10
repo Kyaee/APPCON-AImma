@@ -1,4 +1,4 @@
-import { GemIcon, HeartIcon } from "@/assets/stats-icons";
+import { GemIcon, HeartIcon } from "@/components/layout/stats-icons";
 
 export default function StatsDisplay({ hearts, gems }) {
   return (

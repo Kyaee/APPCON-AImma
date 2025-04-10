@@ -13,7 +13,7 @@ import { Gem, Rocket, Briefcase } from "lucide-react";
 import BlueCappy from "/src/assets/shop/BlueCappy.svg";
 import RedCappy from "/src/assets/shop/RedCappy.svg";
 import MainNav from "@/components/layout/main-nav";
-import { Background } from "@/components/layout/background";
+import { Background } from "@/components/layout/Background";
 import StatsDisplay from "@/components/features/stats-display";
 import ActionIcons from "@/components/layout/action-icons";
 

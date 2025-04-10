@@ -138,7 +138,6 @@
     }
   }
 
-
   @keyframes fade-in {
     0% {
       opacity: 0;
@@ -169,7 +168,6 @@
     }
   }
 
-
   @keyframes blink-cursor {
     from,
     to {
@@ -187,9 +185,8 @@
     }
   }
 
-
   @keyframes bounce {
-    0% { 
+    0% {
       transform: translateX(0);
     }
     25% {
@@ -205,7 +202,6 @@
       transform: translateX(0);
     }
   }
-
 
   @keyframes text-reveal {
     0% {
@@ -255,6 +251,14 @@
     }
   }
 
+  @keyframes slowShift {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
 
   --color-dark-mode-bg: var(--dark-mode-bg);
   --color-dark-mode-highlight: var(--dark-mode-highlight);
@@ -291,8 +295,7 @@
       transparent,
       hsl(0 0% 100%) 20%,
       /* Converting from white */ hsl(0 0% 100%) 80%,
-      /* Converting from white */ transparent
-      hsl(0 0% 100%) 20%,
+      /* Converting from white */ transparent hsl(0 0% 100%) 20%,
       /* Converting from white */ hsl(0 0% 100%) 80%,
       /* Converting from white */ transparent
     );
@@ -302,8 +305,7 @@
       transparent,
       hsl(0 0% 100%) 4%,
       /* Converting from white */ hsl(0 0% 100%) 90%,
-      /* Converting from white */ transparent
-      hsl(0 0% 100%) 4%,
+      /* Converting from white */ transparent hsl(0 0% 100%) 4%,
       /* Converting from white */ hsl(0 0% 100%) 90%,
       /* Converting from white */ transparent
     );
@@ -402,8 +404,8 @@
     animation: gradient-animation 15s ease infinite;
   }
 
-  .animated-progress-bar { 
-    animation: progress-bar linear ;
+  .animated-progress-bar {
+    animation: progress-bar linear;
     animation-timeline: scroll();
   }
 
