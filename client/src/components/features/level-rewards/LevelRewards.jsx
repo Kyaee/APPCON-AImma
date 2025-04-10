@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useParams } from "react-router-dom";
+import { useEffect } from 'react';
 import {
   Drawer,
   DrawerClose,

@@ -49,11 +49,12 @@ import CapySkin from "./routes/profile/capyskin";
 import Testing from "./routes/testing";
 import ApiTester from "./routes/UI_TestGemReward";
 
+
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth(); // false;
   const [isAssessed, setAssessed] = useState(true);
-  const [isUserLoggedin, setUserLoggedin] = useState(true);
+  const [isUserLoggedin, setUserLoggedin] = useState(false);
 
   return (
     <>
