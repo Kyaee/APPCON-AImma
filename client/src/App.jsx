@@ -13,6 +13,7 @@ WEB PAGES
 
 import Landing from "./routes/landing";
 import MainLayout from "./components/layout/main-layout";
+import LessonLayout from "./components/layout/lesson-layout";
 // AUTHENTICATION
 import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
@@ -44,12 +45,13 @@ import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import LevelRewardsTest from "./routes/level-rewards-test";
 import CapySkin from "./routes/profile/capyskin";
-import ApiTEST from "./routes/api-test";
+// import ApiTEST from "./routes/api-test";
+import Testing from "./routes/testing";
 import ApiTester from "./routes/UI_TestGemReward";
 
 function App() {
   const queryClient = new QueryClient();
-  const { session } = useAuth();
+  const { session } = useAuth(); // false;
   const [isAssessed, setAssessed] = useState(true);
   const [isUserLoggedin, setUserLoggedin] = useState(true);
 
@@ -64,9 +66,9 @@ function App() {
               <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="/GemReward" element={<ApiTester />} />
               <Route path="*" element={<NotFound />} />
-              <Route path="/api-testing" element={<ApiTEST />} />
+              <Route path="/testing" element={<Testing />} />
 
-              {!session ? (
+              {!isUserLoggedin ? (
                 // IF USER IS NOT LOGGED-IN
                 <>
                   <Route path="/auth/login" element={<LoginPage />} />
@@ -118,14 +120,13 @@ function App() {
                       element={<JobOpportunities />}
                     />
                   </Route>
-                  {/* <Route element="MainLayout"> */}
+                  <Route element={<LessonLayout />}>
                     <Route path="/lesson/:id" element={<Lesson />} />
                     <Route
-                      path="/lesson/:id/assessment/:id"
+                      path="/l/:id/assessment"
                       element={<LessonAssessment />}
                     />
-                  {/* </Route> */}
-                  <Route path="/capyskin/:id" element={<CapySkin />} />
+                  </Route>
                 </>
               )}
             </Routes>

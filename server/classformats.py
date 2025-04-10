@@ -41,8 +41,13 @@ class Question(BaseModel):
     correct_answer: str
     explanation: str
 
-class QuestionRequest(BaseModel):
+class GenerateQuestions(BaseModel):
     questions: list[Question]
+
+class QuestionRequest(BaseModel):
+    prompt_assessment_generate: str
+    id: int
+    name: str
 
 """======================================
   STEP 4: Check if answer is correct
