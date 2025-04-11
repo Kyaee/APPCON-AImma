@@ -1,11 +1,11 @@
 import { ArrowLeft, ArrowRight, Gem, ZapIcon } from "lucide-react";
 import Image from "@/assets/lesson-assessment/la-intro-capybara.png";
-import Questions from "./questions";
+import Questions from "./LessonQuestionnaire";
 import Loading from "@/routes/loading";
 import { bouncy } from "ldrs";
 bouncy.register();
 import { VideoBackground } from "@/components/layout/background";
-import { HeartIcon } from "@/assets/stats-icons";
+import { HeartIcon } from "@/components/layout/stats-icons";
 import { Link } from "react-router-dom";
 
 // Use Hooks

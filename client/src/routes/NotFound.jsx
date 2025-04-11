@@ -10,7 +10,7 @@ export default function NotFound() {
     // Simulate loading time for all elements
     const timer = setTimeout(() => {
       setContentLoaded(true);
-    }, 100);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);

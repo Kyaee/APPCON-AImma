@@ -20,6 +20,11 @@ import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
 import IntroShowcase from "./routes/Showcase";
 import UserAssessment from "./routes/UserAssessment";
+// REDIRECTS
+import RedirectDashboard from "./routes/redirects/redirectDashboard";
+import RedirectProfile from "./routes/redirects/redirectProfile";
+import RedirectShop from "./routes/redirects/redirectShop";
+import RedirectJobOpportunities from "./routes/redirects/redirectJobOpportunities";
 // GENERAL PAGES
 import Dashboard from "./routes/Dashboard";
 import Profile from "./routes/Profile";
@@ -33,12 +38,11 @@ import Testing from "./routes/Testing/TestingPage";
 import LevelRewardsTest from "./routes/Testing/LevelRewards";
 import ApiTester from "./routes/UI_TestGemReward";
 
-
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(false);
-  const [isUserLoggedin, setUserLoggedin] = useState(true);
+  const [isAssessed, setAssessed] = useState(true);
+  // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
@@ -75,6 +79,10 @@ function App() {
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED
                 <>
+                  <Route path="/dashboard" element={<RedirectDashboard />} />
+                  <Route path="/profile" element={<RedirectProfile />} />
+                  <Route path="/shop" element={<RedirectShop />} />
+                  <Route path="/job-opportunities" element={<RedirectJobOpportunities />} />
                   <Route element={<MainLayout />}>
                     <Route path="/dashboard/:id" element={<Dashboard />} />
                     <Route path="/profile/:id" element={<Profile />} />
