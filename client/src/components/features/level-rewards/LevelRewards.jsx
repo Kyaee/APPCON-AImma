@@ -1,5 +1,18 @@
 import { useState, useRef } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useParams } from "react-router-dom";
+import { useEffect } from 'react';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 const calculateGems = (level) => {
   if (level >= 1 && level <= 10) return 50;
@@ -9,96 +22,198 @@ const calculateGems = (level) => {
   return 0;
 };
 
-const LevelRewards = ({ currentLevel = 1 }) => {
+const LevelRewards = () => {  
+  const { id } = useParams(); // Get user ID from URL params
+  const [currentLevel, setCurrentLevel] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const scrollContainerRef = useRef(null);
+  const [selectedLevel, setSelectedLevel] = useState(null);
+
+  // Load user's current level on component mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!id) return;
+      
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("level")
+          .eq("user_id", id)
+          .single();
+        
+        if (!error && data) {
+          setCurrentLevel(data.level || 1);
+        }
+      } catch (err) {
+        console.error("Error loading user level:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadUserData();
+  }, [id]);
 
   // Generate levels up to currentLevel + 10 to show upcoming rewards
   const levels = Array.from({ length: Math.max(60, currentLevel + 10) }, (_, i) => i + 1);
 
-  const scrollUp = () => {
+  const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ top: -200, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
     }
   };
 
-  const scrollDown = () => {
+  const scrollRight = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ top: 200, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
     }
   };
+
+  // Handle level update and claim rewards
+  const handleClaimRewards = async (level) => {
+    if (!id) {
+      setMessage("User ID is required");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const result = await updateGems(id, level);
+      
+      if (result.success) {
+        setMessage(`Level ${level} rewards claimed! You received ${result.gemsAwarded} gems.`);
+        setCurrentLevel(level);
+      } else {
+        setMessage("Failed to claim rewards. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error claiming rewards:", error);
+      setMessage("An error occurred while claiming rewards.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && !levels.length) {
+    return <div className="text-white text-center py-8">Loading rewards...</div>;
+  }
 
   return (
-    <div className="relative bg-gray-900/50 rounded-lg p-4 max-w-md mx-auto">
+    <div className="relative bg-gray-900/50 rounded-lg p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-white">Level Up Rewards</h2>
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-primary hover:text-primary/80 transition-colors"
-        >
+        <Button variant="outline" onClick={() => setIsExpanded(!isExpanded)}>
           {isExpanded ? 'Show Less' : 'Show More'}
-        </button>
+        </Button>
       </div>
+
+      {message && (
+        <div className="bg-green-500/20 border border-green-500 text-green-300 p-3 rounded mb-4">
+          {message}
+        </div>
+      )}
 
       <div className="relative">
         <button
-          onClick={scrollUp}
-          className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10 bg-gray-800/90 rounded-full p-1 hover:bg-gray-700/90 transition-colors"
+          onClick={scrollLeft}
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
         >
-          <ChevronUpIcon className="h-6 w-6 text-white" />
+          <ChevronLeftIcon className="h-6 w-6 text-white" />
         </button>
 
         <div
           ref={scrollContainerRef}
-          className="overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-800/50 max-h-[400px] space-y-3 py-4"
+          className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-800/50 py-4 px-12"
           style={{ scrollBehavior: 'smooth' }}
         >
-          {levels.map((level) => {
-            const gems = calculateGems(level);
-            const isCurrentLevel = level === currentLevel;
-            const isLocked = level > currentLevel;
+          <div className="flex space-x-4 min-w-max">
+            {levels.map((level) => {
+              const gems = calculateGems(level);
+              const isCurrentLevel = level === currentLevel;
+              const isLocked = level > currentLevel;
 
-            return (
-              <div
-                key={level}
-                className={`relative flex items-center space-x-4 p-4 rounded-lg transition-all duration-200
-                  ${isCurrentLevel ? 'bg-primary/20 border-2 border-primary' : 'bg-gray-800/50'}
-                  ${isLocked ? 'opacity-50' : 'opacity-100'}
-                `}
-              >
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center">
-                  <span className="text-lg font-bold text-white">{level}</span>
-                </div>
-
-                <div className="flex-grow">
-                  <div className="flex justify-between items-center">
-                    <span className="text-white font-medium">Level {level}</span>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-amber-400">{gems}</span>
-                      <span className="text-amber-400">💎</span>
+              return (
+                <Drawer key={level}>
+                  <DrawerTrigger asChild>
+                    <button
+                      onClick={() => setSelectedLevel(level)}
+                      className={`flex flex-col items-center w-24 p-4 rounded-lg transition-all duration-200
+                        ${isCurrentLevel ? 'bg-primary/20 border-2 border-primary' : 'bg-gray-800/50'}
+                        ${isLocked ? 'opacity-50' : 'opacity-100 hover:bg-gray-700/50'}
+                      `}
+                    >
+                      <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center mb-2">
+                        <span className="text-lg font-bold text-white">{level}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span className="text-amber-400">{gems}</span>
+                        <span className="text-amber-400">💎</span>
+                      </div>
+                      {isLocked && (
+                        <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                          <span className="text-white/90">🔒</span>
+                        </div>
+                      )}
+                    </button>
+                  </DrawerTrigger>
+                  <DrawerContent>
+                    <div className="mx-auto w-full max-w-lg">
+                      <DrawerHeader>
+                        <DrawerTitle>Level {level} Rewards</DrawerTitle>
+                        <DrawerDescription>
+                          {isLocked 
+                            ? "Keep learning to unlock these rewards!" 
+                            : "Congratulations on reaching this level!"}
+                        </DrawerDescription>
+                      </DrawerHeader>
+                      <div className="p-4">
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center">
+                            <span className="text-3xl font-bold text-white">{level}</span>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-amber-400 flex items-center justify-center space-x-2">
+                              <span>{gems}</span>
+                              <span>💎</span>
+                            </div>
+                            <p className="text-gray-400 mt-2">Gems Reward</p>
+                          </div>
+                          {isLocked ? (
+                            <div className="bg-gray-800/50 p-4 rounded-lg text-center">
+                              <p className="text-gray-400">Complete more lessons to reach this level</p>
+                            </div>
+                          ) : (
+                            <div className="bg-primary/20 p-4 rounded-lg text-center">
+                              <p className="text-primary">Rewards Unlocked!</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <DrawerFooter>
+                        <DrawerClose asChild>
+                          <Button variant="outline">Close</Button>
+                        </DrawerClose>
+                      </DrawerFooter>
                     </div>
-                  </div>
-
-                  {isLocked && (
-                    <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
-                      <span className="text-white/90">🔒</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+                  </DrawerContent>
+                </Drawer>
+              );
+            })}
+          </div>
         </div>
 
         <button
-          onClick={scrollDown}
-          className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 z-10 bg-gray-800/90 rounded-full p-1 hover:bg-gray-700/90 transition-colors"
+          onClick={scrollRight}
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
         >
-          <ChevronDownIcon className="h-6 w-6 text-white" />
+          <ChevronRightIcon className="h-6 w-6 text-white" />
         </button>
       </div>
     </div>
   );
 };
 
-export default LevelRewards; 
+export default LevelRewards;

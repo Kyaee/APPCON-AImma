@@ -4,12 +4,20 @@ import FeatureSlider from "@/components/landing-page/FeatureSlider";
 import FAQSection from "@/components/landing-page/FAQSection";
 import CTASection from "@/components/landing-page/CTASection";
 import LandingFooter from "@/components/landing-page/LandingFooter";
+import { useEffect } from "react";
+import Loading from "./Loading";
 
 // Import the SVG background files
 import landingBg from "@/assets/landing/landing-bg.svg";
 import landingBgCapy from "@/assets/landing/landing-bg-capy.svg";
 
 export default function Landing() {
+  useEffect(() => {
+    setTimeout(() => {
+      return <Loading />;
+    }, 1000);
+  }, []);
+
   return (
     <div className="bg-background relative">
       {/* Full-height background SVG */}

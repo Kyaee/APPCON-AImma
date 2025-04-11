@@ -6,16 +6,16 @@ import { useFetchStore } from "@/store/useUserData";
 import { fetchProfile, fetchRoadmapAIdata } from "@/api/FETCH";
 
 // Components & Icons
-import ProfileDetails from "@/routes/profile/ProfileDetails";
-import CareerOpportunities from "./profile/career-opportunities-profile";
-import Finished_Roadmap_Component from "./profile/finished-roadmaps";
-import Streak_Component from "./profile/streak-profile";
-import Tabs_Component from "./profile/tabs-profile";
-import Badges_Component from "./profile/badges-profile";
-import Skills_Component from "./profile/skills-profile";
-import Loading from "@/routes/loading";
-import CapySkin from "./profile/capyskin";
-import SkinBadgesTabs from "./profile/skin_tab";
+import ProfileDetails from "@/components/profile/ProfileDetails";
+import CareerOpportunities from "../components/profile/CareerOpportunities";
+import Finished_Roadmap_Component from "../components/profile/FinishedRoadmaps";
+import Streak_Component from "../components/profile/Streak";
+import Tabs_Component from "../components/profile/TabsProfile";
+import Badges_Component from "../components/profile/BadgesProfile";
+import Skills_Component from "../components/profile/SkillsProfile";
+import Loading from "@/routes/Loading";
+import CapySkin from "../components/profile/CapySkins";
+import SkinBadgesTabs from "../components/profile/SkinsTab";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
@@ -83,8 +83,6 @@ export default function Profile() {
         )}
 
         <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
-          
-
           {/****************  
             Badges Section 
           ****************/}
@@ -113,22 +111,24 @@ export default function Profile() {
           {/****************  
               Skills Section 
           ******************/}
-          <SkinBadgesTabs/>
-          
+          <SkinBadgesTabs />
+
           {/**************** 
             Charts Section 
           ****************/}
           <Tabs_Component
             linechartData={
-              !isError && profile?.line_chart_data ? profile.line_chart_data : []
+              !isError && profile?.line_chart_data
+                ? profile.line_chart_data
+                : []
             }
             radarData={
-              !isError && profile?.radar_chart_data ? profile.radar_chart_data : []
+              !isError && profile?.radar_chart_data
+                ? profile.radar_chart_data
+                : []
             }
             summary="Summary of your progress"
           />
-
-          
 
           {/********************** 
               Skill Trees Section 

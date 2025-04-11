@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "@/components/layout/lesson/header-navigator";
 import { useQuery } from "@tanstack/react-query";
 import { fetchLessonAIdata } from "@/api/FETCH"; // Adjust the import path as needed
-import Loading from "@/routes/loading";
+import Loading from "@/routes/Loading";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useEffect } from "react";
 
@@ -23,10 +23,7 @@ export default function LessonLayout({ children }) {
 
   return (
     <>
-      <Header 
-        id={lessonData.id} 
-        isAssessment={lessonData.assessment} 
-      />
+      <Header id={lessonData.id} isAssessment={lessonData.assessment} />
       <Outlet />
       {children}
     </>

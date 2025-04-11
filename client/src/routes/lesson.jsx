@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import Markdown from "react-markdown";
-import { Background } from "@/components/layout/background"; // Add this import
+import { Background } from "@/components/layout/Background"; // Add this import
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useEffect, useRef } from "react";

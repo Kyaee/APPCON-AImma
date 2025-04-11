@@ -1,14 +1,14 @@
-import QuestPanel from "@/components/layout/dashboard-roadmap/QuestPanel";
-import StreakPanel from "@/components/layout/dashboard-roadmap/StreakPanel";
-import Sidebar from "@/components/layout/dashboard-roadmap/Sidebar";
-import RoadmapHeader from "@/components/layout/dashboard-roadmap/RoadmapHeader";
-import RoadmapContent from "@/components/layout/dashboard-roadmap/RoadmapContent";
+import QuestPanel from "@/components/dashboard-roadmap/QuestPanel";
+import StreakPanel from "@/components/dashboard-roadmap/StreakPanel";
+import Sidebar from "@/components/dashboard-roadmap/Sidebar";
+import RoadmapHeader from "@/components/dashboard-roadmap/RoadmapHeader";
+import RoadmapContent from "@/components/dashboard-roadmap/RoadmapContent";
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRoadmap, fetchLesson } from "@/api/FETCH";
-import Loading from "@/routes/loading";
+import Loading from "@/routes/Loading";
 
 export default function Ayon() {
   const { id } = useParams();
@@ -53,7 +53,7 @@ export default function Ayon() {
   const condition = roadmapError || !roadmapData || roadmapData.length === 0;
 
   if (getLoading) {
-    return <Loading generate_lesson={true}/>;
+    return <Loading generate_lesson={true} />;
   }
 
   return (
