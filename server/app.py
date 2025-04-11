@@ -5,10 +5,13 @@ from dotenv import load_dotenv
 import uvicorn
 import os
 from classformats import (
-    RoadmapRequest, GenerateRoadmap,
-    QuestionRequest, GenerateLesson,
-    GenerateQuestions, AssessmentRequest,
-    GenerateSummary,   
+    RoadmapRequest,
+    GenerateRoadmap,
+    QuestionRequest,
+    GenerateLesson,
+    GenerateQuestions,
+    AssessmentRequest,
+    GenerateSummary,
 )
 from pydantic import BaseModel
 import json
@@ -56,6 +59,7 @@ data_store = {
     "summary": None,
 }
 
+
 @app.post("/api/generate-roadmap")
 def POST_generate_roadmap(request: RoadmapRequest = None):
     if request:
@@ -68,12 +72,18 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
         data_store["roadmap"] = {
             "roadmap_name": event.roadmap_name,
             "description": event.description,
+            "daily_goal": event.daily_goal,
             "lessons": [
                 {
                     "lesson_name": lesson.lesson_name,
+                    "description": lesson.description,
                     "category": lesson.category,
+                    "status": lesson.status,
                     "difficulty": lesson.difficulty,
                     "duration": lesson.duration,
+                    "assessment": lesson.assessment,
+                    "gems": lesson.gems,
+                    "exp": lesson.exp,
                 }
                 for lesson in event.lessons
             ],
@@ -132,9 +142,9 @@ def POST_generate_assessment(request: QuestionRequest = None):
         return {"message": "data was not posted"}
 
 
-@app.post('/api/generate-summary') 
+@app.post("/api/generate-summary")
 def POST_generate_summary(request: AssessmentRequest = None):
-    if request: 
+    if request:
         summary_completion = client.beta.chat.completions.parse(
             model="gemini-2.0-flash",
             messages=[{"role": "user", "content": request}],
@@ -182,7 +192,8 @@ def GET_generate_summary():
     if data_store["summary"]:
         return data_store["summary"]
     else:
-        return {"message": "No summary generated yet"}   
+        return {"message": "No summary generated yet"}
+
 
 # --------------------------------------------------------------
 #  Prompt engineering

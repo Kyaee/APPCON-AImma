@@ -1,6 +1,8 @@
 import { useTheme } from "@/config/theme-provider";
 import { quantum } from "ldrs";
 quantum.register();
+import { bouncy } from "ldrs";
+bouncy.register();
 
 export default function loading({ generate_lesson, generate_assessment }) {
   const { theme } = useTheme();
@@ -21,7 +23,20 @@ export default function loading({ generate_lesson, generate_assessment }) {
       </main>
     );
   } else if (generate_assessment) {
-    return <></>;
+    return (
+      <main className="absolute top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
+        <l-quantum
+          size="80"
+          speed="1.5"
+          color={theme === "dark" ? "#fff" : "#000"}
+          className="mb-8"
+        ></l-quantum>
+        <h3 className="font-extrabold text-xl mb-2">On the Way!</h3>
+        <p className="animate-text-pulse max-w-1/4 text-center text-foreground">
+          Generating your personal lesson
+        </p>
+      </main>
+    );
   } else {
     const tips = [
       "Capybaras can hold their breath underwater for up to 5 minutes!",

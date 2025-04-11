@@ -1,12 +1,13 @@
-import { ArrowLeft, ArrowRight, Gem, ZapIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "@/assets/lesson-assessment/la-intro-capybara.png";
 import Questions from "./LessonQuestionnaire";
 import Loading from "@/routes/loading";
-import { bouncy } from "ldrs";
-bouncy.register();
 import { VideoBackground } from "@/components/layout/background";
 import { HeartIcon } from "@/components/layout/stats-icons";
-import { Link } from "react-router-dom";
+import NoLivesPage from "@/components/lesson-assessment/no-lives";
+import IntroSlide from "@/components/lesson-assessment/IntroSlide";
+import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
+import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 
 // Use Hooks
 import { useState } from "react";
@@ -16,10 +17,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
 
-// FIX LIVES LOGIC
-// POST DATA TO -> AI -> DATABASE
-// POST DATA TO -> USER -> DATABASE
-// FIX FUCKING ASSESSMENT
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
@@ -47,12 +44,10 @@ export default function Assessment() {
   const { createSummary, isError } = useSummary();
 
   const handleCheck = () => {
-    // PROCESSING ANSWER VALIDATION
     setValidateAnswer(true);
     const isCorrect =
       isAnswers[isCurrentSlide]?.answer ===
       lessonData.questions[isCurrentSlide]?.correct_answer;
-    // Update isAnswers state
     setAnswers({
       ...isAnswers,
       [isCurrentSlide]: {
@@ -82,38 +77,8 @@ export default function Assessment() {
   };
 
   if (isLoading) return <Loading />;
-  if (isCount.lives === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <VideoBackground />
-        <h1 className="text-4xl font-bold mb-4 text-background">
-          You have no lives left!
-        </h1>
-        <p className="text-lg text-background">Wait for more lives.</p>
-        <Link
-          to={`/dashboard/${userData.id}`}
-          className="py-3 px-4 mt-8 text-lg bg-white text-black font-extrabold custom-shadow-50 rounded-md hover:bg-neutral-300"
-        >
-          Go back to Dashboard
-        </Link>
-      </div>
-    );
-  }
 
-  function fetchAllData(e) {
-    e.preventDefault();
-
-    // console.log(lessonFetch.id)
-    // console.log(lessonFetch.name)
-    // console.log(lessonFetch.difficulty)
-    // console.log(isAnswers)
-    createSummary(
-      lessonFetch.id,
-      lessonFetch.name,
-      lessonFetch.difficulty,
-      isAnswers
-    );
-  }
+  if (isCount.lives === 0) return <NoLivesPage userId={userData.id} />;
 
   return (
     <>
@@ -122,99 +87,37 @@ export default function Assessment() {
 
         <form>
           {isIntroSlide ? (
-            <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-background ">
-              <img src={Image} alt="capybara superhero" />
-              <h1 className="text-4xl font-extrabold mb-4">
-                Start Your Assessment.
-              </h1>
-              <p className="mb-2">Rewards</p>
-              <div className="grid grid-cols-2 gap-x-8 mb-4 text-xl *:flex *:gap-2 *:items-center ">
-                <div>
-                  <Gem size={20} />
-                  {lessonFetch.gems} gems
-                </div>
-                <div>
-                  <ZapIcon size={23} />
-                  {lessonFetch.exp} exp.
-                </div>
-              </div>
-              <button
-                className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                hover:bg-neutral-300"
-                onClick={() => setIntroSlide(false)}
-              >
-                Start
-              </button>
-            </article>
+            // ------------------------
+            //       FIRST PAGE
+            // -------------------------
+            <IntroSlide
+              lessonData={lessonFetch}
+              image={Image}
+              gems={lessonFetch.gems}
+              exp={lessonFetch.exp}
+              setIntroSlide={() => setIntroSlide(false)}
+            />
           ) : isLastSlide ? (
             isCount.score >= 3 ? (
-              <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
-                <h1 className="text-4xl font-extrabold mb-4 text-center">
-                  Congratulations!
-                  <br /> You have completed the assessment.
-                </h1>
-                <div className="grid grid-cols-2  gap-x-10">
-                  <div>
-                    <p>Your Score</p>
-                    <h2 className="text-3xl font-bold">
-                      {isCount.score} / {lessonData.questions.length - 1}
-                    </h2>
-                  </div>
-                  <div>
-                    <p>Rewards</p>
-                    <div className="flex gap-5 *:flex *:items-center *:gap-0.5">
-                      <h2 className="text-xl font-semibold pt-1">
-                        +<Gem size={18} />
-                        {lessonFetch.gems}
-                      </h2>
-                      <h2 className="text-xl font-semibold pt-1">
-                        +<ZapIcon size={20} />
-                        {lessonFetch.exp}
-                      </h2>
-                    </div>
-                  </div>
-                </div>
-                <button
-                  className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                  hover:bg-neutral-300"
-                  onClick={fetchAllData}
-                  disabled={``}
-                >
-                  Finish
-                </button>
-              </article>
+              // ------------------------
+              //   USER PASSED ASSESSMENT
+              // -------------------------
+              <PassLastSlide
+                score={isCount.score}
+                total={lessonData.questions.length - 1}
+                gems={lessonFetch.gems}
+                exp={lessonFetch.exp}
+              />
             ) : (
-              <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
-                <h1 className="text-4xl font-extrabold mb-4 text-center">
-                  Hey! &nbsp;Let's try again
-                  <br />{" "}
-                  <span className="px-2 bg-light-brown animate-text-reveal">
-                    Don't worry
-                  </span>{" "}
-                  we all have bad days.
-                </h1>
-                <div className="flex gap-2 gap-x-10">
-                  <div>
-                    <p>Your Score</p>
-                    <h2 className="text-3xl font-bold">
-                      {isCount.score} / {lessonData.questions.length - 1}
-                    </h2>
-                  </div>
-                  <div>
-                    <p>Rewards</p>
-                    <h2 className="text-xl font-semibold pt-1 text-gray-200">
-                      Reach at least 3 points to earn rewards.
-                    </h2>
-                  </div>
-                </div>
-                <Link
-                  to={`/lesson/${lessonData.id}`}
-                  className="py-3 w-3/5 mt-8 text-lg text-center bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                  hover:bg-neutral-300"
-                >
-                  Back to Lesson
-                </Link>
-              </article>
+              // ------------------------
+              //   USER FAILED ASSESSMENT
+              // -------------------------
+              <FailLastSlide
+                lessonId={lessonFetch.id}
+                passing={3}
+                score={isCount.score}
+                total={lessonData.questions.length - 1}
+              />
             )
           ) : (
             <Questions
@@ -233,6 +136,9 @@ export default function Assessment() {
           )}
         </form>
 
+        {/*********************************************
+                  FOOTER DESIGN LOGIC
+        **********************************************/}
         {isIntroSlide ? (
           <></>
         ) : (

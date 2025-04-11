@@ -5,13 +5,19 @@ from pydantic import BaseModel
 ============================"""
 class Lesson(BaseModel):
     lesson_name: str
+    description: str
     category: str
+    status: str
     difficulty: str
-    duration: int
+    duration: str
+    assessment: bool
+    gems: int
+    exp: int
 
 class GenerateRoadmap(BaseModel):
     roadmap_name: str
     description: str
+    daily_goal: str
     lessons: list[Lesson]
 
 class RoadmapRequest(BaseModel):

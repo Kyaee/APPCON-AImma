@@ -19,12 +19,12 @@ export const postPrompt1 = async () => {
       Do not include the actual content but provide a structure to generate the lesson in the next prompt.
   
       Format:
-      - Name
-      - Difficulty
-      - Duration with time unit (e.g., 30 minutes, 1 hour)
-      - Daily goal
-      - status (returns "locked", "in_progress", or no output if unlocked)
+      - Roadmap Name, roadmap daily_goal & roadmap descripton
+      - Lesson Category in ARRAY
+      - status each lesson(returns "locked" for premium access, "in_progress", or no output if unlocked)
       - Assessment(returns true or false)
+      - Duration of each lesson with time unit (e.g., 30 minutes, 1 hour)
+      - Gems & Exp rewarded per lesson
     `,
   };
   try {
@@ -87,27 +87,43 @@ export const postPrompt2 = async (
 /**************************************
  *       POST ASSESSMENT PROMPT
  **************************************/
-export const postPrompt3 = async (lesson_id, lesson_name, lesson_content) => {
-  try {
+export function useAssessment(trueId) {
+  const postPrompt3 = async ({lesson_id, lesson_name, lesson_content}) => {
+    if (!lesson_id || !lesson_name || !lesson_content) {
+      throw new Error("Invalid input parameters for postPrompt3");
+    }
+
     const requestBody = {
       prompt_assessment_generate: `Generate 7 assessment questions for ${lesson_name} with the following content: ${lesson_content}`,
       id: lesson_id,
       name: lesson_name,
     };
-
     const response = await axios.post(
       "http://127.0.0.1:8000/api/generate-assessment",
       requestBody
     );
-
     if (response.data?.error) console.error("Error:", response.data.error);
-  } catch (error) {
-    console.error("Error:", error);
-  } finally {
-    window.location.href = `/l/${lesson_id}/assessment`;
-  }
-};
 
+    return response.data;
+  };
+
+  const { mutate: createAssessment, isError, isPending } = useMutation({
+    mutationFn: postPrompt3,
+    onSuccess: (data) => {
+      console.log("Data:", data);
+      window.location.href = `/l/${trueId}/assessment`;
+    },
+    onError: (error) => {
+      console.error("Error:", error);
+    },
+  });
+
+  return { createAssessment, isError, isPending };
+}
+
+/**************************************
+ *       POST EVALUATION PROMPT
+ **************************************/
 export function useSummary() {
   const postprompt4 = async (id, name, difficulty, answers) => {
     const requestBody = {
@@ -145,7 +161,7 @@ export function useSummary() {
   });
 
   return { createSummary, isError };
-};
+}
 
 /**************************************
  *   POST ROADMAP DATA TO SUPABASE
@@ -159,6 +175,7 @@ export const createNewRoadmap = async (roadmaps, userId) => {
           user_id: userId,
           roadmap_name: roadmap.roadmap_name,
           description: roadmap.description,
+          daily_goal: roadmap.daily_goal,
         },
       ])
       .select("*");
@@ -170,14 +187,16 @@ export const createNewRoadmap = async (roadmaps, userId) => {
     if (roadmap.lessons?.length > 0) {
       const lessonsToInsert = roadmap.lessons.map((lesson) => ({
         roadmap_id: roadmapId,
+        user_id: userId,
         lesson_name: lesson.lesson_name,
+        description: lesson.description,
         lesson_category: lesson.category,
+        status: lesson.status,
         lesson_difficulty: lesson.difficulty,
         lesson_duration: lesson.duration,
         assessment: lesson.assessment,
-        status: lesson.status,
-        lesson_description: lesson.description,
-        user_id: userId,
+        gems: lesson.gems,
+        exp: lesson.exp,
       }));
 
       const { error: lessonsError } = await supabase
