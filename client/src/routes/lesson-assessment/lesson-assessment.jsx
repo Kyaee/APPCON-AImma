@@ -1,16 +1,16 @@
 import { ArrowLeft, ArrowRight, Gem, ZapIcon } from "lucide-react";
 import Image from "@/assets/lesson-assessment/la-intro-capybara.png";
+import Questions from "./questions";
+import Loading from "@/routes/loading";
 import { bouncy } from "ldrs";
 bouncy.register();
-import Questions from "./questions";
-import Header from "@/components/layout/lesson/header-navigator";
-import Loading from "@/routes/loading";
 import { VideoBackground } from "@/components/layout/background";
 import { HeartIcon } from "@/assets/stats-icons";
 import { Link } from "react-router-dom";
 
 // Use Hooks
 import { useState } from "react";
+import { useSummary } from "@/api/INSERT";
 import { fetchLessonAssessmentData } from "@/api/FETCH";
 import { useQuery } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
@@ -44,6 +44,7 @@ export default function Assessment() {
       validated: false,
     },
   ]);
+  const { createSummary, isError } = useSummary();
 
   const handleCheck = () => {
     // PROCESSING ANSWER VALIDATION
@@ -99,11 +100,25 @@ export default function Assessment() {
     );
   }
 
+  function fetchAllData(e) {
+    e.preventDefault();
+
+    // console.log(lessonFetch.id)
+    // console.log(lessonFetch.name)
+    // console.log(lessonFetch.difficulty)
+    // console.log(isAnswers)
+    createSummary(
+      lessonFetch.id,
+      lessonFetch.name,
+      lessonFetch.difficulty,
+      isAnswers
+    );
+  }
+
   return (
     <>
       <main className="h-screen w-full flex justify-center items-center select-none relative overflow-hidden">
         <VideoBackground />
-        <Header />
 
         <form>
           {isIntroSlide ? (
@@ -162,7 +177,8 @@ export default function Assessment() {
                 <button
                   className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
                   hover:bg-neutral-300"
-                  onClick={() => setIntroSlide(false)}
+                  onClick={fetchAllData}
+                  disabled={``}
                 >
                   Finish
                 </button>

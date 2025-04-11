@@ -1,5 +1,6 @@
 import { supabase } from "@/config/supabase";
 import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 /**************************************
  *        POST ROADMAP PROMPT
@@ -78,10 +79,9 @@ export const postPrompt2 = async (
     if (response.data?.error) console.error("Error:", response.data.error);
   } catch (error) {
     console.error("Error:", error);
-  } 
-  // finally {
-  //   window.location.href = `/lesson/${id}`;
-  // }
+  } finally {
+    window.location.href = `/lesson/${id}`;
+  }
 };
 
 /**************************************
@@ -106,6 +106,45 @@ export const postPrompt3 = async (lesson_id, lesson_name, lesson_content) => {
   } finally {
     window.location.href = `/l/${lesson_id}/assessment`;
   }
+};
+
+export function useSummary() {
+  const postprompt4 = async (id, name, difficulty, answers) => {
+    const requestBody = {
+      prompt_summary_generate: `
+      Generate a short evaluation of the user's assessment of ${answers} 
+      for the lesson ${name}:
+  
+      Response format: 
+      - summary: 1-2 lines and another 1-2 lines for user feedback
+      - radarchart: 
+      `,
+      lesson_id: id,
+      lesson_name: name,
+      difficulty_level: difficulty,
+    };
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/generate-summary",
+      requestBody
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.data;
+  };
+
+  const { mutate: createSummary, isError } = useMutation({
+    mutationFn: postprompt4,
+    onSuccess: (data) => {
+      console.log("Data:", data);
+    },
+    onError: (error) => {
+      console.error("Error:", error);
+    },
+  });
+
+  return { createSummary, isError };
 };
 
 /**************************************
@@ -170,6 +209,6 @@ export const createNewLesson = async (lesson, userId) => {
     ])
     .select("*");
 
-  if (lessonError) throw lessonError; 
+  if (lessonError) throw lessonError;
   return lessonData[0].lesson_id;
-}
+};

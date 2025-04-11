@@ -50,16 +50,16 @@ class QuestionRequest(BaseModel):
     name: str
 
 """======================================
-  STEP 4: Check if answer is correct
-=========================================="""
-class AnswerValidationRequest(BaseModel):
-    question_number: int
-    selected_answer: str
-
-"""======================================
-  STEP 5: Assessment request model
+  STEP 4: Assessment request model
 =========================================="""
 class AssessmentRequest(BaseModel):
+    prompt_summary_generate: str
+    lesson_id: int
     lesson_name: str
     difficulty_level: str
-    time_limit_minutes: int
+    
+class GenerateSummary(BaseModel):
+    summary: str
+    linechart: list[int]
+    radarchart: list[int]
+

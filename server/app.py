@@ -5,11 +5,10 @@ from dotenv import load_dotenv
 import uvicorn
 import os
 from classformats import (
-    RoadmapRequest,
-    GenerateRoadmap,
-    GenerateLesson,
-    QuestionRequest,
-    GenerateQuestions,
+    RoadmapRequest, GenerateRoadmap,
+    QuestionRequest, GenerateLesson,
+    GenerateQuestions, AssessmentRequest,
+    GenerateSummary,   
 )
 from pydantic import BaseModel
 import json
@@ -20,7 +19,7 @@ import json
 load_dotenv()
 
 app = FastAPI()
-origins = ["*"]
+origins = ["http://localhost:3000"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -51,7 +50,8 @@ system_prompt = (
 
 roadmap_content = {}
 lesson_content = {}
-asssessment_content = {}
+assessment_content = {}
+summary_content = {}
 
 
 @app.post("/api/generate-roadmap")
@@ -140,6 +140,28 @@ def POST_generate_assessment(request: QuestionRequest = None):
         }
     else:
         return {"message": "data was not posted"}
+
+@app.post('/api/generate-summary') 
+def POST_generate_summary(request: AssessmentRequest = None):
+    global summary_content
+    if request: 
+        summary_completion = client.beta.chat.completions.parse(
+            model="gemini-2.0-flash",
+            messages=[{"role": "user", "content": request}],
+            response_format=GenerateSummary,
+        )
+        content = summary_completion.choices[0].message.parsed
+        summary_content = {
+            "id": request.lesson_id,
+            "lesson_name": request.lesson_name,
+            "difficulty_level": request.difficulty_level,
+            "summary": content.summary,
+            "linechart": content.linechart,
+            "radarchart": content.radarchart,
+        }
+    else:
+        return {"message": "data was not posted"}
+
 
 
 @app.get("/api/get-roadmap")
