@@ -94,9 +94,9 @@ export default function Profile() {
           <Streak_Component
             streak={!isError ? fetch.streaks : 0}
             previous_best={
-              !isError && profile.best_streak ? profile.best_streak : 0
+              !isError && fetch.best_streak ? fetch.best_streak : 0
             }
-            quests_finished={!isError ? 12 : 0}
+            quests_finished={!isError ? fetch.finished_quests : 0}
             skill_progress={
               !isError
                 ? [
