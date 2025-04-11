@@ -48,28 +48,24 @@ system_prompt = (
     "6. Design content for 30-minute daily learning goals."
 )
 
-roadmap_content = {}
-lesson_content = {}
-assessment_content = {}
-summary_content = {}
-
+# Replace global variables with a dictionary
+data_store = {
+    "roadmap": None,
+    "lesson": None,
+    "assessment": None,
+    "summary": None,
+}
 
 @app.post("/api/generate-roadmap")
 def POST_generate_roadmap(request: RoadmapRequest = None):
-    global roadmap_content
     if request:
         Roadmap_completion = client.beta.chat.completions.parse(
-            # model="deepseek/deepseek-r1:free",
             model="gemini-2.0-flash",
-            messages=[
-                # {"role": "system", "content": system_prompt},
-                {"role": "user", "content": request.prompt_roadmap_generate}
-            ],
+            messages=[{"role": "user", "content": request.prompt_roadmap_generate}],
             response_format=GenerateRoadmap,
         )
-
         event = Roadmap_completion.choices[0].message.parsed
-        roadmap_content = {
+        data_store["roadmap"] = {
             "roadmap_name": event.roadmap_name,
             "description": event.description,
             "lessons": [
@@ -87,19 +83,14 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
 
 
 @app.post("/api/generate-lesson")
-def POST_generate_lesson(
-    request: GenerateLesson = None,
-):
-    print(f"DEBUG: Received request_data: {request}")
-    print(f"DEBUG: Type of data: {type(request)}")
-    global lesson_content
+def POST_generate_lesson(request: GenerateLesson = None):
     if request:
         Lesson_completion = client.chat.completions.create(
             model="gemini-2.0-flash",
             messages=[{"role": "user", "content": request.prompt_lesson_generate}],
         )
         content = Lesson_completion.choices[0].message.content
-        lesson_content = {
+        data_store["lesson"] = {
             "lesson": content,
             "id": request.lesson_id,
             "name": request.lesson_name,
@@ -116,7 +107,6 @@ def POST_generate_lesson(
 
 @app.post("/api/generate-assessment")
 def POST_generate_assessment(request: QuestionRequest = None):
-    global assessment_content
     if request:
         Assessment_completion = client.beta.chat.completions.parse(
             model="gemini-2.0-flash",
@@ -124,7 +114,7 @@ def POST_generate_assessment(request: QuestionRequest = None):
             response_format=GenerateQuestions,
         )
         content = Assessment_completion.choices[0].message.parsed
-        assessment_content = {
+        data_store["assessment"] = {
             "id": request.id,
             "name": request.name,
             "questions": [
@@ -141,9 +131,9 @@ def POST_generate_assessment(request: QuestionRequest = None):
     else:
         return {"message": "data was not posted"}
 
+
 @app.post('/api/generate-summary') 
 def POST_generate_summary(request: AssessmentRequest = None):
-    global summary_content
     if request: 
         summary_completion = client.beta.chat.completions.parse(
             model="gemini-2.0-flash",
@@ -151,7 +141,7 @@ def POST_generate_summary(request: AssessmentRequest = None):
             response_format=GenerateSummary,
         )
         content = summary_completion.choices[0].message.parsed
-        summary_content = {
+        data_store["summary"] = {
             "id": request.lesson_id,
             "lesson_name": request.lesson_name,
             "difficulty_level": request.difficulty_level,
@@ -163,47 +153,41 @@ def POST_generate_summary(request: AssessmentRequest = None):
         return {"message": "data was not posted"}
 
 
-
 @app.get("/api/get-roadmap")
 def GET_generate_roadmap():
-    if roadmap_content:
-        return [roadmap_content]
+    if data_store["roadmap"]:
+        return [data_store["roadmap"]]
     else:
-        return {"No roadmap generated yet"}
+        return {"message": "No roadmap generated yet"}
 
 
 @app.get("/api/get-lesson")
 def GET_generate_lesson():
-    if lesson_content:
-        return lesson_content
+    if data_store["lesson"]:
+        return data_store["lesson"]
     else:
         return {"message": "No lesson generated yet"}
 
+
 @app.get("/api/get-assessment")
 def GET_generate_assessment():
-    if assessment_content:
-        return assessment_content
+    if data_store["assessment"]:
+        return data_store["assessment"]
     else:
-        return {"message": "No assessment generated yet"}   
+        return {"message": "No assessment generated yet"}
+
+
+@app.get("/api/get-summary")
+def GET_generate_summary():
+    if data_store["summary"]:
+        return data_store["summary"]
+    else:
+        return {"message": "No summary generated yet"}   
 
 # --------------------------------------------------------------
 #  Prompt engineering
 # --------------------------------------------------------------
-# instruction = "You generate a lesson contents for "
 
-# completion = client.chat.completions.create(
-#     model="deepseek/deepseek-r1:free",
-#     messages=[
-#         {"role": "user", "content": "What is the meaning of life?"}
-#     ],
-# )
-
-# @app.post('/api/generate-roadmap')
-# def Roadmap():
-#     return {"message": "Hello World"}
-
-
-# print(completion.choices[0].message.content)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

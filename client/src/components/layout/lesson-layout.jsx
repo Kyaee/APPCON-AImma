@@ -7,6 +7,7 @@ import { useLessonFetchStore } from "@/store/useLessonData";
 import { useEffect } from "react";
 
 export default function LessonLayout({ children }) {
+  const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const setLessonFetch = useLessonFetchStore((state) => state.setFetch);
   const {
     data: lessonData,
@@ -15,7 +16,7 @@ export default function LessonLayout({ children }) {
   } = useQuery(fetchLessonAIdata());
 
   useEffect(() => {
-    if (lessonData) setLessonFetch(lessonData);
+      if (lessonData) setLessonFetch(lessonData);
   }, [lessonData]);
 
   if (isLoading) return <Loading />;
@@ -23,7 +24,10 @@ export default function LessonLayout({ children }) {
 
   return (
     <>
-      <Header id={lessonData.id} isAssessment={lessonData.assessment} />
+      <Header
+        id={lessonFetch.id || lessonData.id}
+        isAssessment={lessonFetch.assessment || lessonData.assessment}
+      />
       <Outlet />
       {children}
     </>
