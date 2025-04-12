@@ -93,7 +93,7 @@ export default function MidQuestionsStep({ formData, setFormData }) {
                 className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
                     formData.skillsUsed.includes(skill)
-                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                      ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
                       : "border-black border-2 hover:border-black hover:border-3"
                   }`}
               >

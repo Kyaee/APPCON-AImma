@@ -18,10 +18,10 @@ export default function EducationLevelStep({
           <button
             key={option.id}
             onClick={() => onLevelSelect(option)}
-            className={`p-4 sm:px-14.5 sm:py-25 rounded-lg transition-all duration-200 cursor-pointer bg-white
+            className={`p-4 sm:px-14.5 sm:py-25 rounded-lg transition-all duration-200 cursor-pointer bg-transparent
               ${
                 selectedLevel?.id === option.id
-                  ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                  ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
                   : "border-black border-2 hover:border-black hover:border-3"
               }`}
           >

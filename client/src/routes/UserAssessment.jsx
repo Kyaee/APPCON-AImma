@@ -218,6 +218,9 @@ export default function UserAssessment() {
     }
   }, [technicalAnswers]);
 
+  // Add a new state to track if we're showing questions for the selected tech interest
+  const [techQuestionsVisible, setTechQuestionsVisible] = useState(false);
+
   // Handlers
   const handleLanguageChange = (value) => {
     setLanguage(value);
@@ -264,6 +267,12 @@ export default function UserAssessment() {
   // Handle back button click
   const handleBack = () => {
     if (currentStep === "language") return;
+
+    // If on tech interest questions view, go back to interest selection
+    if (currentStep === "techInterest" && techQuestionsVisible) {
+      setTechQuestionsVisible(false);
+      return;
+    }
 
     const backMapping = {
       userType: "language",
@@ -524,13 +533,109 @@ export default function UserAssessment() {
         break;
 
       case "techInterest":
-        navigateToNextStep("complete");
+        if (technicalInterest) {
+          if (!techQuestionsVisible) {
+            // First click on Next: Show the questions for the selected interest
+            setTechQuestionsVisible(true);
+          } else {
+            // Second click on Next: Move to completion
+            setTechQuestionsVisible(false);
+            navigateToNextStep("complete");
+          }
+        } else {
+          alert("Please select a technical interest");
+        }
         break;
 
       case "complete":
+        // Log all collected data
+        console.group("Assessment Results");
+        console.log("Language:", language);
+        console.log("User Type:", selectedType);
+        console.log("Education Level:", selectedLevel);
+        
+        // User type specific data
+        if (selectedType?.id === "student") {
+          console.log("Education Level:", selectedLevel?.label);
+          if (selectedLevel?.id === "highSchool") {
+            console.log("High School Data:", hsFormData);
+          } else if (selectedLevel?.id === "college") {
+            console.log("College Data:", collegeFormData);
+          } else if (selectedLevel?.id === "graduateSchool") {
+            console.log("Graduate School Data:", gradFormData);
+          }
+        } else if (selectedType?.id === "professional") {
+          console.log("Experience Level:", selectedLevel?.label);
+          if (selectedLevel?.id === "entryLevel") {
+            console.log("Entry Level Data:", entryFormData);
+          } else if (selectedLevel?.id === "midLevel") {
+            console.log("Mid Level Data:", midFormData);
+          } else if (selectedLevel?.id === "seniorLevel") {
+            console.log("Senior Level Data:", seniorFormData);
+          }
+        } else if (selectedType?.id === "jobSeeker") {
+          console.log("Previous Experience:", previousExperience);
+        } else if (selectedType?.id === "careerShifter") {
+          console.log("Career Transition:", transition);
+        }
+        
+        console.log("Daily Goal:", dailyGoal);
+        console.log("Technical Interest:", technicalInterest ? `${technicalInterest.label} (${technicalInterest.id})` : "None");
+        console.log("Technical Answers:", technicalAnswers);
+        // Additional details about technical interest answers
+        if (technicalInterest) {
+          console.group(`${technicalInterest.label} Questions and Answers`);
+          const questionSet = technicalInterest.id === "other" 
+            ? assessmentFlow.otherInterests 
+            : assessmentFlow[technicalInterest.id + "Questions"];
+            
+          if (questionSet && questionSet.questions) {
+            questionSet.questions.forEach(question => {
+              const answer = technicalAnswers[question.id];
+              console.log(`Q: ${question.label}`);
+              console.log(`A: ${Array.isArray(answer) ? answer.join(', ') : answer || "Not answered"}`);
+              console.log('---');
+            });
+          } else {
+            console.log(`No questions found for ${technicalInterest.label} (${technicalInterest.id})`);
+            console.log('Available question sets:', Object.keys(assessmentFlow).filter(key => key.includes('Questions')));
+          }
+          console.groupEnd();
+        }
+        console.log("Feedback:", feedback);
+        
+        
+        
+        // Create a formatted summary of all answers
+        const summaryData = {
+          basicInfo: {
+            language,
+            userType: selectedType?.label,
+            dailyGoal: `${dailyGoal} minutes`,
+          },
+          pathDetails: selectedType?.id === "student" 
+            ? { educationLevel: selectedLevel?.label }
+            : selectedType?.id === "professional"
+              ? { experienceLevel: selectedLevel?.label }
+              : selectedType?.id === "jobSeeker"
+                ? { previousExperience }
+                : { careerTransition: transition },
+          technicalInterests: {
+            primaryInterest: technicalInterest?.label,
+            answers: technicalAnswers
+          },
+        };
+        
+        // Display the summary as an alert for user visibility
+        // alert("Assessment Complete! Summary:\n\n" + JSON.stringify(summaryData, null, 2));
+        // console.groupEnd();
+        
         // Navigate to dashboard after completion
         navigate("/dashboard/:id");
         break;
+
+      default:
+        return null;
     }
   };
 
@@ -573,7 +678,9 @@ export default function UserAssessment() {
       midQuestions: "Middle Level Assessment",
       seniorQuestions: "Senior Level Assessment",
       dailyGoal: "Daily Learning Goal",
-      techInterest: "Technical Interests",
+      techInterest: techQuestionsVisible 
+        ? `${technicalInterest?.label || 'Technical'} Questions` 
+        : "Technical Interests",
       complete: "Assessment Complete",
     };
 
@@ -696,6 +803,7 @@ export default function UserAssessment() {
             onInterestSelect={handleTechInterestSelect}
             technicalAnswers={technicalAnswers}
             onAnswerChange={handleTechAnswerChange}
+            showQuestions={techQuestionsVisible}
           />
         );
       case "complete":

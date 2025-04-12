@@ -40,7 +40,8 @@ export const useAssessmentStore = create(
         }
       })),
       transition: (data) => set({ data }),
-      setCareerTransition: (data) => set({ data }),
+      setPreviousExperience: (data) => set({ previousExperience: data }),
+      setCareerTransition: (data) => set({ careerTransition: data }),
       setDailyGoal: (goal) => set({ dailyGoal: goal }),
       setTechnicalInterest: (interest) => set({ technicalInterest: interest }),
       setTechnicalAnswers: (answers) => set({ technicalAnswers: answers }),

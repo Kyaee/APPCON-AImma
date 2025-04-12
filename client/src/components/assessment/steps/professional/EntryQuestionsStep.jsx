@@ -96,7 +96,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
                 className={`p-3 rounded-lg border-2 text-left transition-all duration-200
                   ${
                     formData.skillsUsed.includes(skill)
-                      ? "border-primary bg-primary/10"
+                      ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
                       : "border-gray-200 hover:border-primary/50"
                   }`}
               >

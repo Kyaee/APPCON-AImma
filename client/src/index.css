@@ -409,6 +409,10 @@
     animation-timeline: scroll();
   }
 
+  .card-bg-opacity {
+    background-color: hsla(0, 0%, 100%, 0.2); /* semi-transparent white with 20% opacity */
+  }
+
   @keyframes gradient-animation {
     0% {
       background-position: 0% 50%;
