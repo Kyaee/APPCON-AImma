@@ -183,3 +183,31 @@ export function fetchLessonAssessmentData() {
     },
   });
 }
+
+export function useFetchSummary() { 
+  const fetchEvaluation = async () => {
+    return queryOptions({
+      
+    })
+  }
+
+  const { data: evaluationData, isLoading: isEvaluationLoading } = useQuery({queryKey: ["evaluation"],
+    queryFn: async () => {
+      const response = await axios
+        .get("http://127.0.1:8000/api/get-summary")
+        .catch((error) => {
+          console.error("Error fetching evaluation data:", error);
+          throw error;
+        });
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch evaluation data");
+      }
+      console.log("evaluation data", response.data);
+      return response.data;
+    },});
+
+  return {
+    evaluationData,
+    isEvaluationLoading,
+  };
+}

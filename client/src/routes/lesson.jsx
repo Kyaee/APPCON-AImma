@@ -22,9 +22,7 @@ export default function ElementLesson() {
   const lessonFetch = useLessonFetchStore((state) => state.fetch); // Get the lesson data from the store
   const contentRef = useRef(null); // Create a ref for the content section
   const [isLoading, setLoading] = useState(false); // State to manage loading status
-  const { createAssessment, isPending, isError } = useAssessment(
-    lessonFetch.id
-  );
+  const { createAssessment, isPending, isError } = useAssessment();
 
   useEffect(() => {
     if (!contentRef.current) return;
@@ -70,14 +68,17 @@ export default function ElementLesson() {
     setLoading(true);
 
     if (!generated_assessment) {
+      window.location.href = `/l/${id}/assessment`;
+    } else { 
       createAssessment({
         lesson_id: lessonFetch.id,
         lesson_name: lessonFetch.name,
-        lesson_content: lessonFetch.lesson,
+        lesson_content: lessonFetch.lesson, 
       });
       setGeneratedAssessment(true);
       setLoading(false);
-    } else window.location.href = `/l/${id}/assessment`;
+      setTimeout(()=> window.location.href = `/l/${id}/assessment`, 2000);
+    }
   };
 
   if (isPending) return <Loading generate_assessment={true} />;

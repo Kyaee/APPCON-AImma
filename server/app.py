@@ -144,19 +144,21 @@ def POST_generate_assessment(request: QuestionRequest = None):
 
 @app.post("/api/generate-summary")
 def POST_generate_summary(request: AssessmentRequest = None):
+    print("Incoming Request:", request.dict())
     if request:
         summary_completion = client.beta.chat.completions.parse(
             model="gemini-2.0-flash",
-            messages=[{"role": "user", "content": request}],
+            messages=[{"role": "user", "content": request.prompt_summary_generate}],
             response_format=GenerateSummary,
         )
         content = summary_completion.choices[0].message.parsed
         data_store["summary"] = {
-            "id": request.lesson_id,
-            "lesson_name": request.lesson_name,
-            "difficulty_level": request.difficulty_level,
+            "id": request.id,
+            "lesson_name": request.name,
+            "difficulty_level": request.difficulty,
+            "score": request.score,
+            "total": request.total,
             "summary": content.summary,
-            "linechart": content.linechart,
             "radarchart": content.radarchart,
         }
     else:
