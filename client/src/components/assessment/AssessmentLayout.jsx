@@ -2,6 +2,7 @@ import React from "react";
 import ProgressBar from "./ProgressBar";
 import NavigationButtons from "./NavigationButtons";
 import { VideoBackground } from "@/components/layout/Background";
+import Capydetect from "@/assets/user-assessment/DetectiveCapybara.png";
 
 const AssessmentLayout = ({
   children,
@@ -11,7 +12,6 @@ const AssessmentLayout = ({
   nextPage,
   showMascot,
   buttonPosition,
-  mascotZIndex,
 }) => {
   return (
     <div className="min-h-screen flex flex-col">
@@ -26,7 +26,7 @@ const AssessmentLayout = ({
             style={{ zIndex: -1 }}
           >
             <img
-              src="../src/assets/user-assessment/DetectiveCapybara.png"
+              src={Capydetect}
               alt="Mascot character"
               className="w-5/6 h-5/6 object-cover pointer-events-none"
             />

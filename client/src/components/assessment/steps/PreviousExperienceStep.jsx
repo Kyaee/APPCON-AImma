@@ -13,9 +13,9 @@ export default function PreviousExperienceStep({ experience, setExperience }) {
   };
 
   // For debugging - let's log what's happening
-  useEffect(() => {
-    console.log("PreviousExperienceStep rendered with:", experience);
-  }, [experience]);
+  // useEffect(() => {
+  //   console.log("PreviousExperienceStep rendered with:", experience);
+  // }, [experience]);
 
   return (
     <AssessmentStep title="Previous Experience">

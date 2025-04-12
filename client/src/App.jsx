@@ -41,7 +41,7 @@ import ApiTester from "./routes/UI_TestGemReward";
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(true);
+  const [isAssessed, setAssessed] = useState(false);
   // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
