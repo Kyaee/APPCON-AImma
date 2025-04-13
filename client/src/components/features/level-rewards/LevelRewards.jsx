@@ -113,7 +113,7 @@ const LevelRewards = () => {
       </Button>
 
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent className="h-[85vh]">
+        <DrawerContent className="h-[60vh]">
           <div className="mx-auto w-full max-w-6xl">
             <DrawerHeader>
               <DrawerTitle className="text-2xl font-bold">Level Up Rewards</DrawerTitle>

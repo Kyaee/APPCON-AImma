@@ -36,7 +36,6 @@ import JobOpportunities from "./routes/JobOpportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Testing from "./routes/Testing/TestingPage";
-import LevelRewardsTest from "./routes/Testing/LevelRewards";
 import ApiTester from "./routes/UI_TestGemReward";
 
 function App() {
@@ -53,7 +52,6 @@ function App() {
             <Routes>
               {/* GENERAL ROUTES */}
               <Route path="/" element={<Landing />} />
-              <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="/GemReward" element={<ApiTester />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/testing" element={<Testing />} />
