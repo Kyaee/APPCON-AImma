@@ -14,6 +14,7 @@ import axios from "axios";
 /***********************************
 1*        FETCH USER DATA
  ************************************/
+
 export function fetchUserdata() {
   return queryOptions({
     queryKey: ["fetch_user"],
@@ -109,6 +110,12 @@ export function fetchRoadmapAIdata() {
       console.log("roadmap AI data", response.data);
       return response.data;
     },
+    onSuccess: (data) => {
+      console.log("Data fetched successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Error fetching data:", error);
+    },
   });
 }
 
@@ -182,4 +189,32 @@ export function fetchLessonAssessmentData() {
       return response.data;
     },
   });
+}
+
+export function useFetchSummary() { 
+  const fetchEvaluation = async () => {
+    return queryOptions({
+      
+    })
+  }
+
+  const { data: evaluationData, isLoading: isEvaluationLoading } = useQuery({queryKey: ["evaluation"],
+    queryFn: async () => {
+      const response = await axios
+        .get("http://127.0.1:8000/api/get-summary")
+        .catch((error) => {
+          console.error("Error fetching evaluation data:", error);
+          throw error;
+        });
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch evaluation data");
+      }
+      console.log("evaluation data", response.data);
+      return response.data;
+    },});
+
+  return {
+    evaluationData,
+    isEvaluationLoading,
+  };
 }

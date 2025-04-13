@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AssessmentLayout from "@/components/assessment/AssessmentLayout";
 import { assessmentFlow } from "@/lib/assessment-flow";
 import { useAssessmentStore } from "@/store/useAssessmentStore";
+import { useGenerateRoadmap } from "@/api/INSERT";
 
 // Import step components
 import LanguageStep from "@/components/assessment/steps/LanguageStep";
@@ -26,22 +27,14 @@ export default function UserAssessment() {
   const setLanguage = useAssessmentStore((state) => state.setLanguage);
   const language = useAssessmentStore((state) => state.language);
   const setUserType = useAssessmentStore((state) => state.setUserType);
-  const setEducationLevel = useAssessmentStore(
-    (state) => state.setEducationLevel
-  );
-  const setCareerTransition = useAssessmentStore(
-    (state) => state.setCareerTransition
-  );
-  const setPreviousExperience = useAssessmentStore(
-    (state) => state.setPreviousExperience
-  );
+  const setEducationLevel = useAssessmentStore((state) => state.setEducationLevel);
+  const setCareerTransition = useAssessmentStore((state) => state.setCareerTransition);
+  const setPreviousExperience = useAssessmentStore((state) => state.setPreviousExperience);
   const setDailyGoal = useAssessmentStore((state) => state.setDailyGoal);
-  const setTechnicalInterest = useAssessmentStore(
-    (state) => state.setTechnicalInterest
-  );
-  const setTechnicalAnswers = useAssessmentStore(
-    (state) => state.setTechnicalAnswers
-  );
+  const setTechnicalInterest = useAssessmentStore((state) => state.setTechnicalInterest);
+  const setTechnicalAnswers = useAssessmentStore((state) => state.setTechnicalAnswers);
+  const resetAssessment = useAssessmentStore((state) => state.resetAssessment);
+  const { createRoadmap, isSuccess } = useGenerateRoadmap();
 
   // Local state
   const [currentStep, setCurrentStep] = useState(() => {
@@ -326,6 +319,7 @@ export default function UserAssessment() {
     // Custom validation and navigation logic for each step
     switch (currentStep) {
       case "language":
+        resetAssessment()
         navigateToNextStep("userType");
         break;
 
@@ -540,6 +534,7 @@ export default function UserAssessment() {
           } else {
             // Second click on Next: Move to completion
             setTechQuestionsVisible(false);
+            createRoadmap()
             navigateToNextStep("complete");
           }
         } else {
@@ -604,8 +599,6 @@ export default function UserAssessment() {
         }
         console.log("Feedback:", feedback);
         
-        
-        
         // Create a formatted summary of all answers
         const summaryData = {
           basicInfo: {
@@ -631,7 +624,9 @@ export default function UserAssessment() {
         // console.groupEnd();
         
         // Navigate to dashboard after completion
-        navigate("/dashboard/:id");
+        
+        // THIS ONE SHOULD POST FETCH THE DATA AND POST 
+        navigate("/dashboard/p");
         break;
 
       default:

@@ -21,6 +21,7 @@ import ConfirmAccount from "./routes/auth/confirm-account";
 import IntroShowcase from "./routes/Showcase";
 import UserAssessment from "./routes/UserAssessment";
 // REDIRECTS
+import ProcessDashboard from "./routes/redirects/processDashboard";
 import RedirectDashboard from "./routes/redirects/redirectDashboard";
 import RedirectProfile from "./routes/redirects/redirectProfile";
 import RedirectShop from "./routes/redirects/redirectShop";
@@ -35,7 +36,6 @@ import JobOpportunities from "./routes/JobOpportunities";
 import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Testing from "./routes/Testing/TestingPage";
-import LevelRewardsTest from "./routes/Testing/LevelRewards";
 import ApiTester from "./routes/UI_TestGemReward";
 
 function App() {
@@ -52,7 +52,6 @@ function App() {
             <Routes>
               {/* GENERAL ROUTES */}
               <Route path="/" element={<Landing />} />
-              <Route path="/level-rewards" element={<LevelRewardsTest />} />
               <Route path="/GemReward" element={<ApiTester />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/testing" element={<Testing />} />
@@ -75,6 +74,7 @@ function App() {
                     path="/start/assessment/*"
                     element={<UserAssessment />}
                   />
+                  <Route path="/dashboard/p" element={<ProcessDashboard setAssessed={setAssessed} />} />
                 </>
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED

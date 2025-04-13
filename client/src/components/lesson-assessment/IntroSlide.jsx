@@ -19,13 +19,17 @@ export default function IntroSlide({
 
   function generateQuestions(e) {
     e.preventDefault();
-
-    if (!generated_assessment) {
-      createAssessment(lessonFetch.id, lessonFetch.name, lessonFetch.lesson);
-      setGeneratedAssessment(true);
-    } else {
-      console.log("Generating questions...");
+    
+    if (generated_assessment) {
+      console.log("Proceeding...");
       setIntroSlide();
+    } else {
+      setGeneratedAssessment(true);
+      createAssessment({
+        lesson_id: lessonData.id,
+        lesson_name: lessonData.name,
+        lesson_content: lessonData.lesson,
+      });
     }
   }
 
