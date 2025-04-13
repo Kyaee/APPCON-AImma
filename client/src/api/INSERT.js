@@ -1,45 +1,69 @@
 import { supabase } from "@/config/supabase";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import { useAssessmentStore } from "@/store/useAssessmentStore";
+
+// const proficiencySkills = useAssessmentStore.getState().proficiencySkills;
+// const appGoals = useAssessmentStore.getState().appGoals;
+// const dailyTimeCommitment = useAssessmentStore.getState().dailyTimeCommitment;
+// const assessmentAnswers = useAssessmentStore.getState().assessmentAnswers;
+const language = useAssessmentStore.getState().language;
+const userType = useAssessmentStore.getState().userType;
+const educationLevel = useAssessmentStore.getState().educationLevel;
+const previousExperience = useAssessmentStore.getState().previousExperience;
+const careerTransition = useAssessmentStore.getState().careerTransition;
+const dailyGoal = useAssessmentStore.getState().dailyGoal;
+const technicalInterest = useAssessmentStore.getState().technicalInterest;
+const technicalAnswers = useAssessmentStore.getState().technicalAnswers;
 
 /**************************************
  *        POST ROADMAP PROMPT
  **************************************/
-export const postPrompt1 = async () => {
+export function useGenerateRoadmap() {
   const prompt_roadmap = {
-    prompt_roadmap_generate: `
-      Generate a {name} roadmap including the following details:
-      - Difficulty (Easy, Intermediate, Hard)
-      - Lesson duration
-      - Whether it includes an assessment (answer in true/false)
-  
-      The roadmap should be tailored for a {User_classification} {User_Type} user, 
-      who has a daily goal of {daily_goal}. 
-      The lessons should be based on interests such as {interests}. 
-      Do not include the actual content but provide a structure to generate the lesson in the next prompt.
-  
-      Format:
-      - Roadmap Name, roadmap daily_goal & roadmap descripton
-      - Lesson Category in ARRAY
-      - status each lesson(returns "locked" for premium access, "in_progress", or no output if unlocked)
-      - Assessment(returns true or false)
-      - Duration of each lesson with time unit (e.g., 30 minutes, 1 hour)
-      - Gems & Exp rewarded per lesson
-    `,
-  };
-  try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/api/generate-roadmap",
-      prompt_roadmap
-    );
+  prompt_roadmap_generate: `
+    Generate a roadmap in ${JSON.stringify(language)} with the following details:
 
-    if (response.error) {
-      console.error("Error:", response.error);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
+    The roadmap is tailored for a "${userType?.label}" ${JSON.stringify(educationLevel?.label || previousExperience || careerTransition)} user, 
+    with a daily goal of ${JSON.stringify(dailyGoal)} (if two digits its minutes, else hours) .
+    The lessons should be based on interests such as ${JSON.stringify(technicalInterest?.label)} and user personalization: ${JSON.stringify(technicalAnswers)}. 
+    Do not include the actual content but provide a structure to generate the lesson in the next prompt.
+
+    Format:
+    - Roadmap Name, roadmap dailyGoal & roadmap descripton
+    - Lesson Category in ARRAY
+    - status each lesson(returns "locked" for premium access, "in_progress", or no output if unlocked)
+    - Assessment(returns true or false)
+    - Duration of each lesson with time unit (e.g., 30 minutes, 1 hour)
+    - Gems & Exp rewarded per lesson
+  `}
+
+  const postPrompt1 = async () => {
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/generate-roadmap",
+        prompt_roadmap
+      );
+      console.log(prompt_roadmap.prompt_roadmap_generate)
+  
+      if (response.error) console.error("Error:", response.error);
+    } catch (error) {
+      console.error("Error:", error);
+  }};
+
+  const { mutate: createRoadmap, isSuccess } = useMutation({
+    mutationFn: postPrompt1,
+    onSuccess: (data) => {
+      console.log("Data:", data);
+    },
+    onError: (error) => {
+      console.error("Error:", error);
+    },
+  });
+
+  return { createRoadmap, isSuccess };
+}
+
 
 /**************************************
  *        POST LESSON PROMPT
@@ -213,7 +237,7 @@ export const createNewRoadmap = async (roadmaps, userId) => {
         user_id: userId,
         lesson_name: lesson.lesson_name,
         description: lesson.description,
-        lesson_category: lesson.category,
+        lesson_category: [lesson.category],
         status: lesson.status,
         lesson_difficulty: lesson.difficulty,
         lesson_duration: lesson.duration,
@@ -304,7 +328,7 @@ export function useEvaluation(id) {
     });
     if (error) throw error;
     else return "Succesfully Update User";
-  };
+  }; 
 
   const {
     mutate: updateUser,

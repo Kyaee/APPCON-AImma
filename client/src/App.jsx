@@ -21,6 +21,7 @@ import ConfirmAccount from "./routes/auth/confirm-account";
 import IntroShowcase from "./routes/Showcase";
 import UserAssessment from "./routes/UserAssessment";
 // REDIRECTS
+import ProcessDashboard from "./routes/redirects/processDashboard";
 import RedirectDashboard from "./routes/redirects/redirectDashboard";
 import RedirectProfile from "./routes/redirects/redirectProfile";
 import RedirectShop from "./routes/redirects/redirectShop";
@@ -41,7 +42,7 @@ import ApiTester from "./routes/UI_TestGemReward";
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(false);
+  const [isAssessed, setAssessed] = useState(true);
   // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
@@ -75,6 +76,7 @@ function App() {
                     path="/start/assessment/*"
                     element={<UserAssessment />}
                   />
+                  <Route path="/dashboard/p" element={<ProcessDashboard setAssessed={setAssessed} />} />
                 </>
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED

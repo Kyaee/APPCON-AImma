@@ -14,6 +14,7 @@ import axios from "axios";
 /***********************************
 1*        FETCH USER DATA
  ************************************/
+
 export function fetchUserdata() {
   return queryOptions({
     queryKey: ["fetch_user"],
@@ -108,6 +109,12 @@ export function fetchRoadmapAIdata() {
       }
       console.log("roadmap AI data", response.data);
       return response.data;
+    },
+    onSuccess: (data) => {
+      console.log("Data fetched successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Error fetching data:", error);
     },
   });
 }
