@@ -56,7 +56,8 @@ export const fetchLesson = async (lessonId) => {
   const { data, error } = await supabase
     .from("lessons")
     .select("*")
-    .eq("roadmap_id", lessonId);
+    .eq("roadmap_id", lessonId)
+    .order("id", { ascending: true });
   if (error) throw new Error(error.message);
   console.log("lesson data: ", data);
   return data;
