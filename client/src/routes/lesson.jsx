@@ -10,54 +10,22 @@ import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useEffect, useRef } from "react";
 import { useAssessment } from "@/api/INSERT";
-import { useQuery } from "@tanstack/react-query";
-import { fetchLesson } from "@/api/FETCH";
 
-// Import timer tracking functionality
-import { useTimeTracking } from "@/lib/timeTracker";
-import { useQuestStore } from "@/store/useQuestStore";
-
-export default function Lesson() {
+export default function ElementLesson() {
   const { id } = useParams(); // Get the lesson ID from the URL parameters
-  const [loading, setLoading] = useState(false);
-  const [generated_assessment, setGeneratedAssessment] = useState(false);
+  const generated_assessment = useLessonFetchStore(
+    (state) => state.generated_assessment
+  );
+  const setGeneratedAssessment = useLessonFetchStore(
+    (state) => state.setGeneratedAssessment
+  );
+  const lessonFetch = useLessonFetchStore((state) => state.fetch); // Get the lesson data from the store
   const contentRef = useRef(null); // Create a ref for the content section
+  const [isLoading, setLoading] = useState(false); // State to manage loading status
+  const { createAssessment, isPending, isError } = useAssessment(
+    lessonFetch.id
+  );
 
-  // Time tracking for quests
-  const { startTracking, stopTracking } = useTimeTracking(id);
-  const reviewLesson = useQuestStore((state) => state.reviewLesson);
-
-  // Query
-  const {
-    data: lessonFetch,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["lessonFetch", id],
-    queryFn: () => fetchLesson(id),
-    select: (data) => data[0],
-  });
-
-  const { createAssessment, isError: lessonError } = useAssessment(id);
-
-  // Start time tracking when lesson loads
-  useEffect(() => {
-    if (lessonFetch?.id) {
-      startTracking();
-
-      // Mark this lesson as reviewed for the "Review 3 previous lessons" quest
-      reviewLesson(lessonFetch.id, id);
-    }
-
-    return () => {
-      // When component unmounts, stop tracking and update quest progress
-      if (lessonFetch?.id) {
-        stopTracking();
-      }
-    };
-  }, [lessonFetch?.id, startTracking, stopTracking, reviewLesson, id]);
-
-  // Scroll animation effect
   useEffect(() => {
     if (!contentRef.current) return;
 
@@ -71,10 +39,12 @@ export default function Lesson() {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
 
-    const animatedElements = contentRef.current.querySelectorAll("*");
+    const animatedElements = contentRef.current.querySelectorAll(
+      "h1, h2, h3, p, ul, .badge-container, code"
+    );
 
     animatedElements.forEach((el) => {
       el.style.opacity = "0";
@@ -95,7 +65,7 @@ export default function Lesson() {
     );
   }
 
-  // Handle assessment
+  // Set up scroll animations
   const handleAssessment = () => {
     setLoading(true);
 
