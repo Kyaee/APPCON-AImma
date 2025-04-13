@@ -190,7 +190,7 @@ const RoadmapContent = ({
     const container = canvas.parentElement;
     const containerWidth = container.clientWidth;
     const containerHeight =
-      stagePositions[stagePositions.length - 1].verticalPosition + 100;
+      stagePositions[stagePositions.length - 1].verticalPosition + 150; // Add extra space (150px instead of 100px)
 
     // Set canvas dimensions
     canvas.width = containerWidth;
@@ -420,7 +420,7 @@ const RoadmapContent = ({
               height: `${
                 stagePositions.length > 0
                   ? stagePositions[stagePositions.length - 1].verticalPosition +
-                    100
+                    150
                   : 0
               }px`,
             }}
