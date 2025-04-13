@@ -129,12 +129,14 @@ const Sidebar = ({ isExpanded, onToggle, isLessonOpen = false }) => {
                       <Target className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium">{course.roadmap_name}</p>
+                      <p className="font-medium truncate max-w-[200px]">
+                        {course.roadmap_name}
+                      </p>
                       <div className="flex items-center gap-2">
                         <Progress
                           value={course.progress}
                           max={100}
-                          className="h-1.5 w-24 rounded-full"
+                          className="h-1.5 w-50 rounded-full"
                         />
                         <span className="text-xs text-gray-600">
                           {course.progress}%
