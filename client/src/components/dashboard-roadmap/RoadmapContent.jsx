@@ -26,6 +26,9 @@ const RoadmapContent = ({
   currentCourse,
   onCourseChange,
   isSidebarExpanded,
+  setIsSidebarExpanded, // Add this prop
+  isOpenLesson, // Add this prop
+  setOpenLesson, // Add this prop
   // Update default path color to black
   pathColor = "#706E6E", // Changed from #E6E0EA to black
   pathWidth = 4, // Slightly thinner
@@ -33,9 +36,8 @@ const RoadmapContent = ({
   pathDashGap = 6, // Slightly more gap between dashes
   pathBorderRadius = 30,
   isLoading,
-  setLoading
+  setLoading,
 }) => {
-  const [isOpenLesson, setOpenLesson] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState(null);
   const navigate = useNavigate();
   // Create a ref for the canvas
@@ -53,28 +55,40 @@ const RoadmapContent = ({
 
     const positions = [];
 
-    // Capy position
+    // Capy position (always show the capy)
     positions.push({
       horizontalPosition: CENTER_POSITION,
       verticalPosition: 0,
       isCapy: true,
     });
 
+    // If no lessons, just return the capy
+    if (!extendedLessons || extendedLessons.length === 0) {
+      return positions;
+    }
+
     // First stage centered
-    positions.push({
-      horizontalPosition: CENTER_POSITION,
-      verticalPosition: VERTICAL_GAP,
-      isCurrentStage: extendedLessons[0]?.status === "in_progress",
-      isCompleted: extendedLessons[0]?.status === "completed",
-      isLocked: extendedLessons[0]?.status === "locked",
-      iconSrc: iconFirstSvg,
-      fruitSrc: fruitOneSvg,
-      difficulty: extendedLessons[0]?.lesson_difficulty,
-      lessonId: extendedLessons[0]?.id,
-      lessonTitle: extendedLessons[0].lesson_name,
-      category: extendedLessons[0]?.lesson_category,
-      isFirstStage: true,
-    });
+    if (extendedLessons[0]) {
+      positions.push({
+        horizontalPosition: CENTER_POSITION,
+        verticalPosition: VERTICAL_GAP,
+        isCurrentStage: extendedLessons[0]?.status === "in_progress",
+        isCompleted: extendedLessons[0]?.status === "completed",
+        isLocked: extendedLessons[0]?.status === "locked",
+        iconSrc: iconFirstSvg,
+        fruitSrc: fruitOneSvg,
+        difficulty: extendedLessons[0]?.lesson_difficulty,
+        lessonId: extendedLessons[0]?.id,
+        lessonTitle: extendedLessons[0]?.lesson_name || "Lesson 1",
+        category: extendedLessons[0]?.lesson_category,
+        isFirstStage: true,
+      });
+    }
+
+    // If only one lesson, return just the capy and first stage
+    if (extendedLessons.length === 1) {
+      return positions;
+    }
 
     // Define the wave pattern
     let currentPosition = CENTER_POSITION;
@@ -84,20 +98,27 @@ const RoadmapContent = ({
 
     // Add explicit positioning for the SECOND stage (after Capy)
     // This is the stage at index 1 in extendedLessons
-    positions.push({
-      // Position the second stage to the full right position
-      horizontalPosition: CENTER_POSITION + HORIZONTAL_STEP, // Changed from 0.6 to full step
-      verticalPosition: VERTICAL_GAP * 2, // Positioned 2 gaps down from top
-      isCurrentStage: extendedLessons[1]?.status === "in_progress",
-      isCompleted: extendedLessons[1]?.status === "completed",
-      isLocked: extendedLessons[1]?.status === "locked",
-      iconSrc: iconSecondSvg,
-      fruitSrc: fruitOneSvg,
-      difficulty: extendedLessons[1]?.lesson_difficulty,
-      lessonId: extendedLessons[1]?.id,
-      lessonTitle: extendedLessons[1].lesson_name,
-      category: extendedLessons[1]?.lesson_category,
-    });
+    if (extendedLessons[1]) {
+      positions.push({
+        // Position the second stage to the full right position
+        horizontalPosition: CENTER_POSITION + HORIZONTAL_STEP, // Changed from 0.6 to full step
+        verticalPosition: VERTICAL_GAP * 2, // Positioned 2 gaps down from top
+        isCurrentStage: extendedLessons[1]?.status === "in_progress",
+        isCompleted: extendedLessons[1]?.status === "completed",
+        isLocked: extendedLessons[1]?.status === "locked",
+        iconSrc: iconSecondSvg,
+        fruitSrc: fruitOneSvg,
+        difficulty: extendedLessons[1]?.lesson_difficulty,
+        lessonId: extendedLessons[1]?.id,
+        lessonTitle: extendedLessons[1]?.lesson_name || "Lesson 2",
+        category: extendedLessons[1]?.lesson_category,
+      });
+    }
+
+    // If only two lessons, return early
+    if (extendedLessons.length === 2) {
+      return positions;
+    }
 
     // Update the current position and direction after placing the second stage
     currentPosition = CENTER_POSITION + HORIZONTAL_STEP; // Changed from 0.6 to full step
@@ -273,111 +294,147 @@ const RoadmapContent = ({
     pathBorderRadius,
   ]);
 
-  const findIndexOfLessonId = stagePositions.findIndex(
-    (position) => position.lessonId === currentLessonId
-  );
-
   const handleStageClick = (position) => {
     if (!position.isLocked) {
       setCurrentLessonId(position.lessonId);
-      setOpenLesson(true);
-      console.log(findIndexOfLessonId);
+      setOpenLesson(true); // This now updates the parent state
+
+      // Close the sidebar when opening a lesson
+      if (isSidebarExpanded) {
+        setIsSidebarExpanded(false);
+      }
+
+      console.log(
+        stagePositions.findIndex((pos) => pos.lessonId === position.lessonId)
+      );
     }
   };
 
   return (
-    <div className="relative mx-auto mb-[50px]" style={{ width: "90%" }}>
-      {/* Canvas positioning fixed - make sure it's full width/height and behind stages */}
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
-      />
-
-      {/* Stages with higher z-index to appear in front of canvas */}
-      {stagePositions.map((position, index) => {
-        return (
-          <div
-            key={index}
-            className="absolute transform -translate-x-1/2"
-            style={{
-              left: `${position.horizontalPosition}%`,
-              top: `${position.verticalPosition}px`,
-              zIndex: 10, // Higher than canvas
-            }}
-          >
-            {position.isCapy ? (
-              // Render capy for first position
-              <div className="w-40 h-40 flex items-center justify-center">
-                <img src={capySvg} alt="Capy" className="w-full h-full" />
-              </div>
-            ) : (
-              // Render stage
-              <div
-                className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 ${
-                  position.isLocked ? "opacity-90" : ""
-                }`}
-                onClick={() => handleStageClick(position)}
-                title={position.lessonTitle}
-              >
-                {/* Stage image - increased size */}
-                <img
-                  src={position.isLocked ? lockedStageSvg : stageSvg}
-                  alt={position.isLocked ? "Locked Stage" : "Stage"}
-                  className="w-[120px] h-[120px]" // Increased from 90px
-                />
-
-                {/* Icon in center of stage - increased size */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {position.isCurrentStage ? (
-                    <img
-                      src={currentPlaySvg}
-                      alt="Current Stage"
-                      className="w-16 h-16 mb-4" // Increased from 12
-                    />
-                  ) : (
-                    <img
-                      src={position.iconSrc}
-                      alt={`Icon ${position.isLastStage ? "Trophy" : index}`}
-                      className={`w-16 h-16 mb-4 ${
-                        position.isLocked ? "filter grayscale opacity-50" : ""
-                      }`} // Increased from 12
-                    />
-                  )}
-                </div>
-
-                {/* Difficulty indicator - increased size */}
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-20">
-                  <img
-                    src={position.fruitSrc}
-                    alt={`Difficulty ${position.difficulty}`}
-                    className={`w-20 h-12 ${
-                      position.isLocked ? "opacity-50" : ""
-                    }`} // Increased from 14x8
-                  />
-                </div>
-              </div>
-            )}
+    <div
+      className={`relative mx-auto ${
+        isSidebarExpanded ? "ml-[100px]" : "mt-4"
+      }`}
+      style={{ width: "90%" }}
+    >
+      {/* Show a message when there are no lessons for this roadmap */}
+      {!lessons || lessons.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <img src={capySvg} alt="Capy" className="w-32 h-32 mb-8" />
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            No lessons available yet
+          </h2>
+          <p className="text-gray-600 text-center max-w-md mb-6">
+            It looks like lessons for this roadmap are still being developed.
+            Check back soon!
+          </p>
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-md text-amber-800 max-w-md">
+            <p>
+              This roadmap is ready for you to start your learning journey, but
+              content is still being prepared.
+            </p>
           </div>
-        );
-      })}
-      {isOpenLesson && (
+        </div>
+      ) : (
+        <>
+          {/* Canvas positioning fixed - make sure it's full width/height and behind stages */}
+          <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
+          />
+
+          {/* Stages with higher z-index to appear in front of canvas */}
+          {stagePositions.map((position, index) => {
+            return (
+              <div
+                key={index}
+                className="absolute transform -translate-x-1/2"
+                style={{
+                  left: `${position.horizontalPosition}%`,
+                  top: `${position.verticalPosition}px`,
+                  zIndex: 10, // Higher than canvas
+                }}
+              >
+                {position.isCapy ? (
+                  // Render capy for first position
+                  <div className="w-40 h-40 flex items-center justify-center">
+                    <img src={capySvg} alt="Capy" className="w-full h-full" />
+                  </div>
+                ) : (
+                  // Render stage
+                  <div
+                    className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 ${
+                      position.isLocked ? "opacity-90" : ""
+                    }`}
+                    onClick={() => handleStageClick(position)}
+                    title={position.lessonTitle}
+                  >
+                    {/* Stage image - increased size */}
+                    <img
+                      src={position.isLocked ? lockedStageSvg : stageSvg}
+                      alt={position.isLocked ? "Locked Stage" : "Stage"}
+                      className="w-[120px] h-[120px]" // Increased from 90px
+                    />
+
+                    {/* Icon in center of stage - increased size */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {position.isCurrentStage ? (
+                        <img
+                          src={currentPlaySvg}
+                          alt="Current Stage"
+                          className="w-16 h-16 mb-4" // Increased from 12
+                        />
+                      ) : (
+                        <img
+                          src={position.iconSrc}
+                          alt={`Icon ${
+                            position.isLastStage ? "Trophy" : index
+                          }`}
+                          className={`w-16 h-16 mb-4 ${
+                            position.isLocked
+                              ? "filter grayscale opacity-50"
+                              : ""
+                          }`} // Increased from 12
+                        />
+                      )}
+                    </div>
+
+                    {/* Difficulty indicator - increased size */}
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-20">
+                      <img
+                        src={position.fruitSrc}
+                        alt={`Difficulty ${position.difficulty}`}
+                        className={`w-20 h-12 ${
+                          position.isLocked ? "opacity-50" : ""
+                        }`} // Increased from 14x8
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {/* Calculate total height needed for the roadmap */}
+          <div
+            style={{
+              height: `${
+                stagePositions.length > 0
+                  ? stagePositions[stagePositions.length - 1].verticalPosition +
+                    100
+                  : 0
+              }px`,
+            }}
+          />
+        </>
+      )}
+
+      {isOpenLesson && lessons && lessons.length > 0 && (
         <OpenLesson
-          lesson={lessons[findIndexOfLessonId]}
+          lesson={lessons.find((lesson) => lesson.id === currentLessonId)}
           setOpenLesson={setOpenLesson}
           setLoading={setLoading}
         />
       )}
-
-      {/* Calculate total height needed for the roadmap */}
-      <div
-        style={{
-          height: `${
-            stagePositions.length > 0
-              ? stagePositions[stagePositions.length - 1].verticalPosition + 100
-              : 0
-          }px`,
-        }}
-      />
     </div>
   );
 };

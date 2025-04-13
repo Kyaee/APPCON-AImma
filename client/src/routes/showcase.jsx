@@ -10,7 +10,7 @@ const IntroSlides = [
     logo: true,
     title: "Welcome to",
     subtitle: "Here's how our platform helps you grow professionally.",
-    brandName: "Capacademy!",
+    brandName: "Capycademy!",
     button: "Let's Go!",
   },
   {

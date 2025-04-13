@@ -10,13 +10,14 @@ import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 
 // Use Hooks
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSummary } from "@/api/INSERT";
 import { fetchLessonAssessmentData } from "@/api/FETCH";
 import { useQuery } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
-
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuestStore } from "@/store/useQuestStore";
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
@@ -42,6 +43,10 @@ export default function Assessment() {
     },
   ]);
   const { createSummary, isError } = useSummary();
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const userId = id; // Assuming the URL parameter id is the user ID
 
   const handleCheck = () => {
     setValidateAnswer(true);
@@ -76,6 +81,12 @@ export default function Assessment() {
     if (isCurrentSlide === lessonData.questions.length - 1) setLastSlide(false);
   };
 
+  // Add function to handle completion and redirect to dashboard
+  const handleFinishAssessment = () => {
+    // Redirect to dashboard where quests will be displayed
+    navigate(`/dashboard/${userId}`);
+  };
+
   if (isLoading) return <Loading />;
 
   if (isCount.lives === 0) return <NoLivesPage userId={userData.id} />;
@@ -107,6 +118,8 @@ export default function Assessment() {
                 total={lessonData.questions.length - 1}
                 gems={lessonFetch.gems}
                 exp={lessonFetch.exp}
+                userId={userId}
+                onClick={handleFinishAssessment}
               />
             ) : (
               // ------------------------

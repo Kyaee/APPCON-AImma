@@ -9,7 +9,7 @@ export default function CTASection() {
         <div className="flex flex-col items-center">
           <img
             src={brandIcon}
-            alt="Capacademy Brand"
+            alt="Capycademy Brand"
             className="w-62 h-62 mb-6"
           />
           <h2 className="text-4xl font-bold text-foreground mb-6">
@@ -17,7 +17,7 @@ export default function CTASection() {
           </h2>
           <p className="text-xl text-foreground/80 mb-8 max-w-3xl mx-auto">
             Join thousands of learners who are building their skills and
-            advancing their careers with CapyCademy's interactive learning
+            advancing their careers with Capycademy's interactive learning
             platform.
           </p>
           <Link to="/auth/register">

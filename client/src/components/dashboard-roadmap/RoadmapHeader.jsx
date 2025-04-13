@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
+import ReactDOM from "react-dom";
 
 const RoadmapHeader = ({
   currentCourse = "Web Development",
@@ -14,26 +15,143 @@ const RoadmapHeader = ({
   onCourseSelect,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const containerRef = useRef(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [lineWidth, setLineWidth] = useState(
+    isSidebarExpanded ? "695px" : "auto"
+  );
+  const [dropdownWidth, setDropdownWidth] = useState("auto");
+
+  // Handle course selection from the dropdown
+  const handleCourseSelection = (index) => {
+    if (onCourseSelect) {
+      onCourseSelect(index);
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    const measureWidth = () => {
+      if (containerRef.current) {
+        // Directly measure the width of the header container (h2 + chevron)
+        const containerWidth =
+          containerRef.current.getBoundingClientRect().width;
+
+        if (!isSidebarExpanded) {
+          setLineWidth(`${containerWidth}px`);
+          setDropdownWidth(`${containerWidth}px`);
+        } else {
+          setLineWidth("695px");
+          // Use the same dynamic width measurement for the dropdown even when sidebar is expanded
+          setDropdownWidth(`${containerWidth}px`);
+        }
+
+        // Calculate dropdown position
+        const rect = containerRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY + 10,
+          left: rect.left + window.scrollX,
+        });
+      }
+    };
+
+    // Measure immediately
+    measureWidth();
+
+    // Also measure after a small delay to ensure all elements are fully rendered
+    const timeoutId = setTimeout(measureWidth, 50);
+
+    // Add event listener to close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (
+        isDropdownOpen &&
+        containerRef.current &&
+        !containerRef.current.contains(event.target) &&
+        !document.getElementById("roadmap-dropdown")?.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [currentCourse, isDropdownOpen, isSidebarExpanded]);
+
+  // Create dropdown portal
+  const renderDropdown = () => {
+    if (!isDropdownOpen || !courseOptions || courseOptions.length === 0)
+      return null;
+
+    return ReactDOM.createPortal(
+      <div
+        id="roadmap-dropdown"
+        className="fixed bg-white border-2 border-black rounded-lg shadow-md translate-x-[-3px]"
+        style={{
+          top: `${dropdownPosition.top}px`,
+          left: `${dropdownPosition.left}px`,
+          width: dropdownWidth,
+          zIndex: 9999,
+        }}
+      >
+        {courseOptions.map((course, index) => (
+          <div
+            key={index}
+            className="p-3 hover:bg-[#CBB09B] cursor-pointer text-black text-lg truncate"
+            onClick={() => handleCourseSelection(index)}
+            title={course}
+          >
+            {course}
+          </div>
+        ))}
+      </div>,
+      document.body
+    );
+  };
 
   return (
-    <div className={`py-6 ml-23 ${className}`}>
+    <div className={`py-6 ml-25 ${className} relative z-50`}>
       <div className="relative inline-block">
         <div className="flex flex-col">
           <div
+            ref={containerRef}
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="relative inline-flex items-center gap-3 cursor-pointer group"
+            className="inline-flex items-start gap-3 cursor-pointer group"
           >
-            <h2 className="text-2xl font-bold text-black">{currentCourse}</h2>
+            <h2
+              className={`text-2xl font-bold text-black ${
+                isSidebarExpanded
+                  ? "max-w-[660px] line-clamp-2"
+                  : "max-w-[240px] break-words"
+              }`}
+              style={{
+                wordWrap: isSidebarExpanded ? "normal" : "break-word",
+                overflow: isSidebarExpanded ? "hidden" : "visible",
+                textOverflow: isSidebarExpanded ? "ellipsis" : "clip",
+                display: isSidebarExpanded ? "-webkit-box" : "block",
+                WebkitLineClamp: isSidebarExpanded ? "2" : "none",
+                WebkitBoxOrient: "vertical",
+              }}
+              title={currentCourse}
+            >
+              {currentCourse}
+            </h2>
             <ChevronRight
-              className={`w-8 h-8 text-black transition-transform duration-200 ${
-                isDropdownOpen ? "rotate-0" : "rotate-90"
+              className={`w-8 h-8 text-black flex-shrink-0 mt-1 transition-transform duration-200 ${
+                isDropdownOpen ? "rotate-90" : "rotate-0"
               }`}
             />
           </div>
 
-          <div className="h-[3px] bg-black mt-3 w-[695px]" />
+          <div className="h-[3px] bg-black mt-3" style={{ width: lineWidth }} />
         </div>
       </div>
+
+      {renderDropdown()}
 
       <p className="text-black font-medium mt-4 text-md">
         Current Progression: {progression}%

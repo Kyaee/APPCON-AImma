@@ -3,7 +3,7 @@ import StreakPanel from "@/components/dashboard-roadmap/StreakPanel";
 import Sidebar from "@/components/dashboard-roadmap/Sidebar";
 import RoadmapHeader from "@/components/dashboard-roadmap/RoadmapHeader";
 import RoadmapContent from "@/components/dashboard-roadmap/RoadmapContent";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +17,28 @@ export default function Ayon() {
   const [roadmapIndex, setRoadmapIndex] = useState(0);
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);
   const [getLoading, setLoading] = useState(false);
+  const [isLessonOpen, setIsLessonOpen] = useState(false);
+  const [userRewards, setUserRewards] = useState({ xp: 0, gems: 0 });
+
+  const handleQuestComplete = (quest) => {
+    // Check if the quest is already completed
+    if (quest.completed) return;
+
+    // Mark the quest as completed
+    quest.completed = true;
+
+    // Add rewards to the user
+    setUserRewards((prevRewards) => ({
+      xp: prevRewards.xp + quest.rewards.xp,
+      gems: prevRewards.gems + quest.rewards.gems,
+    }));
+
+    // Log the completion for debugging
+    console.log(`Quest completed: ${quest.title}`);
+    console.log(
+      `Rewards added: ${quest.rewards.xp} XP, ${quest.rewards.gems} Gems`
+    );
+  };
 
   const {
     data: roadmapData,
@@ -27,20 +49,33 @@ export default function Ayon() {
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
   const roadmapId = currentRoadmap?.roadmap_id;
 
-  const { data: lessonData, isLoading: loadingLessons } = useQuery({
-    queryKey: ["lessons"],
+  const {
+    data: lessonData,
+    isLoading: loadingLessons,
+    refetch: refetchLessons,
+  } = useQuery({
+    queryKey: ["lessons", roadmapId], // Add roadmapId to the queryKey to automatically refetch when it changes
     queryFn: () => fetchLesson(roadmapId),
     enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
   });
+
+  // Refetch lessons when roadmapIndex changes
+  useEffect(() => {
+    if (roadmapId) {
+      refetchLessons();
+    }
+  }, [roadmapId, refetchLessons]);
 
   if (loadingRoadmap || loadingLessons) return <Loading />;
 
   // Handle course navigation
   const handleCourseChange = (direction) => {
-    if (direction === "next") {
-      setRoadmapIndex((prev) => (prev + 1) % courses.length);
-    } else if (direction === "prev") {
-      setRoadmapIndex((prev) => (prev - 1 + courses.length) % courses.length);
+    if (direction === "next" && roadmapData) {
+      setRoadmapIndex((prev) => (prev + 1) % roadmapData.length);
+    } else if (direction === "prev" && roadmapData) {
+      setRoadmapIndex(
+        (prev) => (prev - 1 + roadmapData.length) % roadmapData.length
+      );
     }
   };
 
@@ -62,6 +97,7 @@ export default function Ayon() {
       <Sidebar
         isExpanded={isSidebarExpanded}
         onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
+        isLessonOpen={isLessonOpen} // Add this prop
       />
 
       {/* Main Content Area - Three Column Layout */}
@@ -88,23 +124,31 @@ export default function Ayon() {
                         onClick={() =>
                           setIsLeftDropdownOpen(!isLeftDropdownOpen)
                         }
-                        className="relative inline-flex items-center gap-3 cursor-pointer group p-0"
+                        className="relative inline-flex items-start gap-3 cursor-pointer group p-0"
+                        id="headerContainer"
+                        style={{ width: "450px" }}
                       >
-                        <h2 className="text-3xl font-bold text-black">
+                        <h2
+                          className="text-3xl font-bold text-black break-words"
+                          style={{ maxWidth: "450px" }}
+                        >
                           {currentRoadmap?.roadmap_name || "Select a roadmap"}
                         </h2>
-                        {isLeftDropdownOpen ? (
-                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600 rotate-90" />
-                        ) : (
-                          <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
-                        )}
+                        <ChevronRight
+                          className="w-8 h-8 text-black group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 mt-1"
+                          style={{
+                            transform: isLeftDropdownOpen
+                              ? "rotate(90deg)"
+                              : "rotate(0deg)",
+                          }}
+                        />
                       </div>
                     )}
 
-                    {/* Horizontal Line - limited width to match content */}
+                    {/* Horizontal Line - width now matches header container exactly */}
                     <div
-                      className="h-[3px] bg-black mt-3 w-auto"
-                      style={{ width: "fit-content", minWidth: "300px" }}
+                      className="h-[3px] bg-black mt-3"
+                      style={{ width: "100%" }}
                     />
                   </div>
                 </div>
@@ -123,12 +167,16 @@ export default function Ayon() {
 
               {/* Dropdown menu moved here - below the progression text */}
               {isLeftDropdownOpen && !condition && (
-                <div className="mt-4 border-2 border-black rounded-lg shadow-md bg-white z-30 min-w-[300px]">
+                <div
+                  className="mt-4 border-2 border-black rounded-lg shadow-md bg-white z-30"
+                  style={{ width: "450px" }}
+                >
                   {roadmapData.map((roadmap, index) => (
                     <div
                       key={roadmap.roadmap_id}
-                      className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
+                      className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl truncate"
                       onClick={() => handleCourseSelect(index)}
+                      title={roadmap.roadmap_name}
                     >
                       {roadmap.roadmap_name}
                     </div>
@@ -157,14 +205,19 @@ export default function Ayon() {
           ) : (
             <>
               {isSidebarExpanded && currentRoadmap && (
-                <div className="z-10 pb-0 mx-auto">
+                <div
+                  className="z-10 pb-0 mx-auto relative"
+                  style={{ isolation: "isolate" }}
+                >
                   <RoadmapHeader
                     currentCourse={currentRoadmap.roadmap_name}
                     progression={currentRoadmap.progress}
-                    // courseOptions={lessonData.map((course) => course.lesson_name)}
+                    courseOptions={roadmapData.map(
+                      (roadmap) => roadmap.roadmap_name
+                    )}
                     className="mb-6"
                     isSidebarExpanded={isSidebarExpanded}
-                    // onCourseSelect={handleHeaderCourseSelect}
+                    onCourseSelect={handleCourseSelect}
                   />
                 </div>
               )}
@@ -175,8 +228,11 @@ export default function Ayon() {
                     currentCourse={currentRoadmap.roadmap_name}
                     onCourseChange={handleCourseChange}
                     isSidebarExpanded={isSidebarExpanded}
+                    setIsSidebarExpanded={setIsSidebarExpanded} // Add this line
                     isLoading={getLoading}
                     setLoading={setLoading}
+                    setOpenLesson={setIsLessonOpen} // Pass the setter to RoadmapContent
+                    isOpenLesson={isLessonOpen} // Also pass the state
                   />
                 )}
               </div>
@@ -185,8 +241,8 @@ export default function Ayon() {
         </div>
         {/* Right Section - Panels */}
         <div className="w-[25%] p-4 sticky pt-10">
-          <StreakPanel />
-          <QuestPanel />
+          <StreakPanel userId={id} />
+          <QuestPanel userId={id} />
         </div>
       </div>
     </div>
