@@ -74,6 +74,12 @@ export default function Assessment() {
     if (isCurrentSlide === lessonData.questions.length - 1) setLastSlide(false);
   };
 
+  // Add function to handle completion and redirect to dashboard
+  const handleFinishAssessment = () => {
+    // Redirect to dashboard where quests will be displayed
+    navigate(`/dashboard/${userId}`);
+  };
+
   if (isLoading) return <Loading />;
   if (lives === 0) {
     return <NoLivesPage userId={userData.id} />;
@@ -97,7 +103,7 @@ export default function Assessment() {
             />
           ) : !isLastSlide ? (
             // -------------------------------
-            //   GENERATED USER ASSESSMENT 
+            //   GENERATED USER ASSESSMENT
             // -------------------------------
             <Questions
               display_wrong_answer={isCount.wrong}

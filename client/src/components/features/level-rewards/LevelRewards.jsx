@@ -22,14 +22,15 @@ const calculateGems = (level) => {
   return 0;
 };
 
-const LevelRewards = () => {  
-  const { id } = useParams(); // Get user ID from URL params
+const LevelRewards = () => {
+  const { id } = useParams();
   const [currentLevel, setCurrentLevel] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollContainerRef = useRef(null);
   const [selectedLevel, setSelectedLevel] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Load user's current level on component mount
   useEffect(() => {
@@ -102,117 +103,108 @@ const LevelRewards = () => {
   }
 
   return (
-    <div className="relative bg-gray-900/50 rounded-lg p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-white">Level Up Rewards</h2>
-        <Button variant="outline" onClick={() => setIsExpanded(!isExpanded)}>
-          {isExpanded ? 'Show Less' : 'Show More'}
-        </Button>
-      </div>
+    <>
+      <Button 
+        variant="outline" 
+        className="fixed bottom-4 right-4 z-50"
+        onClick={() => setIsDrawerOpen(true)}
+      >
+        View Level Rewards
+      </Button>
 
-      {message && (
-        <div className="bg-green-500/20 border border-green-500 text-green-300 p-3 rounded mb-4">
-          {message}
-        </div>
-      )}
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <DrawerContent className="h-[60vh]">
+          <div className="mx-auto w-full max-w-6xl">
+            <DrawerHeader>
+              <DrawerTitle className="text-2xl font-bold">Level Up Rewards</DrawerTitle>
+              <DrawerDescription>
+                Track your progress and see upcoming rewards
+              </DrawerDescription>
+            </DrawerHeader>
 
-      <div className="relative">
-        <button
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
-        >
-          <ChevronLeftIcon className="h-6 w-6 text-white" />
-        </button>
+            <div className="p-4">
+              {/* Current Level Indicator */}
+              <div className="mb-8 text-center">
+                <div className="inline-block bg-primary/20 rounded-full px-6 py-2">
+                  <span className="text-primary font-semibold">Current Level: {currentLevel}</span>
+                </div>
+              </div>
 
-        <div
-          ref={scrollContainerRef}
-          className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-800/50 py-4 px-12"
-          style={{ scrollBehavior: 'smooth' }}
-        >
-          <div className="flex space-x-4 min-w-max">
-            {levels.map((level) => {
-              const gems = calculateGems(level);
-              const isCurrentLevel = level === currentLevel;
-              const isLocked = level > currentLevel;
+              {/* Progress Track */}
+              <div className="relative mb-8">
+                <div className="absolute h-2 bg-gray-700 rounded-full w-full"></div>
+                <div 
+                  className="absolute h-2 bg-primary rounded-full transition-all duration-500"
+                  style={{ width: `${(currentLevel / 60) * 100}%` }}
+                ></div>
+              </div>
 
-              return (
-                <Drawer key={level}>
-                  <DrawerTrigger asChild>
-                    <button
-                      onClick={() => setSelectedLevel(level)}
-                      className={`flex flex-col items-center w-24 p-4 rounded-lg transition-all duration-200
-                        ${isCurrentLevel ? 'bg-primary/20 border-2 border-primary' : 'bg-gray-800/50'}
-                        ${isLocked ? 'opacity-50' : 'opacity-100 hover:bg-gray-700/50'}
-                      `}
-                    >
-                      <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center mb-2">
-                        <span className="text-lg font-bold text-white">{level}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <span className="text-amber-400">{gems}</span>
-                        <span className="text-amber-400">💎</span>
-                      </div>
-                      {isLocked && (
-                        <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
-                          <span className="text-white/90">🔒</span>
-                        </div>
-                      )}
-                    </button>
-                  </DrawerTrigger>
-                  <DrawerContent>
-                    <div className="mx-auto w-full max-w-lg">
-                      <DrawerHeader>
-                        <DrawerTitle>Level {level} Rewards</DrawerTitle>
-                        <DrawerDescription>
-                          {isLocked 
-                            ? "Keep learning to unlock these rewards!" 
-                            : "Congratulations on reaching this level!"}
-                        </DrawerDescription>
-                      </DrawerHeader>
-                      <div className="p-4">
-                        <div className="flex flex-col items-center space-y-4">
-                          <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center">
-                            <span className="text-3xl font-bold text-white">{level}</span>
+              {/* Rewards Grid */}
+              <div className="relative">
+                <button
+                  onClick={scrollLeft}
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
+                >
+                  <ChevronLeftIcon className="h-6 w-6 text-white" />
+                </button>
+
+                <div
+                  ref={scrollContainerRef}
+                  className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-800/50 py-4 px-12"
+                  style={{ scrollBehavior: 'smooth' }}
+                >
+                  <div className="flex space-x-4 min-w-max">
+                    {levels.map((level) => {
+                      const gems = calculateGems(level);
+                      const isCurrentLevel = level === currentLevel;
+
+                      return (
+                        <div
+                          key={level}
+                          className={`flex flex-col items-center w-32 p-4 rounded-lg transition-all duration-200
+                            ${isCurrentLevel ? 'bg-primary/20 border-2 border-primary' : 'bg-gray-800/50 hover:bg-gray-700/50'}
+                          `}
+                        >
+                          <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center mb-3">
+                            <span className="text-2xl font-bold text-white">{level}</span>
                           </div>
+                          
                           <div className="text-center">
-                            <div className="text-2xl font-bold text-amber-400 flex items-center justify-center space-x-2">
-                              <span>{gems}</span>
-                              <span>💎</span>
+                            <div className="flex items-center justify-center space-x-2 mb-2">
+                              <span className="text-xl font-bold text-amber-400">{gems}</span>
+                              <span className="text-2xl">💎</span>
                             </div>
-                            <p className="text-gray-400 mt-2">Gems Reward</p>
+                            
+                            {level <= currentLevel ? (
+                              <span className="text-green-400 text-sm">Unlocked!</span>
+                            ) : (
+                              <span className="text-gray-400 text-sm">Coming soon</span>
+                            )}
                           </div>
-                          {isLocked ? (
-                            <div className="bg-gray-800/50 p-4 rounded-lg text-center">
-                              <p className="text-gray-400">Complete more lessons to reach this level</p>
-                            </div>
-                          ) : (
-                            <div className="bg-primary/20 p-4 rounded-lg text-center">
-                              <p className="text-primary">Rewards Unlocked!</p>
-                            </div>
-                          )}
                         </div>
-                      </div>
-                      <DrawerFooter>
-                        <DrawerClose asChild>
-                          <Button variant="outline">Close</Button>
-                        </DrawerClose>
-                      </DrawerFooter>
-                    </div>
-                  </DrawerContent>
-                </Drawer>
-              );
-            })}
-          </div>
-        </div>
+                      );
+                    })}
+                  </div>
+                </div>
 
-        <button
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
-        >
-          <ChevronRightIcon className="h-6 w-6 text-white" />
-        </button>
-      </div>
-    </div>
+                <button
+                  onClick={scrollRight}
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
+                >
+                  <ChevronRightIcon className="h-6 w-6 text-white" />
+                </button>
+              </div>
+            </div>
+
+            <DrawerFooter>
+              <DrawerClose asChild>
+                <Button variant="outline">Close</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 };
 

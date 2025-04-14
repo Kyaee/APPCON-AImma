@@ -4,6 +4,10 @@ import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
 import { fetchProfile, fetchRoadmapAIdata } from "@/api/FETCH";
+import { useQuestStore } from "@/store/useQuestStore";
+import { fetchUserStats } from "@/api/UPDATE";
+import { useEffect, useState } from "react";
+import { useStreakStore } from "@/store/useStreakStore";
 
 // Components & Icons
 import ProfileDetails from "@/components/profile/ProfileDetails";
@@ -19,6 +23,21 @@ import SkinBadgesTabs from "../components/profile/SkinsTab";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Get quest data from our store
+  const dailyQuests = useQuestStore((state) => state.dailyQuests);
+  const weeklyQuests = useQuestStore((state) => state.weeklyQuests);
+
+  // Get streak data from our store
+  const streak = useStreakStore((state) => state.streak);
+  const bestStreak = useStreakStore((state) => state.bestStreak);
+
+  // Calculate completed quests
+  const completedDailyQuests = dailyQuests.filter((q) => q.completed).length;
+  const completedWeeklyQuests = weeklyQuests.filter((q) => q.completed).length;
+  const totalCompletedQuests = completedDailyQuests + completedWeeklyQuests;
 
   const {
     data: profile,
@@ -26,7 +45,35 @@ export default function Profile() {
     isError,
   } = useQuery(fetchProfile(fetch.id));
 
-  if (load_profile) return <Loading />;
+  // Fetch the latest user stats from Supabase
+  useEffect(() => {
+    const getUserData = async () => {
+      if (fetch?.id) {
+        try {
+          setLoading(true);
+          const response = await fetchUserStats(fetch.id);
+          if (response.success) {
+            setUserData(response.userData);
+          }
+        } catch (error) {
+          console.error("Error fetching user stats:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    getUserData();
+  }, [fetch?.id]);
+
+  // Effect to check and update streak
+  useEffect(() => {
+    if (fetch?.id) {
+      useStreakStore.getState().checkAndUpdateStreak(fetch.id);
+    }
+  }, [fetch?.id]);
+
+  if (load_profile || loading) return <Loading />;
 
   const skills = [
     "React",
@@ -41,6 +88,9 @@ export default function Profile() {
     { id: 1, title: "Badge 1", description: "Description 1", image: "image1" },
     { id: 2, title: "Badge 2", description: "Description 2", image: "image2" },
   ];
+
+  // Use userData if available, fallback to fetch data
+  const userDisplayData = userData || fetch;
 
   return (
     <>
@@ -70,9 +120,11 @@ export default function Profile() {
             {/* Profile Content */}
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              name={fetch.first_name + " " + fetch.last_name}
-              level={fetch.level}
-              experience={40}
+              name={
+                userDisplayData.first_name + " " + userDisplayData.last_name
+              }
+              level={userDisplayData.level}
+              experience={userDisplayData.current_exp || 0}
               totalExperience={100}
               continueLearning="JavaScript Basics"
               hours={2}
@@ -92,11 +144,15 @@ export default function Profile() {
               Streak Section 
           ****************/}
           <Streak_Component
-            streak={!isError ? fetch.streaks : 0}
+            streak={!isError ? streak || userDisplayData.streaks || 0 : 0}
             previous_best={
-              !isError && fetch.best_streak ? fetch.best_streak : 0
+              !isError ? bestStreak || userDisplayData.best_streak || 0 : 0
             }
-            quests_finished={!isError ? fetch.finished_quests : 0}
+            quests_finished={
+              !isError
+                ? userDisplayData.finished_quests || totalCompletedQuests
+                : 0
+            }
             skill_progress={
               !isError
                 ? [

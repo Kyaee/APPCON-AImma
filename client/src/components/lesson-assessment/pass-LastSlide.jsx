@@ -23,7 +23,9 @@ export default function LastSlide({
   const { session } = useAuth();
   const { createSummary, isPending, isError } = useSummary();
   const { evaluationData, isLoading } = useFetchSummary();
-  const { updateLesson, updateUser, createEvaluation } = useEvaluation(session.user.id);
+  const { updateLesson, updateUser, createEvaluation } = useEvaluation(
+    session.user.id
+  );
 
   function handleNext(e) {
     e.preventDefault();

@@ -5,20 +5,43 @@ import { useState, useEffect } from "react";
 
 export default function NotFound() {
   const [contentLoaded, setContentLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [bgReady, setBgReady] = useState(false);
 
+  // Set a timer to ensure background has time to load
   useEffect(() => {
-    // Simulate loading time for all elements
-    const timer = setTimeout(() => {
-      setContentLoaded(true);
-    }, 1000);
+    const bgTimer = setTimeout(() => {
+      setBgReady(true);
+    }, 800); // Give background time to initialize
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(bgTimer);
+  }, []);
+
+  // Only set content as loaded when both image and bg are ready
+  useEffect(() => {
+    if (imageLoaded && bgReady) {
+      // Add small delay for smoothness
+      const timer = setTimeout(() => {
+        setContentLoaded(true);
+      }, 200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [imageLoaded, bgReady]);
+
+  // Preload image
+  useEffect(() => {
+    const img = new Image();
+    img.src = detectiveCapybara;
+    img.onload = () => setImageLoaded(true);
   }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 relative font-['Inter']">
-      {/* Video Background */}
-      <VideoBackground />
+      {/* Video Background - hidden until ready */}
+      <div className={contentLoaded ? "opacity-100" : "opacity-0"}>
+        <VideoBackground />
+      </div>
 
       {/* Content Container */}
       <div

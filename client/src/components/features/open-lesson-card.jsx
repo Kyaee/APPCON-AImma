@@ -13,13 +13,7 @@ import {
 import React from "react";
 import { postPrompt2 } from "@/api/INSERT";
 
-
-export default function OpenLesson({
-  lesson,
-  setOpenLesson,
-  setLoading,
-}) {
-
+export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
   const createLesson = () => {
     setLoading(true);
     postPrompt2(
@@ -30,12 +24,12 @@ export default function OpenLesson({
       lesson.gems,
       lesson.exp,
       lesson.lesson_duration,
-      lesson.assessment,
-    )
+      lesson.assessment
+    );
   };
 
   return (
-    <div className="transition animate-panel-in fixed transform left-0 top-0 h-full w-full lg:max-w-lg z-30 bg-gray-50 border-1 border-solid border-black">
+    <div className="transition animate-panel-in fixed transform left-0 top-0 h-full w-full lg:max-w-lg z-[100] bg-gray-50 border-1 border-solid border-black">
       <div className="flex flex-col h-full justify-between gap-8 relative w-full p-10 ">
         {/* Header with title and actions */}
         <section>

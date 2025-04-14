@@ -69,15 +69,15 @@ export default function ElementLesson() {
 
     if (!generated_assessment) {
       window.location.href = `/l/${id}/assessment`;
-    } else { 
+    } else {
       createAssessment({
         lesson_id: lessonFetch.id,
         lesson_name: lessonFetch.name,
-        lesson_content: lessonFetch.lesson, 
+        lesson_content: lessonFetch.lesson,
       });
       setGeneratedAssessment(true);
       setLoading(false);
-      setTimeout(()=> window.location.href = `/l/${id}/assessment`, 2000);
+      setTimeout(() => (window.location.href = `/l/${id}/assessment`), 2000);
     }
   };
 
@@ -106,12 +106,13 @@ export default function ElementLesson() {
           {lessonFetch.message ? lessonFetch.message : lessonFetch.lesson}
         </FormattedContent>
 
-        {lessonFetch.assessment && 
+        {lessonFetch.assessment && (
           <NavigateAssessment
             name={lessonFetch.name}
             onClick={handleAssessment}
             disabled={isLoading}
-          />}
+          />
+        )}
       </section>
 
       {/* CREATE FRONTEND SECTION FOR ASSESSMENT */}
