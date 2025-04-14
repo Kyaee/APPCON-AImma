@@ -18,6 +18,7 @@ import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
 import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
+import NameCustomization from '@/components/onboarding/NameCustomization';
 import IntroShowcase from "./routes/Showcase";
 import UserAssessment from "./routes/UserAssessment";
 // REDIRECTS
@@ -68,6 +69,10 @@ function App() {
                 </>
               ) : !isAssessed ? (
                 // IF USER IS LOGGED-IN, AND NOT ASSESSED
+                {
+                  path: "/onboarding/name",
+                  element: <NameCustomization />,
+                },
                 <>
                   <Route path="/start/showcase" element={<IntroShowcase />} />
                   <Route
