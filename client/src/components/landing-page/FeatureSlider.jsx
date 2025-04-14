@@ -8,12 +8,6 @@ import {
   Zap,
 } from "lucide-react";
 
-// Import feature images from assets
-import feature1 from "@/assets/dashboard/feature1.jpg";
-import feature2 from "@/assets/dashboard/feature2.jpg";
-import feature3 from "@/assets/dashboard/feature3.jpg";
-import feature4 from "@/assets/dashboard/feature4.png";
-
 // Feature data with icons and descriptions
 const featureData = [
   {
@@ -22,7 +16,7 @@ const featureData = [
     description:
       "Our AI creates personalized courses tailored to your learning style and goals, ensuring effective skill acquisition.",
     icon: <Zap className="w-8 h-8 text-primary" />,
-    image: feature1, // Using imported image
+    image: "/showcase-features/learning.png", // Using public directory image
   },
   {
     id: 2,
@@ -30,7 +24,7 @@ const featureData = [
     description:
       "Follow a clear learning path with milestones and achievements to track your progress like Duolingo.",
     icon: <Route className="w-8 h-8 text-primary" />,
-    image: feature2, // Using imported image
+    image: "/showcase-features/gamification.png", // Using public directory image
   },
   {
     id: 3,
@@ -38,7 +32,7 @@ const featureData = [
     description:
       "Test your knowledge with interactive quizzes after each lesson to reinforce your learning.",
     icon: <BookOpen className="w-8 h-8 text-primary" />,
-    image: feature3, // Using imported image
+    image: "/showcase-features/quiz.png", // Using public directory image
   },
   {
     id: 4,
@@ -46,7 +40,7 @@ const featureData = [
     description:
       "Detailed analytics track your progress and identify areas for improvement with data visualization.",
     icon: <BarChart className="w-8 h-8 text-primary" />,
-    image: feature4, // Using imported image
+    image: "/showcase-features/analytics.png", // Using public directory image
   },
 ];
 

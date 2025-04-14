@@ -33,7 +33,7 @@ export default function Header({ id, isAssessment }) {
             : "text-background"
         }`}
       >
-        CapaCademy
+        Capycademy
       </h1>
       <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px]">
         {filteredNavItems.map((item) => (

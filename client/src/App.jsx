@@ -87,7 +87,10 @@ function App() {
                   <Route path="/dashboard" element={<RedirectDashboard />} />
                   <Route path="/profile" element={<RedirectProfile />} />
                   <Route path="/shop" element={<RedirectShop />} />
-                  <Route path="/job-opportunities" element={<RedirectJobOpportunities />} />
+                  <Route
+                    path="/job-opportunities"
+                    element={<RedirectJobOpportunities />}
+                  />
                   <Route element={<MainLayout />}>
                     <Route path="/dashboard/:id" element={<Dashboard />} />
                     <Route path="/profile/:id" element={<Profile />} />

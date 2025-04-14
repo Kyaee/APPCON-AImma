@@ -12,10 +12,10 @@ const MainNav = () => {
         <div className="flex items-center gap-2">
           <img
             src="/favicon.svg"
-            alt="Capacademy Logo"
+            alt="Capycademy Logo"
             className="h-10 w-10 object-contain"
           />
-          <span className="text-2xl font-bold text-foreground">CapaCademy</span>
+          <span className="text-2xl font-bold text-foreground">Capycademy</span>
         </div>
 
         {/* Mobile menu button */}

@@ -125,20 +125,21 @@ export default function ElementShop() {
         {/* <p className="text-p mb-5 ml-8 text-neutral-600">Whether you're looking to boost your progress, gain extra lives, or enjoy premium features, <br/>we've got you covered. Dive in and make the most of your learning journey!</p> */}
 
         <div
-          className=" flex items-center w-11/12 gap-7 mb-5 px-7 pb-5 pt-5 overflow-auto hide-scrollbar [-ms-overflow-style:'none'] [scrollbar-width:'none']
+          className=" flex items-center w-11/12 gap-7 mb-5 px-7 pb-10 pt-5 overflow-auto hide-scrollbar [-ms-overflow-style:'none'] [scrollbar-width:'none']
           [&::-webkit-scrollbar]:h-4
           [&::-webkit-scrollbar-track]:rounded-full
           [&::-webkit-scrollbar-track]:bg-gray-200
           [&::-webkit-scrollbar-track]:border
           [&::-webkit-scrollbar-track]:border-gray-300
           [&::-webkit-scrollbar-thumb]:rounded-full
-          [&::-webkit-scrollbar-thumb]:bg-[#f6cb4f]
+          [&::-webkit-scrollbar-thumb]:bg-light-brown  
+          [&::-webkit-scrollbar-thumb]:h-[4px]
           [&::-webkit-scrollbar-thumb]:border-2
-          [&::-webkit-scrollbar-thumb]:border-[#f6cb4f]
+          [&::-webkit-scrollbar-thumb]:border-[#f6cb4f
           [&::-webkit-scrollbar-thumb]:hover:bg-[#ffcb23]
-          before:content-[''] before:absolute before:left-0 before:top-0 before:h-full before:w-20 
+          before:content-[''] before:absolute before:left-0 before:top-0 before:h-full 
           before:bg-gradient-to-r before:from-white before:via-white before:to-transparent before:z-20
-          after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-20 
+          after:content-[''] after:absolute after:right-0 after:top-0 after:h-full 
           after:bg-gradient-to-l after:from-white after:via-white after:to-transparent after:z-20"
         >
           {shopItems.map((item) => (
