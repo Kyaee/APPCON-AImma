@@ -1,5 +1,6 @@
 import React from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function EducationLevelStep({
   selectedType,
@@ -7,34 +8,35 @@ export default function EducationLevelStep({
   educationOptions,
   onLevelSelect,
 }) {
-  if (selectedType?.id !== "student") {
-    return null;
-  }
-
   return (
-    <AssessmentStep title="What's your education level?">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-8 px-4 sm:px-0">
-        {educationOptions.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => onLevelSelect(option)}
-            className={`p-4 sm:px-14.5 sm:py-25 rounded-lg transition-all duration-200 cursor-pointer bg-transparent
-              ${
-                selectedLevel?.id === option.id
-                  ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
-                  : "border-black border-2 hover:border-black hover:border-3"
-              }`}
-          >
-            <div className="flex justify-center space-x-4">
-              <span className="text-6xl">{option.icon}</span>
-            </div>
-            <div>
-              <h3 className="mt-5 font-medium text-lg text-black">
+    <AssessmentStep title={assessmentFlow.educationLevel.title}>
+      <div className="flex items-center justify-center min-h-[60vh] w-full px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-5xl w-full">
+          {educationOptions.map((option) => (
+            <button
+              key={option.id}
+              onClick={() => onLevelSelect(option)}
+              className={`flex flex-col items-center p-6 rounded-xl transition-all duration-200 cursor-pointer
+                ${
+                  selectedLevel?.id === option.id
+                    ? "border-amber-500/50 border-2 shadow-lg shadow-amber-900/20 bg-white/95"
+                    : "border border-gray-400/20 hover:border-amber-500/30 hover:bg-white/5"
+                }`}
+            >
+              <div className="flex justify-center mb-4">
+                <span className="text-6xl">{option.icon}</span>
+              </div>
+              <h3 className="text-xl font-medium text-black text-center">
                 {option.label}
               </h3>
-            </div>
-          </button>
-        ))}
+              {option.description && (
+                <p className="mt-2 text-sm text-gray-300 text-center">
+                  {option.description}
+                </p>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
     </AssessmentStep>
   );
