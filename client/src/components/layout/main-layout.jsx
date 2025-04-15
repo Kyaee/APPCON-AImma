@@ -26,13 +26,17 @@ export default function MainLayout({ children }) {
   if (isError) return <div>Error loading user data.</div>;
 
   return (
-    <div>
+    <div className="select-none">
       <Background />
       <MainNav userId={session.user.id} />
 
       <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
-        <StatsDisplay hearts={userData.lives} gems={userData.gems} />
-        <ActionIcons />
+        <StatsDisplay
+          hearts={userData.lives}
+          gems={userData.gems}
+          userId={session?.user?.id}
+        />
+        <ActionIcons notification={session?.user?.created_at} />
       </div>
 
       <Outlet />

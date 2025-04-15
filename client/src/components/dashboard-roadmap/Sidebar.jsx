@@ -41,9 +41,9 @@ const Sidebar = ({ isExpanded, onToggle, isLessonOpen = false }) => {
         <div className="fixed top-6 left-18 z-50">
           <button
             onClick={() => onToggle()}
-            className="p-2 rounded-lg border border-black hover:bg-[#CBB09B] transition-colors bg-white"
+            className="flex gap-2 p-2 rounded-lg border border-black hover:bg-[#CBB09B] transition-colors bg-white"
           >
-            <Menu className="w-6 h-6 text-black" />
+            <Menu className="w-6 h-6 text-black" /> Expand
           </button>
         </div>
       ) : (

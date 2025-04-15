@@ -239,7 +239,7 @@ export default function Dashboard({setAssessed}) {
           )}
         </div>
         {/* Right Section - Panels */}
-        <div className="p-4 fixed pt-10 right-102">
+        <div className="p-4 fixed pt-20 right-102">
           <StreakPanel userId={id} />
           <QuestPanel userId={id} />
         </div>
