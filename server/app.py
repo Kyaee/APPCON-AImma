@@ -110,6 +110,7 @@ def POST_generate_lesson(request: GenerateLesson = None):
             "exp": request.exp,
             "duration": request.duration,
             "assessment": request.assessment,
+            "progress": request.progress,
         }
     else:
         return {"message": "data was not posted"}

@@ -27,18 +27,18 @@ export default function Header({ id, isAssessment, previousProgress, scrollProgr
     : navItems.filter((item) => item.label !== "Assessment");
 
   const handleQuit = () => {
-    if (scrollProgress < previousProgress) {
+    if (scrollProgress > previousProgress) {
       updateLesson({
         userId: session?.user?.id,
         lessonId: id,
         lastAccessed: new Date().toISOString(),
         progress: scrollProgress,
       });
-      // window.location.href = `/dashboard/${session?.user?.id}`;
+      window.location.href = `/dashboard/${session?.user?.id}`;
       console.log("successful")
     }
-    // window.location.href = `/dashboard/${session?.user?.id}`;
     console.log("redirect", previousProgress)
+    window.location.href = `/dashboard/${session?.user?.id}`;
   };
 
   return (

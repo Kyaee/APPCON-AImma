@@ -43,6 +43,7 @@ class GenerateLesson(BaseModel):
     exp: int
     duration: str
     assessment: bool
+    progress: int
 
 
 """======================================

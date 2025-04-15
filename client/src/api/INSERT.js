@@ -24,18 +24,22 @@ export function useGenerateRoadmap() {
   prompt_roadmap_generate: `
     Generate a roadmap in ${JSON.stringify(language)} with the following details:
 
-    The roadmap is tailored for a "${userType?.label}" ${JSON.stringify(educationLevel?.label || previousExperience || careerTransition)} user, 
+    Roadmap tailored for a "${userType?.label}" ${JSON.stringify(educationLevel?.label || previousExperience || careerTransition)} user, 
     with a daily goal of ${JSON.stringify(dailyGoal)} (if two digits its minutes, else hours) .
-    The lessons should be based on interests such as ${JSON.stringify(technicalInterest?.label)} and user personalization: ${JSON.stringify(technicalAnswers)}. 
-    Do not include the actual content but provide a structure to generate the lesson in the next prompt.
+    The lessons are based on interests such as ${JSON.stringify(technicalInterest?.label)} and user personalization: ${JSON.stringify(technicalAnswers)}. 
+    Don't include actual content but provide a structure to generate lesson in the next prompt.
 
     Format:
-    - Roadmap Name, roadmap dailyGoal & roadmap descripton
-    - Lesson Category in ARRAY
-    - status each lesson(returns "locked" for premium access, "in_progress", or no output if unlocked)
-    - Assessment(returns true or false)
-    - Duration of each lesson with time unit (e.g., 30 minutes, 1 hour)
-    - Gems & Exp rewarded per lesson
+    - Roadmap Name, roadmap dailyGoal 
+    - Lesson Categories in ARRAY 
+    - Lesson description
+    - Lesson difficulty(return only "Easy", "Intermediate", "Hard")
+    - Lesson status(returns "locked" for premium access, "in_progress", or no output if unlocked)
+    - Lesson Assessment(returns true or false)
+    - Lesson duration time unit (e.g., 30 minutes, 1 hour)
+    - Gems & Exp rewarded per lesson 
+    (No assessment: 15 exp, 10 gems),
+    with assessment: (Easy: 50 exp, 25 gems) (Intermediate: 100 exp, 50 gems) (Hard: 200 exp, 100 gems)
   `}
 
   const postPrompt1 = async () => {
@@ -77,10 +81,24 @@ export const postPrompt2 = async (
   lesson_gems,
   lesson_expierence,
   lesson_duration,
-  lesson_assessment
+  lesson_assessment,
+  lesson_progress
 ) => {
   const prompt_lesson = `
-    Generate a ${lesson_name} lesson plan for the following topic
+    Generate a ${lesson_name} lesson for the user
+
+    Format:
+    - (do not include lesson name as title)
+    - Target Audience
+    - ## Introduction 
+    - ### Objectives
+    - ## Lesson Content 
+      #### A. Key Concepts and Definitions
+      #### B. Step-by-step Explanations
+      #### C. Real world examples or scenarios
+    - ### Activity/Indenpdent Practice 
+    - ## Conclusion 
+    - ### References (if possible) 
   `;
   try {
     const requestBody = {
@@ -93,6 +111,7 @@ export const postPrompt2 = async (
       exp: lesson_expierence,
       duration: lesson_duration,
       assessment: lesson_assessment,
+      progress: lesson_progress
     };
 
     const response = await axios.post(
@@ -118,7 +137,7 @@ export function useAssessment() {
     }
     const requestBody = {
       prompt_assessment_generate: `
-      Generate 7 assessment questions for ${lesson_name} with the following content: ${lesson_content}
+      Generate 11 assessment questions for ${lesson_name} with the following content: ${lesson_content}
       The questions must only be "multiple-choice"
       `,
       id: lesson_id,

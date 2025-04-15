@@ -5,14 +5,14 @@ import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
 
-import { useState, useEffect, useRef, useMemo, useCallback, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useAssessment } from "@/api/INSERT";
 
 export default function ElementLesson() {
   const { id } = useParams(); // Get the lesson ID from the URL parameters
-  const generated_assessment = useLessonFetchStore( 
+  const generated_assessment = useLessonFetchStore(
     (state) => state.generated_assessment
   );
   const setGeneratedAssessment = useLessonFetchStore(
@@ -20,12 +20,12 @@ export default function ElementLesson() {
   );
   const lessonFetch = useLessonFetchStore((state) => state.fetch); // Get the lesson data from the store
   const scrollProgress = useLessonFetchStore((state) => state.scrollProgress); // Get the scroll progress from the store
-  const setScrollProgress = useLessonFetchStore((state) => state.setScrollProgress); // Function to set scroll progress
+  const setScrollProgress = useLessonFetchStore(
+    (state) => state.setScrollProgress
+  ); // Function to set scroll progress
   const contentRef = useRef(null); // Attach to main
   const [isLoading, setLoading] = useState(false); // State to manage loading status
-  const { createAssessment, isPending, isError } = useAssessment();
-
-  const lessonContent = useMemo(() => lessonFetch?.message ? lessonFetch?.message : lessonFetch?.lesson, [lessonFetch]);
+  const { createAssessment, isPending } = useAssessment();
 
   // Memoize scroll handler for performance
   const calculateScrollProgress = useCallback((main) => {
@@ -109,7 +109,7 @@ export default function ElementLesson() {
   }
 
   // Set up scroll animations
-  const handleAssessment = useCallback(() => {
+  const handleAssessment = () => {
     setLoading(true);
 
     if (generated_assessment) {
@@ -125,7 +125,7 @@ export default function ElementLesson() {
       setLoading(false);
       setTimeout(() => (window.location.href = `/l/${id}/assessment`), 2000);
     }
-  }, [generated_assessment, setGeneratedAssessment, id, createAssessment, lessonFetch]);
+  };
 
   if (isPending) return <Loading generate_assessment={true} />;
 
@@ -134,7 +134,9 @@ export default function ElementLesson() {
       ref={contentRef}
       className="w-full h-screen overflow-y-auto scroll-smooth"
     >
-      <Suspense fallback={<div className="h-2 bg-gray-200 animate-pulse w-full" />}>
+      <Suspense
+        fallback={<div className="h-2 bg-gray-200 animate-pulse w-full" />}
+      >
         <ProgressBar progress={scrollProgress} />
       </Suspense>
       <Background className="opacity-90" />
@@ -149,17 +151,26 @@ export default function ElementLesson() {
         />
         {/* Title */}
         <FormattedContent>
-          {lessonContent}
+          {lessonFetch?.message ? lessonFetch?.message : lessonFetch?.lesson}
         </FormattedContent>
 
-        {lessonFetch?.assessment && (
+        {lessonFetch?.assessment ? (
           <NavigateAssessment
             name={lessonFetch?.name}
             onClick={handleAssessment}
             disabled={isLoading}
           />
+        ) : (
+          <article className="flex mt-10">
+            <p className="text-3xl font-extrabold">End of lesson.</p>
+          </article>
         )}
       </section>
+      <div className="fixed bottom-5 transform left-5 text-neutral-400 text-balance text-sm w-full max-w-md">
+        Please take note that CapyCademy,
+        <br />
+        can make mistakes, check important info.
+      </div>
       <footer className="mb-20"></footer>
     </main>
   );

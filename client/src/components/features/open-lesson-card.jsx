@@ -8,6 +8,7 @@ import {
   AngryIcon,
   BicepsFlexed,
   X,
+  Target,
   Hourglass,
 } from "lucide-react";
 import React from "react";
@@ -24,7 +25,8 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
       lesson.gems,
       lesson.exp,
       lesson.lesson_duration,
-      lesson.assessment
+      lesson.assessment,
+      lesson.progress
     );
   };
 
@@ -67,15 +69,15 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
             ))}
           </article>
           <div className="flex items-center justify-between">
-            <div className="flex gap-4">
-              <div className="flex items-center gap-2">
+            <div className="flex gap-5">
+              <div className="flex items-center gap-1">
                 <Hourglass size={17} />
                 {lesson.lesson_duration
                   ? lesson.lesson_duration
                   : "No description available. Sorry! :(("}
               </div>
               {lesson.lesson_difficulty === "Easy" && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <SmileIcon className="size-6 text-green-600" />
                   <span className="font-bold text-green-600 text-sm leading-[22px] font-['Inter-Bold',Helvetica]">
                     Easy
@@ -83,7 +85,7 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
                 </div>
               )}
               {lesson.lesson_difficulty === "Intermediate" && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <AngryIcon className="size-6 text-amber-500" />
                   <span className="font-bold text-amber-500 text-sm leading-[22px] font-['Inter-Bold',Helvetica]">
                     Medium
@@ -91,7 +93,7 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
                 </div>
               )}
               {lesson.lesson_difficulty === "Hard" && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <BicepsFlexed className="size-6 text-red-600" />
                   <span className="font-bold text-red-600 text-sm leading-[22px] font-['Inter-Bold',Helvetica]">
                     Hard
@@ -119,8 +121,8 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
             Description
           </h2>
           <p className="mb-5 pr-2 transition animate-text-fade text-[#7b7b7b] text-base font-normal font-['Inter-Regular',Helvetica] leading-[22px]">
-            {lesson.lesson_description
-              ? lesson.lesson_description
+            {lesson.description
+              ? lesson.description
               : "No description available. Sorry! :(("}
           </p>
         </section>
@@ -128,6 +130,15 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
         {/* Main content area */}
         <div className="flex flex-col gap-5 transition animate-text-fade justify-center w-full">
           {/* Left column - Description and Outline */}
+          {lesson.assessment ? (
+            <p className="flex gap-2 items-center border-2 border-blue-500 w-auto p-2 rounded-md text-blue-500">
+              <Target /> With Assessment
+            </p>
+          ) : (
+            <p className="flex gap-2 items-center border-2 border-light-brown w-auto p-2 rounded-md text-brown">
+              <Target /> No Assessment
+            </p>
+          )}
           <div className="max-w-lg w-108 flex flex-col gap-7">
             {/* Progress card */}
             <Card className="bg-[#fff7f7] border-black shadow-[4px_4px_0px_#00000080] rounded-md py-5">
