@@ -107,7 +107,7 @@ export default function Dashboard({setAssessed}) {
           } sticky top-20`}
         >
           {!isSidebarExpanded && (
-            <div className="ml-[60px] mt-[0px] p-3 fixed top-25">
+            <div className="ml-[60px] w-1/4 mt-[15px] p-3 fixed top-25">
               <div className="relative inline-block">
                 <div className="relative inline-block">
                   {/* Header content with inline horizontal line */}
@@ -239,7 +239,7 @@ export default function Dashboard({setAssessed}) {
           )}
         </div>
         {/* Right Section - Panels */}
-        <div className="w-[25%] p-4 sticky pt-10">
+        <div className="p-4 fixed pt-10 right-102">
           <StreakPanel userId={id} />
           <QuestPanel userId={id} />
         </div>
