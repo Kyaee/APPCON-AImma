@@ -69,7 +69,7 @@ const QuestPanel = ({ userId }) => {
   };
 
   return (
-    <div className="fixed top-80 bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
+    <div className="bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-lg font-medium text-black">
           {isDaily ? "Daily Quests" : "Weekly Quests"}

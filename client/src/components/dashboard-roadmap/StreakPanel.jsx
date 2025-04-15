@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { checkStreaks } from "@/lib/check-day-streak";
 import { useFetchStore } from "@/store/useUserData";
 import { useAuth } from "@/config/authContext";
+import CapySlide from "@/assets/general/capy_sleep.png";
 
 const StreakPanel = ({ streak }) => {
   const fetch = useFetchStore((state) => state.fetch);
@@ -25,13 +26,18 @@ const StreakPanel = ({ streak }) => {
   const parsedDailyStatus = JSON.parse(dailyStatus);
 
   useEffect(() => {
-    if (!localStorage.getItem("dailyStatus")) 
+    if (!localStorage.getItem("dailyStatus"))
       localStorage.setItem("dailyStatus", JSON.stringify(daysOfWeek));
-    checkStreaks(session?.user?.created_at)
+    checkStreaks(session?.user?.created_at);
   }, []);
 
   return (
-    <div className="fixed top-[120px] z-50 bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
+    <div className="relative bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
+      <img 
+        src={CapySlide} 
+        alt="Sleeping capybara with orang" 
+        className="absolute -top-29 w-2/5 right-0"
+      />
       <h2 className="text-lg font-medium mb-3 text-black">Streaks</h2>
 
       <div className="flex items-center justify-center gap-2 mb-4">

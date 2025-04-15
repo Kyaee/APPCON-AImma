@@ -96,7 +96,9 @@ export default function Dashboard({setAssessed}) {
       <Sidebar
         isExpanded={isSidebarExpanded}
         onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
-        isLessonOpen={isLessonOpen} // Add this prop
+        isLessonOpen={isLessonOpen}
+        isLessonData={lessonData}
+        // Add this prop
       />
 
       {/* Main Content Area - Three Column Layout */}
@@ -107,7 +109,7 @@ export default function Dashboard({setAssessed}) {
           } sticky top-20`}
         >
           {!isSidebarExpanded && (
-            <div className="ml-[60px] w-1/4 mt-[15px] p-3 fixed top-25">
+            <div className="ml-[60px] w-1/4 top-30 p-3 fixed">
               <div className="relative inline-block">
                 <div className="relative inline-block">
                   {/* Header content with inline horizontal line */}
@@ -125,11 +127,11 @@ export default function Dashboard({setAssessed}) {
                         }
                         className="relative inline-flex items-start gap-3 cursor-pointer group p-0"
                         id="headerContainer"
-                        style={{ width: "450px" }}
+                        style={{ width: "430px" }}
                       >
                         <h2
-                          className="text-3xl font-bold text-black break-words"
-                          style={{ maxWidth: "450px" }}
+                          className="text-3xl font-bold text-black text-balance"
+                          style={{ maxWidth: "430px" }}
                         >
                           {currentRoadmap?.roadmap_name || "Select a roadmap"}
                         </h2>
@@ -173,7 +175,7 @@ export default function Dashboard({setAssessed}) {
                   {roadmapData.map((roadmap, index) => (
                     <div
                       key={roadmap.roadmap_id}
-                      className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl truncate"
+                      className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-md truncate"
                       onClick={() => handleCourseSelect(index)}
                       title={roadmap.roadmap_name}
                     >
@@ -239,7 +241,7 @@ export default function Dashboard({setAssessed}) {
           )}
         </div>
         {/* Right Section - Panels */}
-        <div className="p-4 fixed pt-20 right-102">
+        <div className="p-4 fixed space-y-5 mt-20 right-7 z-10">
           <StreakPanel userId={id} />
           <QuestPanel userId={id} />
         </div>
