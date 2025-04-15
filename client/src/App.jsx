@@ -42,7 +42,7 @@ import ApiTester from "./routes/UI_TestGemReward";
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(true);
+  const [isAssessed, setAssessed] = useState(false);
 // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
@@ -69,12 +69,12 @@ function App() {
                 </>
               ) : !isAssessed ? (
                 // IF USER IS LOGGED-IN, AND NOT ASSESSED
-                {
-                  path: "/onboarding/name",
-                  element: <NameCustomization />,
-                },
                 <>
                   <Route path="/start/showcase" element={<IntroShowcase />} />
+                  <Route 
+                    path="/start/name"
+                    element={<NameCustomization />}
+                  />
                   <Route
                     path="/start/assessment/*"
                     element={<UserAssessment />}

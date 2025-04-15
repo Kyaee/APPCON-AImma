@@ -36,7 +36,7 @@ export default function Header({ id, isAssessment, previousProgress, scrollProgr
       });
       window.location.href = `/dashboard/${session?.user?.id}`;
       console.log("successful")
-    }
+    } 
     console.log("redirect", previousProgress)
     window.location.href = `/dashboard/${session?.user?.id}`;
   };
