@@ -67,7 +67,8 @@ export default function ElementLesson() {
   const handleAssessment = () => {
     setLoading(true);
 
-    if (!generated_assessment) {
+    if (generated_assessment) {
+      setGeneratedAssessment(false);
       window.location.href = `/l/${id}/assessment`;
     } else {
       createAssessment({
@@ -94,21 +95,21 @@ export default function ElementLesson() {
         className="mt-40 max-w-2xl mx-auto overflow-hidden"
       >
         <LessonArticle
-          name={lessonFetch.name}
-          difficulty={lessonFetch.difficulty}
-          duration={lessonFetch.duration}
-          exp={lessonFetch.exp}
-          gems={lessonFetch.gems}
-          assessment={lessonFetch.assessment}
+          name={lessonFetch?.name}
+          difficulty={lessonFetch?.difficulty}
+          duration={lessonFetch?.duration}
+          exp={lessonFetch?.exp}
+          gems={lessonFetch?.gems}
+          assessment={lessonFetch?.assessment}
         />
         {/* Title */}
         <FormattedContent>
-          {lessonFetch.message ? lessonFetch.message : lessonFetch.lesson}
+          {lessonFetch?.message ? lessonFetch?.message : lessonFetch?.lesson}
         </FormattedContent>
 
-        {lessonFetch.assessment && (
+        {lessonFetch?.assessment && (
           <NavigateAssessment
-            name={lessonFetch.name}
+            name={lessonFetch?.name}
             onClick={handleAssessment}
             disabled={isLoading}
           />

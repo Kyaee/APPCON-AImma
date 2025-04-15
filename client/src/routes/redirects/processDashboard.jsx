@@ -16,11 +16,6 @@ export default function ProcessDashboard({setAssessed}) {
     isError,
   } = useQuery(fetchRoadmapAIdata());
 
-  useEffect(() => {
-    console.log(roadmapData);
-    processRoadmap();
-  }, [roadmapData]);
-
   const processRoadmap = async () => {
     if (roadmapData && session?.user?.id) {
       try {
@@ -33,6 +28,11 @@ export default function ProcessDashboard({setAssessed}) {
       }
     }
   };
+
+  useEffect(() => {
+    console.log(roadmapData);
+    processRoadmap();
+  }, [roadmapData]);
 
   if (isLoading) return <Loading />;
   return (

@@ -10,9 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchRoadmap, fetchLesson } from "@/api/FETCH";
 import Loading from "@/routes/Loading";
 
-export default function Ayon() {
+export default function Dashboard({setAssessed}) {
   const { id } = useParams();
-
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [roadmapIndex, setRoadmapIndex] = useState(0);
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);

@@ -43,7 +43,7 @@ function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
   const [isAssessed, setAssessed] = useState(true);
-  // const [isUserLoggedin, setUserLoggedin] = useState(true);
+// const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
@@ -84,7 +84,7 @@ function App() {
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED
                 <>
-                  <Route path="/dashboard" element={<RedirectDashboard />} />
+                  <Route path="/dashboard" element={<RedirectDashboard setAssessed={setAssessed} />} />
                   <Route path="/profile" element={<RedirectProfile />} />
                   <Route path="/shop" element={<RedirectShop />} />
                   <Route
@@ -92,7 +92,7 @@ function App() {
                     element={<RedirectJobOpportunities />}
                   />
                   <Route element={<MainLayout />}>
-                    <Route path="/dashboard/:id" element={<Dashboard />} />
+                    <Route path="/dashboard/:id" element={<Dashboard setAssessed={setAssessed} />} />
                     <Route path="/profile/:id" element={<Profile />} />
                     <Route path="/shop/:id" element={<Shop />} />
                     <Route

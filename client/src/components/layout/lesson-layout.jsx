@@ -25,8 +25,8 @@ export default function LessonLayout({ children }) {
   return (
     <>
       <Header
-        id={lessonFetch.id || lessonData.id}
-        isAssessment={lessonFetch.assessment || lessonData.assessment}
+        id={lessonFetch?.id || lessonData.id}
+        isAssessment={lessonFetch?.assessment || lessonData?.assessment}
       />
       <Outlet />
       {children}

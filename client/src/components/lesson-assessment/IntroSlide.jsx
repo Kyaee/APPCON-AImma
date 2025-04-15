@@ -1,6 +1,5 @@
 import { Gem, ZapIcon } from "lucide-react";
 import { useLessonFetchStore } from "@/store/useLessonData";
-import { useState } from "react"
 import Loading from "@/routes/loading"
 import { useAssessment } from "@/api/INSERT";
 
@@ -22,6 +21,7 @@ export default function IntroSlide({
     
     if (generated_assessment) {
       console.log("Proceeding...");
+      setGeneratedAssessment(false);
       setIntroSlide();
     } else {
       setGeneratedAssessment(true);
@@ -33,7 +33,7 @@ export default function IntroSlide({
     }
   }
 
-  if (isPending) return <Loading generate_assessment={true}/>
+if (isPending) return <Loading generate_assessment={true}/>
 
   return (
     <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-background ">
