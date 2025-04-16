@@ -1,3 +1,6 @@
+import { Card, CardContent } from "@/components/ui/card";
+import BadgesProfile from "./BadgesProfile";
+
 export default function SkillsProfile({titles}) {
   return (
     <div>
@@ -11,6 +14,16 @@ export default function SkillsProfile({titles}) {
           </button>
         ))}
       </div>
+
+      <CardContent className="p-4 mt-15">
+         <BadgesProfile
+            badges={{
+            name: "Example badge here",
+            description: "You put the description here",
+            }}
+        />
+      </CardContent>          
+
     </div>
   );
 }
