@@ -6,29 +6,48 @@ export function handleUpdateStreak(updateUser, userId, gems, exp, streak, lives)
   // INITIALIZE DAILY STATUS
   const dailyStatus = localStorage.getItem("dailyStatus");
   if (!dailyStatus) {
-    console.warn("No dailyStatus found in localStorage");
-    return;
+    console.warn("No dailyStatus found in localStorage, initializing");
+    const daysOfWeek = [
+      { day: "Mon", full: "Monday", status: "" },
+      { day: "Tue", full: "Tuesday", status: "" },
+      { day: "Wed", full: "Wednesday", status: "" },
+      { day: "Thu", full: "Thursday", status: "" },
+      { day: "Fri", full: "Friday", status: "" },
+      { day: "Sat", full: "Saturday", status: "" },
+      { day: "Sun", full: "Sunday", status: "" },
+    ];
+    localStorage.setItem("dailyStatus", JSON.stringify(daysOfWeek));
+    const parsedDailyStatus = daysOfWeek;
+    return handleDailyUpdate(updateUser, userId, gems, exp, streak, lives, parsedDailyStatus);
   }
   
   const parsedDailyStatus = JSON.parse(dailyStatus);
+  return handleDailyUpdate(updateUser, userId, gems, exp, streak, lives, parsedDailyStatus);
+}
+
+// Helper function to handle the daily update logic
+function handleDailyUpdate(updateUser, userId, gems, exp, streak, lives, parsedDailyStatus) {
   const now = new Date();
   const nowDayName = now.toLocaleDateString("en-US", { weekday: "long" });
 
+  // Store today's date as string for tracking
+  const today = now.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  
   // FIND INDEX OF TODAY
   const todayIndex = parsedDailyStatus.findIndex((day) => day.full === nowDayName);
   if (todayIndex === -1) {
     console.warn(`Could not find today (${nowDayName}) in dailyStatus`);
-    return;
+    return false;
   }
   
   now.setHours(0, 0, 0, 0);
 
-  // Mark today as completed if not already
+  // Check if streak was already incremented today
   if (parsedDailyStatus[todayIndex].status === "completed") {
     console.log(`Today (${nowDayName}) is already marked as completed, not updating streak or rewards.`);
     // Don't update user here - would give duplicate rewards
     localStorage.setItem("dailyStatus", JSON.stringify(parsedDailyStatus));
-    return;
+    return false;
   }
 
   // Only update user if today wasn't already completed
@@ -46,6 +65,11 @@ export function handleUpdateStreak(updateUser, userId, gems, exp, streak, lives)
   console.log(`Today (${nowDayName}) marked as completed.`);
 
   localStorage.setItem("dailyStatus", JSON.stringify(parsedDailyStatus));
+  
+  // Save last update date to prevent multiple increments on same day
+  localStorage.setItem("lastStreakUpdate", today);
+  
+  return true; // Return true to indicate successful update
 }
 
 export function checkStreaks(createdAt) {

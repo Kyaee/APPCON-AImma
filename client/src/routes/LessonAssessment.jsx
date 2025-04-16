@@ -19,6 +19,8 @@ import { useFetchStore } from "@/store/useUserData";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuestStore } from "@/store/useQuestStore";
 import { useAuth } from "@/config/authContext";
+import { useStreakStore } from "@/store/useStreakStore";
+import { handleUpdateStreak } from "@/lib/check-day-streak";
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
@@ -38,6 +40,9 @@ export default function Assessment() {
   const userData = useFetchStore((state) => state.fetch);
   const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData());
   const queryClient = useQueryClient();
+  const updateStreakFromLesson = useStreakStore(
+    (state) => state.updateStreakFromLesson
+  );
   const [isAnswers, setAnswers] = useState([
     {
       id: isCurrentSlide,
@@ -227,11 +232,26 @@ export default function Assessment() {
 
       // Update user stats with rewards and subtract lives
       try {
+        // Check if we should update streak by using handleUpdateStreak
+        // Only increment streak if the user didn't lose lives and passed the assessment
+        let streakIncrement = 0;
+        if (livesLost === 0 && isCount.score >= 3) {
+          // Use the updated function that checks if streak was already updated today
+          // This will only update streak once per day
+          const streakUpdated = await updateStreakFromLesson(userId);
+          if (streakUpdated) {
+            console.log("Streak was updated successfully");
+          } else {
+            console.log("Streak was already updated today, skipping increment");
+          }
+        }
+
+        // Always update gems, exp and lives
         const response = await updateUser({
           userId: userId,
           gems: gems,
           exp: exp,
-          streak: livesLost > 0 ? 0 : 1, // Increment streak if didn't lose lives
+          streak: 0, // Don't increment streak here, it's handled by updateStreakFromLesson
           lives: livesLost, // This will decrease lives by this amount
         });
 
@@ -268,16 +288,28 @@ export default function Assessment() {
       const totalQuestions = lessonData.questions.length - 1;
       const livesLost = isCount.livesLost || totalQuestions - isCount.score;
 
-      // Update user data with rewards
+      // Check if we should update streak
+      let streakUpdated = false;
+      if (livesLost === 0 && isCount.score >= 3) {
+        // Try to update streak using the streakStore method that includes the daily check
+        streakUpdated = await updateStreakFromLesson(userId);
+      }
+
+      // Update user data with rewards (but don't increment streak here)
       await updateUser({
         userId: userId,
         gems: gems,
         exp: exp,
-        streak: livesLost > 0 ? 0 : 1, // Increment streak if didn't lose lives
+        streak: 0, // Don't increment streak here
         lives: livesLost,
       });
 
-      console.log("User stats updated with rewards:", { gems, exp, livesLost });
+      console.log("User stats updated with rewards:", {
+        gems,
+        exp,
+        livesLost,
+        streakUpdated,
+      });
       return true;
     } catch (error) {
       console.error("Error updating user stats:", error);
