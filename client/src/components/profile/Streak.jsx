@@ -5,7 +5,7 @@ export default function ProfileStreak({
   streak,
   previous_best,
   quests_finished,
-  skill_progress,
+  roadmap_progress,
 }) {
   return (
     <div className="w-full">
@@ -30,7 +30,7 @@ export default function ProfileStreak({
 
       <div className="rounded-lg bg-white dark:bg-dark-mode-bg mt-6 border-2 border-black dark:border-dark-mode-highlight">
         <div className="space-y-4 p-5">
-          {skill_progress.map((skill, index) => (
+          {roadmap_progress.map((skill, index) => (
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div>
