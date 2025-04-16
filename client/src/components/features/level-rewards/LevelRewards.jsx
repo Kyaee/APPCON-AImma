@@ -131,10 +131,10 @@ const LevelRewards = () => {
               </div>
 
               {/* Progress Track */}
-              <div className="relative mb-8">
-                <div className="absolute h-2 bg-gray-700 rounded-full w-full"></div>
+              <div className="relative mb-10">
+                <div className="absolute h-4 bg-light-brown rounded-full w-full"></div>
                 <div 
-                  className="absolute h-2 bg-primary rounded-full transition-all duration-500"
+                  className="absolute h-4 bg-primary rounded-full transition-all duration-500"
                   style={{ width: `${(currentLevel / 60) * 100}%` }}
                 ></div>
               </div>
