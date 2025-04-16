@@ -37,9 +37,9 @@ export default function Profile() {
   const completedDailyQuests = dailyQuests.filter((q) => q.completed).length;
   const completedWeeklyQuests = weeklyQuests.filter((q) => q.completed).length;
   const totalCompletedQuests = completedDailyQuests + completedWeeklyQuests;
-  
- // reward user 
- const [isRewardsOpen, setIsRewardsOpen] = useState(true);
+
+  // reward user
+  const [isRewardsOpen, setIsRewardsOpen] = useState(true);
 
   const {
     data: profile,
@@ -56,10 +56,7 @@ export default function Profile() {
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
   const roadmapId = currentRoadmap?.roadmap_id;
 
-  const {
-    data: lessonData,
-    isLoading: loadingLessons,
-  } = useQuery({
+  const { data: lessonData, isLoading: loadingLessons } = useQuery({
     queryKey: ["lessons", roadmapId], // Add roadmapId to the queryKey to automatically refetch when it changes
     queryFn: () => fetchLesson(roadmapId),
     enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
@@ -93,11 +90,12 @@ export default function Profile() {
     }
   }, [fetch?.id]);
 
-  if (load_profile || loading || loadingRoadmap || loadingLessons) return <Loading />;
+  if (load_profile || loading || loadingRoadmap || loadingLessons)
+    return <Loading />;
 
   const userDisplayData = userData || fetch;
 
-          // Calculate experience for the current level - FIXED 100 XP per level
+  // Calculate experience for the current level - FIXED 100 XP per level
   const calculateLevelExperience = (level) => {
     // Each level requires 100 XP
     return level * 100;
@@ -105,23 +103,12 @@ export default function Profile() {
 
   // Calculate current level progress
   const calculateLevelProgress = (currentExp, level) => {
-    // With 100 XP per level, calculations become simpler
-    
-    // Total XP needed for current level completion
-    const currentLevelTotalExp = level * 100;
-    
-    // Total XP needed for previous level completion
-    const prevLevelTotalExp = (level - 1) * 100;
-    
-    // Calculate the exp within the current level (between 0-100)
-    const expInCurrentLevel = currentExp - prevLevelTotalExp;
-    
-    // Each level always needs 100 XP
-    const expNeededForLevel = 100;
-    
+    // Simply return the current_exp value directly (0-100) to match sidebar.jsx
+    // This assumes the level-up logic in the backend keeps current_exp between 0-100
+
     return {
-     current: Math.max(1, expInCurrentLevel), // Always show at least 1 XP progress
-  total: expNeededForLevel
+      current: currentExp || 0,
+      total: 100, // Always use 100 as the maximum EXP per level
     };
   };
 
@@ -158,8 +145,18 @@ export default function Profile() {
                 userDisplayData.first_name + " " + userDisplayData.last_name
               }
               level={userDisplayData.level}
-              experience={calculateLevelProgress(userDisplayData.current_exp || 0, userDisplayData.level).current}
-              totalExperience={calculateLevelProgress(userDisplayData.current_exp || 0, userDisplayData.level).total}
+              experience={
+                calculateLevelProgress(
+                  userDisplayData.current_exp || 0,
+                  userDisplayData.level
+                ).current
+              }
+              totalExperience={
+                calculateLevelProgress(
+                  userDisplayData.current_exp || 0,
+                  userDisplayData.level
+                ).total
+              }
               continueLearning="JavaScript Basics"
               hours={2}
               withAssessment={true}
@@ -168,15 +165,13 @@ export default function Profile() {
           </>
         )}
 
-         {/* Render the LevelRewards component without its button */}
-         <LevelRewards 
-          isOpen={isRewardsOpen} 
+        {/* Render the LevelRewards component without its button */}
+        <LevelRewards
+          isOpen={isRewardsOpen}
           onOpenChange={setIsRewardsOpen}
           userId={userDisplayData?.id}
           renderButton={true} // Don't render the button in the component
-          />     
-         
-         
+        />
 
         <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
           {/****************  
@@ -197,18 +192,14 @@ export default function Profile() {
                 ? userDisplayData.finished_quests || totalCompletedQuests
                 : 0
             }
-            roadmap_progress={
-              !isError
-                ? roadmapData
-                : []
-            }
+            roadmap_progress={!isError ? roadmapData : []}
             setRoadmapIndex={setRoadmapIndex}
           />
 
           {/****************  
               Skills Section 
           ******************/}
-          <SkinBadgesTabs /> 
+          <SkinBadgesTabs />
 
           {/**************** 
             Charts Section 

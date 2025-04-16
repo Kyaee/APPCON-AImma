@@ -208,11 +208,13 @@ export default function Assessment() {
       const { gems, exp } = calculateRewards(lessonFetch.difficulty);
 
       // Get the exact number of lives lost during assessment
-      const livesLost = isCount.livesLost || totalQuestions - isCount.score;
+      const livesLost = isCount.livesLost || 0;
 
       console.log(`Assessment results for ${lessonFetch.name}:`);
       console.log(
-        `Score: ${isCount.score}/${totalQuestions} (${successRate * 100}%)`
+        `Score: ${isCount.score}/${totalQuestions} (${Math.round(
+          successRate * 100
+        )}%)`
       );
       console.log(`Rewards: ${gems} gems, ${exp} exp`);
       console.log(`Lives lost during assessment: ${livesLost}`);
@@ -228,44 +230,45 @@ export default function Assessment() {
         });
 
         console.log(`Lesson ${lessonFetch.id} marked as completed`);
-      }
 
-      // Update user stats with rewards and subtract lives
-      try {
-        // Check if we should update streak by using handleUpdateStreak
-        // Only increment streak if the user didn't lose lives and passed the assessment
-        let streakIncrement = 0;
-        if (livesLost === 0 && isCount.score >= 3) {
+        // Check if streak should be updated
+        let streakUpdated = false;
+        if (livesLost === 0) {
           // Use the updated function that checks if streak was already updated today
-          // This will only update streak once per day
-          const streakUpdated = await updateStreakFromLesson(userId);
-          if (streakUpdated) {
-            console.log("Streak was updated successfully");
-          } else {
-            console.log("Streak was already updated today, skipping increment");
-          }
+          streakUpdated = await updateStreakFromLesson(userId);
+          console.log(
+            streakUpdated
+              ? "Streak was updated successfully"
+              : "Streak was already updated today, skipping increment"
+          );
         }
 
-        // Always update gems, exp and lives
-        const response = await updateUser({
-          userId: userId,
-          gems: gems,
-          exp: exp,
-          streak: 0, // Don't increment streak here, it's handled by updateStreakFromLesson
-          lives: livesLost, // This will decrease lives by this amount
-        });
+        // ALWAYS update rewards regardless of streak status
+        try {
+          const response = await updateUser({
+            userId: userId,
+            gems: gems,
+            exp: exp,
+            streak: 0, // Streak is handled by updateStreakFromLesson
+            lives: livesLost,
+          });
 
-        console.log("Rewards saved to Supabase", response);
-        console.log(`Lives decreased by: ${livesLost}`);
-      } catch (error) {
-        console.error("Error updating user rewards:", error);
-        throw error;
+          console.log("Rewards saved to Supabase:", response);
+          console.log(`EXP awarded: ${exp}, Gems awarded: ${gems}`);
+          if (livesLost > 0) {
+            console.log(`Lives decreased by: ${livesLost}`);
+          }
+
+          // Invalidate queries to refresh dashboard data
+          queryClient.invalidateQueries(["userStats", userId]);
+          queryClient.invalidateQueries(["fetch_user"]);
+          console.log("Query cache invalidated, dashboard will refresh");
+        } catch (error) {
+          console.error("Error updating user rewards:", error);
+        }
+      } else {
+        console.log("Assessment failed, no rewards will be given");
       }
-
-      // Invalidate queries to refresh dashboard data
-      queryClient.invalidateQueries(["userStats", userId]);
-      queryClient.invalidateQueries(["fetch_user"]);
-      console.log("Query cache invalidated, dashboard will refresh");
 
       // Redirect to dashboard with timestamp to force refresh
       navigate(`/dashboard/${userId}?t=${Date.now()}`);

@@ -89,10 +89,11 @@ export default function ElementLesson() {
           highestProgress
         );
 
-        const status =
-          finalProgress >= 100 && !lessonFetch.assessment
-            ? "Completed"
-            : currentData?.status || lessonFetch.status;
+        const wasAlreadyCompleted = currentData?.status === "Completed";
+        const shouldComplete = finalProgress >= 100 && !lessonFetch.assessment;
+        const status = shouldComplete
+          ? "Completed"
+          : currentData?.status || lessonFetch.status;
 
         console.log(`Saving progress: ${finalProgress}%, status: ${status}`);
 
@@ -105,12 +106,15 @@ export default function ElementLesson() {
         });
 
         // If lesson is completed (100% progress) and has no assessment, award rewards
-        if (
-          finalProgress >= 100 &&
-          !lessonFetch.assessment &&
-          status === "Completed"
-        ) {
+        // Only award if the lesson wasn't previously completed
+        if (shouldComplete && status === "Completed" && !wasAlreadyCompleted) {
+          console.log(
+            "Lesson completed without assessment - awarding rewards automatically"
+          );
           await awardLessonRewards();
+          // Invalidate queries to refresh dashboard data when user returns
+          queryClient.invalidateQueries(["userStats", session.user.id]);
+          queryClient.invalidateQueries(["fetch_user"]);
         }
 
         console.log("Progress saved successfully");
@@ -121,7 +125,7 @@ export default function ElementLesson() {
       }
     }
     return false;
-  }, [session, lessonFetch, highestProgress, updateLesson]);
+  }, [session, lessonFetch, highestProgress, updateLesson, queryClient]);
 
   // Calculate rewards based on lesson difficulty
   const calculateRewards = useCallback(() => {
@@ -175,7 +179,7 @@ export default function ElementLesson() {
         // First, get the current stored progress from Supabase
         const { data: currentData } = await supabase
           .from("lessons")
-          .select("progress")
+          .select("progress, status")
           .eq("user_id", session.user.id)
           .eq("id", lessonFetch.id)
           .single();
@@ -187,10 +191,9 @@ export default function ElementLesson() {
         );
         console.log(`Saving highest progress: ${finalProgress}%`);
 
-        const newStatus =
-          finalProgress >= 100 && !lessonFetch.assessment
-            ? "Completed"
-            : lessonFetch.status;
+        // Determine if the lesson should be marked as completed
+        const shouldComplete = finalProgress >= 100 && !lessonFetch.assessment;
+        const newStatus = shouldComplete ? "Completed" : lessonFetch.status;
 
         // Ensure we wait for this to complete
         await updateLesson({
@@ -202,12 +205,13 @@ export default function ElementLesson() {
         });
 
         // If lesson is completed without assessment, award rewards
-        if (
-          finalProgress >= 100 &&
-          !lessonFetch.assessment &&
-          newStatus === "Completed"
-        ) {
+        if (shouldComplete && newStatus === "Completed") {
+          console.log("Lesson completed without assessment - awarding rewards");
           await awardLessonRewards();
+
+          // Invalidate queries to refresh dashboard data
+          queryClient.invalidateQueries(["userStats", session.user.id]);
+          queryClient.invalidateQueries(["fetch_user"]);
         }
 
         console.log(`Progress saved: ${finalProgress}%`);
