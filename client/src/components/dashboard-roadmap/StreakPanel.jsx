@@ -33,9 +33,9 @@ const StreakPanel = ({ streak }) => {
 
   return (
     <div className="relative bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
-      <img 
-        src={CapySlide} 
-        alt="Sleeping capybara with orang" 
+      <img
+        src={CapySlide}
+        alt="Sleeping capybara with orang"
         className="absolute -top-29 w-2/5 right-0"
       />
       <h2 className="text-lg font-medium mb-3 text-black">Streaks</h2>

@@ -13,8 +13,11 @@ import {
   Layers,
 } from "lucide-react";
 import { useQuestStore } from "@/store/useQuestStore";
+import { supabase } from "@/config/supabase";
+import { useAuth } from "@/config/authContext";
 
 const QuestPanel = ({ userId }) => {
+  const { session } = useAuth();
   const [isDaily, setIsDaily] = useState(true);
 
   // Get quest data and functions from our store
@@ -63,6 +66,40 @@ const QuestPanel = ({ userId }) => {
     }
   };
 
+  // Update this function to save quest completion to Supabase
+  const handleQuestComplete = async (quest) => {
+    if (quest.completed || !session?.user?.id) return;
+
+    try {
+      // Mark as completed in local state
+      completeQuest(quest.id);
+
+      // Update Supabase - increment the finished_quests count
+      const { data, error } = await supabase
+        .from("users")
+        .select("finished_quests")
+        .eq("id", session.user.id)
+        .single();
+
+      if (error) throw error;
+
+      const currentCount = data?.finished_quests || 0;
+
+      await supabase
+        .from("users")
+        .update({
+          finished_quests: currentCount + 1,
+          gems: data.gems + quest.rewards.gems,
+          current_exp: data.current_exp + quest.rewards.xp,
+        })
+        .eq("id", session.user.id);
+
+      console.log(`Quest completed and saved to database: ${quest.title}`);
+    } catch (error) {
+      console.error("Error updating quest completion:", error);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
       <div className="flex justify-between items-center mb-3">
@@ -82,7 +119,13 @@ const QuestPanel = ({ userId }) => {
 
       <div className="space-y-3">
         {quests.map((quest) => (
-          <div key={quest.id} className="flex items-start gap-3 p-3 rounded-md">
+          <div
+            key={quest.id}
+            className={`flex items-start gap-3 p-3 rounded-md ${
+              !quest.completed ? "hover:bg-gray-100 cursor-pointer" : ""
+            }`}
+            onClick={() => !quest.completed && handleQuestComplete(quest)}
+          >
             {quest.completed ? (
               <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
             ) : (

@@ -2,7 +2,7 @@ import { Gem, ZapIcon } from "lucide-react";
 import { bouncy } from "ldrs";
 bouncy.register();
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useSummary } from "@/api/INSERT";
 import { useAuth } from "@/config/authContext";
@@ -20,16 +20,24 @@ export default function LastSlide({
   userTotal,
   gems,
   exp,
+  onClick,
+  userId,
 }) {
   const [isPage, setPage] = useState(1);
   const [isSummaryDone, setSummaryDone] = useState(false); // Track summary completion
+  const [isSubmitting, setIsSubmitting] = useState(false); // Prevent double submission
+  const [calculatedRewards, setCalculatedRewards] = useState({
+    gems: 0,
+    exp: 0,
+  });
   const { session } = useAuth();
   const {
     updateLesson,
     createEvaluation,
+    updateUser,
     isPending: isEvalPending,
     isError: isEvalError,
-  } = useEvaluation(session.user.id);
+  } = useEvaluation(userId || session?.user?.id);
 
   const {
     createSummary,
@@ -38,42 +46,164 @@ export default function LastSlide({
   } = useSummary();
   const { evaluationData } = useFetchSummary();
 
+  // Calculate actual rewards based on performance
+  const calculateActualRewards = useCallback(() => {
+    if (!userScore || !userTotal || !lessonDifficulty) {
+      console.log("Missing data for reward calculation", {
+        userScore,
+        userTotal,
+        gems,
+        exp,
+        lessonDifficulty,
+      });
+      return { gems: 0, exp: 0 };
+    }
+
+    // Calculate success rate (for logging purposes)
+    const successRate = userScore / userTotal;
+    console.log(
+      `Success rate: ${successRate.toFixed(2)} (${userScore}/${userTotal})`
+    );
+
+    // Use standard difficulty-based rewards (these values must match LessonAssessment.jsx)
+    let baseGemsReward, baseExpReward;
+
+    if (lessonDifficulty === "Easy") {
+      baseGemsReward = 25;
+      baseExpReward = 50;
+    } else if (lessonDifficulty === "Intermediate") {
+      baseGemsReward = 50;
+      baseExpReward = 100;
+    } else if (lessonDifficulty === "Hard") {
+      baseGemsReward = 100;
+      baseExpReward = 200;
+    } else {
+      baseGemsReward = 25; // Default to Easy rewards
+      baseExpReward = 50;
+    }
+
+    console.log(
+      `Base rewards for ${lessonDifficulty}: ${baseGemsReward} gems, ${baseExpReward} exp`
+    );
+
+    // Return the actual reward values without any reduction
+    return { gems: baseGemsReward, exp: baseExpReward };
+  }, [userScore, userTotal, lessonDifficulty]);
+
+  // Calculate rewards on component mount
+  useEffect(() => {
+    const rewards = calculateActualRewards();
+    setCalculatedRewards(rewards);
+  }, [calculateActualRewards]);
+
   const handleNext = (e) => {
     e.preventDefault();
-    updateLesson({
-      userId: session.user.id,
-      lessonId,
-      lastAccessed: new Date().toISOString(),
-      progress: 100,
-      status: "Completed",
-    });
-    handleUpdateStreak(updateLesson, session.user.id, gems, exp, 1, userLives);
-    setPage(2);
-    setSummaryDone(false); // Reset before starting
-    createSummary(
-      {
-        id: lessonId,
-        name: lessonName,
-        difficulty: lessonDifficulty,
-        isAnswers: answers,
-        score: userScore,
-        total: userTotal,
-      },
-      {
-        onSuccess: () => setSummaryDone(true),
-        onError: () => setSummaryDone(false),
-      }
-    );
+
+    // Prevent double submission
+    if (isSubmitting) {
+      console.log("Submission already in progress, ignoring duplicate click");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // If onClick prop is provided, use it (for LessonAssessment.jsx integration)
+    if (onClick) {
+      onClick(e);
+      return;
+    }
+
+    // Otherwise use the legacy behavior
+    const currentUserId = userId || session?.user?.id;
+    if (!currentUserId) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      // Update lesson progress
+      updateLesson({
+        userId: currentUserId,
+        lessonId,
+        lastAccessed: new Date().toISOString(),
+        progress: 100,
+        status: "Completed",
+      });
+
+      // Get calculated rewards
+      const { gems: actualGems, exp: actualExp } = calculatedRewards;
+
+      // Update user rewards directly
+      updateUser({
+        userId: currentUserId,
+        gems: actualGems,
+        exp: actualExp,
+        streak: 1,
+        lives: 0,
+      });
+
+      // Continue to summary page
+      setPage(2);
+      setSummaryDone(false); // Reset before starting
+
+      // Generate summary
+      createSummary(
+        {
+          id: lessonId,
+          name: lessonName,
+          difficulty: lessonDifficulty,
+          isAnswers: answers,
+          score: userScore,
+          total: userTotal,
+        },
+        {
+          onSuccess: () => {
+            setSummaryDone(true);
+            setIsSubmitting(false);
+          },
+          onError: () => {
+            setSummaryDone(false);
+            setIsSubmitting(false);
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error in handleNext:", error);
+      setIsSubmitting(false);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createEvaluation({ evaluation: evaluationData, userId: session.user.id });
-    // Optionally, add a redirect here after successful evaluation
+
+    // Prevent double submission
+    if (isSubmitting) {
+      console.log("Submission already in progress, ignoring duplicate click");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // If onClick prop is provided, use it (for LessonAssessment.jsx integration)
+    if (onClick) {
+      onClick(e);
+      return;
+    }
+
+    try {
+      createEvaluation({
+        evaluation: evaluationData,
+        userId: userId || session?.user?.id,
+      });
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Show loading spinner if summary or evaluation is pending
-  const isLoading = isSummaryPending || isEvalPending;
+  const isLoading = isSummaryPending || isEvalPending || isSubmitting;
   const isError = isSummaryError || isEvalError;
 
   if (isError) {
@@ -107,21 +237,21 @@ export default function LastSlide({
               <div className="flex gap-5 *:flex *:items-center *:gap-0.5">
                 <h2 className="text-xl font-semibold pt-1">
                   +<Gem size={18} />
-                  {gems}
+                  {calculatedRewards.gems}
                 </h2>
                 <h2 className="text-xl font-semibold pt-1">
                   +<ZapIcon size={20} />
-                  {exp}
+                  {calculatedRewards.exp}
                 </h2>
               </div>
             </div>
           </div>
           <button
-            className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg hover:bg-neutral-300"
+            className="py-3 w-3/5 mt-8 text-lg bg-white text-black font-extrabold custom-shadow-50 rounded-lg hover:bg-neutral-300 disabled:bg-gray-300 disabled:text-gray-500"
             onClick={handleNext}
             disabled={isLoading}
           >
-            Finish
+            {isLoading ? "Processing..." : "Finish"}
           </button>
         </article>
       );
@@ -129,10 +259,11 @@ export default function LastSlide({
       return (
         <>
           {isLoading ? (
-            <div>
-              <span>
+            <div className="flex flex-col items-center justify-center h-full">
+              <span className="mb-4">
                 <l-bouncy size="45" speed="1.75" color="white"></l-bouncy>
               </span>
+              <p className="text-background">Processing your assessment...</p>
             </div>
           ) : (
             <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
@@ -140,7 +271,7 @@ export default function LastSlide({
                 +1 Streak!
               </h1>
               <button
-                className="disabled:bg-neutral-400 py-3 w-full mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg hover:bg-neutral-300"
+                className="disabled:bg-neutral-400 py-3 w-full mt-8 text-lg bg-white text-black font-extrabold custom-shadow-50 rounded-lg hover:bg-neutral-300"
                 onClick={handleSubmit}
                 disabled={!isSummaryDone || isLoading}
               >
@@ -167,4 +298,6 @@ LastSlide.propTypes = {
   userTotal: PropTypes.number,
   gems: PropTypes.number,
   exp: PropTypes.number,
+  onClick: PropTypes.func,
+  userId: PropTypes.string,
 };

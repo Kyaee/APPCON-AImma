@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { VideoBackground } from "@/components/layout/background";
 
 const NoLives = ({ userId }) => {
+  // Generate URL with timestamp to force refresh
+  const dashboardUrl = `/dashboard/${userId}?t=${Date.now()}`;
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <VideoBackground />
@@ -10,7 +13,7 @@ const NoLives = ({ userId }) => {
       </h1>
       <p className="text-lg text-background">Wait for more lives.</p>
       <Link
-        to={`/dashboard/${userId}`}
+        to={dashboardUrl}
         className="py-3 px-4 mt-8 text-lg bg-white text-black font-extrabold custom-shadow-50 rounded-md hover:bg-neutral-300"
       >
         Go back to Dashboard

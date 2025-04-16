@@ -25,8 +25,13 @@ export function fetchUserdata() {
       if (error) throw new Error(error.message);
       if (!userData || userData.length === 0)
         throw new Error("No user data found");
+      
+      console.log("Fetched user data:", userData[0]);
       return userData[0];
     },
+    refetchOnMount: true,      // Refetch on component mount
+    refetchOnWindowFocus: true, // Refetch when window regains focus
+    staleTime: 1000,           // Consider data stale after 1 second
   });
 }
 

@@ -48,7 +48,7 @@ const Sidebar = ({
     onToggle();
   };
 
-  if (isLoading) return <Loading generate_lesson={true}/>
+  if (isLoading) return <Loading generate_lesson={true} />;
 
   return (
     <>
@@ -107,17 +107,16 @@ const Sidebar = ({
               Level {userData?.level || 1}
             </p>
 
-            {/* Experience Bar */}
+            {/* Experience Bar - Update to use current_exp */}
             <div className="w-4/5 mt-2">
               <div className="flex justify-between text-xs mb-1">
                 <span>EXP</span>
-                <span>
-                  {userData?.experience || 0}/{(userData?.level || 1) * 100}
-                </span>
+                <span>{userData?.current_exp || 0}/100</span>
               </div>
+              {/* Use current_exp directly, will always be 0-99 after level up is implemented */}
               <Progress
-                value={userData?.experience || 0}
-                max={(userData?.level || 1) * 100}
+                value={userData?.current_exp || 0}
+                max={100}
                 className="h-2 rounded-full"
               />
             </div>

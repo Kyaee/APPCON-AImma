@@ -10,10 +10,10 @@ import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 
 // Use Hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSummary, useEvaluation } from "@/api/INSERT";
 import { fetchLessonAssessmentData } from "@/api/FETCH";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
 import { useParams, useNavigate } from "react-router-dom";
@@ -29,12 +29,15 @@ export default function Assessment() {
     lives: 5,
     score: 0,
     wrong: false,
+    livesLost: 0,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { session } = useAuth();
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const userData = useFetchStore((state) => state.fetch);
   const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData());
+  const queryClient = useQueryClient();
   const [isAnswers, setAnswers] = useState([
     {
       id: isCurrentSlide,
@@ -48,16 +51,91 @@ export default function Assessment() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const userId = id; // Assuming the URL parameter id is the user ID
+  const userId = session?.user?.id || id;
 
   // Get the updateLesson function to update progress in Supabase
-  const { updateLesson } = useEvaluation(session?.user?.id);
+  const { updateLesson, updateUser } = useEvaluation(userId);
+
+  // Track assessment performance
+  const [assessmentResults, setAssessmentResults] = useState({
+    score: 0,
+    totalQuestions: 0,
+    gemsEarned: 0,
+    expEarned: 0,
+    livesLost: 0,
+  });
+
+  // Calculate rewards based on difficulty
+  const calculateRewards = useCallback((difficulty) => {
+    // Default reward values based on difficulty
+    let baseGemsReward, baseExpReward;
+
+    // Set rewards based on difficulty as per prompt_roadmap_generate:
+    // Easy: 50 exp, 25 gems
+    // Intermediate: 100 exp, 50 gems
+    // Hard: 200 exp, 100 gems
+    if (difficulty === "Easy") {
+      baseGemsReward = 25;
+      baseExpReward = 50;
+    } else if (difficulty === "Intermediate") {
+      baseGemsReward = 50;
+      baseExpReward = 100;
+    } else if (difficulty === "Hard") {
+      baseGemsReward = 100;
+      baseExpReward = 200;
+    } else {
+      // Default to Easy if difficulty is undefined
+      baseGemsReward = 25;
+      baseExpReward = 50;
+    }
+
+    console.log(
+      `Standard rewards for ${difficulty} difficulty: ${baseGemsReward} gems, ${baseExpReward} exp`
+    );
+
+    // Return fixed rewards values based only on difficulty (not success rate)
+    return { gems: baseGemsReward, exp: baseExpReward };
+  }, []);
+
+  // Update when assessment is completed
+  const handleAssessmentSubmit = useCallback(
+    (score, total) => {
+      if (!lessonFetch || !userId) return;
+
+      // Calculate success rate
+      const successRate = score / total;
+
+      // Calculate rewards based on difficulty
+      const { gems, exp } = calculateRewards(lessonFetch.difficulty);
+
+      // Determine lives lost - lose 1 life if score is less than 50%
+      const livesLost = successRate < 0.5 ? 1 : 0;
+
+      // Update the assessment results
+      setAssessmentResults({
+        score,
+        totalQuestions: total,
+        gemsEarned: gems,
+        expEarned: exp,
+        livesLost: livesLost,
+      });
+
+      console.log(
+        `Assessment results: ${score}/${total}, Rewards: ${gems} gems, ${exp} exp, Lives lost: ${livesLost}`
+      );
+
+      return { gems, exp, livesLost };
+    },
+    [lessonFetch, userId, calculateRewards]
+  );
 
   const handleCheck = () => {
     setValidateAnswer(true);
     const isCorrect =
       isAnswers[isCurrentSlide]?.answer ===
       lessonData.questions[isCurrentSlide]?.correct_answer;
+
+    // Create updated answer record
     setAnswers({
       ...isAnswers,
       [isCurrentSlide]: {
@@ -68,10 +146,24 @@ export default function Assessment() {
         validated: true,
       },
     });
+
     // Update score and lives
     if (!isCorrect) {
-      setCount({ ...isCount, lives: isCount.lives - 1, wrong: true });
-    } else setCount({ ...isCount, score: isCount.score + 1 });
+      // Track lives lost immediately when an answer is wrong
+      setCount((prevCount) => ({
+        ...prevCount,
+        lives: prevCount.lives - 1,
+        wrong: true,
+        livesLost: (prevCount.livesLost || 0) + 1, // Track total lives lost during assessment
+      }));
+      console.log("Wrong answer! Decreased lives by 1");
+    } else {
+      setCount((prevCount) => ({
+        ...prevCount,
+        score: prevCount.score + 1,
+      }));
+      console.log("Correct answer! Increased score by 1");
+    }
   };
 
   const handleNext = () => {
@@ -86,26 +178,157 @@ export default function Assessment() {
     if (isCurrentSlide === lessonData.questions.length - 1) setLastSlide(false);
   };
 
-  // Add function to handle completion and redirect to dashboard
-  const handleFinishAssessment = () => {
-    // Update lesson as completed in Supabase if user passes
-    if (isCount.score >= 3 && session?.user?.id && lessonFetch?.id) {
-      updateLesson({
-        userId: session.user.id,
-        lessonId: lessonFetch.id,
-        lastAccessed: new Date().toISOString(),
-        progress: 100,
-        status: "Completed",
-      });
+  // Function to handle completion and redirect to dashboard
+  const handleFinishAssessment = async () => {
+    // Prevent double submission
+    if (isSubmitting) {
+      console.log("Submission already in progress, ignoring duplicate click");
+      return;
     }
 
-    // Redirect to dashboard where quests will be displayed
-    navigate(`/dashboard/${userId}`);
+    // Set submitting state to true
+    setIsSubmitting(true);
+
+    if (!userId || !lessonFetch) {
+      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+      return;
+    }
+
+    try {
+      // Calculate final score and determine lives lost
+      const totalQuestions = lessonData.questions.length - 1;
+      const successRate = isCount.score / totalQuestions;
+
+      // Get the fixed rewards based on difficulty only
+      const { gems, exp } = calculateRewards(lessonFetch.difficulty);
+
+      // Get the exact number of lives lost during assessment
+      const livesLost = isCount.livesLost || totalQuestions - isCount.score;
+
+      console.log(`Assessment results for ${lessonFetch.name}:`);
+      console.log(
+        `Score: ${isCount.score}/${totalQuestions} (${successRate * 100}%)`
+      );
+      console.log(`Rewards: ${gems} gems, ${exp} exp`);
+      console.log(`Lives lost during assessment: ${livesLost}`);
+
+      // Update lesson as completed in Supabase if user passes
+      if (isCount.score >= 3) {
+        await updateLesson({
+          userId: userId,
+          lessonId: lessonFetch.id,
+          lastAccessed: new Date().toISOString(),
+          progress: 100,
+          status: "Completed",
+        });
+
+        console.log(`Lesson ${lessonFetch.id} marked as completed`);
+      }
+
+      // Update user stats with rewards and subtract lives
+      try {
+        const response = await updateUser({
+          userId: userId,
+          gems: gems,
+          exp: exp,
+          streak: livesLost > 0 ? 0 : 1, // Increment streak if didn't lose lives
+          lives: livesLost, // This will decrease lives by this amount
+        });
+
+        console.log("Rewards saved to Supabase", response);
+        console.log(`Lives decreased by: ${livesLost}`);
+      } catch (error) {
+        console.error("Error updating user rewards:", error);
+        throw error;
+      }
+
+      // Invalidate queries to refresh dashboard data
+      queryClient.invalidateQueries(["userStats", userId]);
+      queryClient.invalidateQueries(["fetch_user"]);
+      console.log("Query cache invalidated, dashboard will refresh");
+
+      // Redirect to dashboard with timestamp to force refresh
+      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+    } catch (error) {
+      console.error("Error finishing assessment:", error);
+      setIsSubmitting(false); // Reset submitting state on error
+      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+    }
+  };
+
+  // Update user stats in the database
+  const updateUserStats = async () => {
+    if (!userId || !lessonFetch) return false;
+
+    try {
+      // Get fixed rewards based on lesson difficulty
+      const { gems, exp } = calculateRewards(lessonFetch.difficulty);
+
+      // Calculate lives lost based on wrong answers
+      const totalQuestions = lessonData.questions.length - 1;
+      const livesLost = isCount.livesLost || totalQuestions - isCount.score;
+
+      // Update user data with rewards
+      await updateUser({
+        userId: userId,
+        gems: gems,
+        exp: exp,
+        streak: livesLost > 0 ? 0 : 1, // Increment streak if didn't lose lives
+        lives: livesLost,
+      });
+
+      console.log("User stats updated with rewards:", { gems, exp, livesLost });
+      return true;
+    } catch (error) {
+      console.error("Error updating user stats:", error);
+      return false;
+    }
+  };
+
+  const saveLessonProgress = async () => {
+    if (!userId || !lessonFetch) return false;
+
+    try {
+      const totalQuestions = lessonData.questions.length - 1;
+      const progress = Math.floor((isCount.score / totalQuestions) * 100);
+      const status = progress >= 70 ? "Completed" : "In-progress";
+
+      await updateLesson({
+        userId: userId,
+        lessonId: lessonFetch.id,
+        lastAccessed: new Date().toISOString(),
+        progress: progress,
+        status: status,
+      });
+
+      console.log("Lesson progress saved successfully");
+      return true;
+    } catch (error) {
+      console.error("Error saving lesson progress:", error);
+      return false;
+    }
+  };
+
+  const handleAssessmentComplete = async () => {
+    try {
+      // Save both lesson progress and user stats
+      await saveLessonProgress();
+      await updateUserStats();
+
+      // Invalidate and refetch user stats query to update UI
+      queryClient.invalidateQueries(["userStats", userId]);
+
+      // Navigate to dashboard with timestamp parameter to force refresh
+      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+    } catch (error) {
+      console.error("Error completing assessment:", error);
+      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+    }
   };
 
   if (isLoading) return <Loading />;
 
-  if (isCount.lives === 0) return <NoLivesPage userId={userData.id} />;
+  if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
 
   return (
     <>
@@ -153,6 +376,7 @@ export default function Assessment() {
                 passing={3}
                 score={isCount.score}
                 total={lessonData.questions.length - 1}
+                onClick={handleFinishAssessment}
               />
             )
           ) : (
