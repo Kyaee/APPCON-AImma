@@ -6,6 +6,7 @@ export default function ProfileStreak({
   previous_best,
   quests_finished,
   roadmap_progress,
+  setRoadmapIndex
 }) {
   return (
     <div className="w-full">
@@ -30,11 +31,15 @@ export default function ProfileStreak({
 
       <div className="rounded-lg bg-white dark:bg-dark-mode-bg mt-6 border-2 border-black dark:border-dark-mode-highlight">
         <div className="space-y-4 p-5">
-          {roadmap_progress.map((skill, index) => (
-            <div key={index} className="flex items-center justify-between">
+          {roadmap_progress.map((skill) => (
+            <div 
+              key={skill.roadmap_id} 
+              className="flex items-center justify-between"
+              onClick={() => setRoadmapIndex(skill.roadmap_id)}
+            >
               <div className="flex items-center gap-3">
                 <div>
-                  <h3 className="text-lg font-semibold text-black dark:text-primary">{skill.title}</h3>
+                  <h3 className="text-lg font-semibold text-black dark:text-primary">{skill.roadmap_name}</h3>
                   <p className="text-sm text-gray-600 dark:text-dark-nav-text">
                     {skill.progress}% Complete
                   </p>

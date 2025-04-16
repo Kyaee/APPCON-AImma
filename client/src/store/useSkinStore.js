@@ -1,17 +1,21 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import capybara from "@/assets/profile/capybara.png";
-import charlie from "@/assets/profile/charlie.png";
-import tatang from "@/assets/profile/tatang.jpg";
+import capscout from "@/assets/profile/capscout.svg";
+import supcappie from "@/assets/profile/supcappie.svg";
+import summercappy from "@/assets/profile/summercappy.svg";
+import formalblue from "@/assets/profile/formalbluecappy.svg";
+import formalblack from "@/assets/profile/formalblackcappy.svg";
+
 
 
 const skins = [
   { id: 0, name: "Default", image: capybara },
-  { id: 1, name: "Charlie", image: charlie },
-  { id: 2, name: "Tatang", image: tatang },
-  { id: 3, name: "Skin 4", image: "https://via.placeholder.com/150" },
-  { id: 4, name: "Skin 5", image: "https://via.placeholder.com/150", locked: true},
-  { id: 5, name: "Skin 6", image: "https://via.placeholder.com/150", locked: false },
+  { id: 1, name: "Capscout", image: capscout },
+  { id: 2, name: "Supercapy", image: supcappie, locked: true },
+  { id: 3, name: "Summercapy", image: summercappy, locked: true },
+  { id: 4, name: "Formalblue", image: formalblue, locked: true},
+  { id: 5, name: "Formalblack", image: formalblack, locked: true },
 ];
 
 // allSkins[selectedSkinIndex].image
