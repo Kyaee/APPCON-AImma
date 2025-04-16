@@ -20,7 +20,7 @@ import Skills_Component from "../components/profile/SkillsProfile";
 import Loading from "@/routes/Loading";
 import CapySkin from "../components/profile/CapySkins";
 import SkinBadgesTabs from "../components/profile/SkinsTab";
-
+import LevelRewards from "@/components/features/level-rewards/LevelRewards";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
@@ -94,6 +94,34 @@ export default function Profile() {
   // Use userData if available, fallback to fetch data
   const userDisplayData = userData || fetch;
 
+          // Calculate experience for the current level - FIXED 100 XP per level
+  const calculateLevelExperience = (level) => {
+    // Each level requires 100 XP
+    return level * 100;
+  };
+
+  // Calculate current level progress
+  const calculateLevelProgress = (currentExp, level) => {
+    // With 100 XP per level, calculations become simpler
+    
+    // Total XP needed for current level completion
+    const currentLevelTotalExp = level * 100;
+    
+    // Total XP needed for previous level completion
+    const prevLevelTotalExp = (level - 1) * 100;
+    
+    // Calculate the exp within the current level (between 0-100)
+    const expInCurrentLevel = currentExp - prevLevelTotalExp;
+    
+    // Each level always needs 100 XP
+    const expNeededForLevel = 100;
+    
+    return {
+     current: Math.max(1, expInCurrentLevel), // Always show at least 1 XP progress
+  total: expNeededForLevel
+    };
+  };
+
   return (
     <>
       <div className="relative w-full min-h-screen overflow-x-hidden pb-20">
@@ -126,8 +154,8 @@ export default function Profile() {
                 userDisplayData.first_name + " " + userDisplayData.last_name
               }
               level={userDisplayData.level}
-              experience={userDisplayData.current_exp || 0}
-              totalExperience={100}
+              experience={calculateLevelProgress(userDisplayData.current_exp || 0, userDisplayData.level).current}
+              totalExperience={calculateLevelProgress(userDisplayData.current_exp || 0, userDisplayData.level).total}
               continueLearning="JavaScript Basics"
               hours={2}
               withAssessment={true}
@@ -135,6 +163,8 @@ export default function Profile() {
             />
           </>
         )}
+        
+      
 
         <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
           {/****************  
