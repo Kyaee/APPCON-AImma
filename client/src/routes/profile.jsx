@@ -227,15 +227,6 @@ export default function Profile() {
             summary="Summary of your progress"
           />
 
-          {/********************** 
-              Skill Trees Section 
-          ***********************/}
-          {/* <Finished_Roadmap_Component /> */}
-
-          {/*********************************************************************** 
-            Career Opportunities Section - Enhanced with borders and interactions 
-          ************************************************************************/}
-          <CareerOpportunities />
         </main>
       </div>
     </>

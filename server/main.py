@@ -1,12 +1,13 @@
 from dotenv import load_dotenv
 from job_scraper_utils import *
+import os
 
 load_dotenv()
 
 """
 List of countries url.
 """
-philippines = 'https://ph.indeed.com/'
+philippines = 'https://ph.indeed.com'
 
 def main():
     driver = configure_webdriver()
@@ -14,14 +15,12 @@ def main():
     sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = os.getenv("RECEIVER_EMAIL")
     password = os.getenv("PASSWORD")
-    job_position = 'web developer'
+    job_position = 'Web developer'
     job_location = 'remote'
-    date_posted = 20
-
     cleaned_df = None
 
     try:
-        full_url = search_jobs(driver, country, job_position, job_location, date_posted)
+        full_url = search_jobs(driver, country, job_position, job_location)
         df = scrape_job_data(driver, country)
 
         if df.shape[0] == 1:
