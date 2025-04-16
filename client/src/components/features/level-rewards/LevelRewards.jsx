@@ -13,6 +13,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { supabase } from "@/config/supabase"
 
 const calculateGems = (level) => {
   if (level >= 1 && level <= 10) return 50;
@@ -106,7 +107,7 @@ const LevelRewards = () => {
     <>
       <Button 
         variant="outline" 
-        className="fixed bottom-4 right-4 z-50"
+        className="mt-8 border border-foreground"
         onClick={() => setIsDrawerOpen(true)}
       >
         View Level Rewards

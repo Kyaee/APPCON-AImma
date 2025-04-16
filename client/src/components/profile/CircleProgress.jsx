@@ -13,7 +13,11 @@ export function CircleProgressBar({ className, value, ...props }) {
           cy="18"
           r="16"
           fill="none"
-          className="stroke-current text-light-brown dark:text-light-brown"
+          className={`stroke-current ${
+            value === 100
+              ? "text-green-400 dark:text-green-400"
+              : "text-light-brown dark:text-light-brown"
+          } `}
           strokeWidth="3"
         ></circle>
         <circle
@@ -30,7 +34,13 @@ export function CircleProgressBar({ className, value, ...props }) {
       </svg>
 
       <div className="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
-        <span className="text-center text-md font-bold text-light-brown dark:text-light-brown">
+        <span
+          className={`text-center text-md font-bold ${
+            value === 100
+              ? "text-green-400 dark:text-green-400 text-xs"
+              : "text-light-brown dark:text-light-brown"
+          }`}
+        >
           {value}%
         </span>
       </div>

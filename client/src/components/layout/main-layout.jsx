@@ -17,7 +17,6 @@ export default function MainLayout({ children }) {
   const { data: userData, isLoading, isError } = useQuery(fetchUserdata());
 
   useEffect(() => {
-    console.log("User data:", userData);
     if (userData) setFetch(userData);
   }, [userData]);
 

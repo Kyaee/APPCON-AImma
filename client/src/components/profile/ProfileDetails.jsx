@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/card";
 import { CircleProgressBar } from "@/components/profile/CircleProgress";
 import useSkinStore from "@/store/useSkinStore";
+import LevelRewards from "@/components/features/level-rewards/LevelRewards";
+import { postPrompt2 } from "@/api/INSERT";
+import Loading from "@/routes/Loading";
 
 const ProfileDetails = ({
   initialImageUrl,
@@ -15,11 +18,16 @@ const ProfileDetails = ({
   level,
   experience,
   totalExperience,
-  continueLearning,
+  lessonData,
   hours,
   withAssessment,
   progress,
+  isOpen,
+  onOpenChange,
+  userId,
+  renderButton, // Don't render the button in the component
 }) => {
+  const [isLoading, setLoading] = useState(false);
   const FileInputProfile = useRef(null);
   const FileInputCover = useRef(null);
   const [isCoverImageUrl, setCoverImageUrl] = useState(null);
@@ -53,9 +61,23 @@ const ProfileDetails = ({
     }
   };
 
-  const calculatePercentage = () => {
-    if (totalExperience === 0) return 0;
+  const handleLessonSelect = (lesson) => {
+    setLoading(true);
+    postPrompt2(
+      lesson.lesson_name,
+      lesson.id,
+      lesson.lesson_category,
+      lesson.lesson_difficulty,
+      lesson.gems,
+      lesson.exp,
+      lesson.lesson_duration,
+      lesson.assessment,
+      lesson.progress
+    );
+    onToggle();
   };
+
+  if (isLoading) return <Loading generate_lesson={true} />;
 
   return (
     <section className="relative flex justify-between h-80 w-full pt-50 px-10 lg:px-30 xl:px-40 rounded-md border-b-2 border-foreground">
@@ -108,6 +130,12 @@ const ProfileDetails = ({
               className="bg-blue-500 h-full rounded-full border-r-2 border-foreground"
               style={{ width: `${(experience / totalExperience) * 100}%` }}
             ></div>
+            <LevelRewards
+              isOpen={isOpen}
+              onOpenChange={onOpenChange}
+              userId={userId}
+              renderButton={renderButton}
+            />
           </div>
         </div>
       </div>
@@ -118,27 +146,35 @@ const ProfileDetails = ({
           <div className="relative flex items-center justify-between rounded-t-xl bg-card border-b-2 border-foreground">
             <CardHeader className="pt-5 pb-2 *:py-0.5">
               <CardTitle className="text-wrap leading-tight">
-                {continueLearning}
+                {lessonData[0]?.lesson_name}
               </CardTitle>
               <div className="fle x gap-3 *:flex *:items-center *:gap-2">
                 <CardDescription>
                   <Clock3 size={16} />
-                  {hours}+
+                  {lessonData[0]?.lesson_duration}
                 </CardDescription>
                 <CardDescription>
                   <BookOpen size={16} />
-                  {withAssessment ? "With Assessment" : "No Assessment"}
+                  {lessonData[0]?.assessment
+                    ? "With Assessment"
+                    : "No Assessment"}
                 </CardDescription>
               </div>
             </CardHeader>
-            <CircleProgressBar className="size-12" value={progress} />
+            <CircleProgressBar
+              className="size-12"
+              value={lessonData[0]?.progress}
+            />
             <img
               src={selectedSkin.image}
               alt="capybara"
               className="h-35 absolute -left-21 -bottom-10 z-0"
             />
           </div>
-          <div className="text-center py-3 *:text-sm *:text-white">
+          <div
+            onClick={() => handleLessonSelect(lessonData[0])}
+            className="text-center py-3 *:text-sm *:text-white"
+          >
             <p>CONTINUE LEARNING</p>
           </div>
         </Card>

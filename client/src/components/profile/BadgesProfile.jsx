@@ -121,7 +121,7 @@ export default function BadgesProfile({ badgesData }) {
   const unearnedBadges = allBadges.filter((badge) => !badge.earned);
 
   return (
-    <section className="overflow-hidden">
+    <section className="overflow-hidden mt-15">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-semibold mb-5 text-black dark:text-primary tracking-tight">
           Badges {earnedBadges.length > 0 ? `(${earnedBadges.length})` : ""}

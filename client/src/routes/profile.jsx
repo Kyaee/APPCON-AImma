@@ -11,13 +11,11 @@ import { useStreakStore } from "@/store/useStreakStore";
 
 // Components & Icons
 import ProfileDetails from "@/components/profile/ProfileDetails";
-import CareerOpportunities from "../components/profile/CareerOpportunities";
+import BadgesProfile from "@/components/profile/BadgesProfile";
 import Streak_Component from "../components/profile/Streak";
 import Tabs_Component from "../components/profile/TabsProfile";
 import Skills_Component from "../components/profile/SkillsProfile";
 import Loading from "@/routes/Loading";
-import SkinBadgesTabs from "../components/profile/SkinsTab";
-import LevelRewards from "@/components/features/level-rewards/LevelRewards";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
@@ -37,9 +35,9 @@ export default function Profile() {
   const completedDailyQuests = dailyQuests.filter((q) => q.completed).length;
   const completedWeeklyQuests = weeklyQuests.filter((q) => q.completed).length;
   const totalCompletedQuests = completedDailyQuests + completedWeeklyQuests;
-  
- // reward user 
- const [isRewardsOpen, setIsRewardsOpen] = useState(true);
+
+  // reward user
+  const [isRewardsOpen, setIsRewardsOpen] = useState(true);
 
   const {
     data: profile,
@@ -56,10 +54,7 @@ export default function Profile() {
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
   const roadmapId = currentRoadmap?.roadmap_id;
 
-  const {
-    data: lessonData,
-    isLoading: loadingLessons,
-  } = useQuery({
+  const { data: lessonData, isLoading: loadingLessons } = useQuery({
     queryKey: ["lessons", roadmapId], // Add roadmapId to the queryKey to automatically refetch when it changes
     queryFn: () => fetchLesson(roadmapId),
     enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
@@ -93,35 +88,23 @@ export default function Profile() {
     }
   }, [fetch?.id]);
 
-  if (load_profile || loading || loadingRoadmap || loadingLessons) return <Loading />;
+  if (load_profile || loading || loadingRoadmap || loadingLessons)
+    return <Loading />;
 
   const userDisplayData = userData || fetch;
 
-          // Calculate experience for the current level - FIXED 100 XP per level
-  const calculateLevelExperience = (level) => {
-    // Each level requires 100 XP
-    return level * 100;
-  };
-
   // Calculate current level progress
   const calculateLevelProgress = (currentExp, level) => {
-    // With 100 XP per level, calculations become simpler
-    
-    // Total XP needed for current level completion
-    const currentLevelTotalExp = level * 100;
-    
     // Total XP needed for previous level completion
     const prevLevelTotalExp = (level - 1) * 100;
-    
     // Calculate the exp within the current level (between 0-100)
     const expInCurrentLevel = currentExp - prevLevelTotalExp;
-    
     // Each level always needs 100 XP
     const expNeededForLevel = 100;
-    
+
     return {
-     current: Math.max(1, expInCurrentLevel), // Always show at least 1 XP progress
-  total: expNeededForLevel
+      current: Math.max(1, expInCurrentLevel), // Always show at least 1 XP progress
+      total: expNeededForLevel,
     };
   };
 
@@ -154,31 +137,45 @@ export default function Profile() {
             {/* Profile Content */}
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              name={
-                fetch.first_name + " " + fetch.last_name
-              }
+              name={fetch.first_name + " " + fetch.last_name}
               level={userDisplayData.level}
-              experience={calculateLevelProgress(userDisplayData.current_exp || 0, userDisplayData.level).current}
-              totalExperience={calculateLevelProgress(userDisplayData.current_exp || 0, userDisplayData.level).total}
-              continueLearning="JavaScript Basics"
+              experience={
+                calculateLevelProgress(
+                  userDisplayData.current_exp || 0,
+                  userDisplayData.level
+                ).current
+              }
+              totalExperience={
+                calculateLevelProgress(
+                  userDisplayData.current_exp || 0,
+                  userDisplayData.level
+                ).total
+              }
+              lessonData={lessonData
+                .filter(
+                  (lesson) =>
+                    lesson.previous_lesson &&
+                    new Date(lesson.previous_lesson) <= new Date()
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(b.previous_lesson) - new Date(a.previous_lesson)
+                )
+                .slice(0, 1)}
               hours={2}
               withAssessment={true}
               progress={40}
+              isOpen={isRewardsOpen}
+              onOpenChange={setIsRewardsOpen}
+              userId={userDisplayData?.id}
+              renderButton={true} // Don't render the button in the component
             />
           </>
         )}
 
-         {/* Render the LevelRewards component without its button */}
-         <LevelRewards 
-          isOpen={isRewardsOpen} 
-          onOpenChange={setIsRewardsOpen}
-          userId={userDisplayData?.id}
-          renderButton={true} // Don't render the button in the component
-          />     
-         
-         
+        {/* Render the LevelRewards component without its button */}
 
-        <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
+        <main className="grid grid-cols-2 w-full mt-23 px-10 lg:px-30 xl:px-45 gap-y-15 gap-x-25">
           {/****************  
             Badges Section 
           ****************/}
@@ -189,26 +186,21 @@ export default function Profile() {
           ****************/}
           <Streak_Component
             streak={!isError ? fetch.streaks : 0}
-            previous_best={
-              !isError ? fetch.best_streak : 0
-            }
-            quests_finished={
-              !isError
-                ? fetch.finished_quests 
-                : 0
-            }
-            roadmap_progress={
-              !isError
-                ? roadmapData
-                : []
-            }
+            previous_best={!isError ? fetch.best_streak : 0}
+            quests_finished={!isError ? fetch.finished_quests : 0}
+            roadmap_progress={!isError ? roadmapData : []}
             setRoadmapIndex={setRoadmapIndex}
           />
 
           {/****************  
               Skills Section 
           ******************/}
-          <SkinBadgesTabs /> 
+          <BadgesProfile
+            badges={{
+              name: "Example badge here",
+              description: "You put the description here",
+            }}
+          />
 
           {/**************** 
             Charts Section 
@@ -226,7 +218,6 @@ export default function Profile() {
             }
             summary="Summary of your progress"
           />
-
         </main>
       </div>
     </>

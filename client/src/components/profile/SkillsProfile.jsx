@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import BadgesProfile from "./BadgesProfile";
+import SkinBadgesTabs from "./SkinsTab";
+
 
 export default function SkillsProfile({titles}) {
   return (
@@ -15,15 +15,7 @@ export default function SkillsProfile({titles}) {
         ))}
       </div>
 
-      <CardContent className="p-4 mt-15">
-         <BadgesProfile
-            badges={{
-            name: "Example badge here",
-            description: "You put the description here",
-            }}
-        />
-      </CardContent>          
-
+      <SkinBadgesTabs />
     </div>
   );
 }
