@@ -152,7 +152,7 @@ export default function Profile() {
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
               name={
-                userDisplayData.first_name + " " + userDisplayData.last_name
+                fetch.first_name + " " + fetch.last_name
               }
               level={userDisplayData.level}
               experience={calculateLevelProgress(userDisplayData.current_exp || 0, userDisplayData.level).current}
@@ -177,13 +177,13 @@ export default function Profile() {
               Streak Section 
           ****************/}
           <Streak_Component
-            streak={!isError ? streak || userDisplayData.streaks || 0 : 0}
+            streak={!isError ? fetch.streaks : 0}
             previous_best={
-              !isError ? bestStreak || userDisplayData.best_streak || 0 : 0
+              !isError ? fetch.best_streak : 0
             }
             quests_finished={
               !isError
-                ? userDisplayData.finished_quests || totalCompletedQuests
+                ? fetch.finished_quests 
                 : 0
             }
             roadmap_progress={
