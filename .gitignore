@@ -7,6 +7,9 @@
 ##################
 client/logs
 client/npm-debug.log*
+client/src/lib/storage
+client/src/lib/storage
+
 
 node_modules
 client/node_modules

@@ -4,6 +4,7 @@ import Loading from "./loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
+import { useNavigate } from "react-router-dom";
 
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useParams } from "react-router-dom";
@@ -11,6 +12,7 @@ import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the impor
 import { useAssessment } from "@/api/INSERT";
 
 export default function ElementLesson() {
+  const navigate = useNavigate()
   const { id } = useParams(); // Get the lesson ID from the URL parameters
   const generated_assessment = useLessonFetchStore(
     (state) => state.generated_assessment
@@ -114,7 +116,7 @@ export default function ElementLesson() {
 
     if (generated_assessment) {
       setGeneratedAssessment(false);
-      window.location.href = `/l/${id}/assessment`;
+      navigate(`/l/${id}/assessment`);
     } else {
       createAssessment({
         lesson_id: lessonFetch.id,
@@ -123,7 +125,7 @@ export default function ElementLesson() {
       });
       setGeneratedAssessment(true);
       setLoading(false);
-      setTimeout(() => (window.location.href = `/l/${id}/assessment`), 2000);
+      setTimeout(() => (navigate(`/l/${id}/assessment`)), 2000);
     }
   };
 
