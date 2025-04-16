@@ -13,18 +13,18 @@ export default function ExperienceStep({
           <button
             key={option.id}
             onClick={() => onLevelSelect(option)}
-            className={`p-4 px-23 sm:py-25 rounded-lg text-center transition-all duration-200 cursor-pointer bg-transparent
+              className={`flex flex-col items-center p-8 sm:p-10 rounded-xl transition-all duration-300 transform hover:scale-115
               ${
                 selectedLevel?.id === option.id
-                  ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
-                  : "border-black border-2 hover:border-black hover:border-3"
+                    ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
+                    : "border-white/30 border-2 hover:border-white/50"
               }`}
           >
             <div className="flex justify-center space-x-4">
               <span className="text-6xl">{option.icon}</span>
             </div>
             <div>
-              <h3 className="mt-5 font-medium text-lg text-black">
+              <h3 className="mt-5 font-medium text-lg text-white">
                 {option.label}
               </h3>
             </div>

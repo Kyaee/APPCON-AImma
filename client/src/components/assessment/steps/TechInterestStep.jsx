@@ -132,18 +132,18 @@ export default function TechInterestStep({
                 <button
                   key={option.id}
                   onClick={() => handleInterestSelect(option)}
-                  className={`p-6 rounded-lg transition-all duration-200 cursor-pointer bg-transparent
+                  className={`flex flex-col items-center p-8 sm:p-10 rounded-xl transition-all duration-300 transform hover:scale-105
                     ${
                       isSelected
                         ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
-                        : "border-black border-2 hover:border-black hover:border-3"
+                        : "border-white/30 border-2 hover:border-white/50"
                     }`}
                 >
                   <div className="flex justify-center space-x-4">
                     <span className="text-4xl">{option.icon}</span>
                   </div>
                   <div>
-                    <h3 className="mt-5 font-medium text-l text-black">
+                    <h3 className="mt-5 font-medium text-l text-white">
                       {option.label}
                     </h3>
                   </div>

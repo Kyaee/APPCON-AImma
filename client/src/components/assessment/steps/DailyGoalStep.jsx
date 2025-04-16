@@ -13,11 +13,11 @@ export default function DailyGoalStep({
           <button
             key={option.value}
             onClick={() => onGoalSelect(option.value)}
-            className={`p-4 sm:px-18 sm:py-15 rounded-lg transition-all duration-200 cursor-pointer bg-transparent
+              className={`flex flex-col items-center p-8 sm:p-10 rounded-xl transition-all duration-300 transform hover:scale-115
               ${
                 selectedGoal === option.value
-                  ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
-                  : "border-black border-2 hover:border-black hover:border-3"
+                    ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
+                    : "border-white/30 border-2 hover:border-white/50"
               }`}
           >
             <div className="flex justify-center space-x-2 sm:space-x-4">
@@ -27,7 +27,7 @@ export default function DailyGoalStep({
                 className="w-20 h-20 sm:w-30 sm:h-30"
               />
             </div>
-            <h3 className="font-large mt-3 sm:mt-5 text-base sm:text-lg text-black">
+            <h3 className="font-large mt-3 sm:mt-5 text-base sm:text-lg text-white">
               {option.label}
             </h3>
           </button>
