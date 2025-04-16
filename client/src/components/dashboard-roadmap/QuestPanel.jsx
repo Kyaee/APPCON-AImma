@@ -63,11 +63,6 @@ const QuestPanel = ({ userId }) => {
     }
   };
 
-  const handleQuestComplete = (quest) => {
-    // Call the completeQuest function from our store
-    completeQuest(quest.id, isDaily, userId);
-  };
-
   return (
     <div className="bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
       <div className="flex justify-between items-center mb-3">
@@ -87,13 +82,7 @@ const QuestPanel = ({ userId }) => {
 
       <div className="space-y-3">
         {quests.map((quest) => (
-          <div
-            key={quest.id}
-            className={`flex items-start gap-3 p-3 rounded-md transition-colors cursor-pointer ${
-              quest.completed ? "bg-[#c9af9c]" : "hover:bg-gray-50"
-            }`}
-            onClick={() => handleQuestComplete(quest)}
-          >
+          <div key={quest.id} className="flex items-start gap-3 p-3 rounded-md">
             {quest.completed ? (
               <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
             ) : (
@@ -102,8 +91,11 @@ const QuestPanel = ({ userId }) => {
             <div>
               <p className="font-medium text-gray-900">{quest.title}</p>
               <p className="text-xs text-gray-500">
-                {quest.rewards.xp} XP, {quest.rewards.gems} Gems
-                {quest.rewards.booster && " + Booster"}
+                {quest.completed
+                  ? "Completed"
+                  : `${quest.rewards.xp} XP, ${quest.rewards.gems} Gems${
+                      quest.rewards.booster ? " + Booster" : ""
+                    }`}
               </p>
             </div>
           </div>
