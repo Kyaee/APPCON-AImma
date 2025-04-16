@@ -3,7 +3,7 @@ Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
-import { fetchProfile, fetchRoadmapAIdata } from "@/api/FETCH";
+import { fetchProfile, fetchRoadmap } from "@/api/FETCH";
 import { useQuestStore } from "@/store/useQuestStore";
 import { fetchUserStats } from "@/api/UPDATE";
 import { useEffect, useState } from "react";
@@ -20,6 +20,7 @@ import Skills_Component from "../components/profile/SkillsProfile";
 import Loading from "@/routes/Loading";
 import CapySkin from "../components/profile/CapySkins";
 import SkinBadgesTabs from "../components/profile/SkinsTab";
+
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
@@ -153,13 +154,13 @@ export default function Profile() {
                 ? userDisplayData.finished_quests || totalCompletedQuests
                 : 0
             }
-            skill_progress={
+            roadmap_progress={
               !isError
                 ? [
-                    { title: "Data Analysis with Python", progress: 75 },
-                    { title: "Minecraft 2", progress: 50 },
-                    { title: "TypeScript", progress: 0 },
-                  ]
+                  { title: "Data Analysis with Python", progress: 75 },
+                  { title: "Minecraft 2", progress: 50 },
+                  { title: "TypeScript", progress: 0 },
+                ] 
                 : []
             }
           />

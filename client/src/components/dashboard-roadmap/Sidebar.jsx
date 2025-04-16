@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { Menu, X, Target, Award } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/config/authContext";
@@ -7,11 +7,19 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchRoadmap, fetchProfile } from "@/api/FETCH";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { postPrompt2 } from "@/api/INSERT";
+import Loading from "@/routes/loading";
 
-const Sidebar = ({ isExpanded, onToggle, isLessonOpen = false }) => {
+const Sidebar = ({
+  isExpanded,
+  onToggle,
+  isLessonOpen = false,
+  isLessonData,
+}) => {
   const { session } = useAuth();
   const navigate = useNavigate();
   const userData = useFetchStore((state) => state.fetch);
+  const [isLoading, setLoading] = useState(false);
 
   // Fetch user's roadmaps
   const { data: roadmapData, isLoading: loadingRoadmap } = useQuery(
@@ -23,17 +31,24 @@ const Sidebar = ({ isExpanded, onToggle, isLessonOpen = false }) => {
     fetchProfile(session?.user?.id)
   );
 
-  // Get in-progress courses
-  const activeCourses =
-    roadmapData?.filter(
-      (course) => course.progress > 0 && course.progress < 100
-    ) || [];
-
   // Handle course selection
-  const handleCourseSelect = (roadmapId) => {
-    navigate(`/dashboard/${roadmapId}`);
+  const handleLessonSelect = (lesson) => {
+    setLoading(true);
+    postPrompt2(
+      lesson.lesson_name,
+      lesson.id,
+      lesson.lesson_category,
+      lesson.lesson_difficulty,
+      lesson.gems,
+      lesson.exp,
+      lesson.lesson_duration,
+      lesson.assessment,
+      lesson.progress
+    );
     onToggle();
   };
+
+  if (isLoading) return <Loading generate_lesson={true}/>
 
   return (
     <>
@@ -41,9 +56,9 @@ const Sidebar = ({ isExpanded, onToggle, isLessonOpen = false }) => {
         <div className="fixed top-6 left-18 z-50">
           <button
             onClick={() => onToggle()}
-            className="p-2 rounded-lg border border-black hover:bg-[#CBB09B] transition-colors bg-white"
+            className="flex gap-2 p-2 rounded-lg border border-black hover:bg-[#CBB09B] transition-colors bg-white"
           >
-            <Menu className="w-6 h-6 text-black" />
+            <Menu className="w-6 h-6 text-black" /> Expand
           </button>
         </div>
       ) : (
@@ -117,34 +132,67 @@ const Sidebar = ({ isExpanded, onToggle, isLessonOpen = false }) => {
 
             {loadingRoadmap ? (
               <p className="text-sm text-gray-500">Loading courses...</p>
-            ) : activeCourses.length > 0 ? (
+            ) : isLessonData
+                ?.filter(
+                  (lesson) =>
+                    lesson.previous_lesson &&
+                    new Date(lesson.previous_lesson) <= new Date()
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(b.previous_lesson.date) -
+                    new Date(a.previous_lesson.date)
+                )
+                .slice(0, 3).length > 0 ? (
               <div className="space-y-3">
-                {activeCourses.map((course) => (
-                  <div
-                    key={course.roadmap_id}
-                    className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer transition-colors"
-                    onClick={() => handleCourseSelect(course.roadmap_id)}
-                  >
-                    <div className="p-2 bg-gray-200 rounded-full">
-                      <Target className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium truncate max-w-[200px]">
-                        {course.roadmap_name}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <Progress
-                          value={course.progress}
-                          max={100}
-                          className="h-1.5 w-50 rounded-full"
-                        />
-                        <span className="text-xs text-gray-600">
-                          {course.progress}%
-                        </span>
+                {isLessonData
+                  .filter(
+                    (lesson) =>
+                      lesson.previous_lesson &&
+                      new Date(lesson.previous_lesson) <= new Date()
+                  )
+                  .sort(
+                    (a, b) =>
+                      new Date(b.previous_lesson) - new Date(a.previous_lesson)
+                  )
+                  .slice(0, 3)
+                  .map((lesson) => (
+                    <div
+                      key={lesson.id}
+                      className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer transition-colors"
+                      onClick={() => handleLessonSelect(lesson)}
+                    >
+                      <div className="p-2 bg-gray-200 rounded-full">
+                        <Target className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium truncate max-w-[200px">
+                          {lesson.lesson_name}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Progress
+                            value={lesson.progress}
+                            max={100}
+                            className="h-1.5 w-50 rounded-full"
+                          />
+                          <span className="text-xs text-gray-600">
+                            {lesson.progress}%
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {new Date(lesson.previous_lesson).toLocaleTimeString(
+                            [],
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              day: "numeric",
+                              month: "long",
+                            }
+                          )}
+                        </p>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <p className="text-sm text-gray-500">No courses in progress</p>

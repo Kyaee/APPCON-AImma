@@ -9,6 +9,8 @@ import { useEffect } from "react";
 export default function LessonLayout({ children }) {
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const setLessonFetch = useLessonFetchStore((state) => state.setFetch);
+  const scrollProgress = useLessonFetchStore((state) => state.scrollProgress);
+  
   const {
     data: lessonData,
     isLoading,
@@ -25,8 +27,10 @@ export default function LessonLayout({ children }) {
   return (
     <>
       <Header
-        id={lessonFetch.id || lessonData.id}
-        isAssessment={lessonFetch.assessment || lessonData.assessment}
+        id={lessonFetch?.id || lessonData.id}
+        isAssessment={lessonFetch?.assessment || lessonData?.assessment}
+        previousProgress={lessonFetch?.progress}
+        scrollProgress={scrollProgress}
       />
       <Outlet />
       {children}

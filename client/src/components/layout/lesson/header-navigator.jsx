@@ -1,9 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/config/authContext";
+import { useEvaluation } from "@/api/INSERT";
 
-export default function Header({ id, isAssessment }) {
+export default function Header({ id, isAssessment, previousProgress, scrollProgress }) {
   const { session } = useAuth(); // Get the session from the auth contex
+  const { updateLesson } = useEvaluation(); // Function to update user data
   const navItems = [
     { icon: <Sprout size="20" />, label: "Lesson", path: `/lesson/${id}` },
     {
@@ -23,6 +25,21 @@ export default function Header({ id, isAssessment }) {
   const filteredNavItems = isAssessment
     ? navItems
     : navItems.filter((item) => item.label !== "Assessment");
+
+  const handleQuit = () => {
+    if (scrollProgress > previousProgress) {
+      updateLesson({
+        userId: session?.user?.id,
+        lessonId: id,
+        lastAccessed: new Date().toISOString(),
+        progress: scrollProgress,
+      });
+      window.location.href = `/dashboard/${session?.user?.id}`;
+      console.log("successful")
+    } 
+    console.log("redirect", previousProgress)
+    window.location.href = `/dashboard/${session?.user?.id}`;
+  };
 
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
@@ -50,15 +67,15 @@ export default function Header({ id, isAssessment }) {
           </Link>
         ))}
       </nav>
-      <Link
-        to={`/dashboard/${session.user.id}`}
+      <button
+        onClick={handleQuit}
         className={`${
           location.pathname.split("/")[1] === "lesson" ? "ml-6" : ""
         } text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md`}
       >
         <ArrowUpRight size="20" />
         Quit
-      </Link>
+      </button>
     </header>
   );
 }

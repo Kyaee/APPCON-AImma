@@ -1,6 +1,6 @@
 import Markdown from "react-markdown";
 
-export default function markdownFormat({children}) {
+export default function markdownFormat({ children }) {
   return (
     <Markdown
       components={{
@@ -10,7 +10,7 @@ export default function markdownFormat({children}) {
           </div>
         ),
         h2: ({ children }) => (
-          <h2 className="mt-9 tracking-tight text-4xl font-bold text-[#333] leading-10 mb-6 border-b-2 border-gray-300 pb-2">
+          <h2 className="mt-12 tracking-tight text-3xl font-bold text-[#333] leading-10 mb-6 border-b-2 border-gray-300 pb-2">
             {children}
           </h2>
         ),
@@ -19,8 +19,13 @@ export default function markdownFormat({children}) {
             {children}
           </h3>
         ),
+        h4: ({ children }) => {
+          <h4 className="mt-12 text-2xl font-semibold text-[#444] tracking-tight leading-9 mb-5">
+            {children}
+          </h4>;
+        },
         p: ({ children }) => (
-          <p className="text-[#555] font-light text-lg leading-7 my-4">
+          <p className="text-[#555] font-light text-lg leading-7 my-6">
             {children}
           </p>
         ),
@@ -33,7 +38,7 @@ export default function markdownFormat({children}) {
           </li>
         ),
         code: ({ children }) => (
-          <code className="inline-block bg-[#f5f5f5] text-[#d6336c] border border-gray-300 rounded-md p-2 text-sm font-mono">
+          <code className="inline-block bg-[#f5f5f5] text-[#d6336c] border border-gray-300 rounded-md p-2 text-md font-mono">
             {children}
           </code>
         ),
@@ -48,7 +53,12 @@ export default function markdownFormat({children}) {
         em: ({ children }) => (
           <em className="italic text-[#444]">{children}</em>
         ),
+        a: ({ children }) => {
+          <a className="text-blue-500">{children}</a>;
+        },
       }}
-    >{children}</Markdown>
+    >
+      {children}
+    </Markdown>
   );
 }

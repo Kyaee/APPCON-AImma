@@ -38,9 +38,9 @@ export default function LessonArticle({
         {difficulty === "Intermediate" && (
           <Badge
             variant="outline"
-            className="h-9 w-[90px] rounded-[5px] border-2 text-amber-500 flex items-center justify-center gap-2"
+            className="h-9 w-auto rounded-[5px] border-2 border-amber-500 flex items-center justify-center gap-2"
           >
-            <AngryIcon className="w-[17px] h-[17px] text-amber-500" />
+            <AngryIcon className="w-[20px] h-[20px] text-amber-500" />
             <span className="text-amber-500 text-base">
               {difficulty}
             </span>

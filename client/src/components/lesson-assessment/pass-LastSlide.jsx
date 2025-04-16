@@ -2,11 +2,13 @@ import { Gem, ZapIcon } from "lucide-react";
 import { bouncy } from "ldrs";
 bouncy.register();
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import PropTypes from "prop-types";
 import { useSummary } from "@/api/INSERT";
 import { useAuth } from "@/config/authContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useFetchSummary } from "@/api/FETCH";
+import { handleUpdateStreak } from "@/lib/check-day-streak";
 
 export default function LastSlide({
   lessonId,
@@ -20,32 +22,34 @@ export default function LastSlide({
   exp,
 }) {
   const [isPage, setPage] = useState(1);
+  const [isSummaryDone, setSummaryDone] = useState(false); // Track summary completion
   const { session } = useAuth();
-  const { createSummary, isPending, isError } = useSummary();
-  const { evaluationData, isLoading } = useFetchSummary();
-  const { updateLesson, updateUser, createEvaluation } = useEvaluation(
-    session.user.id
-  );
+  const {
+    updateLesson,
+    createEvaluation,
+    isPending: isEvalPending,
+    isError: isEvalError,
+  } = useEvaluation(session.user.id);
 
-  function handleNext(e) {
+  const {
+    createSummary,
+    isPending: isSummaryPending,
+    isError: isSummaryError,
+  } = useSummary();
+  const { evaluationData } = useFetchSummary();
+
+  const handleNext = (e) => {
     e.preventDefault();
-
     updateLesson({
       userId: session.user.id,
-      lessonId: lessonId,
+      lessonId,
       lastAccessed: new Date().toISOString(),
       progress: 100,
       status: "Completed",
     });
-    updateUser({
-      userId: session.user.id,
-      gems: gems,
-      exp: exp,
-      streak: 1,
-      lives: userLives,
-    });
-
+    handleUpdateStreak(updateLesson, session.user.id, gems, exp, 1, userLives);
     setPage(2);
+    setSummaryDone(false); // Reset before starting
     createSummary({
       id: lessonId,
       name: lessonName,
@@ -53,13 +57,32 @@ export default function LastSlide({
       isAnswers: answers,
       score: userScore,
       total: userTotal,
+    }, {
+      onSuccess: () => setSummaryDone(true),
+      onError: () => setSummaryDone(false),
     });
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     createEvaluation({ evaluation: evaluationData, userId: session.user.id });
+    // Optionally, add a redirect here after successful evaluation
   };
+
+  // Show loading spinner if summary or evaluation is pending
+  const isLoading = isSummaryPending || isEvalPending;
+  const isError = isSummaryError || isEvalError;
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">
+          An error occurred.
+        </h2>
+        <p>Please try again.</p>
+      </div>
+    );
+  }
 
   switch (isPage) {
     case 1:
@@ -91,10 +114,9 @@ export default function LastSlide({
             </div>
           </div>
           <button
-            className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                      hover:bg-neutral-300"
+            className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg hover:bg-neutral-300"
             onClick={handleNext}
-            disabled={``}
+            disabled={isLoading}
           >
             Finish
           </button>
@@ -103,7 +125,7 @@ export default function LastSlide({
     case 2:
       return (
         <>
-          {isPending ? (
+          {isLoading ? (
             <div>
               <span>
                 <l-bouncy size="45" speed="1.75" color="white"></l-bouncy>
@@ -115,16 +137,29 @@ export default function LastSlide({
                 +1 Streak!
               </h1>
               <button
-                className="py-3 w-full mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                      hover:bg-neutral-300"
+                className="disabled:bg-neutral-400 py-3 w-full mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg hover:bg-neutral-300"
                 onClick={handleSubmit}
-                disabled={``}
+                disabled={!isSummaryDone || isLoading}
               >
-                Finish
+                {(!isSummaryDone || isLoading) ? "Please wait, fetching for evaluation" : "Finish"}
               </button>
             </article>
           )}
         </>
       );
+    default:
+      return null;
   }
 }
+
+LastSlide.propTypes = {
+  lessonId: PropTypes.any,
+  lessonName: PropTypes.string,
+  lessonDifficulty: PropTypes.string,
+  answers: PropTypes.any,
+  userLives: PropTypes.number,
+  userScore: PropTypes.number,
+  userTotal: PropTypes.number,
+  gems: PropTypes.number,
+  exp: PropTypes.number,
+};
