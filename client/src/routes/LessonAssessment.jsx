@@ -19,7 +19,6 @@ import { useFetchStore } from "@/store/useUserData";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuestStore } from "@/store/useQuestStore";
 import { useAuth } from "@/config/authContext";
-import { useEvaluation } from "@/api/INSERT";
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
