@@ -20,9 +20,6 @@ export default function CapySkin() {
   return (
     <div className="flex flex-col gap-4 max-w-7xl mx-auto h-full">
       {/* Title Section */}
-      <div className="w-full text-center">
-        <h2 className="text-2xl font-semibold text-black dark:text-primary tracking-tight">Capy Skins Collection</h2>
-      </div>
       
       <div className="flex flex-col md:flex-row gap-1 w-full">
         {/* Preview Image */}

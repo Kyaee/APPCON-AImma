@@ -59,62 +59,17 @@ export default function ProfileTabs({ linechartData, radarData, summary }) {
           return;
         }
 
-        // First check if linechartData from props is valid
-        if (Array.isArray(linechartData) && linechartData.length === 7) {
-          setWeeklyExpData(linechartData);
-          setLoading(false);
-          return;
-        }
-
-        // Get user's experience data from Supabase
-        const { data, error } = await supabase
-          .from("users")
-          .select("total_exp, weekly_exp_data")
-          .eq("user_id", session.user.id)
-          .single();
-
-        if (error) {
-          console.error("Error fetching user EXP data:", error);
-          setLoading(false);
-          return;
-        }
-
-        // Get current day of week (0 = Sunday, 1 = Monday, etc.)
-        const today = new Date();
-        const currentDay = today.getDay();
-        const adjustedDayIndex = currentDay === 0 ? 6 : currentDay - 1; // Convert to Monday=0, Sunday=6
-
-        // Handle weekly_exp_data
-        let newWeeklyData;
-
-        // Check if we need to reset the weekly data (new week started)
-        const needsReset = shouldResetWeeklyData();
-
-        if (
-          data.weekly_exp_data &&
-          Array.isArray(data.weekly_exp_data) &&
-          data.weekly_exp_data.length === 7 &&
-          !needsReset
-        ) {
-          // Use existing data
-          newWeeklyData = [...data.weekly_exp_data];
-        } else {
-          // Create a new array with all zeros
-          newWeeklyData = [0, 0, 0, 0, 0, 0, 0];
-
-          // If this is a reset, update the weekly_exp_data in Supabase
-          if (needsReset) {
-            await supabase
-              .from("users")
-              .update({ weekly_exp_data: newWeeklyData })
-              .eq("user_id", session.user.id);
-          }
-        }
+        // Just use the linechartData from props or default to zeros
+        // Avoiding database queries that cause errors
+        const newWeeklyData =
+          Array.isArray(linechartData) && linechartData.length === 7
+            ? [...linechartData]
+            : [0, 0, 0, 0, 0, 0, 0];
 
         setWeeklyExpData(newWeeklyData);
+        setLoading(false);
       } catch (error) {
         console.error("Error in fetchWeeklyExpData:", error);
-      } finally {
         setLoading(false);
       }
     };

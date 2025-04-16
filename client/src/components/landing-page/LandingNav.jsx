@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const MainNav = () => {
+const MainNav = ({ isLoggedIn }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -46,11 +46,19 @@ const MainNav = () => {
           >
             FAQ
           </a>
-          <Link to="/auth/login">
-            <Button className="px-8 py-5 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-md">
-              Log In
-            </Button>
-          </Link>
+          {!isLoggedIn ? (
+            <Link to="/auth/login">
+              <Button className="px-8 py-5 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-md">
+                Log In
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/dashboard">
+              <Button className="px-8 py-5 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-md">
+                Dashboard
+              </Button>
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Navigation */}

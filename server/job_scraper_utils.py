@@ -20,7 +20,7 @@ global total_jobs
 
 def configure_webdriver():
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
+    options.add_argument("--headless-new")
     options.add_argument("start-maximized")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
@@ -33,12 +33,11 @@ def configure_webdriver():
             renderer="Intel Iris OpenGL Engine",
             fix_hairline=True,
             )
-
     return driver
 
 
-def search_jobs(driver, country, job_position, job_location, date_posted):
-    full_url = f'{country}/jobs?q={"+".join(job_position.split())}&l={job_location}&fromage={date_posted}'
+def search_jobs(driver, country, job_position, job_location):
+    full_url = f'{country}/jobs?q={"+".join(job_position.split())}&l={job_location}'
     print(full_url)
     driver.get(full_url)
     global total_jobs

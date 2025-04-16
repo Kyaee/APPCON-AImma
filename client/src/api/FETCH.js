@@ -64,7 +64,6 @@ export const fetchLesson = async (lessonId) => {
     .eq("roadmap_id", lessonId)
     .order("id", { ascending: true });
   if (error) throw new Error(error.message);
-  console.log("lesson data: ", data);
   return data;
 };
 
@@ -113,14 +112,7 @@ export function fetchRoadmapAIdata() {
       if (response.status !== 200) {
         throw new Error("Failed to fetch roadmap AI data");
       }
-      console.log("roadmap AI data", response.data);
       return response.data;
-    },
-    onSuccess: (data) => {
-      console.log("Data fetched successfully:", data);
-    },
-    onError: (error) => {
-      console.error("Error fetching data:", error);
     },
   });
 }
@@ -138,7 +130,6 @@ export function fetchLessonAIdata() {
       if (response.status !== 200) {
         throw new Error("Failed to fetch roadmap AI data");
       }
-      console.log("roadmap AI data", response.data);
       return response.data;
     },
   });
@@ -191,7 +182,6 @@ export function fetchLessonAssessmentData() {
       if (response.status !== 200) {
         throw new Error("Failed to fetch lesson assessment data");
       }
-      console.log("lesson assessment data", response.data);
       return response.data;
     },
   });
@@ -215,7 +205,6 @@ export function useFetchSummary() {
       if (response.status !== 200) {
         throw new Error("Failed to fetch evaluation data");
       }
-      console.log("evaluation data", response.data);
       return response.data;
     },});
 

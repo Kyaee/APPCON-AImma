@@ -8,21 +8,19 @@ import { useQuestStore } from "@/store/useQuestStore";
 import { fetchUserStats } from "@/api/UPDATE";
 import { useEffect, useState } from "react";
 import { useStreakStore } from "@/store/useStreakStore";
+import LevelRewards from "@/components/features/level-rewards/LevelRewards";
 
 // Components & Icons
 import ProfileDetails from "@/components/profile/ProfileDetails";
-import CareerOpportunities from "../components/profile/CareerOpportunities";
+import BadgesProfile from "@/components/profile/BadgesProfile";
 import Streak_Component from "../components/profile/Streak";
 import Tabs_Component from "../components/profile/TabsProfile";
 import Skills_Component from "../components/profile/SkillsProfile";
 import Loading from "@/routes/Loading";
-import SkinBadgesTabs from "../components/profile/SkinsTab";
-import LevelRewards from "@/components/features/level-rewards/LevelRewards";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Get quest data from our store
   const [roadmapIndex, setRoadmapIndex] = useState(0);
@@ -62,27 +60,6 @@ export default function Profile() {
     enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
   });
 
-  // Fetch the latest user stats from Supabase
-  useEffect(() => {
-    const getUserData = async () => {
-      if (fetch?.id) {
-        try {
-          setLoading(true);
-          const response = await fetchUserStats(fetch.id);
-          if (response.success) {
-            setUserData(response.userData);
-          }
-        } catch (error) {
-          console.error("Error fetching user stats:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    getUserData();
-  }, [fetch?.id]);
-
   // Effect to check and update streak
   useEffect(() => {
     if (fetch?.id) {
@@ -92,8 +69,6 @@ export default function Profile() {
 
   if (load_profile || loading || loadingRoadmap || loadingLessons)
     return <Loading />;
-
-  const userDisplayData = userData || fetch;
 
   // Calculate experience for the current level - FIXED 100 XP per level
   const calculateLevelExperience = (level) => {
@@ -141,39 +116,37 @@ export default function Profile() {
             {/* Profile Content */}
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              name={
-                userDisplayData.first_name + " " + userDisplayData.last_name
-              }
-              level={userDisplayData.level}
+              name={fetch.first_name + " " + fetch.last_name}
+              level={fetch?.level}
               experience={
-                calculateLevelProgress(
-                  userDisplayData.current_exp || 0,
-                  userDisplayData.level
-                ).current
+                calculateLevelProgress(fetch?.current_exp || 0).current
               }
               totalExperience={
-                calculateLevelProgress(
-                  userDisplayData.current_exp || 0,
-                  userDisplayData.level
-                ).total
+                calculateLevelProgress(fetch?.current_exp || 0).total
               }
-              continueLearning="JavaScript Basics"
+              lessonData={lessonData
+                .filter(
+                  (lesson) =>
+                    lesson.previous_lesson &&
+                    new Date(lesson.previous_lesson) <= new Date()
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(b.previous_lesson) - new Date(a.previous_lesson)
+                )
+                .slice(0, 1)}
               hours={2}
               withAssessment={true}
               progress={40}
+              isOpen={isRewardsOpen}
+              onOpenChange={setIsRewardsOpen}
+              userId={fetch?.id}
+              renderButton={true} // Don't render the button in the component
             />
           </>
         )}
 
-        {/* Render the LevelRewards component without its button */}
-        <LevelRewards
-          isOpen={isRewardsOpen}
-          onOpenChange={setIsRewardsOpen}
-          userId={userDisplayData?.id}
-          renderButton={true} // Don't render the button in the component
-        />
-
-        <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
+        <main className="grid grid-cols-2 w-full mt-23 px-10 lg:px-30 xl:px-45 gap-y-15 gap-x-25">
           {/****************  
             Badges Section 
           ****************/}
@@ -183,15 +156,9 @@ export default function Profile() {
               Streak Section 
           ****************/}
           <Streak_Component
-            streak={!isError ? streak || userDisplayData.streaks || 0 : 0}
-            previous_best={
-              !isError ? bestStreak || userDisplayData.best_streak || 0 : 0
-            }
-            quests_finished={
-              !isError
-                ? userDisplayData.finished_quests || totalCompletedQuests
-                : 0
-            }
+            streak={!isError ? fetch.streaks : 0}
+            previous_best={!isError ? fetch.best_streak : 0}
+            quests_finished={!isError ? fetch.finished_quests : 0}
             roadmap_progress={!isError ? roadmapData : []}
             setRoadmapIndex={setRoadmapIndex}
           />
@@ -199,7 +166,12 @@ export default function Profile() {
           {/****************  
               Skills Section 
           ******************/}
-          <SkinBadgesTabs />
+          <BadgesProfile
+            badges={{
+              name: "Example badge here",
+              description: "You put the description here",
+            }}
+          />
 
           {/**************** 
             Charts Section 
@@ -217,16 +189,6 @@ export default function Profile() {
             }
             summary="Summary of your progress"
           />
-
-          {/********************** 
-              Skill Trees Section 
-          ***********************/}
-          {/* <Finished_Roadmap_Component /> */}
-
-          {/*********************************************************************** 
-            Career Opportunities Section - Enhanced with borders and interactions 
-          ************************************************************************/}
-          <CareerOpportunities />
         </main>
       </div>
     </>

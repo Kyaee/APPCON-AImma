@@ -59,7 +59,7 @@ const StreakPanel = () => {
       <h2 className="text-lg font-medium mb-3 text-black">Streaks</h2>
 
       <div className="flex items-center justify-center gap-2 mb-4">
-        <img src={fireStreak} alt="Fire streak" className="w-8 h-8" />
+        <img src={fireStreak} alt="Fire streak" className="w-10 h-10" />
         <div className="flex items-baseline">
           <span className="text-3xl font-bold text-black">
             {loading ? "..." : userStreak || fetch.streaks || 0}

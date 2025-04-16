@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import OpportunitiesMenu from "../components/features/job-item";
 import wavingCappy from "@/assets/job-opportunities/WaveCappy.png";
+import SampleJobData from "@/components/features/sampleJobData";
 
 export default function JobOpportunities() {
   const [isNewUser, setIsNewUser] = useState(() => {
@@ -15,19 +16,12 @@ export default function JobOpportunities() {
     setIsNewUser(false);
   };
 
-  // const filterButtons = [
-  //   { text: "Software Development", width: "173px" },
-  //   { text: "Javascript", width: "111px" },
-  //   { text: "React", width: "86px" },
-  //   { text: "Add +", width: "111px" },
-  // ];
-
   return (
     <div className="relative flex items-center w-full min-h-screen pb-20">
 
       {isNewUser ? (
         // New user welcome screen
-        <div className="w-full h-full flex flex-col justify-center items-center">
+        <div className="animate-text-fade w-full h-full flex flex-col justify-center items-center">
           <div className="flex flex-col items-center justify-center">
             <img
               src={wavingCappy}
@@ -37,7 +31,7 @@ export default function JobOpportunities() {
             <span className="text-[#4C4C4C] dark:text-primary text-[48px] font-bold tracking-tighter">
               Gather Job Opportunities
             </span>
-            <span className="text-black dark:text-primary text-[20px]">
+            <span className="animate-text-reveal text-black dark:text-primary text-[20px]">
               We will find job opportunities for you!
             </span>
             <button
@@ -47,7 +41,7 @@ export default function JobOpportunities() {
                 custom-shadow-75
                 flex items-center justify-center
                 transition-colors duration-300 transform ease-in
-                text-white text-2xl font-semibold
+                text-white text-2xl font-semibold cursor-pointer
                 bg-[#007CE8] hover:bg-[#0056b3]
               `}
             >
@@ -56,43 +50,37 @@ export default function JobOpportunities() {
           </div>
         </div>
       ) : (
-        <div className="relative w-full min-h-screen pt-35">
+        <div className="relative w-full min-h-screen pt-40 smooth-scroll">
           <div className="px-55">
             <div className="flex justify-between">
               <h1 className="text-[#4C4C4C] dark:text-primary text-5xl font-extrabold mb-4 tracking-tight">
                 Personalized for You
               </h1>
-              <Button className="bg-light-brown hover:bg-light-brown/80 dark:bg-light-brown dark:hover:bg-light-brown/80">
+              <Button className="px-3 py-2 bg-light-brown border-2 border-foreground text-foreground hover:bg-light-brown/80 dark:bg-light-brown dark:hover:bg-light-brown/80">
                 Generate Again
               </Button>
             </div>
             <p className="text-black dark:text-primary text-base font-medium mb-8 max-w-[760px]">
               We prepared possible opportunities based on your capabilities and
               learning.
-            </p>
-
-            {/* Filter Buttons */}
-            {/* <div className="flex gap-2 mb-8">
-              {filterButtons.map((button, index) => (
-                <button
-                  key={index}
-                  className="h-[40px] px-6 rounded-[10px] border border-black bg-white font-inter text-xs font-semibold text-black"
-                  style={{ width: button.width }}
-                >
-                  {button.text}
-                </button>
-              ))}
-            </div> */}
-
-            
+            </p>            
           </div>
 
           {/* Opportunities Grid */}
-          <div className="px-55 relative w-full grid grid-cols-2 gap-10">
-            <OpportunitiesMenu />
-            <OpportunitiesMenu />
-            <OpportunitiesMenu />
-            <OpportunitiesMenu />
+          <div className="px-55 relative w-full grid grid-cols-2 gap-15">
+            {SampleJobData.map((data)=> {
+              return (
+                <OpportunitiesMenu 
+                  title={data.title}
+                  salary={data.salary}
+                  company={data.company}
+                  time={data.time}
+                  location={data.location}
+                  description={data.description}
+                  link={data.link}
+                />
+              )
+            })}
           </div>
         </div>
       )}

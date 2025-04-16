@@ -10,7 +10,7 @@ export const updateUserQuestCompletion = async (userId, questData) => {
     // First get current user data
     const { data, error: fetchError } = await supabase
       .from("users")
-      .select("gems, current_exp, total_exp, finished_quests, weekly_exp_data")
+      .select("gems, current_exp, total_exp, finished_quests")
       .eq("user_id", userId)
       .single();
     
@@ -22,8 +22,7 @@ export const updateUserQuestCompletion = async (userId, questData) => {
     const updatedTotalExp = (data.total_exp || 0) + questData.rewards.xp;
     const updatedFinishedQuests = (data.finished_quests || 0) + 1;
     
-    // Update weekly EXP data for charts
-    const updatedWeeklyExpData = await updateWeeklyExpData(data.weekly_exp_data, questData.rewards.xp);
+    // No need to update the non-existent weekly_exp_data column
     
     const { error: updateError } = await supabase
       .from("users")
@@ -31,8 +30,7 @@ export const updateUserQuestCompletion = async (userId, questData) => {
         gems: updatedGems,
         current_exp: updatedExp,
         total_exp: updatedTotalExp,
-        finished_quests: updatedFinishedQuests,
-        weekly_exp_data: updatedWeeklyExpData
+        finished_quests: updatedFinishedQuests
       })
       .eq("user_id", userId);
     
@@ -61,7 +59,7 @@ export const updateUserAssessmentRewards = async (userId, score, total, gems, ex
     // First get current user data
     const { data, error: fetchError } = await supabase
       .from("users")
-      .select("gems, current_exp, total_exp, weekly_exp_data")
+      .select("gems, current_exp, total_exp")
       .eq("user_id", userId)
       .single();
     
@@ -72,16 +70,14 @@ export const updateUserAssessmentRewards = async (userId, score, total, gems, ex
     const updatedExp = (data.current_exp || 0) + exp;
     const updatedTotalExp = (data.total_exp || 0) + exp;
     
-    // Update weekly EXP data for charts
-    const updatedWeeklyExpData = await updateWeeklyExpData(data.weekly_exp_data, exp);
+    // No need to update the non-existent weekly_exp_data column
     
     const { error: updateError } = await supabase
       .from("users")
       .update({ 
         gems: updatedGems,
         current_exp: updatedExp,
-        total_exp: updatedTotalExp,
-        weekly_exp_data: updatedWeeklyExpData
+        total_exp: updatedTotalExp
       })
       .eq("user_id", userId);
     
@@ -101,6 +97,7 @@ export const updateUserAssessmentRewards = async (userId, score, total, gems, ex
 /**
  * Update weekly EXP data array with new EXP gained
  * Resets every week (Monday is the start of a new week)
+ * This function doesn't update the database anymore since the column doesn't exist
  * @param {Array} currentWeeklyData - Current weekly EXP data array
  * @param {number} expGained - New EXP points gained
  * @returns {Array} - Updated weekly EXP data array
@@ -115,7 +112,7 @@ export const updateWeeklyExpData = async (currentWeeklyData, expGained) => {
     // Check if we need to create a new array or reset based on the week
     let weeklyData;
     
-    if (!Array.isArray(currentWeeklyData) || currentWeeklyData.length !== 7 || shouldResetWeeklyData(currentWeeklyData)) {
+    if (!Array.isArray(currentWeeklyData) || currentWeeklyData.length !== 7 || shouldResetWeeklyData()) {
       // Initialize with zeros for a new week
       weeklyData = [0, 0, 0, 0, 0, 0, 0];
     } else {
@@ -136,10 +133,9 @@ export const updateWeeklyExpData = async (currentWeeklyData, expGained) => {
 
 /**
  * Check if the weekly data should be reset (new week has started)
- * @param {Array} weeklyData - Current weekly EXP data array
  * @returns {boolean} - True if the data should be reset
  */
-function shouldResetWeeklyData(weeklyData) {
+function shouldResetWeeklyData() {
   // Get the current day (we'll use this to check if we crossed into a new week)
   const today = new Date();
   

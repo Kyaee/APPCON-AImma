@@ -6,12 +6,15 @@ import CTASection from "@/components/landing-page/CTASection";
 import LandingFooter from "@/components/landing-page/LandingFooter";
 import { useEffect } from "react";
 import Loading from "./Loading";
+import { useAuth } from "@/config/authContext";
 
 // Import the SVG background files
 import landingBg from "@/assets/landing/landing-bg.svg";
 import landingBgCapy from "@/assets/landing/landing-bg-capy.svg";
 
 export default function Landing() {
+  const { session } = useAuth();
+  const isLoggedIn = session !== null;
   useEffect(() => {
     setTimeout(() => {
       return <Loading />;
@@ -19,7 +22,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="bg-background relative">
+    <div className="bg-background relative smooth-scroll scroll-smooth ">
       {/* Full-height background SVG */}
       <div className="absolute inset-0 w-full h-full z-0">
         <img src={landingBg} alt="" className="w-full h-full object-cover" />
@@ -43,7 +46,7 @@ export default function Landing() {
 
       {/* Content positioned above the background */}
       <div className="relative z-20">
-        <LandingNav />
+        <LandingNav isLoggedIn={isLoggedIn} />
         <HeroSection />
         <FeatureSlider />
 
@@ -58,9 +61,8 @@ export default function Landing() {
 
             {/* CTA Section */}
             <div className="relative z-10">
-              <CTASection />
+              {!isLoggedIn && <CTASection />}
             </div>
-
             <LandingFooter />
           </div>
         </div>
