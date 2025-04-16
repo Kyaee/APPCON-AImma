@@ -3,7 +3,7 @@ Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
-import { fetchProfile, fetchRoadmap } from "@/api/FETCH";
+import { fetchProfile, fetchRoadmap, fetchLesson } from "@/api/FETCH";
 import { useQuestStore } from "@/store/useQuestStore";
 import { fetchUserStats } from "@/api/UPDATE";
 import { useEffect, useState } from "react";
@@ -12,13 +12,10 @@ import { useStreakStore } from "@/store/useStreakStore";
 // Components & Icons
 import ProfileDetails from "@/components/profile/ProfileDetails";
 import CareerOpportunities from "../components/profile/CareerOpportunities";
-import Finished_Roadmap_Component from "../components/profile/FinishedRoadmaps";
 import Streak_Component from "../components/profile/Streak";
 import Tabs_Component from "../components/profile/TabsProfile";
-import Badges_Component from "../components/profile/BadgesProfile";
 import Skills_Component from "../components/profile/SkillsProfile";
 import Loading from "@/routes/Loading";
-import CapySkin from "../components/profile/CapySkins";
 import SkinBadgesTabs from "../components/profile/SkinsTab";
 
 
@@ -28,6 +25,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   // Get quest data from our store
+  const [roadmapIndex, setRoadmapIndex] = useState(0);
   const dailyQuests = useQuestStore((state) => state.dailyQuests);
   const weeklyQuests = useQuestStore((state) => state.weeklyQuests);
 
@@ -45,6 +43,24 @@ export default function Profile() {
     isLoading: load_profile,
     isError,
   } = useQuery(fetchProfile(fetch.id));
+
+  const {
+    data: roadmapData,
+    isLoading: loadingRoadmap,
+    isError: roadmapError,
+  } = useQuery(fetchRoadmap(fetch.id));
+
+  const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
+  const roadmapId = currentRoadmap?.roadmap_id;
+
+  const {
+    data: lessonData,
+    isLoading: loadingLessons,
+  } = useQuery({
+    queryKey: ["lessons", roadmapId], // Add roadmapId to the queryKey to automatically refetch when it changes
+    queryFn: () => fetchLesson(roadmapId),
+    enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
+  });
 
   // Fetch the latest user stats from Supabase
   useEffect(() => {
@@ -74,23 +90,8 @@ export default function Profile() {
     }
   }, [fetch?.id]);
 
-  if (load_profile || loading) return <Loading />;
+  if (load_profile || loading || loadingRoadmap || loadingLessons) return <Loading />;
 
-  const skills = [
-    "React",
-    "Node.js",
-    "Express",
-    "MongoDB",
-    "GraphQL",
-    "TypeScript",
-  ];
-
-  const badges = [
-    { id: 1, title: "Badge 1", description: "Description 1", image: "image1" },
-    { id: 2, title: "Badge 2", description: "Description 2", image: "image2" },
-  ];
-
-  // Use userData if available, fallback to fetch data
   const userDisplayData = userData || fetch;
 
   return (
@@ -118,6 +119,7 @@ export default function Profile() {
           </div>
         ) : (
           <>
+            {/* <button>ONCLICK</button> */}
             {/* Profile Content */}
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
@@ -139,7 +141,7 @@ export default function Profile() {
           {/****************  
             Badges Section 
           ****************/}
-          <Skills_Component titles={skills} />
+          <Skills_Component titles={lessonData} />
 
           {/**************** 
               Streak Section 
@@ -156,13 +158,10 @@ export default function Profile() {
             }
             roadmap_progress={
               !isError
-                ? [
-                  { title: "Data Analysis with Python", progress: 75 },
-                  { title: "Minecraft 2", progress: 50 },
-                  { title: "TypeScript", progress: 0 },
-                ] 
+                ? roadmapData
                 : []
             }
+            setRoadmapIndex={setRoadmapIndex}
           />
 
           {/****************  
