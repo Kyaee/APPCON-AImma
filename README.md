@@ -8,9 +8,9 @@ insert gif or link here
 
 ## Tech Stack
 
-**Client:** React, ShadCN, TailwindCSS, Zustand, TanStack Query, and Supabase
+**Client:** React, ShadCN, TailwindCSS, Zustand, TanStack Query, Axios, and Supabase
 
-**Server:** Python, FastAPI, OpenAI Deepseek, and Gemini Services
+**Server:** Python, FastAPI, OpenAI package, Deepseek, and Gemini Services
 
 ## Environment Variables
 
