@@ -7,15 +7,13 @@ export default function HeroSection() {
     <section className="py-40">
       <div className="w-4/5 mx-auto flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 ml-8 mb-10 md:mb-0">
-          <h1 className="text-6xl font-bold tracking-tight text-foreground mb-6">
-            Learn and study with your
+          <h1 className="text-6xl font-bold tracking-tight text-foreground mb-8 text-balance">
+            It's Time to Train Your Brain 💡
             <br />
-            <span className="text-primary">Capybara Companion</span>
+            <span className="text-primary text-4xl">- Capybara Says 👀</span>
           </h1>
-          <p className="text-xl text-foreground/80 mb-8">
-            Master essential skills with interactive lessons and projects,
-            guided by your friendly Capybara companion who adapts to your
-            learning style.
+          <p className="text-xl text-foreground/80 mb-13 text-balance">
+          Dive into smart, bite-sized lessons tailored to you—led by <span className="bg-[#F4CB57] p-1">your Capybara friend</span> who learns as fast as <span className="font-bold italic tracking-tight font-serif text-xl">you do</span>.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/auth/register">
