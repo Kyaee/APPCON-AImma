@@ -8,7 +8,7 @@ import { useSummary } from "@/api/INSERT";
 import { useAuth } from "@/config/authContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useFetchSummary } from "@/api/FETCH";
-import { handleUpdateStreak } from "@/lib/check-day-streak";
+import { useStreakStore } from "@/store/useStreakStore";
 
 export default function LastSlide({
   lessonId,
@@ -38,6 +38,9 @@ export default function LastSlide({
     isPending: isEvalPending,
     isError: isEvalError,
   } = useEvaluation(userId || session?.user?.id);
+  const updateStreakFromLesson = useStreakStore(
+    (state) => state.updateStreakFromLesson
+  );
 
   const {
     createSummary,
@@ -133,12 +136,21 @@ export default function LastSlide({
       // Get calculated rewards
       const { gems: actualGems, exp: actualExp } = calculatedRewards;
 
-      // Update user rewards directly
+      // Try to update streak, but check if it was already done today
+      updateStreakFromLesson(currentUserId).then((streakUpdated) => {
+        if (streakUpdated) {
+          console.log("Streak was updated successfully");
+        } else {
+          console.log("Streak was already updated today, skipping increment");
+        }
+      });
+
+      // Update user rewards directly - don't increment streak here
       updateUser({
         userId: currentUserId,
         gems: actualGems,
         exp: actualExp,
-        streak: 1,
+        streak: 0, // Don't increment streak here - it's handled by updateStreakFromLesson
         lives: 0,
       });
 
