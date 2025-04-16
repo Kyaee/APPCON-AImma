@@ -107,7 +107,7 @@ const LevelRewards = () => {
     <>
       <Button 
         variant="outline" 
-        className="mt-8 border border-foreground"
+        className="mt-10 border border-foreground"
         onClick={() => setIsDrawerOpen(true)}
       >
         View Level Rewards
