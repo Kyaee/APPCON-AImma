@@ -2,8 +2,10 @@ import { Link, useLocation } from "react-router-dom";
 import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/config/authContext";
 import { useEvaluation } from "@/api/INSERT";
+import { useNavigate } from "react-router-dom";
 
 export default function Header({ id, isAssessment, previousProgress, scrollProgress }) {
+  const navigate = useNavigate(); // Initialize the navigate function
   const { session } = useAuth(); // Get the session from the auth contex
   const { updateLesson } = useEvaluation(); // Function to update user data
   const navItems = [
@@ -34,11 +36,11 @@ export default function Header({ id, isAssessment, previousProgress, scrollProgr
         lastAccessed: new Date().toISOString(),
         progress: scrollProgress,
       });
-      window.location.href = `/dashboard/${session?.user?.id}`;
+       navigate(`/dashboard/${session?.user?.id}`);
       console.log("successful")
-    } 
-    console.log("redirect", previousProgress)
-    window.location.href = `/dashboard/${session?.user?.id}`;
+    } else {
+      navigate(`/dashboard/${session?.user?.id}`);
+    }
   };
 
   return (

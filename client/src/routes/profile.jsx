@@ -3,7 +3,7 @@ Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
-import { fetchProfile, fetchRoadmap } from "@/api/FETCH";
+import { fetchProfile, fetchRoadmap, fetchLesson  } from "@/api/FETCH";
 import { useQuestStore } from "@/store/useQuestStore";
 import { fetchUserStats } from "@/api/UPDATE";
 import { useEffect, useState } from "react";
@@ -28,6 +28,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   // Get quest data from our store
+  const [roadmapIndex, setRoadmapIndex] = useState(0);
   const dailyQuests = useQuestStore((state) => state.dailyQuests);
   const weeklyQuests = useQuestStore((state) => state.weeklyQuests);
 
@@ -45,7 +46,7 @@ export default function Profile() {
     isLoading: load_profile,
     isError,
   } = useQuery(fetchProfile(fetch.id));
-
+  
   // Fetch the latest user stats from Supabase
   useEffect(() => {
     const getUserData = async () => {
