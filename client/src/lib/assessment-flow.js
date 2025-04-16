@@ -2,7 +2,9 @@ import fifteenMinIcon from '@/assets/user-assessment/15min.svg';
 import thirtyMinIcon from '@/assets/user-assessment/30min.svg';
 import oneHourIcon from '@/assets/user-assessment/1hour.svg';
 import twoHoursIcon from '@/assets/user-assessment/2hour.svg';
-
+import year1 from '@/assets/user-assessment/year1.svg';
+import year3 from '@/assets/user-assessment/year2.svg';
+import year5 from '@/assets/user-assessment/year3.svg';
 
 export const assessmentSteps = [
   {
@@ -109,9 +111,9 @@ export const assessmentFlow = {
   yearsExperience: {
     title: 'Years of Experience',
     options: [
-      { id: 'entryLevel', label: '0-2 years', icon: '1️⃣', nextStep: 'entryQuestions' },
-      { id: 'midLevel', label: '3-5 years', icon: '2️⃣', nextStep: 'midQuestions' },
-      { id: 'seniorLevel', label: '5+ years', icon: '3️⃣', nextStep: 'seniorQuestions' }
+      { id: 'entryLevel', label: '0-2 years', icon: year1, nextStep: 'entryQuestions' },
+      { id: 'midLevel', label: '3-5 years', icon: year3, nextStep: 'midQuestions' },
+      { id: 'seniorLevel', label: '5+ years', icon: year5, nextStep: 'seniorQuestions' }
     ]
   },
 
@@ -358,7 +360,8 @@ export const assessmentFlow = {
           { value: 15, label: '15 minutes', icon: fifteenMinIcon },
           { value: 30, label: '30 minutes', icon: thirtyMinIcon },
           { value: 60 , label: '1 hour', icon: oneHourIcon },
-          { value: 120, label: '2 hours', icon: twoHoursIcon }  
+          { value: 120, label: '2 hours', icon: twoHoursIcon },
+          { value: 180, label: '2 hours+', icon: twoHoursIcon }   
         ]
       }
     ],
