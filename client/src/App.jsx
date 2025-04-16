@@ -18,7 +18,7 @@ import LoginPage from "./routes/auth/login";
 import RegisterPage from "./routes/auth/register";
 import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
-import NameCustomization from '@/components/onboarding/NameCustomization';
+import NameCustomization from "@/components/onboarding/NameCustomization";
 import IntroShowcase from "./routes/Showcase";
 import UserAssessment from "./routes/UserAssessment";
 // REDIRECTS
@@ -43,7 +43,7 @@ function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
   const [isAssessed, setAssessed] = useState(true);
-// const [isUserLoggedin, setUserLoggedin] = useState(true);
+  // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
@@ -71,20 +71,23 @@ function App() {
                 // IF USER IS LOGGED-IN, AND NOT ASSESSED
                 <>
                   <Route path="/start/showcase" element={<IntroShowcase />} />
-                  <Route 
-                    path="/start/name"
-                    element={<NameCustomization />}
-                  />
+                  <Route path="/start/name" element={<NameCustomization />} />
                   <Route
                     path="/start/assessment/*"
                     element={<UserAssessment />}
                   />
-                  <Route path="/dashboard/p" element={<ProcessDashboard setAssessed={setAssessed} />} />
+                  <Route
+                    path="/dashboard/p"
+                    element={<ProcessDashboard setAssessed={setAssessed} />}
+                  />
                 </>
               ) : (
                 // IF USER IS LOGGED-IN AND ASSESSED
                 <>
-                  <Route path="/dashboard" element={<RedirectDashboard setAssessed={setAssessed} />} />
+                  <Route
+                    path="/dashboard"
+                    element={<RedirectDashboard setAssessed={setAssessed} />}
+                  />
                   <Route path="/profile" element={<RedirectProfile />} />
                   <Route path="/shop" element={<RedirectShop />} />
                   <Route
@@ -92,7 +95,10 @@ function App() {
                     element={<RedirectJobOpportunities />}
                   />
                   <Route element={<MainLayout />}>
-                    <Route path="/dashboard/:id" element={<Dashboard setAssessed={setAssessed} />} />
+                    <Route
+                      path="/dashboard/:id"
+                      element={<Dashboard setAssessed={setAssessed} />}
+                    />
                     <Route path="/profile/:id" element={<Profile />} />
                     <Route path="/shop/:id" element={<Shop />} />
                     <Route
