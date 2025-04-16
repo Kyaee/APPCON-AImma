@@ -37,6 +37,9 @@ export default function Profile() {
   const completedDailyQuests = dailyQuests.filter((q) => q.completed).length;
   const completedWeeklyQuests = weeklyQuests.filter((q) => q.completed).length;
   const totalCompletedQuests = completedDailyQuests + completedWeeklyQuests;
+  
+ // reward user 
+ const [isRewardsOpen, setIsRewardsOpen] = useState(true);
 
   const {
     data: profile,
@@ -164,8 +167,16 @@ export default function Profile() {
             />
           </>
         )}
-        
-      
+
+         {/* Render the LevelRewards component without its button */}
+         <LevelRewards 
+          isOpen={isRewardsOpen} 
+          onOpenChange={setIsRewardsOpen}
+          userId={userDisplayData?.id}
+          renderButton={true} // Don't render the button in the component
+          />     
+         
+         
 
         <main className="grid grid-cols-2 w-full mt-20 px-10 lg:px-30 xl:px-45 gap-y-20 gap-x-25">
           {/****************  
@@ -197,7 +208,7 @@ export default function Profile() {
           {/****************  
               Skills Section 
           ******************/}
-          <SkinBadgesTabs />
+          <SkinBadgesTabs /> 
 
           {/**************** 
             Charts Section 
