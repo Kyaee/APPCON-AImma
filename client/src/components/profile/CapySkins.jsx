@@ -21,13 +21,13 @@ export default function CapySkin() {
     <div className="flex flex-col gap-4 max-w-7xl mx-auto h-full">
       {/* Title Section */}
       <div className="w-full text-center">
-        <h2 className="text-2xl font-bold text-black">Capy Skins Collection</h2>
+        <h2 className="text-2xl font-semibold text-black dark:text-primary tracking-tight">Capy Skins Collection</h2>
       </div>
       
       <div className="flex flex-col md:flex-row gap-1 w-full">
         {/* Preview Image */}
         <div className="flex-1 flex justify-center items-center">
-          <div className="w-10/12 flex flex-col justify-center items-center rounded-lg overflow-hidden h-[400px]">
+          <div className="w-10/12 flex flex-col justify-center items-center rounded-lg overflow-hidden h-[300px]">
             <div className="flex flex-col justify-center items-center h-full">
               <img 
                 src={selectedSkin.image} 
@@ -56,13 +56,13 @@ export default function CapySkin() {
                 style={{ backgroundImage: `url(${skin.image})` }}
               >
                 {skin.locked && (
-                  <div className="absolute top-2 right-2 bg-black bg-opacity-70 p-1 rounded-full">
-                    <FaLock className="text-white text-lg" />
+                  <div className="absolute top-2 right-2 bg-gray-200 dark:bg-black bg-opacity-70 dark:bg-opacity-70 p-1 rounded-full">
+                    <FaLock className="text-gray-700 dark:text-white text-lg" />
                   </div>
                 )}
                 <div className={`absolute bottom-0 left-0 right-0 ${
-                  selectedSkinIndex === index ? 'bg-light-brown' : 'bg-black bg-opacity-50'
-                } text-white p-1 rounded-b-lg text-center`}>
+                  selectedSkinIndex === index ? 'bg-light-brown' : 'bg-black dark:bg-gray-200 bg-opacity-50 dark:bg-opacity-50'
+                } text-sm text-gray-200 dark:text-black p-1 rounded-b-lg text-center`}>
                   <span>{selectedSkinIndex === index ? 'Equipped' : skin.name}</span>
                 </div>
               </div>
