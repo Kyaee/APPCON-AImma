@@ -10,11 +10,12 @@ import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 
 // Use Hooks
-import { useState } from "react";
+import { use, useState } from "react";
 import { fetchLessonAssessmentData } from "@/api/FETCH";
 import { useQuery } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
+import { useEvaluation } from "@/api/INSERT";
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
