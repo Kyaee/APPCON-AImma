@@ -132,7 +132,7 @@ export default function TechInterestStep({
                 <button
                   key={option.id}
                   onClick={() => handleInterestSelect(option)}
-                  className={`flex flex-col items-center p-8 sm:p-10 rounded-xl transition-all duration-300 transform hover:scale-105
+                  className={`flex flex-col items-center p-8 sm:p-9 rounded-xl transition-all duration-300 transform hover:scale-105
                     ${
                       isSelected
                         ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
@@ -156,12 +156,6 @@ export default function TechInterestStep({
               );
             })}
           </div>
-          
-          {selectedInterest && (
-            <div className="text-center mt-6 text-white">
-              <p>Click "Next" to answer questions about {selectedInterest.label}</p>
-            </div>
-          )}
         </div>
       ) : (
         // Questions view for the selected interest
