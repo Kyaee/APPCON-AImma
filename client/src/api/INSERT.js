@@ -138,7 +138,7 @@ export function useAssessment() {
     const requestBody = {
       prompt_assessment_generate: `
       Generate 11 assessment questions for ${lesson_name} with the following content: ${lesson_content}
-      The questions must only be "multiple-choice"
+      The questions must only be "multiple-choice", and don't make the answers too obvious by making it longer than others.
       `,
       id: lesson_id,
       name: lesson_name,
@@ -338,31 +338,91 @@ export function useEvaluation(id) {
   });
 
   const updateUserData = async ({ userId, gems, exp, streak, lives }) => {
-    const { data, error } = await supabase.rpc("update_user_per_lesson", {
-      user_id: userId,
-      increment_gems: gems,
-      increment_exp: exp,
-      increment_streak: streak,
-      decrease_lives: lives,
-    });
-    if (error) throw error;
-    else return "Succesfully Update User";
+    console.log(`Updating user data: userId=${userId}, gems=${gems}, exp=${exp}, streak=${streak}, lives=${lives}`);
+    
+    try {
+      // First get current user data to check if leveling up is needed
+      const { data: userData, error: fetchError } = await supabase
+        .from("users")
+        .select("current_exp, level")
+        .eq("id", userId)
+        .single();
+        
+      if (fetchError) throw fetchError;
+      
+      // Calculate if level up should occur
+      const currentExp = userData.current_exp || 0;
+      const currentLevel = userData.level || 1;
+      const newTotalExp = currentExp + exp;
+      
+      // Calculate level ups and remaining exp
+      const levelUps = Math.floor(newTotalExp / 100);
+      const newLevel = currentLevel + levelUps;
+      const newExp = newTotalExp % 100;
+      
+      console.log(`XP calculation: Current=${currentExp}, Adding=${exp}, Total=${newTotalExp}`);
+      console.log(`Level calculation: Current=${currentLevel}, LevelUps=${levelUps}, New=${newLevel}, Remainder=${newExp}`);
+      
+      let updatedExpInRPC = exp;
+      
+      // Update level and exp if there's a level up
+      if (levelUps > 0) {
+        console.log(`User is leveling up! From level ${currentLevel} to ${newLevel} (${levelUps} level ups)`);
+        
+        // Update user level and reset exp to remainder
+        const { data: levelData, error: levelError } = await supabase
+          .from("users")
+          .update({
+            level: newLevel,
+            current_exp: newExp
+          })
+          .eq("id", userId);
+          
+        if (levelError) throw levelError;
+        
+        console.log(`Level updated: ${newLevel}, New exp: ${newExp}`);
+        
+        // If we've already updated the exp directly, don't increment it again in the RPC
+        updatedExpInRPC = 0;
+      }
+      
+      // Continue with regular update_user_per_lesson RPC call 
+      // But don't increment exp if we already handled it in level up
+      const { data, error } = await supabase.rpc("update_user_per_lesson", {
+        user_id: userId,
+        increment_gems: gems,
+        increment_exp: updatedExpInRPC, // Only increment if no level up occurred
+        increment_streak: streak,
+        decrease_lives: lives,
+      });
+      
+      if (error) throw error;
+      console.log("User data updated successfully:", data);
+      
+      return {
+        success: true,
+        message: "Successfully Updated User",
+        levelUp: levelUps > 0,
+        newLevel: levelUps > 0 ? newLevel : null,
+        levelUps: levelUps
+      };
+    } catch (error) {
+      console.error("Error updating user data:", error);
+      throw error;
+    }
   }; 
 
-  
-  
-
   const {
-    mutate: updateUser,
+    mutateAsync: updateUser,
     isPending: isPendingUser,
     isError: isErrorUser,
   } = useMutation({
     mutationFn: updateUserData,
     onSuccess: (data) => {
-      console.log("Data:", data);
+      console.log("User update success:", data);
     },
     onError: (error) => {
-      console.error("Error:", error);
+      console.error("User update error:", error);
     },
   });
 

@@ -8,26 +8,35 @@ export default function ExperienceStep({
 }) {
   return (
     <AssessmentStep title="Years of Experience">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-8 px-4 sm:px-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4 sm:px-6 mt-10">
         {experienceOptions.map((option) => (
           <button
             key={option.id}
             onClick={() => onLevelSelect(option)}
-            className={`p-4 px-23 sm:py-25 rounded-lg text-center transition-all duration-200 cursor-pointer bg-transparent
+              className={`flex flex-col items-center p-2 sm:p-4 rounded-xl transition-all duration-300 transform hover:scale-115
               ${
                 selectedLevel?.id === option.id
-                  ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
-                  : "border-black border-2 hover:border-black hover:border-3"
+                    ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
+                    : "border-white/30 border-2 hover:border-white/50"
               }`}
           >
-            <div className="flex justify-center space-x-4">
-              <span className="text-6xl">{option.icon}</span>
+            <div className="flex justify-center mb-6">
+              <img
+                src={option.icon}
+                alt={option.label}
+                className="w-60 h-30 sm:w-70 sm:h-35"
+              />
             </div>
             <div>
-              <h3 className="mt-5 font-medium text-lg text-black">
+              <h3 className="text-xl sm:text-2xl font-medium text-white">
                 {option.label}
               </h3>
             </div>
+            {selectedLevel?.id === option.id && (
+              <div className="mt-4 text-white font-bold text-lg">
+                ✓ Selected
+              </div>
+            )}
           </button>
         ))}
       </div>

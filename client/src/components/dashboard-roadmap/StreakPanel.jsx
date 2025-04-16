@@ -3,15 +3,22 @@ import capyDay from "@/assets/dashboard/capy-day.svg";
 import fireStreak from "@/assets/dashboard/fire-streak.svg";
 import sadFace from "@/assets/dashboard/sad.svg";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { checkStreaks } from "@/lib/check-day-streak";
 import { useFetchStore } from "@/store/useUserData";
 import { useAuth } from "@/config/authContext";
 import CapySlide from "@/assets/general/capy_sleep.png";
+import { useStreakStore } from "@/store/useStreakStore";
 
-const StreakPanel = ({ streak }) => {
+const StreakPanel = () => {
   const fetch = useFetchStore((state) => state.fetch);
   const { session } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const checkAndUpdateStreak = useStreakStore(
+    (state) => state.checkAndUpdateStreak
+  );
+  const userStreak = useStreakStore((state) => state.streak);
+
   const daysOfWeek = [
     { day: "Mon", full: "Monday", status: "" },
     { day: "Tue", full: "Tuesday", status: "" },
@@ -23,19 +30,30 @@ const StreakPanel = ({ streak }) => {
   ];
 
   const dailyStatus = localStorage.getItem("dailyStatus");
-  const parsedDailyStatus = JSON.parse(dailyStatus);
+  const parsedDailyStatus = dailyStatus ? JSON.parse(dailyStatus) : daysOfWeek;
 
   useEffect(() => {
     if (!localStorage.getItem("dailyStatus"))
       localStorage.setItem("dailyStatus", JSON.stringify(daysOfWeek));
-    checkStreaks(session?.user?.created_at);
-  }, []);
+
+    if (session?.user?.id) {
+      // Update streak based on user's activity
+      checkAndUpdateStreak(session.user.id).then(() => {
+        setLoading(false);
+      });
+
+      // Check and mark days in the week
+      checkStreaks(session?.user?.created_at);
+    } else {
+      setLoading(false);
+    }
+  }, [session?.user?.id, checkAndUpdateStreak]);
 
   return (
     <div className="relative bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
-      <img 
-        src={CapySlide} 
-        alt="Sleeping capybara with orang" 
+      <img
+        src={CapySlide}
+        alt="Sleeping capybara with orang"
         className="absolute -top-29 w-2/5 right-0"
       />
       <h2 className="text-lg font-medium mb-3 text-black">Streaks</h2>
@@ -44,7 +62,7 @@ const StreakPanel = ({ streak }) => {
         <img src={fireStreak} alt="Fire streak" className="w-10 h-10" />
         <div className="flex items-baseline">
           <span className="text-3xl font-bold text-black">
-            {fetch.streaks || "error"}
+            {loading ? "..." : userStreak || fetch.streaks || 0}
           </span>
           <span className="text-black ml-1">days</span>
         </div>

@@ -90,7 +90,7 @@ const RoadmapHeader = ({
     return ReactDOM.createPortal(
       <div
         id="roadmap-dropdown"
-        className="fixed bg-white border-2 border-black rounded-lg shadow-md translate-x-[-3px]"
+        className="fixed bg-white border-2 border-black rounded-lg shadow-md"
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,

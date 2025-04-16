@@ -18,6 +18,23 @@ export const useStreakStore = create(
           const today = currentDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
           const lastVisit = get().lastVisitDate;
           
+          // Check if lesson was already completed today through localStorage
+          const dailyStatus = localStorage.getItem("dailyStatus");
+          if (dailyStatus) {
+            const parsedDailyStatus = JSON.parse(dailyStatus);
+            const nowDayName = currentDate.toLocaleDateString("en-US", { weekday: "long" });
+            const todayIndex = parsedDailyStatus.findIndex((day) => day.full === nowDayName);
+            
+            if (todayIndex !== -1 && parsedDailyStatus[todayIndex].status === "completed") {
+              console.log("Already completed a lesson today, not incrementing streak");
+              return {
+                streak: get().streak,
+                bestStreak: get().bestStreak,
+                dailyStatus: get().dailyStatus
+              };
+            }
+          }
+          
           // Return early if already visited today to prevent unnecessary updates
           if (lastVisit === today) {
             console.log("Already visited today, skipping streak update");
@@ -126,6 +143,77 @@ export const useStreakStore = create(
         }
       },
       
+      // Update streak after lesson completion
+      updateStreakFromLesson: async (userId) => {
+        try {
+          // Check if we already updated streak today from localStorage
+          const lastUpdate = localStorage.getItem("lastStreakUpdate");
+          const today = new Date().toISOString().split('T')[0];
+          
+          if (lastUpdate === today) {
+            console.log("Already updated streak today from lesson completion");
+            return false;
+          }
+          
+          // Get current streak data
+          const { data, error } = await supabase
+            .from("users")
+            .select("streak, best_streak")
+            .eq("user_id", userId)
+            .single();
+            
+          if (error) {
+            console.error("Error fetching user streak:", error);
+            return false;
+          }
+          
+          // Calculate new streak
+          let newStreak = (data.streak || 0) + 1;
+          let newBestStreak = Math.max(newStreak, data.best_streak || 0);
+          
+          // Update in Supabase
+          const { error: updateError } = await supabase
+            .from("users")
+            .update({
+              streak: newStreak,
+              best_streak: newBestStreak
+            })
+            .eq("user_id", userId);
+            
+          if (updateError) {
+            console.error("Error updating streak:", updateError);
+            return false;
+          }
+          
+          // Update local state
+          set({
+            streak: newStreak,
+            bestStreak: newBestStreak,
+            lastVisitDate: today
+          });
+          
+          // Mark today as completed in localStorage
+          const dailyStatus = localStorage.getItem("dailyStatus");
+          if (dailyStatus) {
+            const parsedDailyStatus = JSON.parse(dailyStatus);
+            const nowDayName = new Date().toLocaleDateString("en-US", { weekday: "long" });
+            const todayIndex = parsedDailyStatus.findIndex((day) => day.full === nowDayName);
+            
+            if (todayIndex !== -1) {
+              parsedDailyStatus[todayIndex].status = "completed";
+              localStorage.setItem("dailyStatus", JSON.stringify(parsedDailyStatus));
+            }
+          }
+          
+          // Save update timestamp
+          localStorage.setItem("lastStreakUpdate", today);
+          return true;
+        } catch (error) {
+          console.error("Error in updateStreakFromLesson:", error);
+          return false;
+        }
+      },
+      
       // Reset streak (for testing)
       resetStreak: () => {
         set({
@@ -154,4 +242,4 @@ export const useStreakStore = create(
       })
     }
   )
-); 
+);

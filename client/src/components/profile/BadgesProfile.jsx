@@ -178,14 +178,14 @@ export default function BadgesProfile({ badgesData }) {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="bg-background dark:bg-dark-mode-bg p-5 rounded-lg border-2 border-foreground overflow-hidden">
-        <div className="flex items-center gap-3 py-1 pb-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent pr-3 pl-3 whitespace-nowrap">
+      <div className="bg-background dark:bg-dark-mode-bg p-4 py-5 rounded-lg border-2 border-foreground overflow-hidden">
+        <div className="flex items-center gap-3 py-3 pb-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent pr-3 pl-3 whitespace-nowrap">
           {/* Display earned badges first */}
           {earnedBadges.map((badge) => (
             <div key={badge.id} className="group transition flex-shrink-0">
               <img
                 src={badge.image}
-                className="rounded-full cursor-pointer border border-green-500 group-hover:scale-110 transition-transform duration-300 h-14 w-14"
+                className="rounded-full cursor-pointer border-2 border-green-500 group-hover:scale-110 transition-transform duration-300 h-30 w-30"
                 alt={badge.name}
               />
               <Badges
@@ -204,7 +204,7 @@ export default function BadgesProfile({ badgesData }) {
             >
               <img
                 src={badge.image}
-                className="rounded-full cursor-pointer border border-gray-400 filter grayscale group-hover:scale-110 transition-transform duration-300 h-14 w-14"
+                className="rounded-full cursor-pointer border-2 border-gray-400 filter grayscale group-hover:scale-110 transition-transform duration-300 h-30 w-30"
                 alt={badge.name}
               />
               <Badges

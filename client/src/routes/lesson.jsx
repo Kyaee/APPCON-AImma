@@ -12,11 +12,13 @@ import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useAssessment, useEvaluation } from "@/api/INSERT";
 import { useAuth } from "@/config/authContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ElementLesson() {
   const navigate = useNavigate();
   const { id } = useParams(); // Get the lesson ID from the URL parameters
   const { session } = useAuth();
+  const queryClient = useQueryClient(); // Added for query invalidation
   const generated_assessment = useLessonFetchStore(
     (state) => state.generated_assessment
   );
@@ -32,8 +34,16 @@ export default function ElementLesson() {
   const [isLoading, setLoading] = useState(false); // State to manage loading status
   const { createAssessment, isPending } = useAssessment();
 
+  // Add state to track user performance
+  const [userPerformance, setUserPerformance] = useState({
+    gemsEarned: 0,
+    expEarned: 0,
+    livesLost: 0,
+    streakIncrement: 1, // Assuming completing a lesson adds 1 to streak
+  });
+
   // Get the updateLesson function to update progress in Supabase
-  const { updateLesson } = useEvaluation(session?.user?.id);
+  const { updateLesson, updateUser } = useEvaluation(session?.user?.id);
 
   // Keep track of highest progress to avoid decreasing on page reload
   const [highestProgress, setHighestProgress] = useState(
@@ -53,8 +63,8 @@ export default function ElementLesson() {
     // Calculate percentage more accurately
     const scrollPercentage = (scrollTop / maxScroll) * 100;
 
-    // Consider it complete if within 20px of bottom OR above 98% scrolled
-    if (scrollHeight - scrollTop - clientHeight < 20 || scrollPercentage > 98) {
+    // Consider it complete if within 5px of bottom OR above 95% scrolled
+    if (scrollHeight - scrollTop - clientHeight < 5 || scrollPercentage > 95) {
       return 100;
     }
 
@@ -93,6 +103,16 @@ export default function ElementLesson() {
           progress: finalProgress,
           status: status,
         });
+
+        // If lesson is completed (100% progress) and has no assessment, award rewards
+        if (
+          finalProgress >= 100 &&
+          !lessonFetch.assessment &&
+          status === "Completed"
+        ) {
+          await awardLessonRewards();
+        }
+
         console.log("Progress saved successfully");
         return true;
       } catch (error) {
@@ -102,6 +122,48 @@ export default function ElementLesson() {
     }
     return false;
   }, [session, lessonFetch, highestProgress, updateLesson]);
+
+  // Calculate rewards based on lesson difficulty
+  const calculateRewards = useCallback(() => {
+    // Default rewards (no assessment: 15 exp, 10 gems)
+    let gems = 10;
+    let exp = 15;
+
+    // If the lesson has specific rewards defined, use those
+    if (lessonFetch?.gems && lessonFetch?.exp) {
+      gems = lessonFetch.gems;
+      exp = lessonFetch.exp;
+    }
+
+    return { gems, exp };
+  }, [lessonFetch]);
+
+  // Function to award rewards for completing a lesson without assessment
+  const awardLessonRewards = async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const { gems, exp } = calculateRewards();
+
+      console.log(`Awarding rewards: ${gems} gems, ${exp} exp`);
+
+      // Update user data with rewards
+      await updateUser({
+        userId: session.user.id,
+        gems: gems,
+        exp: exp,
+        streak: 1, // Increment streak by 1 for completing a lesson
+        lives: 0, // No lives lost for lessons without assessment
+      });
+
+      // Invalidate user data queries to refresh dashboard when user returns
+      queryClient.invalidateQueries(["userStats", session.user.id]);
+
+      console.log("Rewards awarded successfully");
+    } catch (error) {
+      console.error("Error awarding rewards:", error);
+    }
+  };
 
   // Add this function to your component
   const handleQuit = async (e) => {
@@ -125,29 +187,40 @@ export default function ElementLesson() {
         );
         console.log(`Saving highest progress: ${finalProgress}%`);
 
+        const newStatus =
+          finalProgress >= 100 && !lessonFetch.assessment
+            ? "Completed"
+            : lessonFetch.status;
+
         // Ensure we wait for this to complete
         await updateLesson({
           userId: session.user.id,
           lessonId: lessonFetch.id,
           lastAccessed: new Date().toISOString(),
           progress: finalProgress, // Use the higher value
-          status:
-            finalProgress >= 100 && !lessonFetch.assessment
-              ? "Completed"
-              : lessonFetch.status,
+          status: newStatus,
         });
+
+        // If lesson is completed without assessment, award rewards
+        if (
+          finalProgress >= 100 &&
+          !lessonFetch.assessment &&
+          newStatus === "Completed"
+        ) {
+          await awardLessonRewards();
+        }
 
         console.log(`Progress saved: ${finalProgress}%`);
       } catch (error) {
         console.error("Failed to save progress before quitting:", error);
       } finally {
         setLoading(false);
-        // Make sure we're navigating to the right URL with a timestamp
+        // Make sure we're navigating to the right URL with a timestamp to force refresh
         navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
       }
     } else {
       setLoading(false);
-      navigate(`/dashboard/${session.user.id}`);
+      navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
     }
   };
 
@@ -217,7 +290,7 @@ export default function ElementLesson() {
     let lastUpdate = 0;
     let ticking = false;
     const THROTTLE_MS = 1; // ~30fps
-    const MIN_DELTA = 11; // Only update if progress changes by at least 0.5%
+    const MIN_DELTA = 5; // Reduce the minimum delta for progress updates - was 11
 
     const handleScroll = () => {
       const now = performance.now();
@@ -242,7 +315,12 @@ export default function ElementLesson() {
     };
 
     main.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+
+    // Force an initial calculation to ensure correct starting progress
+    setTimeout(() => {
+      handleScroll();
+    }, 500);
+
     return () => {
       main.removeEventListener("scroll", handleScroll);
     };
@@ -314,6 +392,24 @@ export default function ElementLesson() {
       setLoading(false);
       setTimeout(() => navigate(`/l/${id}/assessment`), 2000);
     }
+  };
+
+  // Update performance metrics based on user actions
+  const handleLessonCompletion = (success) => {
+    // Calculate rewards based on performance
+    const gems = success ? calculateGemReward(lessonDifficulty) : 0;
+    const exp = success ? calculateExpReward(lessonDifficulty) : 0;
+    const lives = success ? 0 : 1; // Lose a life if failed
+
+    setUserPerformance({
+      gemsEarned: gems,
+      expEarned: exp,
+      livesLost: lives,
+      streakIncrement: success ? 1 : 0,
+    });
+
+    // Save performance data to be used later
+    savePerformanceData(userPerformance);
   };
 
   if (isPending) return <Loading generate_assessment={true} />;

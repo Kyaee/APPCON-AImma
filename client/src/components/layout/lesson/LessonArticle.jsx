@@ -15,7 +15,7 @@ export default function LessonArticle({
   duration,
   exp,
   gems,
-  assessment
+  assessment,
 }) {
   return (
     <>
@@ -30,9 +30,7 @@ export default function LessonArticle({
             className="h-9 w-[90px] rounded-[5px] border-2 border-emerald-500 flex items-center justify-center gap-2"
           >
             <SmileIcon className="w-[17px] h-[17px] text-emerald-600" />
-            <span className="text-emerald-600 text-base">
-              {difficulty}
-            </span>
+            <span className="text-emerald-600 text-base">{difficulty}</span>
           </Badge>
         )}
         {difficulty === "Intermediate" && (
@@ -41,9 +39,7 @@ export default function LessonArticle({
             className="h-9 w-auto rounded-[5px] border-2 border-amber-500 flex items-center justify-center gap-2"
           >
             <AngryIcon className="w-[20px] h-[20px] text-amber-500" />
-            <span className="text-amber-500 text-base">
-              {difficulty}
-            </span>
+            <span className="text-amber-500 text-base">{difficulty}</span>
           </Badge>
         )}
         {difficulty === "Hard" && (
@@ -52,9 +48,7 @@ export default function LessonArticle({
             className="h-9 w-[90px] rounded-[5px] border-2 border-red-600 flex items-center justify-center gap-2"
           >
             <BicepsFlexed className="w-[17px] h-[17px] text-red-600" />
-            <span className="text-red-600 text-base">
-              {difficulty}
-            </span>
+            <span className="text-red-600 text-base">{difficulty}</span>
           </Badge>
         )}
         <div className="flex items-center gap-5 select-none">
@@ -68,12 +62,12 @@ export default function LessonArticle({
             <span>{duration}</span>
           </div>
           <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
-            <ZapIcon className="w-4 h-4" />
-            <span>{exp} exp</span>
-          </div>
-          <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
             <Gem className="w-4 h-4" />
             <span>{gems} gems</span>
+          </div>
+          <div className="flex items-center gap-2 text-[#7b7b7b] font-p">
+            <ZapIcon className="w-4 h-4" />
+            <span>{exp} exp</span>
           </div>
         </div>
       </div>

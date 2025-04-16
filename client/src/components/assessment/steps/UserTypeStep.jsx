@@ -9,26 +9,37 @@ export default function UserTypeStep({
 }) {
   return (
     <AssessmentStep title={assessmentFlow.userType.title}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-4 sm:mt-8 px-4 sm:px-0">
+      <div className="text-center mb-8">
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 px-4 sm:px-6">
         {userTypeOptions.map((option) => (
           <button
             key={option.id}
             onClick={() => onTypeSelect(option)}
-            className={`p-4 sm:px-10 sm:py-25 rounded-lg transition-all duration-200 cursor-pointer bg-transparent
+            className={`flex flex-col items-center p-8 sm:p-10 rounded-xl transition-all duration-300 transform hover:scale-115
               ${
                 selectedType?.id === option.id
-                  ? "border-amber-500/50 border-2 shadow-lg shadow-amber-900/20 bg-white/95"
-                  : "border-white/10 border hover:border-white/20 hover:bg-white/5"
+                    ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
+                    : "border-white/30 border-2 hover:border-white/50"
               }`}
           >
-            <div className="flex justify-center space-x-4">
-              <span className="text-6xl">{option.icon}</span>
+            <div className="flex justify-center mb-6">
+              {option.id === 'professional' ? (
+                <span className="text-7xl text-white font-mono">&lt;/&gt;</span>
+              ) : (
+                <span className="text-7xl">{option.icon}</span>
+              )}
             </div>
             <div>
-              <h3 className="mt-5 font-medium text-lg text-black">
+              <h3 className="text-xl sm:text-2xl font-medium text-white">
                 {option.label}
               </h3>
             </div>
+            {selectedType?.id === option.id && (
+              <div className="mt-4 text-white font-bold text-lg">
+                ✓ Selected
+              </div>
+            )}
           </button>
         ))}
       </div>

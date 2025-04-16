@@ -8,28 +8,35 @@ export default function DailyGoalStep({
 }) {
   return (
     <AssessmentStep title="Daily Learning Goal">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 mt-4 sm:mt-8 px-4 sm:px-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 px-4 sm:px-6 mt-10">
         {dailyGoalOptions.map((option) => (
           <button
             key={option.value}
             onClick={() => onGoalSelect(option.value)}
-            className={`p-4 sm:px-18 sm:py-15 rounded-lg transition-all duration-200 cursor-pointer bg-transparent
+              className={`flex flex-col items-center p-7 sm:p-7 rounded-xl transition-all duration-300 transform hover:scale-115
               ${
                 selectedGoal === option.value
-                  ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
-                  : "border-black border-2 hover:border-black hover:border-3"
+                    ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
+                    : "border-white/30 border-2 hover:border-white/50"
               }`}
           >
-            <div className="flex justify-center space-x-2 sm:space-x-4">
+            <div className="flex justify-center mb-6">
               <img
                 src={option.icon}
                 alt={option.label}
-                className="w-20 h-20 sm:w-30 sm:h-30"
+                className="w-55 h-20 sm:w-65 sm:h-30"
               />
             </div>
-            <h3 className="font-large mt-3 sm:mt-5 text-base sm:text-lg text-black">
-              {option.label}
-            </h3>
+            <div>
+              <h3 className="text-xl sm:text-2xl font-medium text-white">
+                {option.label}
+              </h3>
+            </div>
+            {selectedGoal === option.value && (
+              <div className="mt-4 text-white font-bold text-lg">
+                ✓ Selected
+              </div>
+            )}
           </button>
         ))}
       </div>
