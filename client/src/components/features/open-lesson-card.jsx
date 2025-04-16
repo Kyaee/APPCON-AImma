@@ -10,11 +10,23 @@ import {
   X,
   Target,
   Hourglass,
+  CheckCircle,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { postPrompt2 } from "@/api/INSERT";
 
 export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
+  useEffect(() => {
+    // If lesson data changes, update the component
+    console.log("Lesson data updated:", lesson);
+    // Any initialization code here
+  }, [lesson]);
+
+  useEffect(() => {
+    // Log when the lesson prop changes
+    console.log("OpenLesson received lesson data:", lesson);
+  }, [lesson]);
+
   const createLesson = () => {
     setLoading(true);
     postPrompt2(
@@ -29,6 +41,14 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
       lesson.progress
     );
   };
+
+  // Update your isCompleted check to handle assessment scenarios
+  const isCompleted =
+    lesson.status === "Completed" ||
+    (lesson.progress === 100 && !lesson.assessment);
+
+  // Keep track of progress percentage separately from completion status
+  const displayProgress = lesson.progress || 0;
 
   return (
     <div className="transition animate-panel-in fixed transform left-0 top-0 h-full w-full lg:max-w-lg z-[100] bg-gray-50 border-1 border-solid border-black">
@@ -144,13 +164,23 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
             <Card className="bg-[#fff7f7] border-black shadow-[4px_4px_0px_#00000080] rounded-md py-5">
               <CardContent className="flex flex-col items-center justify-center px-6">
                 <p className="w-full flex justify-between text-[#444444] text-base font-medium">
-                  <span>Progress:</span>
-                  <span>{lesson.progress}%</span>
+                  {isCompleted ? (
+                    <span className="flex items-center gap-2 text-green-600">
+                      <CheckCircle className="size-5" /> Completed
+                    </span>
+                  ) : (
+                    <span>Progress:</span>
+                  )}
+                  <span>{displayProgress}%</span>
                 </p>
                 <div className="w-full mt-1">
                   <Progress
-                    value={lesson.progress}
-                    className="h-[11px] rounded-full border border-solid border-[#4b4b4b] bg-[color:var(--shadcn-ui-app-secondary)]"
+                    value={displayProgress}
+                    className={`h-[11px] rounded-full border border-solid border-[#4b4b4b] ${
+                      isCompleted
+                        ? "bg-green-200"
+                        : "bg-[color:var(--shadcn-ui-app-secondary)]"
+                    }`}
                   />
                 </div>
               </CardContent>
@@ -160,7 +190,7 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
                 onClick={createLesson}
                 className="disabled:animated-gradient-bg-subtle disabled:cursor-loading w-full h-12 bg-light-brown text-foreground text-lg font-semibold border border-solid border-black shadow-[4px_4px_0px_#00000080] rounded-md hover:bg-[#fff7f7] hover:text-[#444444]"
               >
-                Start Learning
+                {isCompleted ? "Review Lesson" : "Start Learning"}
               </Button>
             </div>
           </div>

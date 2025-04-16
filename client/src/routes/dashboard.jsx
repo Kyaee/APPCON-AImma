@@ -6,11 +6,11 @@ import RoadmapContent from "@/components/dashboard-roadmap/RoadmapContent";
 import { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchRoadmap, fetchLesson } from "@/api/FETCH";
 import Loading from "@/routes/Loading";
 
-export default function Dashboard({setAssessed}) {
+export default function Dashboard({ setAssessed }) {
   const { id } = useParams();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [roadmapIndex, setRoadmapIndex] = useState(0);
@@ -18,6 +18,7 @@ export default function Dashboard({setAssessed}) {
   const [getLoading, setLoading] = useState(false);
   const [isLessonOpen, setIsLessonOpen] = useState(false);
   const [userRewards, setUserRewards] = useState({ xp: 0, gems: 0 });
+  const queryClient = useQueryClient();
 
   const handleQuestComplete = (quest) => {
     // Check if the quest is already completed
@@ -64,6 +65,26 @@ export default function Dashboard({setAssessed}) {
       refetchLessons();
     }
   }, [roadmapId, refetchLessons]);
+
+  // Replace your current refetch effect with this one
+  useEffect(() => {
+    // Force refetch when component mounts or URL has timestamp parameter
+    const doRefetch = async () => {
+      console.log("Forcing refetch of lesson data...");
+      // Use invalidateQueries to ensure we get fresh data
+      await queryClient.invalidateQueries(["lessons", roadmapId]);
+      await refetchLessons();
+    };
+
+    doRefetch();
+
+    // Check for timestamp parameter which indicates we returned from a lesson
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("t")) {
+      console.log("Returned from lesson with timestamp:", urlParams.get("t"));
+      doRefetch();
+    }
+  }, [refetchLessons, roadmapId, queryClient]);
 
   if (loadingRoadmap || loadingLessons) return <Loading />;
 

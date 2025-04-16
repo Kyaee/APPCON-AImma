@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function LastSlide({lessonId, passing, score, total}) {
+export default function LastSlide({ lessonId, passing, score, total }) {
   return (
     <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
       <h1 className="text-4xl font-extrabold mb-4 text-center">

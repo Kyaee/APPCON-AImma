@@ -370,31 +370,39 @@ export function useEvaluation(id) {
     progress,
     status,
   }) => {
-    const { data: lessonData, error: lessonError } = await supabase
-      .from("lessons")
-      .update({
-        previous_lesson: lastAccessed,
-        progress: progress,
-        status: status,
-      })
-      .eq("user_id", userId)
-      .eq("id", lessonId)
-      .select("*");
-    if (lessonError) throw lessonError;
-    else "return lessonData[0].lesson_id";
+    try {
+      const { data: lessonData, error: lessonError } = await supabase
+        .from("lessons")
+        .update({
+          previous_lesson: lastAccessed,
+          progress: progress,
+          status: status,
+        })
+        .eq("user_id", userId)
+        .eq("id", lessonId)
+        .select("*");
+      
+      if (lessonError) throw lessonError;
+      console.log("Lesson progress updated in Supabase:", progress); // Add logging
+      return lessonData; // Make sure to return the result
+    } catch (error) {
+      console.error("Error updating lesson data:", error);
+      throw error; // Re-throw so the Promise rejects properly
+    }
   };
 
+  // Replace mutate with mutateAsync to properly support awaiting
   const {
-    mutate: updateLesson,
+    mutateAsync: updateLesson, // Using mutateAsync is critical here
     isPending: isPendingLesson,
     isError: isErrorLesson,
   } = useMutation({
     mutationFn: updateLessonData,
     onSuccess: (data) => {
-      console.log("Data:", data);
+      console.log("Lesson update success:", data);
     },
     onError: (error) => {
-      console.error("Error:", error);
+      console.error("Lesson update error:", error);
     },
   });
 

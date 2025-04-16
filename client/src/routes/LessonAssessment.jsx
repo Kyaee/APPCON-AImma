@@ -10,11 +10,15 @@ import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 
 // Use Hooks
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSummary, useEvaluation } from "@/api/INSERT";
 import { fetchLessonAssessmentData } from "@/api/FETCH";
 import { useQuery } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuestStore } from "@/store/useQuestStore";
+import { useAuth } from "@/config/authContext";
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
@@ -22,14 +26,14 @@ export default function Assessment() {
   const [isCurrentSlide, setCurrentSlide] = useState(0);
   const [isValidateAnswer, setValidateAnswer] = useState(false);
   const [isCount, setCount] = useState({
-    lives: 0,
+    lives: 5,
     score: 0,
     wrong: false,
   });
 
+  const { session } = useAuth();
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const userData = useFetchStore((state) => state.fetch);
-  const lives = userData?.lives - isCount.lives;
   const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData());
   const [isAnswers, setAnswers] = useState([
     {
@@ -40,6 +44,14 @@ export default function Assessment() {
       validated: false,
     },
   ]);
+  const { createSummary, isError } = useSummary();
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const userId = id; // Assuming the URL parameter id is the user ID
+
+  // Get the updateLesson function to update progress in Supabase
+  const { updateLesson } = useEvaluation(session?.user?.id);
 
   const handleCheck = () => {
     setValidateAnswer(true);
@@ -58,7 +70,7 @@ export default function Assessment() {
     });
     // Update score and lives
     if (!isCorrect) {
-      setCount({ ...isCount, lives: isCount.lives + 1, wrong: true });
+      setCount({ ...isCount, lives: isCount.lives - 1, wrong: true });
     } else setCount({ ...isCount, score: isCount.score + 1 });
   };
 
@@ -76,14 +88,25 @@ export default function Assessment() {
 
   // Add function to handle completion and redirect to dashboard
   const handleFinishAssessment = () => {
+    // Update lesson as completed in Supabase if user passes
+    if (isCount.score >= 3 && session?.user?.id && lessonFetch?.id) {
+      updateLesson({
+        userId: session.user.id,
+        lessonId: lessonFetch.id,
+        lastAccessed: new Date().toISOString(),
+        progress: 100,
+        status: "Completed",
+      });
+    }
+
     // Redirect to dashboard where quests will be displayed
     navigate(`/dashboard/${userId}`);
   };
 
   if (isLoading) return <Loading />;
-  if (lives === 0) {
-    return <NoLivesPage userId={userData.id} />;
-  }
+
+  if (isCount.lives === 0) return <NoLivesPage userId={userData.id} />;
+
   return (
     <>
       <main className="h-screen w-full flex justify-center items-center select-none relative overflow-hidden">
@@ -101,10 +124,38 @@ export default function Assessment() {
               exp={lessonFetch.exp}
               setIntroSlide={() => setIntroSlide(false)}
             />
-          ) : !isLastSlide ? (
-            // -------------------------------
-            //   GENERATED USER ASSESSMENT
-            // -------------------------------
+          ) : isLastSlide ? (
+            isCount.score >= 3 ? (
+              // ------------------------
+              //   USER PASSED ASSESSMENT
+              // -------------------------
+              <PassLastSlide
+                score={isCount.score}
+                total={lessonData.questions.length - 1}
+                gems={lessonFetch.gems}
+                exp={lessonFetch.exp}
+                userId={userId}
+                lessonId={lessonFetch.id}
+                lessonName={lessonFetch.name}
+                lessonDifficulty={lessonFetch.difficulty}
+                userLives={isCount.lives}
+                userScore={isCount.score}
+                userTotal={lessonData.questions.length - 1}
+                answers={isAnswers}
+                onClick={handleFinishAssessment}
+              />
+            ) : (
+              // ------------------------
+              //   USER FAILED ASSESSMENT
+              // -------------------------
+              <FailLastSlide
+                lessonId={lessonFetch.id}
+                passing={3}
+                score={isCount.score}
+                total={lessonData.questions.length - 1}
+              />
+            )
+          ) : (
             <Questions
               display_wrong_answer={isCount.wrong}
               lesson_name={lessonData.name}
@@ -118,37 +169,12 @@ export default function Assessment() {
               validate={isValidateAnswer}
               explanation={lessonData.questions[isCurrentSlide].explanation}
             />
-          ) : isCount.score >= 3 ? (
-            // ------------------------
-            //   USER PASSED ASSESSMENT
-            // -------------------------
-            <PassLastSlide
-              lessonId={lessonFetch.id}
-              lessonName={lessonFetch.name}
-              lessonDifficulty={lessonFetch.difficulty}
-              answers={isAnswers}
-              userLives={isCount.lives}
-              userScore={isCount.score}
-              userTotal={lessonData.questions.length - 1}
-              gems={lessonFetch.gems}
-              exp={lessonFetch.exp}
-            />
-          ) : (
-            // ------------------------
-            //   USER FAILED ASSESSMENT
-            // -------------------------
-            <FailLastSlide
-              lessonId={lessonFetch.id}
-              passing={3}
-              score={isCount.score}
-              total={lessonData.questions.length - 1}
-            />
           )}
         </form>
 
-        {/****************************************************
-                    FOOTER DESIGN LOGIC, DON'T MIND
-        ******************************************************/}
+        {/*********************************************
+                  FOOTER DESIGN LOGIC
+        **********************************************/}
         {isIntroSlide ? (
           <></>
         ) : (
@@ -167,7 +193,7 @@ export default function Assessment() {
             </button>
             <div className="flex gap-2 h-15 text-xl text-background">
               <HeartIcon />
-              {lives}
+              {isCount.lives}
             </div>
 
             {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (

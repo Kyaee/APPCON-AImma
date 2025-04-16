@@ -50,17 +50,20 @@ export default function LastSlide({
     handleUpdateStreak(updateLesson, session.user.id, gems, exp, 1, userLives);
     setPage(2);
     setSummaryDone(false); // Reset before starting
-    createSummary({
-      id: lessonId,
-      name: lessonName,
-      difficulty: lessonDifficulty,
-      isAnswers: answers,
-      score: userScore,
-      total: userTotal,
-    }, {
-      onSuccess: () => setSummaryDone(true),
-      onError: () => setSummaryDone(false),
-    });
+    createSummary(
+      {
+        id: lessonId,
+        name: lessonName,
+        difficulty: lessonDifficulty,
+        isAnswers: answers,
+        score: userScore,
+        total: userTotal,
+      },
+      {
+        onSuccess: () => setSummaryDone(true),
+        onError: () => setSummaryDone(false),
+      }
+    );
   };
 
   const handleSubmit = (e) => {
@@ -141,7 +144,9 @@ export default function LastSlide({
                 onClick={handleSubmit}
                 disabled={!isSummaryDone || isLoading}
               >
-                {(!isSummaryDone || isLoading) ? "Please wait, fetching for evaluation" : "Finish"}
+                {!isSummaryDone || isLoading
+                  ? "Please wait, fetching for evaluation"
+                  : "Finish"}
               </button>
             </article>
           )}

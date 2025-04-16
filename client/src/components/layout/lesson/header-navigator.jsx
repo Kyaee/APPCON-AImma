@@ -4,7 +4,12 @@ import { useAuth } from "@/config/authContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useNavigate } from "react-router-dom";
 
-export default function Header({ id, isAssessment, previousProgress, scrollProgress }) {
+export default function Header({
+  id,
+  isAssessment,
+  previousProgress,
+  scrollProgress,
+}) {
   const navigate = useNavigate(); // Initialize the navigate function
   const { session } = useAuth(); // Get the session from the auth contex
   const { updateLesson } = useEvaluation(); // Function to update user data
@@ -36,8 +41,8 @@ export default function Header({ id, isAssessment, previousProgress, scrollProgr
         lastAccessed: new Date().toISOString(),
         progress: scrollProgress,
       });
-       navigate(`/dashboard/${session?.user?.id}`);
-      console.log("successful")
+      navigate(`/dashboard/${session?.user?.id}`);
+      console.log("successful");
     } else {
       navigate(`/dashboard/${session?.user?.id}`);
     }
