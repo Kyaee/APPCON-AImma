@@ -5,7 +5,6 @@ import { useAuth } from "./config/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavigationProvider } from "./context/navigationContext";
 import "react-image-crop/dist/ReactCrop.css";
-import useAppStore from "./store/useAppStore";
 
 /*------------------------------------------
 WEB PAGES 
@@ -41,12 +40,10 @@ import Testing from "./routes/Testing/TestingPage";
 import ApiTester from "./routes/UI_TestGemReward";
 // Import only the consolidated shop component
 import ElementShop from "./routes/shop";
-import { useEffect } from "react";
 
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-
 
   return (
     <>
