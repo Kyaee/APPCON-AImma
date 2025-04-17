@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,14 +17,42 @@ import MainNav from "@/components/layout/main-nav";
 import Header from "@/components/layout/lesson/header-navigator";
 import { useParams, useLocation } from "react-router-dom";
 import linesBg from "/background/lines-bg.png"; // If file is in the root of public folder
+import { useNavigation } from "@/context/navigationContext";
+import { Background } from "@/components/layout/background"; // Import the Background component
 
 export default function ElementShop() {
   const { id } = useParams();
   const location = useLocation();
-  
-  // Check if we're coming from a lesson (path starts with /l/)
-  const isFromLesson = location.pathname.startsWith('/l/');
-  
+  const { setSuppressNavigation } = useNavigation();
+
+  // Track whether we've handled header rendering
+  const [isHeaderRendered, setIsHeaderRendered] = React.useState(false);
+
+  // More targeted detection logic - specifically look for /l/shop/ pattern
+  const isFromLesson = React.useMemo(() => {
+    return (
+      location.pathname.includes("/l/shop/") ||
+      (location.state && location.state.source === "lesson")
+    );
+  }, [location.pathname, location.state]);
+
+  // Set navigation suppression based on source
+  React.useEffect(() => {
+    if (isFromLesson) {
+      // If we're in /l/shop/:id, let the LessonLayout render its header
+      // We just need to make sure we don't render an additional one
+      setIsHeaderRendered(true);
+      // We don't suppress any navigation in this case
+      setSuppressNavigation(null);
+    } else {
+      // If we're in /shop/:id, render the MainNav
+      setSuppressNavigation("lesson");
+    }
+
+    // Clean up when unmounting
+    return () => setSuppressNavigation(null);
+  }, [isFromLesson, setSuppressNavigation]);
+
   // Data for shop items
   const shopItems = [
     {
@@ -124,32 +153,21 @@ export default function ElementShop() {
   ];
 
   return (
-    <div 
-      className="w-full min-h-screen text-black overflow-hidden"
-      style={
-        isFromLesson ? {
-          backgroundImage: `url(${linesBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        } : {}
-      }
-    >
-      {/* Only render one navigation component based on the route */}
+    <div className="w-full min-h-screen text-black overflow-hidden">
+      {/* Apply Background component when coming from lesson */}
       {isFromLesson ? (
-        <Header 
-          id={id}
-          isAssessment={false}
-          previousProgress={0}
-          scrollProgress={0}
-        />
+        <Background />
       ) : (
-        <MainNav userId={id} />
+        // Otherwise add a simple background color for the standalone shop page
+        <div className="fixed top-0 -z-10 min-h-screen w-screen bg-[#fffaf4]" />
       )}
 
-      {/* Main Content - No need for conditional class */}
+      {/* Only render navigation when not coming from lesson path */}
+      {!isFromLesson && <MainNav userId={id} />}
+
+      {/* Main Content */}
       <div className="mt-32 ml-32 py-6">
         <h1 className="text-3xl font-semibold mb-2 ml-8">In-App Purchases</h1>
-        {/* <p className="text-p mb-5 ml-8 text-neutral-600">Whether you're looking to boost your progress, gain extra lives, or enjoy premium features, <br/>we've got you covered. Dive in and make the most of your learning journey!</p> */}
 
         <div
           className=" flex items-center w-11/12 gap-7 mb-5 px-7 pb-10 pt-5 overflow-auto hide-scrollbar [-ms-overflow-style:'none'] [scrollbar-width:'none']

@@ -9,10 +9,13 @@ export default function Header({
   isAssessment,
   previousProgress,
   scrollProgress,
+  inShop = false, // New prop to indicate when used in shop
 }) {
   const navigate = useNavigate(); // Initialize the navigate function
   const { session } = useAuth(); // Get the session from the auth contex
   const { updateLesson } = useEvaluation(); // Function to update user data
+
+  // Updated navigation items - using state for shop navigation
   const navItems = [
     { icon: <Sprout size="20" />, label: "Lesson", path: `/lesson/${id}` },
     {
@@ -20,22 +23,31 @@ export default function Header({
       label: "Assessment",
       path: `/l/${id}/assessment`,
     },
-    { icon: <ShoppingCart size="20" />, label: "Shop", path: `/l/shop/${id}`},
+    // Use state to indicate shop is being accessed from a lesson
+    {
+      icon: <ShoppingCart size="20" />,
+      label: "Shop",
+      path: `/l/shop/${id}`,
+      state: { source: "lesson" },
+    },
   ];
 
   const location = useLocation();
   const isActive = (path) => {
     // Special cases for each navigation item
-    if (path.includes('/lesson/') && location.pathname.includes('/lesson/')) {
+    if (path.includes("/lesson/") && location.pathname.includes("/lesson/")) {
       return true;
     }
-    if (path.includes('/assessment') && location.pathname.includes('/assessment')) {
+    if (
+      path.includes("/assessment") &&
+      location.pathname.includes("/assessment")
+    ) {
       return true;
     }
-    if (path.includes('/shop/') && location.pathname.includes('/shop/')) {
+    if (path.includes("/shop/") && location.pathname.includes("/shop/")) {
       return true;
     }
-    
+
     return false;
   };
 
@@ -64,7 +76,7 @@ export default function Header({
         className={`text-2xl ${
           location.pathname.split("/")[1] === "lesson"
             ? "text-foreground"
-            : "text-background"
+            : "text-foreground" // Changed from "text-background" to ensure visibility
         }`}
       >
         Capycademy
@@ -74,6 +86,7 @@ export default function Header({
           <Link
             key={item.label}
             to={item.path}
+            state={item.state} // Use state if provided
             className={`
               flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300
               ${isActive(item.path) ? "bg-[#CBB09B] border-x" : ""}
@@ -87,9 +100,7 @@ export default function Header({
       </nav>
       <button
         onClick={handleQuit}
-        className={`${
-          location.pathname.split("/")[1] === "lesson" ? "ml-6" : ""
-        } text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md`}
+        className="text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md"
       >
         <ArrowUpRight size="20" />
         Quit

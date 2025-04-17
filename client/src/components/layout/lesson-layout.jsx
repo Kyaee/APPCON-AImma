@@ -5,12 +5,14 @@ import { fetchLessonAIdata } from "@/api/FETCH"; // Adjust the import path as ne
 import Loading from "@/routes/Loading";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useEffect } from "react";
+import { useNavigation } from "@/context/navigationContext";
 
 export default function LessonLayout({ children }) {
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const setLessonFetch = useLessonFetchStore((state) => state.setFetch);
   const scrollProgress = useLessonFetchStore((state) => state.scrollProgress);
-  
+  const { suppressNavigation } = useNavigation();
+
   const {
     data: lessonData,
     isLoading,
@@ -18,7 +20,7 @@ export default function LessonLayout({ children }) {
   } = useQuery(fetchLessonAIdata());
 
   useEffect(() => {
-      if (lessonData) setLessonFetch(lessonData);
+    if (lessonData) setLessonFetch(lessonData);
   }, [lessonData]);
 
   if (isLoading) return <Loading />;
@@ -26,12 +28,14 @@ export default function LessonLayout({ children }) {
 
   return (
     <>
-      <Header
-        id={lessonFetch?.id || lessonData.id}
-        isAssessment={lessonFetch?.assessment || lessonData?.assessment}
-        previousProgress={lessonFetch?.progress}
-        scrollProgress={scrollProgress}
-      />
+      {suppressNavigation !== "lesson" && (
+        <Header
+          id={lessonFetch?.id || lessonData.id}
+          isAssessment={lessonFetch?.assessment || lessonData?.assessment}
+          previousProgress={lessonFetch?.progress}
+          scrollProgress={scrollProgress}
+        />
+      )}
       <Outlet />
       {children}
     </>

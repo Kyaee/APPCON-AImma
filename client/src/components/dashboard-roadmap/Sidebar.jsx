@@ -68,7 +68,7 @@ const Sidebar = ({
           } overflow-y-auto flex flex-col bg-gray-50`}
         >
           {/* Header with brand logo, name and close button */}
-          <div className="p-4 flex items-center justify-between border-b border-gray-200">
+          <div className="p-4 flex items-center justify-between border-b border-gray-400">
             <div className="flex items-center gap-2">
               <img
                 src="/favicon.svg"

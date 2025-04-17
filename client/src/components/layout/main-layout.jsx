@@ -4,6 +4,7 @@ import { useAuth } from "@/config/authContext";
 import { useFetchStore } from "@/store/useUserData";
 import { useEffect } from "react";
 import { fetchUserdata } from "@/api/FETCH";
+import { useNavigation } from "@/context/navigationContext";
 
 import { Background } from "@/components/layout/Background";
 import MainNav from "@/components/layout/main-nav";
@@ -15,6 +16,7 @@ export default function MainLayout({ children }) {
   const setFetch = useFetchStore((state) => state.setFetch);
   const { session } = useAuth();
   const { data: userData, isLoading, isError } = useQuery(fetchUserdata());
+  const { suppressNavigation } = useNavigation();
 
   useEffect(() => {
     if (userData) setFetch(userData);
@@ -27,7 +29,7 @@ export default function MainLayout({ children }) {
   return (
     <div className="select-none">
       <Background />
-      <MainNav userId={session.user.id} />
+      {suppressNavigation !== "main" && <MainNav userId={session.user.id} />}
 
       <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
         <StatsDisplay

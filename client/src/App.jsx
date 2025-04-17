@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "./config/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NavigationProvider } from "./context/navigationContext";
 
 /*------------------------------------------
 WEB PAGES 
@@ -38,9 +39,8 @@ import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Testing from "./routes/Testing/TestingPage";
 import ApiTester from "./routes/UI_TestGemReward";
-// Import both shop components
+// Import only the consolidated shop component
 import ElementShop from "./routes/shop";
-import LessonShop from "./routes/LessonShop";
 
 function App() {
   const queryClient = new QueryClient();
@@ -51,78 +51,81 @@ function App() {
   return (
     <>
       <ThemeProvider defaultTheme="Light" storageKey="vite-ui-theme">
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <Routes>
-              {/* GENERAL ROUTES */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/GemReward" element={<ApiTester />} />
-              <Route path="*" element={<NotFound />} />
-              <Route path="/testing" element={<Testing />} />
+        <NavigationProvider>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <Routes>
+                {/* GENERAL ROUTES */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/GemReward" element={<ApiTester />} />
+                <Route path="*" element={<NotFound />} />
+                <Route path="/testing" element={<Testing />} />
 
-              {!session ? (
-                // IF USER IS NOT LOGGED-IN
-                <>
-                  <Route path="/auth/login" element={<LoginPage />} />
-                  <Route path="/auth/register" element={<RegisterPage />} />
-                  <Route
-                    path="/auth/confirm-account"
-                    element={<ConfirmAccount />}
-                  />
-                </>
-              ) : !isAssessed ? (
-                // IF USER IS LOGGED-IN, AND NOT ASSESSED
-                <>
-                  <Route path="/start/showcase" element={<IntroShowcase />} />
-                  <Route path="/start/name" element={<NameCustomization />} />
-                  <Route
-                    path="/start/assessment/*"
-                    element={<UserAssessment />}
-                  />
-                  <Route
-                    path="/dashboard/p"
-                    element={<ProcessDashboard setAssessed={setAssessed} />}
-                  />
-                </>
-              ) : (
-                // IF USER IS LOGGED-IN AND ASSESSED
-                <>
-                  <Route
-                    path="/dashboard"
-                    element={<RedirectDashboard setAssessed={setAssessed} />}
-                  />
-                  <Route path="/profile" element={<RedirectProfile />} />
-                  <Route path="/shop" element={<RedirectShop />} />
-                  <Route
-                    path="/job-opportunities"
-                    element={<RedirectJobOpportunities />}
-                  />
-                  <Route element={<MainLayout />}>
+                {!session ? (
+                  // IF USER IS NOT LOGGED-IN
+                  <>
+                    <Route path="/auth/login" element={<LoginPage />} />
+                    <Route path="/auth/register" element={<RegisterPage />} />
                     <Route
-                      path="/dashboard/:id"
-                      element={<Dashboard setAssessed={setAssessed} />}
+                      path="/auth/confirm-account"
+                      element={<ConfirmAccount />}
                     />
-                    <Route path="/profile/:id" element={<Profile />} />
-                    <Route path="/shop/:id" element={<ElementShop />} />
+                  </>
+                ) : !isAssessed ? (
+                  // IF USER IS LOGGED-IN, AND NOT ASSESSED
+                  <>
+                    <Route path="/start/showcase" element={<IntroShowcase />} />
+                    <Route path="/start/name" element={<NameCustomization />} />
                     <Route
-                      path="/job-opportunities/:id"
-                      element={<JobOpportunities />}
+                      path="/start/assessment/*"
+                      element={<UserAssessment />}
                     />
-                  </Route>
+                    <Route
+                      path="/dashboard/p"
+                      element={<ProcessDashboard setAssessed={setAssessed} />}
+                    />
+                  </>
+                ) : (
+                  // IF USER IS LOGGED-IN AND ASSESSED
+                  <>
+                    <Route
+                      path="/dashboard"
+                      element={<RedirectDashboard setAssessed={setAssessed} />}
+                    />
+                    <Route path="/profile" element={<RedirectProfile />} />
+                    <Route path="/shop" element={<RedirectShop />} />
+                    <Route
+                      path="/job-opportunities"
+                      element={<RedirectJobOpportunities />}
+                    />
+                    <Route element={<MainLayout />}>
+                      <Route
+                        path="/dashboard/:id"
+                        element={<Dashboard setAssessed={setAssessed} />}
+                      />
+                      <Route path="/profile/:id" element={<Profile />} />
+                      <Route path="/shop/:id" element={<ElementShop />} />
+                      <Route
+                        path="/job-opportunities/:id"
+                        element={<JobOpportunities />}
+                      />
+                    </Route>
 
-                  <Route element={<LessonLayout />}>
-                    <Route path="/lesson/:id" element={<Lesson />} />
-                    <Route
-                      path="/l/:id/assessment"
-                      element={<LessonAssessment />}
-                    />
-                    <Route path="/l/shop/:id" element={<LessonShop />} />
-                  </Route>
-                </>
-              )}
-            </Routes>
-          </BrowserRouter>
-        </QueryClientProvider>
+                    <Route element={<LessonLayout />}>
+                      <Route path="/lesson/:id" element={<Lesson />} />
+                      <Route
+                        path="/l/:id/assessment"
+                        element={<LessonAssessment />}
+                      />
+                      {/* Use the same ElementShop component for lesson shop route */}
+                      <Route path="/l/shop/:id" element={<ElementShop />} />
+                    </Route>
+                  </>
+                )}
+              </Routes>
+            </BrowserRouter>
+          </QueryClientProvider>
+        </NavigationProvider>
       </ThemeProvider>
     </>
   );
