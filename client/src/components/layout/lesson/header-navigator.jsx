@@ -20,7 +20,7 @@ export default function Header({
       label: "Assessment",
       path: `/l/${id}/assessment`,
     },
-    { icon: <ShoppingCart size="20" />, label: "Shop", path: `/shop/${id}` },
+    { icon: <ShoppingCart size="20" />, label: "Shop", path: `/l/shop/${id}`},
   ];
 
   const location = useLocation();
@@ -67,6 +67,7 @@ export default function Header({
             className={`
               flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300
               ${isActive(item.path) ? "bg-[#CBB09B] border-x" : ""}
+             
             `}
           >
             {item.icon}

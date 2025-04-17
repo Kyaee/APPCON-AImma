@@ -113,6 +113,7 @@ function App() {
                       path="/l/:id/assessment"
                       element={<LessonAssessment />}
                     />
+                    <Route path="/l/shop/:id" element={<Shop />} />
                   </Route>
                 </>
               )}
