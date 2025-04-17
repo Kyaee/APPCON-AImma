@@ -31,7 +31,6 @@ import RedirectJobOpportunities from "./routes/redirects/redirectJobOpportunitie
 // GENERAL PAGES
 import Dashboard from "./routes/Dashboard";
 import Profile from "./routes/Profile";
-import Shop from "./routes/Shop";
 import Lesson from "./routes/Lesson";
 import LessonAssessment from "./routes/LessonAssessment";
 import JobOpportunities from "./routes/JobOpportunities";
@@ -41,11 +40,17 @@ import Testing from "./routes/Testing/TestingPage";
 import ApiTester from "./routes/UI_TestGemReward";
 // Import only the consolidated shop component
 import ElementShop from "./routes/shop";
+import { useEffect } from "react";
 
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
   const [isAssessed, setAssessed] = useState(true);
+  // const conditionIsAssesed = localStorage.getItem("isAssessed") === "true" ? true : false;
+
+  useEffect(()=> {
+    console.log(isAssessed)
+  })
   // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (

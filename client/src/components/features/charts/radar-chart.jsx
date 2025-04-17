@@ -41,13 +41,11 @@ export default function RadarChart({chartData}) {
 
   const data = {
     labels: [
-      'Eating',
-      'Drinking',
-      'Sleeping',
-      'Designing',
-      'Coding',
-      'Cycling',
-      'Running'
+      'Engagement',
+      'Confidence',
+      'Time Efficiency',
+      'Resilience',
+      'Knowledge',
     ],
     datasets: [{
       label: 'My First Dataset',
@@ -59,19 +57,7 @@ export default function RadarChart({chartData}) {
       pointBorderColor: isDark ? '#1a1a1e' : '#fff',
       pointHoverBackgroundColor: isDark ? '#1a1a1e' : '#fff',
       pointHoverBorderColor: 'rgb(255, 99, 132)'
-
-    }, {
-      label: 'My Second Dataset',
-      data: [28, 48, 40, 19, 96, 27, 100],
-      fill: true,
-      backgroundColor: isDark ? 'rgba(54, 162, 235, 0.1)' : 'rgba(54, 162, 235, 0.2)',
-      borderColor: isDark ? 'rgb(54, 162, 235)' : 'rgb(54, 162, 235)',
-      pointBackgroundColor: isDark ? 'rgb(54, 162, 235)' : 'rgb(54, 162, 235)',
-      pointBorderColor: isDark ? '#1a1a1e' : '#fff',
-      pointHoverBackgroundColor: isDark ? '#1a1a1e' : '#fff',
-      pointHoverBorderColor: 'rgb(54, 162, 235)'
-
-    }]
+    }], 
   };
 
   const options = {
@@ -102,7 +88,7 @@ export default function RadarChart({chartData}) {
   };
 
   return (
-    <div className="bg-background dark:bg-dark-mode-bg p-4 rounded-lg">
+    <div className="bg-background dark:bg-dark-mode-bg  rounded-lg max-w-sm">
       <Radar data={data} options={options} />
     </div>
   );

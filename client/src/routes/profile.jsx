@@ -7,12 +7,9 @@ import { fetchProfile, fetchRoadmap, fetchLesson } from "@/api/FETCH"
 import { useEffect, useState } from "react";
 import { useStreakStore } from "@/store/useStreakStore";
 
-
 // Components & Icons
 import ProfileDetails from "@/components/profile/ProfileDetails";
-import BadgesProfile from "@/components/profile/BadgesProfile";
 import Streak_Component from "../components/profile/Streak";
-import Tabs_Component from "../components/profile/TabsProfile";
 import Skills_Component from "../components/profile/SkillsProfile";
 import Loading from "@/routes/Loading";
 
@@ -106,7 +103,7 @@ export default function Profile() {
                   (lesson) =>
                     lesson.previous_lesson &&
                     new Date(lesson.previous_lesson) <= new Date()
-                )
+                ) 
                 .sort(
                   (a, b) =>
                     new Date(b.previous_lesson) - new Date(a.previous_lesson)
@@ -123,7 +120,7 @@ export default function Profile() {
           </>
         )}
 
-        <main className="grid grid-cols-2 w-full mt-23 px-10 lg:px-30 xl:px-45 gap-y-15 gap-x-25">
+        <main className="grid grid-cols-2 w-full mt-28 px-10 lg:px-30 xl:px-45 gap-y-15 gap-x-25">
           {/****************  
             Badges Section 
           ****************/}
@@ -138,34 +135,8 @@ export default function Profile() {
             quests_finished={!isError ? fetch.finished_quests : 0}
             roadmap_progress={!isError ? roadmapData : []}
             setRoadmapIndex={setRoadmapIndex}
-          />
-
-          {/****************  
-              Skills Section 
-          ******************/}
-          <BadgesProfile
-            badges={{
-              name: "Example badge here",
-              description: "You put the description here",
-            }}
-          />
-
-          {/**************** 
-            Charts Section 
-          ****************/}
-          <Tabs_Component
-            data={profile}
-            linechartData={
-              !isError && profile?.line_chart_data
-                ? profile.line_chart_data
-                : []
-            }
-            radarData={
-              !isError && profile?.radar_chart_data
-                ? profile.radar_chart_data
-                : []
-            }
-            summary="Summary of your progress"
+            profile={!isError && profile ? profile : []}
+            defaultValue={roadmapIndex} // Fix: Pass defaultValue to set initial roadmap index
           />
         </main>
       </div>

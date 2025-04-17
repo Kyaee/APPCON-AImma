@@ -107,7 +107,7 @@ const ProfileDetails = ({
             <img
               src={isProfileImageUrl}
               alt="profile"
-              className="w-full h-full object-cover object-center bg-green-500"
+              className="w-full h-full object-cover object-center bg-blue-400"
             />
           </div>
           <div className="absolute top-25 right-0 bg-blue-500 rounded-full p-2">
@@ -141,44 +141,44 @@ const ProfileDetails = ({
       </div>
 
       {/* CONTINUE LEARNING */}
-      <div className="relative w-full">
-        <Card className="absolute min-w-xs max-w-sm right-0 top-3 shadow-2xl p-0 gap-0 bg-dark-brown hover:bg-brown transition ease-in">
-          <div className="relative flex items-center justify-between rounded-t-xl bg-card border-b-2 border-foreground">
-            <CardHeader className="pt-5 pb-2 *:py-0.5">
-              <CardTitle className="text-wrap leading-tight">
-                {lessonData[0]?.lesson_name}
-              </CardTitle>
-              <div className="fle x gap-3 *:flex *:items-center *:gap-2">
-                <CardDescription>
-                  <Clock3 size={16} />
-                  {lessonData[0]?.lesson_duration}
-                </CardDescription>
-                <CardDescription>
-                  <BookOpen size={16} />
-                  {lessonData[0]?.assessment
-                    ? "With Assessment"
-                    : "No Assessment"}
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CircleProgressBar
-              className="size-12"
-              value={lessonData[0]?.progress}
-            />
-            <img
-              src={selectedSkin.image}
-              alt="capybara"
-              className="h-35 absolute -left-21 -bottom-10 z-0"
-            />
-          </div>
-          <div
-            onClick={() => handleLessonSelect(lessonData[0])}
-            className="text-center py-3 *:text-sm *:text-white"
-          >
-            <p>CONTINUE LEARNING</p>
-          </div>
-        </Card>
-      </div>
+      {lessonData && (
+        <div className="relative w-full">
+          <Card className="absolute min-w-xs max-w-sm right-0 top-3 shadow-2xl p-0 gap-0 bg-dark-brown hover:bg-brown transition ease-in">
+            <div className="relative flex items-center justify-between rounded-t-xl bg-card border-b-2 border-foreground">
+              <CardHeader className="pt-5 pb-2 *:py-0.5">
+                <CardTitle className="text-wrap leading-tight">
+                  {lessonData[0]?.lesson_name }
+                </CardTitle>
+                <div className="fle x gap-3 *:flex *:items-center *:gap-2">
+                  <CardDescription>
+                    <Clock3 size={16} />
+                    {lessonData[0]?.lesson_duration}
+                  </CardDescription>
+                  <CardDescription>
+                    <BookOpen size={16} />
+                    {lessonData[0]?.assessment ? "With Assessment" : "No Assessment"}
+                  </CardDescription>
+                </div>
+              </CardHeader>
+              <CircleProgressBar
+                className="size-15"
+                value={lessonData[0]?.progress}
+              />
+              <img
+                src={selectedSkin.image}
+                alt="capybara"
+                className="h-35 absolute -left-21 -bottom-10 z-0"
+              />
+            </div>
+            <div
+              onClick={() => handleLessonSelect(lessonData[0])}
+              className="text-center py-3 *:text-sm *:text-white"
+            >
+              <p>CONTINUE LEARNING</p>
+            </div>
+          </Card>
+        </div>
+      )}
 
       <input
         type="file"

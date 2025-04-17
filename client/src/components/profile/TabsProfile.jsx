@@ -8,17 +8,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RadarChart from "@/components/features/charts/radar-chart";
 import LineChart from "@/components/features/charts/line-chart";
 import { useEffect, useState } from "react";
-import { supabase } from "@/config/supabase";
 import { ZapIcon } from "lucide-react";
 import { useAuth } from "@/config/authContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/ui/select";
 
-export default function ProfileTabs({ data, linechartData, radarData, summary }) {
-  const [weeklyExpData, setWeeklyExpData] = useState([0, 0, 0, 0, 0, 0, 0]);
+export default function ProfileTabs({ profileData, linechartData }) {
+  const [weeklyExpData, setWeeklyExpData] = useState([
+    50, 10, 20, 60, 80, 30, 40,
+  ]);
   const [loading, setLoading] = useState(true);
+  const [index, selectIndex] = useState(0);
   const { session } = useAuth();
 
   // Function to check if we need to reset weekly data (new week started)
   useEffect(() => {
+    console.log(profileData);
+
     const fetchWeeklyExpData = async () => {
       try {
         setLoading(true);
@@ -54,35 +67,66 @@ export default function ProfileTabs({ data, linechartData, radarData, summary })
     return () => clearInterval(intervalId);
   }, [session?.user?.id, linechartData]);
 
+  useEffect(() => {
+    console.log("Index", index);
+  }, [index]);
+
   return (
     <Tabs defaultValue="strengthNQualities">
-      <TabsList className="grid w-full h-14 grid-cols-2 bg-white dark:bg-dark-inner-bg *:font-bold *:h-11 *:tracking-tight *:text-md">
+      <TabsList className="border-2 border-foreground grid w-full h-14 grid-cols-2 bg-dark-brown dark:bg-dark-inner-bg *:font-bold *:h-10 *:tracking-tight *:text-md">
         <TabsTrigger
           value="strengthNQualities"
-          className="text-foreground dark:text-primary data-[state=active]:bg-light-brown dark:data-[state=active]:bg-dark-nav-bg"
+          className="text-background dark:text-foreground data-[state=active]:bg-background dark:data-[state=active]:bg-dark-nav-bg data-[state=active]:text-foreground data-[state=active]:h-10"
         >
           Strength & Qualities
         </TabsTrigger>
         <TabsTrigger
           value="Growth"
-          className="text-foreground dark:text-primary data-[state=active]:bg-light-brown dark:data-[state=active]:bg-dark-nav-bg"
+          className="text-background dark:text-foreground data-[state=active]:bg-background dark:data-[state=active]:bg-dark-nav-bg data-[state=active]:text-foreground"
         >
           Growth
         </TabsTrigger>
       </TabsList>
       <TabsContent value="strengthNQualities">
-        <Card className="mt-2 border-2 border-foreground dark:border-dark-mode-highlight h-full bg-background dark:bg-dark-mode-bg">
-          <CardContent className="flex gap-4 justify-between h-85">
-            <RadarChart chartData={radarData} />
-            <div className="w-full h-full border-2 border-foreground dark:border-dark-mode-highlight p-5 rounded-md bg-background dark:bg-dark-mode-bg">
-              <CardTitle className="text-black dark:text-primary">
+        <Card className="px-3 mt-2 border-2 border-foreground dark:border-dark-mode-highlight h-full bg-background dark:bg-dark-mode-bg">
+          <CardContent className="flex flex-wrap justify-between ">
+            <RadarChart chartData={profileData[index]?.radar_chart_data} />
+            <div className="px-4 max-w-57 h-auto border border-foreground dark:border-dark-mode-highlight py-5 rounded-md bg-background dark:bg-dark-mode-bg">
+              <CardTitle className="text-black dark:text-primary mb-2">
                 Your Stats
               </CardTitle>
-              <CardDescription className="text-black dark:text-primary">
-                {summary}
+              <CardDescription className="flex items-center h-full text-black dark:text-primary">
+                {profileData[index]?.summary}
               </CardDescription>
             </div>
           </CardContent>
+          <Select
+            onValueChange={(value) => {
+              const selectedIndex = profileData.findIndex(
+                (lesson) => lesson.visual_id === value
+              );
+              selectIndex(selectedIndex);
+            }}
+            defaultValue={profileData[0]?.visual_id || ""}
+          >
+            <SelectTrigger className="w-full py-6 border-2 border-foreground hover:bg-light-brown transition duration-200">
+              <SelectValue placeholder="Select lesson statistics" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Select lesson to view statistics</SelectLabel>
+                {Array.isArray(profileData) ? (
+                  profileData.map((lesson, index) => (
+                    <SelectItem key={lesson.index} value={lesson.visual_id}>
+                      {index + 1}. {lesson.lesson_name}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem disabled>No lessons available</SelectItem>
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </Card>
       </TabsContent>
       <TabsContent value="Growth">

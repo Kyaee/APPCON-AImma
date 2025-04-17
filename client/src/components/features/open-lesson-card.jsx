@@ -16,17 +16,6 @@ import React, { useEffect } from "react";
 import { postPrompt2 } from "@/api/INSERT";
 
 export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
-  useEffect(() => {
-    // If lesson data changes, update the component
-    console.log("Lesson data updated:", lesson);
-    // Any initialization code here
-  }, [lesson]);
-
-  useEffect(() => {
-    // Log when the lesson prop changes
-    console.log("OpenLesson received lesson data:", lesson);
-  }, [lesson]);
-
   const createLesson = () => {
     setLoading(true);
     postPrompt2(

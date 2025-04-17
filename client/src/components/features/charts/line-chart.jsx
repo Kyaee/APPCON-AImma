@@ -28,7 +28,7 @@ function LineChart({ chartData }) {
     datasets: [
       {
         label: "EXP Gained",
-        data: chartData || [0, 0, 0, 0, 0, 0, 0],
+        data: [50, 10, 20, 60, 80, 30, 40],
         backgroundColor: "rgba(255, 193, 7, 0.2)",
         borderColor: "rgba(255, 193, 7, 1)",
         borderWidth: 2,
@@ -111,19 +111,18 @@ function LineChart({ chartData }) {
                 },
                 // Set min and max values for y-axis
                 min: 0,
-                max: 1000,
+                max: 100,
                 ticks: {
-                  stepSize: 200,
+                  stepSize: 25,
                   color: isDark ? "#fff" : "#000",
                   // Add specific y-axis labels
                   callback: function (value) {
                     if (
                       value === 0 ||
-                      value === 200 ||
-                      value === 400 ||
-                      value === 600 ||
-                      value === 800 ||
-                      value === 1000
+                      value === 25 ||
+                      value === 50 ||
+                      value === 75 ||
+                      value === 100
                     ) {
                       return value + " exp";
                     }

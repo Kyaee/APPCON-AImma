@@ -81,8 +81,9 @@ const fetchProfileData = async (id) => {
     .from("profile")
     .select()
     .eq("user_id", id);
+    console.log("Profile data:", data); // Log the fetched profile data
   if (error) throw new Error(error.message);
-  return data[0];
+  return data;
 };
 
 /***********************************
@@ -103,8 +104,8 @@ export function fetchRoadmapAIdata() {
     queryKey: ["roadmapAi"],
     queryFn: async () => {
       const response = await axios
-        .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-roadmap")
-        .catch((error) => {
+      .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-roadmap")
+      .catch((error) => {
           console.error("Error fetching roadmap AI data:", error);
           throw error;
         });

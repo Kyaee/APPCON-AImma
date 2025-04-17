@@ -1,11 +1,12 @@
 import SkinBadgesTabs from "./SkinsTab";
+import BadgesProfile from "@/components/profile/BadgesProfile";
 
 
 export default function SkillsProfile({titles}) {
   return (
     <div>
       <h2 className="text-3xl font-semibold mb-8 text-black dark:text-primary tracking-tight">
-        Skills to Improve:
+        Skills to Learn:
       </h2>
       <div className="flex flex-wrap gap-3 *:bg-card dark:*:bg-dark-mode-bg *:py-2 *:px-4 *:border-2 *:border-black dark:*:border-background *:rounded-sm *:cursor-pointer *:tracking-tighter *:font-semibold">
         {titles?.map((title) => (
@@ -16,6 +17,13 @@ export default function SkillsProfile({titles}) {
       </div>
 
       <SkinBadgesTabs />
+
+      <BadgesProfile
+            badges={{
+              name: "Example badge here",
+              description: "You put the description here",
+            }}
+          />
     </div>
   );
 }
