@@ -87,7 +87,7 @@ const ImageCropper = ({ closeModal, updateAvatar }) => {
             />
           </ReactCrop>
           <button
-            className="text-white font-mono text-xs py-2 px-4 rounded-2xl mt-4 bg-sky-500 hover:bg-sky-600"
+            className="text-white font-mono text-xs py-2 px-4 rounded-2xl mt-4 bg-light-brown hover:bg-sky-600"
             onClick={() => {
               setCanvasPreview(
                 imgRef.current, // HTMLImageElement

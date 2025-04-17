@@ -1,10 +1,11 @@
 // THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
 import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useState } from "react";
 import { useAuth } from "./config/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavigationProvider } from "./context/navigationContext";
+import "react-image-crop/dist/ReactCrop.css";
+import useAppStore from "./store/useAppStore";
 
 /*------------------------------------------
 WEB PAGES 
@@ -45,13 +46,7 @@ import { useEffect } from "react";
 function App() {
   const queryClient = new QueryClient();
   const { session } = useAuth();
-  const [isAssessed, setAssessed] = useState(true);
-  // const conditionIsAssesed = localStorage.getItem("isAssessed") === "true" ? true : false;
 
-  useEffect(()=> {
-    console.log(isAssessed)
-  })
-  // const [isUserLoggedin, setUserLoggedin] = useState(true);
 
   return (
     <>
@@ -76,7 +71,7 @@ function App() {
                       element={<ConfirmAccount />}
                     />
                   </>
-                ) : !isAssessed ? (
+                ) : 
                   // IF USER IS LOGGED-IN, AND NOT ASSESSED
                   <>
                     <Route path="/start/showcase" element={<IntroShowcase />} />
@@ -87,15 +82,11 @@ function App() {
                     />
                     <Route
                       path="/dashboard/p"
-                      element={<ProcessDashboard setAssessed={setAssessed} />}
+                      element={<ProcessDashboard />}
                     />
-                  </>
-                ) : (
-                  // IF USER IS LOGGED-IN AND ASSESSED
-                  <>
                     <Route
                       path="/dashboard"
-                      element={<RedirectDashboard setAssessed={setAssessed} />}
+                      element={<RedirectDashboard />}
                     />
                     <Route path="/profile" element={<RedirectProfile />} />
                     <Route path="/shop" element={<RedirectShop />} />
@@ -106,7 +97,7 @@ function App() {
                     <Route element={<MainLayout />}>
                       <Route
                         path="/dashboard/:id"
-                        element={<Dashboard setAssessed={setAssessed} />}
+                        element={<Dashboard />}
                       />
                       <Route path="/profile/:id" element={<Profile />} />
                       <Route path="/shop/:id" element={<ElementShop />} />
@@ -126,7 +117,7 @@ function App() {
                       <Route path="/l/shop/:id" element={<ElementShop />} />
                     </Route>
                   </>
-                )}
+                }
               </Routes>
             </BrowserRouter>
           </QueryClientProvider>

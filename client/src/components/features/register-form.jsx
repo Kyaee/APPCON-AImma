@@ -31,8 +31,8 @@ export function RegisterForm({ className, ...props }) {
       return false;
     }
 
-    // Use a single regex pattern for all password requirements
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    // Updated regex to be more forgiving
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
     if (!passwordRegex.test(isFormData.password)) {
       setPasswordError(

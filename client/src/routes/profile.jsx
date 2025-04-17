@@ -88,10 +88,11 @@ export default function Profile() {
           <>
             {/* <button>ONCLICK</button> */}
             {/* Profile Content */}
+            {/* Provide filler data to ProfileDetails if data is inaccessible */}
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              name={fetch.first_name + " " + fetch.last_name}
-              level={fetch?.level}
+              name={fetch?.first_name && fetch?.last_name ? fetch.first_name + " " + fetch.last_name : "Guest User"}
+              level={fetch?.level || 1}
               experience={
                 calculateLevelProgress(fetch?.current_exp || 0).current
               }
@@ -99,22 +100,24 @@ export default function Profile() {
                 calculateLevelProgress(fetch?.current_exp || 0).total
               }
               lessonData={lessonData
-                .filter(
-                  (lesson) =>
-                    lesson.previous_lesson &&
-                    new Date(lesson.previous_lesson) <= new Date()
-                ) 
-                .sort(
-                  (a, b) =>
-                    new Date(b.previous_lesson) - new Date(a.previous_lesson)
-                )
-                .slice(0, 1)}
+                ? lessonData
+                    .filter(
+                      (lesson) =>
+                        lesson.previous_lesson &&
+                        new Date(lesson.previous_lesson) <= new Date()
+                    )
+                    .sort(
+                      (a, b) =>
+                        new Date(b.previous_lesson) - new Date(a.previous_lesson)
+                    )
+                    .slice(0, 1)
+                : []}
               hours={2}
               withAssessment={true}
               progress={40}
               isOpen={isRewardsOpen}
               onOpenChange={setIsRewardsOpen}
-              userId={fetch?.id}
+              userId={fetch?.id || "unknown"}
               renderButton={true} // Don't render the button in the component
             />
           </>

@@ -3,7 +3,7 @@ import { useState } from "react";
 // Components & Icons
 import { Button } from "@/components/ui/button";
 import OpportunitiesMenu from "../components/features/job-item";
-import wavingCappy from "@/assets/job-opportunities/WaveCappy.png";
+import CapySearch from "@/assets/general/capy_search.png";
 import SampleJobData from "@/components/features/sampleJobData";
 
 export default function JobOpportunities() {
@@ -24,7 +24,7 @@ export default function JobOpportunities() {
         <div className="animate-text-fade w-full h-full flex flex-col justify-center items-center">
           <div className="flex flex-col items-center justify-center">
             <img
-              src={wavingCappy}
+              src={CapySearch}
               alt="Welcome"
               className="max-w-2/4 object-contain mt-[70px]"
             />

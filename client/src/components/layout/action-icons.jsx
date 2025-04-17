@@ -69,25 +69,15 @@ export default function IconButton({notification}) {
         <AlertDialogTrigger>
           <Settings className="text-foreground" />
         </AlertDialogTrigger>
-        <AlertDialogContent className="bg-background">
+        <AlertDialogContent className="bg-background border-2 border-foreground">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-foreground">
               Settings
             </AlertDialogTitle>
-            <AlertDialogDescription className="space-y-5 ">
+            <AlertDialogDescription className="space-y-7 py-8">
               <div className="flex items-center gap-2">
                 <ModeToggle className="border-2 border-foreground" />
-                <div className="text-foreground">
-                  Change the theme of the app
-                  <br />
-                  Guide how.{" "}
-                  <a
-                    className="text-blue-500"
-                    href="https://ui.shadcn.com/docs/theming"
-                  >
-                    https://ui.shadcn.com/docs/theming
-                  </a>
-                </div>
+
               </div>
               <div>
                 <div className="text-foreground">
@@ -103,10 +93,10 @@ export default function IconButton({notification}) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button onClick={logOut} className="text-background bg-foreground max-w-30">
+                <Button onClick={logOut} className="text-background bg-brown border border-foreground max-w-30 hover:bg-light-brown">
                   Log-out
                 </Button>
-                <Button variant="outline" className="max-w-30">
+                <Button variant="outline" className="max-w-30 border border-foreground">
                   Support Us
                 </Button>
               </div>
@@ -117,10 +107,10 @@ export default function IconButton({notification}) {
             className="border border-foreground"
           />
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-foreground bg-background hover:bg-accent">
+            <AlertDialogCancel className="text-foreground bg-background hover:bg-accent border border-foreground">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction className="text-background bg-foreground hover:bg-accent">
+            <AlertDialogAction className="text-background bg-brown hover:bg-light-brown border border-foreground">
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -4,13 +4,14 @@ import {
   Card,
   CardDescription,
   CardHeader,
-  CardTitle,
+CardTitle,
 } from "@/components/ui/card";
 import { CircleProgressBar } from "@/components/profile/CircleProgress";
 import useSkinStore from "@/store/useSkinStore";
 import LevelRewards from "@/components/features/level-rewards/LevelRewards";
 import { postPrompt2 } from "@/api/INSERT";
 import Loading from "@/routes/Loading";
+import Modal from "../crop-image/Modal";
 
 const ProfileDetails = ({
   initialImageUrl,
@@ -28,27 +29,20 @@ const ProfileDetails = ({
   renderButton, // Don't render the button in the component
 }) => {
   const [isLoading, setLoading] = useState(false);
-  const FileInputProfile = useRef(null);
   const FileInputCover = useRef(null);
   const [isCoverImageUrl, setCoverImageUrl] = useState(null);
-  const [isProfileImageUrl, setProfileImageUrl] = useState(
-    initialImageUrl ||
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+
+  const avatarUrl = useRef(
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const updateAvatar = (imgSrc) => {
+    avatarUrl.current = imgSrc;
+  };
 
   // Get the selected skin from the store
   const { selectedSkin } = useSkinStore();
-
-  const handleImageProfileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImageUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleImageCoverChange = (event) => {
     const file = event.target.files[0];
@@ -97,15 +91,31 @@ const ProfileDetails = ({
         Edit Cover
       </button>
 
+      {/* {isClick && (
+        <div className="top-0 left-0 fixed h-full w-full z-50">
+          <div className="top-0 left-0 fixed h-full w-full bg-foreground opacity-30 z-50"></div>
+          <div className="fixed transform left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-background p-8 rounded-lg">
+            <ImageCropper />
+          </div>
+        </div>
+      )} */}
+
+      {modalOpen && (
+        <Modal
+          updateAvatar={updateAvatar}
+          closeModal={() => setModalOpen(false)}
+        />
+      )}
+
       {/* PROFILE DETAILS */}
       <div className="flex w-full pb-5 h-full max-w-xl text-left">
         <button
           className="relative mr-7 cursor-pointer"
-          onClick={() => FileInputProfile.current.click()}
+          onClick={() => setModalOpen(true)}
         >
           <div className="size-37 rounded-full overflow-hidden border-3 border-foreground">
             <img
-              src={isProfileImageUrl}
+              src={avatarUrl.current}
               alt="profile"
               className="w-full h-full object-cover object-center bg-blue-400"
             />
@@ -147,7 +157,7 @@ const ProfileDetails = ({
             <div className="relative flex items-center justify-between rounded-t-xl bg-card border-b-2 border-foreground">
               <CardHeader className="pt-5 pb-2 *:py-0.5">
                 <CardTitle className="text-wrap leading-tight">
-                  {lessonData[0]?.lesson_name }
+                  {lessonData[0]?.lesson_name}
                 </CardTitle>
                 <div className="fle x gap-3 *:flex *:items-center *:gap-2">
                   <CardDescription>
@@ -156,7 +166,9 @@ const ProfileDetails = ({
                   </CardDescription>
                   <CardDescription>
                     <BookOpen size={16} />
-                    {lessonData[0]?.assessment ? "With Assessment" : "No Assessment"}
+                    {lessonData[0]?.assessment
+                      ? "With Assessment"
+                      : "No Assessment"}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -180,13 +192,7 @@ const ProfileDetails = ({
         </div>
       )}
 
-      <input
-        type="file"
-        accept="image/*"
-        ref={FileInputProfile}
-        style={{ display: "none" }}
-        onChange={handleImageProfileChange}
-      />
+
       <input
         type="file"
         accept="image/*"
