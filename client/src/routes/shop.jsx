@@ -159,7 +159,7 @@ export default function ElementShop() {
         <Background />
       ) : (
         // Otherwise add a simple background color for the standalone shop page
-        <div className="fixed top-0 -z-10 min-h-screen w-screen bg-[#fffaf4]" />
+        <div className="fixed top-0 -z-10 min-h-screen w-screen" />
       )}
 
       {/* Only render navigation when not coming from lesson path */}
