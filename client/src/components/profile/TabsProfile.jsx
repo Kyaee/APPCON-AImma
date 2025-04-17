@@ -12,42 +12,12 @@ import { supabase } from "@/config/supabase";
 import { ZapIcon } from "lucide-react";
 import { useAuth } from "@/config/authContext";
 
-export default function ProfileTabs({ linechartData, radarData, summary }) {
+export default function ProfileTabs({ data, linechartData, radarData, summary }) {
   const [weeklyExpData, setWeeklyExpData] = useState([0, 0, 0, 0, 0, 0, 0]);
   const [loading, setLoading] = useState(true);
   const { session } = useAuth();
 
   // Function to check if we need to reset weekly data (new week started)
-  const shouldResetWeeklyData = () => {
-    const today = new Date();
-    const lastWeeklyUpdateStr = localStorage.getItem("last_weekly_exp_update");
-
-    if (!lastWeeklyUpdateStr) {
-      localStorage.setItem("last_weekly_exp_update", today.toISOString());
-      return false;
-    }
-
-    const lastUpdateDate = new Date(lastWeeklyUpdateStr);
-
-    // Calculate the current week number in the year
-    const getWeekNumber = (date) => {
-      const d = new Date(date);
-      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-      return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-    };
-
-    const currentWeek = getWeekNumber(today);
-    const lastWeek = getWeekNumber(lastUpdateDate);
-
-    if (currentWeek !== lastWeek) {
-      localStorage.setItem("last_weekly_exp_update", today.toISOString());
-      return true;
-    }
-
-    return false;
-  };
-
   useEffect(() => {
     const fetchWeeklyExpData = async () => {
       try {

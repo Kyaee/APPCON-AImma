@@ -48,7 +48,6 @@ export function useGenerateRoadmap() {
         "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/generate-roadmap",
         prompt_roadmap
       );
-      console.log(prompt_roadmap.prompt_roadmap_generate)
   
       if (response.error) console.error("Error:", response.error);
     } catch (error) {
@@ -58,7 +57,7 @@ export function useGenerateRoadmap() {
   const { mutate: createRoadmap, isSuccess } = useMutation({
     mutationFn: postPrompt1,
     onSuccess: (data) => {
-      console.log("Data:", data);
+      console.log("Data: Successful")
     },
     onError: (error) => {
       console.error("Error:", error);
@@ -159,7 +158,7 @@ export function useAssessment() {
   } = useMutation({
     mutationFn: postPrompt3,
     onSuccess: (data) => {
-      console.log("Data:", data);
+      console.log("Data: Successful");
     },
     onError: (error) => {
       console.error("Error:", error);
@@ -219,7 +218,7 @@ export function useSummary() {
   } = useMutation({
     mutationFn: postprompt4,
     onSuccess: (data) => {
-      console.log("Data:", data);
+      console.log("Data: Successful")
     },
     onError: (error) => {
       console.error("Error:", error);
@@ -338,7 +337,6 @@ export function useEvaluation(id) {
   });
 
   const updateUserData = async ({ userId, gems, exp, streak, lives }) => {
-    console.log(`Updating user data: userId=${userId}, gems=${gems}, exp=${exp}, streak=${streak}, lives=${lives}`);
     
     try {
       // First get current user data to check if leveling up is needed
@@ -359,15 +357,11 @@ export function useEvaluation(id) {
       const levelUps = Math.floor(newTotalExp / 100);
       const newLevel = currentLevel + levelUps;
       const newExp = newTotalExp % 100;
-      
-      console.log(`XP calculation: Current=${currentExp}, Adding=${exp}, Total=${newTotalExp}`);
-      console.log(`Level calculation: Current=${currentLevel}, LevelUps=${levelUps}, New=${newLevel}, Remainder=${newExp}`);
-      
+    
       let updatedExpInRPC = exp;
       
       // Update level and exp if there's a level up
       if (levelUps > 0) {
-        console.log(`User is leveling up! From level ${currentLevel} to ${newLevel} (${levelUps} level ups)`);
         
         // Update user level and reset exp to remainder
         const { data: levelData, error: levelError } = await supabase
@@ -379,8 +373,6 @@ export function useEvaluation(id) {
           .eq("id", userId);
           
         if (levelError) throw levelError;
-        
-        console.log(`Level updated: ${newLevel}, New exp: ${newExp}`);
         
         // If we've already updated the exp directly, don't increment it again in the RPC
         updatedExpInRPC = 0;
@@ -397,7 +389,7 @@ export function useEvaluation(id) {
       });
       
       if (error) throw error;
-      console.log("User data updated successfully:", data);
+      console.log("User data updated successfully:");
       
       return {
         success: true,
@@ -419,7 +411,7 @@ export function useEvaluation(id) {
   } = useMutation({
     mutationFn: updateUserData,
     onSuccess: (data) => {
-      console.log("User update success:", data);
+      console.log("User update success");
     },
     onError: (error) => {
       console.error("User update error:", error);
@@ -446,7 +438,7 @@ export function useEvaluation(id) {
         .select("*");
       
       if (lessonError) throw lessonError;
-      console.log("Lesson progress updated in Supabase:", progress); // Add logging
+      console.log("Lesson progress updated"); // Add logging
       return lessonData; // Make sure to return the result
     } catch (error) {
       console.error("Error updating lesson data:", error);
@@ -462,7 +454,7 @@ export function useEvaluation(id) {
   } = useMutation({
     mutationFn: updateLessonData,
     onSuccess: (data) => {
-      console.log("Lesson update success:", data);
+      console.log("Lesson update success");
     },
     onError: (error) => {
       console.error("Lesson update error:", error);

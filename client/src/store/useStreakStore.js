@@ -26,7 +26,6 @@ export const useStreakStore = create(
             const todayIndex = parsedDailyStatus.findIndex((day) => day.full === nowDayName);
             
             if (todayIndex !== -1 && parsedDailyStatus[todayIndex].status === "completed") {
-              console.log("Already completed a lesson today, not incrementing streak");
               return {
                 streak: get().streak,
                 bestStreak: get().bestStreak,
@@ -37,7 +36,6 @@ export const useStreakStore = create(
           
           // Return early if already visited today to prevent unnecessary updates
           if (lastVisit === today) {
-            console.log("Already visited today, skipping streak update");
             return {
               streak: get().streak,
               bestStreak: get().bestStreak,
@@ -151,7 +149,6 @@ export const useStreakStore = create(
           const today = new Date().toISOString().split('T')[0];
           
           if (lastUpdate === today) {
-            console.log("Already updated streak today from lesson completion");
             return false;
           }
           

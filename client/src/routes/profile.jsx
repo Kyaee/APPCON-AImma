@@ -3,12 +3,10 @@ Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
-import { fetchProfile, fetchRoadmap, fetchLesson } from "@/api/FETCH";
-import { useQuestStore } from "@/store/useQuestStore";
-import { fetchUserStats } from "@/api/UPDATE";
+import { fetchProfile, fetchRoadmap, fetchLesson } from "@/api/FETCH"
 import { useEffect, useState } from "react";
 import { useStreakStore } from "@/store/useStreakStore";
-import LevelRewards from "@/components/features/level-rewards/LevelRewards";
+
 
 // Components & Icons
 import ProfileDetails from "@/components/profile/ProfileDetails";
@@ -20,21 +18,9 @@ import Loading from "@/routes/Loading";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
-  const [loading, setLoading] = useState(false);
 
   // Get quest data from our store
   const [roadmapIndex, setRoadmapIndex] = useState(0);
-  const dailyQuests = useQuestStore((state) => state.dailyQuests);
-  const weeklyQuests = useQuestStore((state) => state.weeklyQuests);
-
-  // Get streak data from our store
-  const streak = useStreakStore((state) => state.streak);
-  const bestStreak = useStreakStore((state) => state.bestStreak);
-
-  // Calculate completed quests
-  const completedDailyQuests = dailyQuests.filter((q) => q.completed).length;
-  const completedWeeklyQuests = weeklyQuests.filter((q) => q.completed).length;
-  const totalCompletedQuests = completedDailyQuests + completedWeeklyQuests;
 
   // reward user
   const [isRewardsOpen, setIsRewardsOpen] = useState(true);
@@ -67,20 +53,11 @@ export default function Profile() {
     }
   }, [fetch?.id]);
 
-  if (load_profile || loading || loadingRoadmap || loadingLessons)
+  if (load_profile || loadingRoadmap || loadingLessons)
     return <Loading />;
-
-  // Calculate experience for the current level - FIXED 100 XP per level
-  const calculateLevelExperience = (level) => {
-    // Each level requires 100 XP
-    return level * 100;
-  };
 
   // Calculate current level progress
   const calculateLevelProgress = (currentExp, level) => {
-    // Simply return the current_exp value directly (0-100) to match sidebar.jsx
-    // This assumes the level-up logic in the backend keeps current_exp between 0-100
-
     return {
       current: currentExp || 0,
       total: 100, // Always use 100 as the maximum EXP per level
@@ -177,6 +154,7 @@ export default function Profile() {
             Charts Section 
           ****************/}
           <Tabs_Component
+            data={profile}
             linechartData={
               !isError && profile?.line_chart_data
                 ? profile.line_chart_data

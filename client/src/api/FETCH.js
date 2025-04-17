@@ -26,7 +26,6 @@ export function fetchUserdata() {
       if (!userData || userData.length === 0)
         throw new Error("No user data found");
       
-      console.log("Fetched user data:", userData[0]);
       return userData[0];
     },
     refetchOnMount: true,      // Refetch on component mount
@@ -159,7 +158,7 @@ export function useLessonAIData() {
       .eq("user_id", userId)
       .eq("id", passData.id);
     if (error) throw new Error(error.message);
-    console.log("Data inserted successfully:", passData);
+    console.log("Data inserted successfully:");
   };
 
   return {
