@@ -13,12 +13,21 @@ import Loading from "@/routes/Loading";
 export default function Dashboard({ setAssessed }) {
   const { id } = useParams();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [roadmapIndex, setRoadmapIndex] = useState(0);
+  // Initialize roadmapIndex from localStorage or default to 0
+  const [roadmapIndex, setRoadmapIndex] = useState(() => {
+    const savedIndex = localStorage.getItem("selectedRoadmapIndex");
+    return savedIndex !== null ? parseInt(savedIndex, 10) : 0;
+  });
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);
   const [getLoading, setLoading] = useState(false);
   const [isLessonOpen, setIsLessonOpen] = useState(false);
   const [userRewards, setUserRewards] = useState({ xp: 0, gems: 0 });
   const queryClient = useQueryClient();
+
+  // Save roadmapIndex to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("selectedRoadmapIndex", roadmapIndex.toString());
+  }, [roadmapIndex]);
 
   const handleQuestComplete = (quest) => {
     // Check if the quest is already completed
@@ -234,6 +243,7 @@ export default function Dashboard({ setAssessed }) {
                   <RoadmapHeader
                     currentCourse={currentRoadmap.roadmap_name}
                     progression={currentRoadmap.progress}
+                    roadmapId={currentRoadmap.roadmap_id}
                     courseOptions={roadmapData.map(
                       (roadmap) => roadmap.roadmap_name
                     )}

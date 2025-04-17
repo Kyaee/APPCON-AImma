@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -13,13 +13,13 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { supabase } from "@/config/supabase"
+import { supabase } from "@/config/supabase";
 
 const calculateGems = (level) => {
   if (level >= 1 && level <= 10) return 50;
   if (level >= 11 && level <= 30) return 100;
   if (level >= 31 && level <= 50) return 200;
-  if (level > 50) return 300 + (5 * (level - 50));
+  if (level > 50) return 300 + 5 * (level - 50);
   return 0;
 };
 
@@ -27,7 +27,7 @@ const LevelRewards = () => {
   const { id } = useParams();
   const [currentLevel, setCurrentLevel] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollContainerRef = useRef(null);
   const [selectedLevel, setSelectedLevel] = useState(null);
@@ -37,15 +37,15 @@ const LevelRewards = () => {
   useEffect(() => {
     const loadUserData = async () => {
       if (!id) return;
-      
+
       setLoading(true);
       try {
         const { data, error } = await supabase
           .from("users")
           .select("level")
-          .eq("user_id", id)
+          .eq("id", id)
           .single();
-        
+
         if (!error && data) {
           setCurrentLevel(data.level || 1);
         }
@@ -55,22 +55,25 @@ const LevelRewards = () => {
         setLoading(false);
       }
     };
-    
+
     loadUserData();
   }, [id]);
 
   // Generate levels up to currentLevel + 10 to show upcoming rewards
-  const levels = Array.from({ length: Math.max(60, currentLevel + 10) }, (_, i) => i + 1);
+  const levels = Array.from(
+    { length: Math.max(60, currentLevel + 10) },
+    (_, i) => i + 1
+  );
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
 
@@ -80,13 +83,15 @@ const LevelRewards = () => {
       setMessage("User ID is required");
       return;
     }
-    
+
     setLoading(true);
     try {
       const result = await updateGems(id, level);
-      
+
       if (result.success) {
-        setMessage(`Level ${level} rewards claimed! You received ${result.gemsAwarded} gems.`);
+        setMessage(
+          `Level ${level} rewards claimed! You received ${result.gemsAwarded} gems.`
+        );
         setCurrentLevel(level);
       } else {
         setMessage("Failed to claim rewards. Please try again.");
@@ -100,13 +105,15 @@ const LevelRewards = () => {
   };
 
   if (loading && !levels.length) {
-    return <div className="text-white text-center py-8">Loading rewards...</div>;
+    return (
+      <div className="text-white text-center py-8">Loading rewards...</div>
+    );
   }
 
   return (
     <>
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         className="mt-10 border border-foreground"
         onClick={() => setIsDrawerOpen(true)}
       >
@@ -117,7 +124,9 @@ const LevelRewards = () => {
         <DrawerContent className="h-[60vh]">
           <div className="mx-auto w-full max-w-6xl">
             <DrawerHeader>
-              <DrawerTitle className="text-2xl font-bold">Level Up Rewards</DrawerTitle>
+              <DrawerTitle className="text-2xl font-bold">
+                Level Up Rewards
+              </DrawerTitle>
               <DrawerDescription>
                 Track your progress and see upcoming rewards
               </DrawerDescription>
@@ -127,14 +136,16 @@ const LevelRewards = () => {
               {/* Current Level Indicator */}
               <div className="mb-8 text-center">
                 <div className="inline-block bg-primary/20 rounded-full px-6 py-2">
-                  <span className="text-primary font-semibold">Current Level: {currentLevel}</span>
+                  <span className="text-primary font-semibold">
+                    Current Level: {currentLevel}
+                  </span>
                 </div>
               </div>
 
               {/* Progress Track */}
               <div className="relative mb-10">
                 <div className="absolute h-4 bg-light-brown rounded-full w-full"></div>
-                <div 
+                <div
                   className="absolute h-4 bg-primary rounded-full transition-all duration-500"
                   style={{ width: `${(currentLevel / 60) * 100}%` }}
                 ></div>
@@ -152,7 +163,7 @@ const LevelRewards = () => {
                 <div
                   ref={scrollContainerRef}
                   className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-800/50 py-4 px-12"
-                  style={{ scrollBehavior: 'smooth' }}
+                  style={{ scrollBehavior: "smooth" }}
                 >
                   <div className="flex space-x-4 min-w-max">
                     {levels.map((level) => {
@@ -163,23 +174,35 @@ const LevelRewards = () => {
                         <div
                           key={level}
                           className={`flex flex-col items-center w-32 p-4 rounded-lg transition-all duration-200
-                            ${isCurrentLevel ? 'bg-primary/20 border-2 border-primary' : 'bg-gray-800/50 hover:bg-gray-700/50'}
+                            ${
+                              isCurrentLevel
+                                ? "bg-primary/20 border-2 border-primary"
+                                : "bg-gray-800/50 hover:bg-gray-700/50"
+                            }
                           `}
                         >
                           <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center mb-3">
-                            <span className="text-2xl font-bold text-white">{level}</span>
+                            <span className="text-2xl font-bold text-white">
+                              {level}
+                            </span>
                           </div>
-                          
+
                           <div className="text-center">
                             <div className="flex items-center justify-center space-x-2 mb-2">
-                              <span className="text-xl font-bold text-amber-400">{gems}</span>
+                              <span className="text-xl font-bold text-amber-400">
+                                {gems}
+                              </span>
                               <span className="text-2xl">💎</span>
                             </div>
-                            
+
                             {level <= currentLevel ? (
-                              <span className="text-green-400 text-sm">Unlocked!</span>
+                              <span className="text-green-400 text-sm">
+                                Unlocked!
+                              </span>
                             ) : (
-                              <span className="text-gray-400 text-sm">Coming soon</span>
+                              <span className="text-gray-400 text-sm">
+                                Coming soon
+                              </span>
                             )}
                           </div>
                         </div>

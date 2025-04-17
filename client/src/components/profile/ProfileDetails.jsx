@@ -120,9 +120,9 @@ const ProfileDetails = ({
             {name}
           </h2>
           <p className="flex justify-between items-center">
-            <span className="text-gray-600">Lvl. {level}</span>
+            <span className="text-gray-600">Level {level}</span>
             <span className="ml-2 text-sm text-gray-600">
-              {experience} exp.
+              {experience} / 100 EXP
             </span>
           </p>
           <div className="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700 border-2 border-foreground">

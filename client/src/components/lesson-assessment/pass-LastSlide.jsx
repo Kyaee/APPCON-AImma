@@ -112,6 +112,11 @@ export default function LastSlide({
 
     // If onClick prop is provided, use it (for LessonAssessment.jsx integration)
     if (onClick) {
+      // Pass calculated rewards as an argument to the parent component's onClick handler
+      const { gems: actualGems, exp: actualExp } = calculatedRewards;
+      console.log(
+        `Passing rewards to parent handler: ${actualGems} gems, ${actualExp} exp`
+      );
       onClick(e);
       return;
     }
@@ -135,6 +140,9 @@ export default function LastSlide({
 
       // Get calculated rewards
       const { gems: actualGems, exp: actualExp } = calculatedRewards;
+      console.log(
+        `Awarding rewards directly: ${actualGems} gems, ${actualExp} exp`
+      );
 
       // Try to update streak, but check if it was already done today
       updateStreakFromLesson(currentUserId).then((streakUpdated) => {
@@ -152,7 +160,13 @@ export default function LastSlide({
         exp: actualExp,
         streak: 0, // Don't increment streak here - it's handled by updateStreakFromLesson
         lives: 0,
-      });
+      })
+        .then((result) => {
+          console.log("User rewards updated successfully:", result);
+        })
+        .catch((error) => {
+          console.error("Error updating user rewards:", error);
+        });
 
       // Continue to summary page
       setPage(2);

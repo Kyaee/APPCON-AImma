@@ -56,19 +56,19 @@ const Sidebar = ({
         <div className="fixed top-6 left-18 z-50">
           <button
             onClick={() => onToggle()}
-            className="flex gap-2 p-2 rounded-lg border border-black hover:bg-[#CBB09B] transition-colors bg-white"
+            className="flex gap-2 p-2 rounded-lg border border-black  hover:bg-[#CBB09B] transition-colors bg-white"
           >
             <Menu className="w-6 h-6 text-black" /> Expand
           </button>
         </div>
       ) : (
         <div
-          className={`transition animate-panel-in fixed top-0 left-0 h-screen w-[20%] border-r border-black ${
+          className={`transition animate-panel-in fixed top-0 left-0 h-screen w-[20%] border-r-3 border-black ${
             isLessonOpen ? "z-20" : "z-40"
           } overflow-y-auto flex flex-col bg-gray-50`}
         >
           {/* Header with brand logo, name and close button */}
-          <div className="p-4 flex items-center justify-between border-b border-gray-200">
+          <div className="p-4 flex items-center justify-between border-b border-gray-400">
             <div className="flex items-center gap-2">
               <img
                 src="/favicon.svg"
@@ -123,7 +123,7 @@ const Sidebar = ({
           </div>
 
           {/* Divider */}
-          <div className="border-t border-gray-200 w-4/5 mx-auto my-4"></div>
+          <div className="border-t border-gray-500 w-4/5 mx-auto my-4"></div>
 
           {/* Continue Learning Section */}
           <div className="transition animate-text-fade px-6 mb-4">
@@ -199,7 +199,7 @@ const Sidebar = ({
           </div>
 
           {/* Divider */}
-          <div className="border-t border-gray-200 w-4/5 mx-auto my-4"></div>
+          <div className="border-t border-gray-500 w-4/5 mx-auto my-4"></div>
 
           {/* Badges Section */}
           <div className="transition animate-text-fade px-6 mb-4">

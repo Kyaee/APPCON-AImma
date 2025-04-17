@@ -8,6 +8,7 @@ import { useQuestStore } from "@/store/useQuestStore";
 import { fetchUserStats } from "@/api/UPDATE";
 import { useEffect, useState } from "react";
 import { useStreakStore } from "@/store/useStreakStore";
+import LevelRewards from "@/components/features/level-rewards/LevelRewards";
 
 // Components & Icons
 import ProfileDetails from "@/components/profile/ProfileDetails";
@@ -19,8 +20,7 @@ import Loading from "@/routes/Loading";
 
 export default function Profile() {
   const fetch = useFetchStore((state) => state.fetch);
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Get quest data from our store
   const [roadmapIndex, setRoadmapIndex] = useState(0);
@@ -60,27 +60,6 @@ export default function Profile() {
     enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
   });
 
-  // Fetch the latest user stats from Supabase
-  useEffect(() => {
-    const getUserData = async () => {
-      if (fetch?.id) {
-        try {
-          setLoading(true);
-          const response = await fetchUserStats(fetch.id);
-          if (response.success) {
-            setUserData(response.userData);
-          }
-        } catch (error) {
-          console.error("Error fetching user stats:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    getUserData();
-  }, [fetch?.id]);
-
   // Effect to check and update streak
   useEffect(() => {
     if (fetch?.id) {
@@ -91,20 +70,20 @@ export default function Profile() {
   if (load_profile || loading || loadingRoadmap || loadingLessons)
     return <Loading />;
 
-  const userDisplayData = userData || fetch;
+  // Calculate experience for the current level - FIXED 100 XP per level
+  const calculateLevelExperience = (level) => {
+    // Each level requires 100 XP
+    return level * 100;
+  };
 
   // Calculate current level progress
   const calculateLevelProgress = (currentExp, level) => {
-    // Total XP needed for previous level completion
-    const prevLevelTotalExp = (level - 1) * 100;
-    // Calculate the exp within the current level (between 0-100)
-    const expInCurrentLevel = currentExp - prevLevelTotalExp;
-    // Each level always needs 100 XP
-    const expNeededForLevel = 100;
+    // Simply return the current_exp value directly (0-100) to match sidebar.jsx
+    // This assumes the level-up logic in the backend keeps current_exp between 0-100
 
     return {
-      current: Math.max(1, expInCurrentLevel), // Always show at least 1 XP progress
-      total: expNeededForLevel,
+      current: currentExp || 0,
+      total: 100, // Always use 100 as the maximum EXP per level
     };
   };
 
@@ -138,18 +117,12 @@ export default function Profile() {
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
               name={fetch.first_name + " " + fetch.last_name}
-              level={userDisplayData.level}
+              level={fetch?.level}
               experience={
-                calculateLevelProgress(
-                  userDisplayData.current_exp || 0,
-                  userDisplayData.level
-                ).current
+                calculateLevelProgress(fetch?.current_exp || 0).current
               }
               totalExperience={
-                calculateLevelProgress(
-                  userDisplayData.current_exp || 0,
-                  userDisplayData.level
-                ).total
+                calculateLevelProgress(fetch?.current_exp || 0).total
               }
               lessonData={lessonData
                 .filter(
@@ -167,13 +140,11 @@ export default function Profile() {
               progress={40}
               isOpen={isRewardsOpen}
               onOpenChange={setIsRewardsOpen}
-              userId={userDisplayData?.id}
+              userId={fetch?.id}
               renderButton={true} // Don't render the button in the component
             />
           </>
         )}
-
-        {/* Render the LevelRewards component without its button */}
 
         <main className="grid grid-cols-2 w-full mt-23 px-10 lg:px-30 xl:px-45 gap-y-15 gap-x-25">
           {/****************  
