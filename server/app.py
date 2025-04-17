@@ -22,7 +22,7 @@ import json
 load_dotenv()
 
 app = FastAPI()
-origins = ["http://localhost:3000"]
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -31,10 +31,16 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-client = OpenAI(
-    api_key=os.environ["GEMINI_API_KEY"],
+client_gemin1 = OpenAI(
+    api_key=os.environ["GEMINI_API_KEY1"],
     base_url=os.environ["GEMINI_URL"],
 )
+
+client_gemin2 = OpenAI(
+    api_key=os.environ["GEMINI_API_KEY2"],
+    base_url=os.environ["GEMINI_URL"],
+)
+
 
 # --------------------------------------------------------------
 #  SYSTEM PROMPT
@@ -59,11 +65,14 @@ data_store = {
     "summary": None,
 }
 
-
+# --------------------------------------------------------------
+#  POST ROUTES
+#  Data is sent to the server from the client
+# --------------------------------------------------------------
 @app.post("/api/generate-roadmap")
 def POST_generate_roadmap(request: RoadmapRequest = None):
     if request:
-        Roadmap_completion = client.beta.chat.completions.parse(
+        Roadmap_completion = client_gemin1.beta.chat.completions.parse(
             model="gemini-2.0-flash",
             messages=[{"role": "user", "content": request.prompt_roadmap_generate}],
             response_format=GenerateRoadmap,
@@ -95,7 +104,7 @@ def POST_generate_roadmap(request: RoadmapRequest = None):
 @app.post("/api/generate-lesson")
 def POST_generate_lesson(request: GenerateLesson = None):
     if request:
-        Lesson_completion = client.chat.completions.create(
+        Lesson_completion = client_gemin2.chat.completions.create(
             model="gemini-2.0-flash",
             messages=[{"role": "user", "content": request.prompt_lesson_generate}],
         )
@@ -119,7 +128,7 @@ def POST_generate_lesson(request: GenerateLesson = None):
 @app.post("/api/generate-assessment")
 def POST_generate_assessment(request: QuestionRequest = None):
     if request:
-        Assessment_completion = client.beta.chat.completions.parse(
+        Assessment_completion = client_gemin1.beta.chat.completions.parse(
             model="gemini-2.0-flash",
             messages=[{"role": "user", "content": request.prompt_assessment_generate}],
             response_format=GenerateQuestions,
@@ -143,11 +152,15 @@ def POST_generate_assessment(request: QuestionRequest = None):
         return {"message": "data was not posted"}
 
 
+# --------------------------------------------------------------
+#  GET ROUTES
+#  Data is retrieved from the server to the client
+# --------------------------------------------------------------
 @app.post("/api/generate-summary")
 def POST_generate_summary(request: AssessmentRequest = None):
     print("Incoming Request:", request.dict())
     if request:
-        summary_completion = client.beta.chat.completions.parse(
+        summary_completion = client_gemin2.beta.chat.completions.parse(
             model="gemini-2.0-flash",
             messages=[{"role": "user", "content": request.prompt_summary_generate}],
             response_format=GenerateSummary,
@@ -201,7 +214,6 @@ def GET_generate_summary():
 # --------------------------------------------------------------
 #  Prompt engineering
 # --------------------------------------------------------------
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
