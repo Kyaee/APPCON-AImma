@@ -38,6 +38,9 @@ import NotFound from "./routes/NotFound";
 // TESTING PAGE
 import Testing from "./routes/Testing/TestingPage";
 import ApiTester from "./routes/UI_TestGemReward";
+// Import both shop components
+import ElementShop from "./routes/shop";
+import LessonShop from "./routes/LessonShop";
 
 function App() {
   const queryClient = new QueryClient();
@@ -100,7 +103,7 @@ function App() {
                       element={<Dashboard setAssessed={setAssessed} />}
                     />
                     <Route path="/profile/:id" element={<Profile />} />
-                    <Route path="/shop/:id" element={<Shop />} />
+                    <Route path="/shop/:id" element={<ElementShop />} />
                     <Route
                       path="/job-opportunities/:id"
                       element={<JobOpportunities />}
@@ -113,7 +116,7 @@ function App() {
                       path="/l/:id/assessment"
                       element={<LessonAssessment />}
                     />
-                    <Route path="/l/shop/:id" element={<Shop />} />
+                    <Route path="/l/shop/:id" element={<LessonShop />} />
                   </Route>
                 </>
               )}

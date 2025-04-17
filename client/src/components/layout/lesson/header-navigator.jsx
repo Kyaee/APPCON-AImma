@@ -25,8 +25,18 @@ export default function Header({
 
   const location = useLocation();
   const isActive = (path) => {
-    const basePath = path.split("/:")[0];
-    return location.pathname.split("/")[1] === basePath.split("/")[1];
+    // Special cases for each navigation item
+    if (path.includes('/lesson/') && location.pathname.includes('/lesson/')) {
+      return true;
+    }
+    if (path.includes('/assessment') && location.pathname.includes('/assessment')) {
+      return true;
+    }
+    if (path.includes('/shop/') && location.pathname.includes('/shop/')) {
+      return true;
+    }
+    
+    return false;
   };
 
   const filteredNavItems = isAssessment

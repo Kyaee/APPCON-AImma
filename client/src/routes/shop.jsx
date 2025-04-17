@@ -13,11 +13,17 @@ import { Gem, Rocket, Briefcase } from "lucide-react";
 import BlueCappy from "/src/assets/shop/BlueCappy.svg";
 import RedCappy from "/src/assets/shop/RedCappy.svg";
 import MainNav from "@/components/layout/main-nav";
-import { Background } from "@/components/layout/Background";
-import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/layout/action-icons";
+import Header from "@/components/layout/lesson/header-navigator";
+import { useParams, useLocation } from "react-router-dom";
+import linesBg from "/background/lines-bg.png"; // If file is in the root of public folder
 
 export default function ElementShop() {
+  const { id } = useParams();
+  const location = useLocation();
+  
+  // Check if we're coming from a lesson (path starts with /l/)
+  const isFromLesson = location.pathname.startsWith('/l/');
+  
   // Data for shop items
   const shopItems = [
     {
@@ -118,8 +124,29 @@ export default function ElementShop() {
   ];
 
   return (
-    <div className="w-full h-full text-black overflow-hidden">
-      {/* Main Content */}
+    <div 
+      className="w-full min-h-screen text-black overflow-hidden"
+      style={
+        isFromLesson ? {
+          backgroundImage: `url(${linesBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        } : {}
+      }
+    >
+      {/* Only render one navigation component based on the route */}
+      {isFromLesson ? (
+        <Header 
+          id={id}
+          isAssessment={false}
+          previousProgress={0}
+          scrollProgress={0}
+        />
+      ) : (
+        <MainNav userId={id} />
+      )}
+
+      {/* Main Content - No need for conditional class */}
       <div className="mt-32 ml-32 py-6">
         <h1 className="text-3xl font-semibold mb-2 ml-8">In-App Purchases</h1>
         {/* <p className="text-p mb-5 ml-8 text-neutral-600">Whether you're looking to boost your progress, gain extra lives, or enjoy premium features, <br/>we've got you covered. Dive in and make the most of your learning journey!</p> */}
