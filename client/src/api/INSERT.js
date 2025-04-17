@@ -45,7 +45,7 @@ export function useGenerateRoadmap() {
   const postPrompt1 = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/generate-roadmap",
+        "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/generate-roadmap",
         prompt_roadmap
       );
       console.log(prompt_roadmap.prompt_roadmap_generate)
@@ -115,7 +115,7 @@ export const postPrompt2 = async (
     };
 
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/generate-lesson",
+      "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/generate-lesson",
       requestBody
     );
 
@@ -144,7 +144,7 @@ export function useAssessment() {
       name: lesson_name,
     };
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/generate-assessment",
+      "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/generate-assessment",
       requestBody
     );
     if (response.data?.error) console.error("Error:", response.data.error);
@@ -201,7 +201,7 @@ export function useSummary() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/generate-summary",
+        "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/generate-summary",
         requestBody
       );
       if (response.data?.error) {

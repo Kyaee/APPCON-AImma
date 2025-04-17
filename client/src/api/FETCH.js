@@ -104,7 +104,7 @@ export function fetchRoadmapAIdata() {
     queryKey: ["roadmapAi"],
     queryFn: async () => {
       const response = await axios
-        .get("http://127.0.0.1:8000/api/get-roadmap")
+        .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-roadmap")
         .catch((error) => {
           console.error("Error fetching roadmap AI data:", error);
           throw error;
@@ -122,7 +122,7 @@ export function fetchLessonAIdata() {
     queryKey: ["lessonAi"],
     queryFn: async () => {
       const response = await axios
-        .get("http://127.0.0.1:8000/api/get-lesson")
+        .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-lesson")
         .catch((error) => {
           console.error("Error fetching roadmap AI data:", error);
           throw error;
@@ -138,7 +138,7 @@ export function fetchLessonAIdata() {
 export function useLessonAIData() {
   const fetchLessonAI = async () => {
     const response = await axios
-      .get("http://127.0.0.1:8000/api/get-lesson")
+      .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-lesson")
       .catch((error) => {
         console.error("Error fetching roadmap AI data:", error);
         throw error;
@@ -174,7 +174,7 @@ export function fetchLessonAssessmentData() {
     queryKey: ["lessonAssessment"],
     queryFn: async () => {
       const response = await axios
-        .get("http://127.0.1:8000/api/get-assessment")
+        .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-assessment")
         .catch((error) => {
           console.error("Error fetching lesson assessment data:", error);
           throw error;
@@ -197,7 +197,7 @@ export function useFetchSummary() {
   const { data: evaluationData, isLoading: isEvaluationLoading } = useQuery({queryKey: ["evaluation"],
     queryFn: async () => {
       const response = await axios
-        .get("http://127.0.1:8000/api/get-summary")
+        .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-summary")
         .catch((error) => {
           console.error("Error fetching evaluation data:", error);
           throw error;
