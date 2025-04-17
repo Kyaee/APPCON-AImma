@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useQuestStore } from "@/store/useQuestStore";
 import { supabase } from "@/config/supabase";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 
 const QuestPanel = ({ userId }) => {
   const { session } = useAuth();

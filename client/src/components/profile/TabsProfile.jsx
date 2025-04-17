@@ -9,7 +9,7 @@ import RadarChart from "@/components/features/charts/radar-chart";
 import LineChart from "@/components/features/charts/line-chart";
 import { useEffect, useState } from "react";
 import { ZapIcon } from "lucide-react";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import {
   Select,
   SelectContent,

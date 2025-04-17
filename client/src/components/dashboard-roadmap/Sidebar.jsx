@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X, Target, Award } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import { useFetchStore } from "@/store/useUserData";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRoadmap, fetchProfile } from "@/api/FETCH";

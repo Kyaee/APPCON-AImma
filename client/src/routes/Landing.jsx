@@ -6,7 +6,7 @@ import CTASection from "@/components/landing-page/CTASection";
 import LandingFooter from "@/components/landing-page/LandingFooter";
 import { useEffect } from "react";
 import Loading from "./Loading";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 
 // Import the SVG background files
 import landingBg from "@/assets/landing/landing-bg.svg";

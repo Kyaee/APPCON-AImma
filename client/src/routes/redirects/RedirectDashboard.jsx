@@ -1,4 +1,4 @@
-import { useAuth } from "@/config/authContext"
+import { useAuth } from "@/config/AuthContext"
 import Loading from "../Loading"
 
 export default function RedirectDashboard({}) {

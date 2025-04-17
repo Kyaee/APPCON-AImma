@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useNavigate } from "react-router-dom";
 

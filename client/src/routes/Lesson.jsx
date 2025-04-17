@@ -11,7 +11,7 @@ import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useAssessment, useEvaluation } from "@/api/INSERT";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function ElementLesson() {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { VideoBackground } from "@/components/layout/Background";
 import { supabase } from "@/config/supabase";
-import { useAuth } from "@/config/authContext"; // Adjust the import path as needed
+import { useAuth } from "@/config/AuthContext"; // Adjust the import path as needed
 
 export default function NameCustomization() {
   const { session } = useAuth();

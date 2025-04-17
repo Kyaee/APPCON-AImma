@@ -18,7 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { languages } from "@/lib/languages";
 import SelectLanguage from "../features/select-language";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import wavingCappy from "@/assets/job-opportunities/WaveCappy.png";
 import CrocodileCappy from "@/assets/general/capy_crocodile.png";
 

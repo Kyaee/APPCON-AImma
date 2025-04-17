@@ -5,7 +5,7 @@ bouncy.register();
 import { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useSummary } from "@/api/INSERT";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useFetchSummary } from "@/api/FETCH";
 import { useStreakStore } from "@/store/useStreakStore";

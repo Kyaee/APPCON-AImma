@@ -6,7 +6,7 @@ import sadFace from "@/assets/dashboard/sad.svg";
 import { useEffect, useState } from "react";
 import { checkStreaks } from "@/lib/check-day-streak";
 import { useFetchStore } from "@/store/useUserData";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import CapySlide from "@/assets/general/capy_sleep.png";
 import { useStreakStore } from "@/store/useStreakStore";
 

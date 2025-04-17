@@ -18,7 +18,7 @@ import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuestStore } from "@/store/useQuestStore";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import { useStreakStore } from "@/store/useStreakStore";
 import { handleUpdateStreak } from "@/lib/check-day-streak";
 

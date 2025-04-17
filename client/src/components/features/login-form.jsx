@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 
 export function LoginForm({ className, ...props }) {
   const navigate = useNavigate();

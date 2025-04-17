@@ -1,6 +1,6 @@
 import Loading from "@/routes/Loading";
 import { createNewRoadmap } from "@/api/INSERT";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRoadmapAIdata } from "@/api/FETCH";
 import { useEffect } from "react";

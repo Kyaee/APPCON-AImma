@@ -1,7 +1,7 @@
 // THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
 import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useAuth } from "./config/authContext";
+import { useAuth } from "./config/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavigationProvider } from "./context/navigationContext";
 import "react-image-crop/dist/ReactCrop.css";

@@ -3,7 +3,7 @@ import { ArrowLeftFromLine } from "lucide-react";
 import fireStreak from "@/assets/dashboard/fire-streak.svg";
 import { useEffect } from "react";
 import { supabase } from "@/config/supabase";
-import { useAuth } from "@/config/authContext";
+import { useAuth } from "@/config/AuthContext";
 import Tabs_Component from "@/components/profile/TabsProfile";
 
 
