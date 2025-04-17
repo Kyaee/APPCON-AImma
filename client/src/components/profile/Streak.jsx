@@ -1,6 +1,9 @@
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeftFromLine } from "lucide-react";
 import fireStreak from "@/assets/dashboard/fire-streak.svg";
+import { useEffect } from "react";
+import { supabase } from "@/config/supabase";
+import { useAuth } from "@/config/authContext";
 
 export default function ProfileStreak({
   streak,
@@ -11,6 +14,36 @@ export default function ProfileStreak({
 }) {
   // Calculate the best streak - either the current streak or previous best, whichever is higher
   const bestStreak = Math.max(streak, previous_best || 0);
+  const { session } = useAuth();
+
+  // Update best_streak in Supabase if current streak is better than previous best
+  useEffect(() => {
+    const updateBestStreak = async () => {
+      if (!session?.user?.id) return; // Make sure we have a user ID
+
+      // Only update if current streak is higher than previous best
+      if (streak > previous_best) {
+        try {
+          const { error } = await supabase
+            .from("users")
+            .update({
+              best_streak: streak,
+            })
+            .eq("id", session.user.id);
+
+          if (error) {
+            console.error("Error updating best streak:", error);
+          } else {
+            console.log(`New best streak record: ${streak} days`);
+          }
+        } catch (err) {
+          console.error("Exception when updating best streak:", err);
+        }
+      }
+    };
+
+    updateBestStreak();
+  }, [streak, previous_best, session?.user?.id]);
 
   return (
     <div className="w-full">

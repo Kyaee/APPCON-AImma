@@ -241,3 +241,100 @@ export const fetchUserStats = async (userId) => {
     return { success: false, error };
   }
 };
+
+/**
+ * Update roadmap progress based on completed lessons
+ * 
+ * @param {string} roadmapId - ID of the roadmap to update
+ * @param {Array} lessons - Array of lessons in the roadmap
+ * @returns {Promise<Object>} Result of the update operation
+ */
+export const updateRoadmapProgress = async (roadmapId) => {
+  try {
+    if (!roadmapId) {
+      throw new Error("Roadmap ID is required");
+    }
+
+    // 1. Fetch all lessons for this roadmap
+    const { data: lessons, error: lessonError } = await supabase
+      .from("lessons")
+      .select("*")
+      .eq("roadmap_id", roadmapId);
+    
+    if (lessonError) throw lessonError;
+    
+    // 2. Calculate progress based on completed lessons
+    const totalLessons = lessons.length;
+    
+    if (totalLessons === 0) {
+      return { success: true, progress: 0 };
+    }
+    
+    const completedLessons = lessons.filter(lesson => 
+      lesson.status === "completed"
+    ).length;
+    
+    // Calculate progress percentage (rounded to nearest integer)
+    const progressPercentage = Math.round((completedLessons / totalLessons) * 100);
+    
+    // 3. Update the roadmap progress in the database
+    const { error: updateError } = await supabase
+      .from("roadmap")
+      .update({ progress: progressPercentage })
+      .eq("roadmap_id", roadmapId);
+    
+    if (updateError) throw updateError;
+    
+    console.log(`Roadmap progress updated: ${progressPercentage}%`);
+    
+    return {
+      success: true,
+      progress: progressPercentage,
+      completedLessons,
+      totalLessons
+    };
+  } catch (error) {
+    console.error("Error updating roadmap progress:", error);
+    return { success: false, error };
+  }
+};
+
+/**
+ * Mark a lesson as completed and update roadmap progress
+ * 
+ * @param {string} lessonId - ID of the lesson to mark as completed
+ * @param {string} roadmapId - ID of the roadmap the lesson belongs to
+ * @returns {Promise<Object>} Result of the update operation
+ */
+export const markLessonCompleted = async (lessonId, roadmapId) => {
+  try {
+    if (!lessonId || !roadmapId) {
+      throw new Error("Lesson ID and Roadmap ID are required");
+    }
+    
+    // 1. Update the lesson status to 'completed'
+    const { error: lessonError } = await supabase
+      .from("lessons")
+      .update({ status: "completed", progress: 100 })
+      .eq("id", lessonId);
+    
+    if (lessonError) throw lessonError;
+    
+    // 2. Update the roadmap progress
+    const progressResult = await updateRoadmapProgress(roadmapId);
+    
+    if (!progressResult.success) {
+      throw progressResult.error;
+    }
+    
+    return {
+      success: true,
+      lessonId,
+      roadmapId,
+      progress: progressResult.progress
+    };
+  } catch (error) {
+    console.error("Error marking lesson as completed:", error);
+    return { success: false, error };
+  }
+};

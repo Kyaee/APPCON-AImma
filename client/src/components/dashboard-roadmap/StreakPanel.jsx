@@ -17,7 +17,9 @@ const StreakPanel = () => {
   const checkAndUpdateStreak = useStreakStore(
     (state) => state.checkAndUpdateStreak
   );
-  const userStreak = useStreakStore((state) => state.streak);
+
+  // Get the streak data from useFetchStore (same as Streak.jsx)
+  const [supabaseStreak, setSupabaseStreak] = useState(0);
 
   const daysOfWeek = [
     { day: "Mon", full: "Monday", status: "" },
@@ -36,6 +38,12 @@ const StreakPanel = () => {
     if (!localStorage.getItem("dailyStatus"))
       localStorage.setItem("dailyStatus", JSON.stringify(daysOfWeek));
 
+    // Set streak value from the fetch store (same approach as Streak.jsx)
+    if (fetch) {
+      setSupabaseStreak(fetch.streaks || 0);
+      setLoading(false);
+    }
+
     if (session?.user?.id) {
       // Update streak based on user's activity
       checkAndUpdateStreak(session.user.id).then(() => {
@@ -47,7 +55,7 @@ const StreakPanel = () => {
     } else {
       setLoading(false);
     }
-  }, [session?.user?.id, checkAndUpdateStreak]);
+  }, [session?.user?.id, fetch, checkAndUpdateStreak]);
 
   return (
     <div className="relative bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
@@ -59,10 +67,10 @@ const StreakPanel = () => {
       <h2 className="text-lg font-medium mb-3 text-black">Streaks</h2>
 
       <div className="flex items-center justify-center gap-2 mb-4">
-        <img src={fireStreak} alt="Fire streak" className="w-10 h-10" />
+        <img src={fireStreak} alt="Fire streak" className="w-8 h-8" />
         <div className="flex items-baseline">
           <span className="text-3xl font-bold text-black">
-            {loading ? "..." : userStreak || fetch.streaks || 0}
+            {loading ? "..." : supabaseStreak || 0}
           </span>
           <span className="text-black ml-1">days</span>
         </div>
