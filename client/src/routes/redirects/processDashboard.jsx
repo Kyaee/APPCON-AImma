@@ -1,4 +1,4 @@
-import Loading from "@/routes/loading";
+import Loading from "@/routes/Loading";
 import { createNewRoadmap } from "@/api/INSERT";
 import { useAuth } from "@/config/authContext";
 import { useQuery } from "@tanstack/react-query";

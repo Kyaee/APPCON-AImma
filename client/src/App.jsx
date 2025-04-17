@@ -15,19 +15,19 @@ import Landing from "./routes/Landing";
 import MainLayout from "./components/layout/main-layout";
 import LessonLayout from "./components/layout/lesson-layout";
 // AUTHENTICATION
-import LoginPage from "./routes/auth/login";
-import RegisterPage from "./routes/auth/register";
+import LoginPage from "./routes/auth/LoginPage";
+import RegisterPage from "./routes/auth/RegisterPage";
 import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
 import NameCustomization from "@/components/onboarding/NameCustomization";
-import IntroShowcase from "./routes/Showcase";
+import Showcase from "./routes/Showcase";
 import UserAssessment from "./routes/UserAssessment";
 // REDIRECTS
-import ProcessDashboard from "./routes/redirects/processDashboard";
-import RedirectDashboard from "./routes/redirects/redirectDashboard";
-import RedirectProfile from "./routes/redirects/redirectProfile";
-import RedirectShop from "./routes/redirects/redirectShop";
-import RedirectJobOpportunities from "./routes/redirects/redirectJobOpportunities";
+import ProcessDashboard from "./routes/redirects/ProcessDashboard";
+import RedirectDashboard from "./routes/redirects/RedirectDashboard";
+import RedirectProfile from "./routes/redirects/RedirectProfile";
+import RedirectShop from "./routes/redirects/RedirectShop";
+import RedirectJobOpportunities from "./routes/redirects/RedirectJobOpportunities";
 // GENERAL PAGES
 import Dashboard from "./routes/Dashboard";
 import Profile from "./routes/Profile";
@@ -35,11 +35,7 @@ import Lesson from "./routes/Lesson";
 import LessonAssessment from "./routes/LessonAssessment";
 import JobOpportunities from "./routes/JobOpportunities";
 import NotFound from "./routes/NotFound";
-// TESTING PAGE
-import Testing from "./routes/Testing/TestingPage";
-import ApiTester from "./routes/UI_TestGemReward";
-// Import only the consolidated shop component
-import ElementShop from "./routes/shop";
+import ElementShop from "./routes/ElementShop";
 
 function App() {
   const queryClient = new QueryClient();
@@ -54,9 +50,8 @@ function App() {
               <Routes>
                 {/* GENERAL ROUTES */}
                 <Route path="/" element={<Landing />} />
-                <Route path="/GemReward" element={<ApiTester />} />
                 <Route path="*" element={<NotFound />} />
-                <Route path="/testing" element={<Testing />} />
+
 
                 {!session ? (
                   // IF USER IS NOT LOGGED-IN
@@ -71,7 +66,7 @@ function App() {
                 ) : 
                   // IF USER IS LOGGED-IN, AND NOT ASSESSED
                   <>
-                    <Route path="/start/showcase" element={<IntroShowcase />} />
+                    <Route path="/start/showcase" element={<Showcase />} />
                     <Route path="/start/name" element={<NameCustomization />} />
                     <Route
                       path="/start/assessment/*"

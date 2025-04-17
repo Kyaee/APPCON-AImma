@@ -1,6 +1,6 @@
 import { Gem, ZapIcon } from "lucide-react";
 import { useLessonFetchStore } from "@/store/useLessonData";
-import Loading from "@/routes/loading"
+import Loading from "@/routes/Loading"
 import { useAssessment } from "@/api/INSERT";
 
 export default function IntroSlide({

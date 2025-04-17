@@ -8,7 +8,7 @@ import { fetchRoadmap, fetchProfile } from "@/api/FETCH";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { postPrompt2 } from "@/api/INSERT";
-import Loading from "@/routes/loading";
+import Loading from "@/routes/Loading";
 
 const Sidebar = ({
   isExpanded,

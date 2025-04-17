@@ -1,5 +1,5 @@
 import { useAuth } from "@/config/authContext"
-import Loading from "../loading"
+import Loading from "../Loading"
 
 export default function RedirectProfile() {
   const { session } = useAuth()

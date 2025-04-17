@@ -1,6 +1,6 @@
 import ProgressBar from "@/components/lesson-assessment/scroll-progressbar";
 import { Background } from "@/components/layout/Background"; // Add this import
-import Loading from "./loading";
+import Loading from "./Loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";

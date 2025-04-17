@@ -29,26 +29,6 @@ export default function Dashboard({ setAssessed }) {
     localStorage.setItem("selectedRoadmapIndex", roadmapIndex.toString());
   }, [roadmapIndex]);
 
-  const handleQuestComplete = (quest) => {
-    // Check if the quest is already completed
-    if (quest.completed) return;
-
-    // Mark the quest as completed
-    quest.completed = true;
-
-    // Add rewards to the user
-    setUserRewards((prevRewards) => ({
-      xp: prevRewards.xp + quest.rewards.xp,
-      gems: prevRewards.gems + quest.rewards.gems,
-    }));
-
-    // Log the completion for debugging
-    console.log(`Quest completed: ${quest.title}`);
-    console.log(
-      `Rewards added: ${quest.rewards.xp} XP, ${quest.rewards.gems} Gems`
-    );
-  };
-
   const {
     data: roadmapData,
     isLoading: loadingRoadmap,
