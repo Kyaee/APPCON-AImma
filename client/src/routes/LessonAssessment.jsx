@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "@/assets/lesson-assessment/la-intro-capybara.png";
 import Questions from "./LessonQuestionnaire";
 import Loading from "@/routes/Loading";
-import { VideoBackground } from "@/components/layout/background";
+import { VideoBackground } from "@/components/layout/Background";
 import { HeartIcon } from "@/components/layout/stats-icons";
 import NoLivesPage from "@/components/lesson-assessment/no-lives";
 import IntroSlide from "@/components/lesson-assessment/IntroSlide";

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { VideoBackground } from "@/components/layout/background";
+import { VideoBackground } from "@/components/layout/Background";
 
 const NoLives = ({ userId }) => {
   // Generate URL with timestamp to force refresh

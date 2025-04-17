@@ -18,7 +18,7 @@ import Header from "@/components/layout/lesson/header-navigator";
 import { useParams, useLocation } from "react-router-dom";
 import linesBg from "/background/lines-bg.png"; // If file is in the root of public folder
 import { useNavigation } from "@/context/navigationContext";
-import { Background } from "@/components/layout/background"; // Import the Background component
+import { Background } from "@/components/layout/Background"; // Import the Background component
 
 export default function ElementShop() {
   const { id } = useParams();
