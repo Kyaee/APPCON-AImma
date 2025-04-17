@@ -11,7 +11,7 @@ WEB PAGES
 - Check the `Routes` folder for more pages 
 ------------------------------------------*/
 
-import Landing from "./routes/landing";
+import Landing from "./routes/Landing";
 import MainLayout from "./components/layout/main-layout";
 import LessonLayout from "./components/layout/lesson-layout";
 // AUTHENTICATION
