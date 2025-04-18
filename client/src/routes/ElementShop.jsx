@@ -136,8 +136,8 @@ export default function ElementShop() {
     },
     {
       title: "Professional",
-      price: "₱ 10,000",
-      period: "/ day",
+      price: "₱ 2,774",
+      period: "/ mo",
       description: "For casual learners, that want to progressively study.",
       perks: [
         "🚀 High API usage",
