@@ -14,11 +14,11 @@ const AssessmentLayout = ({
   buttonPosition,
 }) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col h-full min-h-screen relative overflow-hidden">
       <VideoBackground />
       <ProgressBar progress={progress} title={title} />
 
-      <div className="flex-grow flex flex-col items-center justify-center px-4 py-6 relative">
+      <div className="flex-grow flex flex-col items-center justify-center px-4 py-6 relative overflow-hidden">
         <div className="w-full max-w-max">{children}</div>
         {showMascot && (
           <div

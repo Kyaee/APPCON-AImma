@@ -33,21 +33,52 @@ export default function TechInterestStep({
   const renderQuestions = () => {
     if (!selectedInterest) return null;
 
+    // Create a scrollable container for questions with custom scrollbar styling
+    const QuestionsContainer = ({ children }) => (
+      <div className="max-h-[65vh] overflow-y-auto pr-4" 
+           style={{ 
+             scrollbarWidth: 'thin', 
+             scrollbarColor: 'rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1)' 
+           }}>
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            width: 8px;
+          }
+          div::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+          }
+          div::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+          }
+          div::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+          }
+        `}</style>
+        {children}
+      </div>
+    );
+
     // Render specific question components based on the interest type
     switch (selectedInterest.id) {
       case "programming":
         return (
-          <ProgrammingQuestionsStep 
-            answers={technicalAnswers} 
-            onAnswerChange={onAnswerChange} 
-          />
+          <QuestionsContainer>
+            <ProgrammingQuestionsStep 
+              answers={technicalAnswers} 
+              onAnswerChange={onAnswerChange} 
+            />
+          </QuestionsContainer>
         );
       case "networking":
         return (
-          <NetworkingQuestionsStep 
-            answers={technicalAnswers} 
-            onAnswerChange={onAnswerChange} 
-          />
+          <QuestionsContainer>
+            <NetworkingQuestionsStep 
+              answers={technicalAnswers} 
+              onAnswerChange={onAnswerChange} 
+            />
+          </QuestionsContainer>
         );
       default:
         // For other interest types, use a generic approach
@@ -64,52 +95,54 @@ export default function TechInterestStep({
         }
         
         return (
-          <div className="mt-8 border-t border-white/30 pt-6">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              {questionSet.title || `${selectedInterest.label} Questions`}
-            </h3>
-            <div className="space-y-6">
-              {questionSet.questions.map((question) => (
-                <div key={question.id} className="space-y-4">
-                  <label className="block text-lg font-medium text-white">
-                    {question.label}
-                  </label>
-                  {question.type === "multiselect" ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {question.options.map((option) => (
-                        <button
-                          key={option}
-                          onClick={() => {
-                            const currentAnswers = technicalAnswers[question.id] || [];
-                            const newAnswers = currentAnswers.includes(option)
-                              ? currentAnswers.filter((a) => a !== option)
-                              : [...currentAnswers, option];
-                            onAnswerChange(question.id, newAnswers);
-                          }}
-                          className={`p-3 rounded-lg transition-all duration-200 bg-white
-                            ${
-                              (technicalAnswers[question.id] || []).includes(option)
-                                ? "border-[#3F6CFF] border-3 custom-shadow-75"
-                                : "border-black border-2 hover:border-black hover:border-3"
-                            }`}
-                        >
-                          <span className="text-black">{option}</span>
-                        </button>
-                      ))}
-                    </div>
-                  ) : question.type === "text" ? (
-                    <textarea
-                      value={technicalAnswers[question.id] || ""}
-                      onChange={(e) => onAnswerChange(question.id, e.target.value)}
-                      className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
-                      rows={4}
-                      placeholder="Enter your answer..."
-                    />
-                  ) : null}
-                </div>
-              ))}
+          <QuestionsContainer>
+            <div className="mt-8 border-t border-white/30 pt-6">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                {questionSet.title || `${selectedInterest.label} Questions`}
+              </h3>
+              <div className="space-y-6">
+                {questionSet.questions.map((question) => (
+                  <div key={question.id} className="space-y-4">
+                    <label className="block text-lg font-medium text-white">
+                      {question.label}
+                    </label>
+                    {question.type === "multiselect" ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {question.options.map((option) => (
+                          <button
+                            key={option}
+                            onClick={() => {
+                              const currentAnswers = technicalAnswers[question.id] || [];
+                              const newAnswers = currentAnswers.includes(option)
+                                ? currentAnswers.filter((a) => a !== option)
+                                : [...currentAnswers, option];
+                              onAnswerChange(question.id, newAnswers);
+                            }}
+                            className={`p-3 rounded-lg transition-all duration-200 bg-white
+                              ${
+                                (technicalAnswers[question.id] || []).includes(option)
+                                  ? "border-[#3F6CFF] border-3 custom-shadow-75"
+                                  : "border-black border-2 hover:border-black hover:border-3"
+                              }`}
+                          >
+                            <span className="text-black">{option}</span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : question.type === "text" ? (
+                      <textarea
+                        value={technicalAnswers[question.id] || ""}
+                        onChange={(e) => onAnswerChange(question.id, e.target.value)}
+                        className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
+                        rows={4}
+                        placeholder="Enter your answer..."
+                      />
+                    ) : null}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </QuestionsContainer>
         );
     }
   };
