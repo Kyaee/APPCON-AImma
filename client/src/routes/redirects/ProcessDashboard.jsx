@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // CREATE REDIRECT
 
-export default function ProcessDashboard({setAssessed}) {
+export default function ProcessDashboard() {
   const navigate = useNavigate();
   const { session } = useAuth();
   const {
@@ -20,9 +20,9 @@ export default function ProcessDashboard({setAssessed}) {
   const processRoadmap = async () => {
     if (roadmapData && session?.user?.id) {
       try {
-        await createNewRoadmap(roadmapData, session.user.id);
+        const roadmapArray = Array.isArray(roadmapData) ? roadmapData : [roadmapData];
+        await createNewRoadmap(roadmapArray, session.user.id);
         console.log("Roadmap data created successfully");
-        setAssessed(true)
         navigate(`/dashboard/${session?.user?.id}`);
       } catch (error) {
         console.error("Error creating roadmap:", error);
@@ -31,7 +31,6 @@ export default function ProcessDashboard({setAssessed}) {
   };
 
   useEffect(() => {
-    console.log(roadmapData);
     processRoadmap();
   }, [roadmapData]);
 
