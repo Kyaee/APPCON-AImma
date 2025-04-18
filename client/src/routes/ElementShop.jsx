@@ -119,7 +119,7 @@ export default function ElementShop() {
     },
     {
       title: "Learner",
-      price: "₱ 554",
+      price: "₱ 743",
       period: "/ mo",
       description: "For casual learners, that want to progressively study.",
       perks: [
@@ -147,8 +147,8 @@ export default function ElementShop() {
         "✅ Priority",
         "✅ Yes Advanced AI Features",
       ],
-      discount: "Save 33%",
-      originalPrice: "₱ 1,100",
+      discount: "Save 17%",
+      originalPrice: "₱ 1,364",
     },
   ];
 
