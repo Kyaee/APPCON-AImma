@@ -40,6 +40,13 @@ To run this project, you will need to add the following environment variables to
 - [Catherine Notado]()
 - [Jogiofernesto Ardales]()
 
+1. cd server
+2. python -m venv .venv
+3. ./.venv/Scripts/Activate 
+4. pip install -r requirements
+5. uvicorn app:app --reload
+
+
 ## Feedback
 
 If you have any feedback, please reach out to us emmanuelfabella606@gmail.com or notadocath@gmail.com
