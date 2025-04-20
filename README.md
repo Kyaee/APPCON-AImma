@@ -13,12 +13,40 @@ insert gif or link here
 | State & Data | _Zustand, TanStack Query_     |
 | Tools & API  | _Axios, and Supabase_         |
 
+<br>
+
 | Server | Tools |
 | ------ | ----- |
 | Languages & Frameworks   | _Python, FastAPI_ |
 | AI Integrations | _OpenAI package, Deepseek, and Gemini Services_ |
 
+<br>
+
 ## ⚙️ Getting Started
+_**To run this project, create a .env file in the root directory and add the following:**_
+
+## I. 🖥️ Front-end (Client)
+
+**1. Navigate to the client directory:**
+
+```
+cd client
+```
+
+**2. Install dependencies:**
+
+```
+npm install
+```
+
+**3. Start the development server:**
+
+```
+npm run dev
+```
+
+## II. 🤖 Back-end (Server)
+
 **1. Go to the server directory**
 
 ```
@@ -31,7 +59,6 @@ cd server
 python -m venv .venv
 source .venv/Scripts/activate  # Windows
 ```
-## or
 
 ```
 source .venv/bin/activate  # macOS/Linux
@@ -49,14 +76,14 @@ pip install -r requirements.txt
 uvicorn app:app --reload
 ```
 
-## 🔐 Environment Variables
-
-**Create a .env file in the root directory and add the following:**
+## III. 🔐 Environment Variables
 
 | Client | URL   |
 | ---- | ---- | 
 | VITE_SUPABASE_KEY | ```eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndteHVnY3Fqa3Jkcmh3YXZseGplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Mzc0NDYsImV4cCI6MjA1NzUxMzQ0Nn0.ut6C9mnpXg9rZxt2yvmB3PWZ_em-IL3SD-roe0lmPcY```|
 | VITE_SUPABASE_URL | ```https://wmxugcqjkrdrhwavlxje.supabase.co``` |
+
+<br>
 
 | Server | URL    |
 | ------ | --- |  
@@ -64,6 +91,7 @@ uvicorn app:app --reload
 | DEEPSEEK_URL | ```https://openrouter.ai/api/v1``` |
 | GEMINI_API_KEY | ```GEMINI_API_KEY=AIzaSyBi57LIg2UFpQrwpHdaAcsVkrlGJrzzNz8``` |
 | GEMINI_API_URL | ```https://generativelanguage.googleapis.com/v1beta/openai/```|
+<br>
 
 ## 🚀 Deployment
 **To deploy this project:**
