@@ -101,18 +101,18 @@ const QuestPanel = ({ userId }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
+    <div className="bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-dark-mode-highlight custom-shadow-75 p-4 w-98">
       <div className="flex justify-between items-center mb-3">
-        <h2 className="text-lg font-medium text-black">
+        <h2 className="text-lg font-medium text-black dark:text-primary">
           {isDaily ? "Daily Quests" : "Weekly Quests"}
         </h2>
         <div className="flex gap-2">
           <button
             onClick={toggleQuestType}
-            className="p-2 rounded-full hover:border-black  hover:bg-gray-200 transition-colors"
+            className="p-2 rounded-full hover:border-black dark:hover:border-primary hover:bg-gray-200 dark:hover:bg-dark-mode-highlight transition-colors"
             aria-label="Toggle quest type"
           >
-            <ChevronRight className="w-5 h-5 text-black" />
+            <ChevronRight className="w-5 h-5 text-black dark:text-primary" />
           </button>
         </div>
       </div>
@@ -122,7 +122,7 @@ const QuestPanel = ({ userId }) => {
           <div
             key={quest.id}
             className={`flex items-start gap-3 p-3 rounded-md ${
-              !quest.completed ? "hover:bg-gray-100 cursor-pointer" : ""
+              !quest.completed ? "hover:bg-gray-100 dark:hover:bg-dark-mode-highlight cursor-pointer" : ""
             }`}
             onClick={() => !quest.completed && handleQuestComplete(quest)}
           >
@@ -132,8 +132,8 @@ const QuestPanel = ({ userId }) => {
               <div className="mt-0.5">{getQuestIcon(quest)}</div>
             )}
             <div>
-              <p className="font-medium text-gray-900">{quest.title}</p>
-              <p className="text-xs text-gray-500">
+              <p className="font-medium text-gray-900 dark:text-primary">{quest.title}</p>
+              <p className="text-xs text-gray-500 dark:text-primary/70">
                 {quest.completed
                   ? "Completed"
                   : `${quest.rewards.xp} XP, ${quest.rewards.gems} Gems${

@@ -114,14 +114,14 @@ const LevelRewards = () => {
     <>
       <Button
         variant="outline"
-        className="mt-10 border border-foreground"
+        className="mt-10 border border-foreground dark:border-dark-mode-highlight"
         onClick={() => setIsDrawerOpen(true)}
       >
         View Level Rewards
       </Button>
 
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent className="h-[60vh]">
+        <DrawerContent className="h-[60vh] bg-background dark:bg-dark-inner-bg">
           <div className="mx-auto w-full max-w-6xl">
             <DrawerHeader>
               <DrawerTitle className="text-2xl font-bold">
@@ -135,34 +135,25 @@ const LevelRewards = () => {
             <div className="p-4">
               {/* Current Level Indicator */}
               <div className="mb-8 text-center">
-                <div className="inline-block bg-primary/20 rounded-full px-6 py-2">
-                  <span className="text-primary font-semibold">
+                <div className="inline-block bg-primary/20 dark:bg-dark-mode-highlight rounded-full px-6 py-2">
+                  <span className="text-primary dark:text-primary font-semibold">
                     Current Level: {currentLevel}
                   </span>
                 </div>
-              </div>
-
-              {/* Progress Track */}
-              <div className="relative mb-10">
-                <div className="absolute h-4 bg-light-brown rounded-full w-full"></div>
-                <div
-                  className="absolute h-4 bg-primary rounded-full transition-all duration-500"
-                  style={{ width: `${(currentLevel / 60) * 100}%` }}
-                ></div>
               </div>
 
               {/* Rewards Grid */}
               <div className="relative">
                 <button
                   onClick={scrollLeft}
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 dark:bg-dark-inner-bg rounded-full p-2 hover:bg-gray-700/90 dark:hover:bg-dark-mode-bg transition-colors"
                 >
                   <ChevronLeftIcon className="h-6 w-6 text-white" />
                 </button>
 
                 <div
                   ref={scrollContainerRef}
-                  className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-800/50 py-4 px-12"
+                  className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary dark:scrollbar-thumb-dark-mode-highlight scrollbar-track-gray-800/50 py-4 px-12"
                   style={{ scrollBehavior: "smooth" }}
                 >
                   <div className="flex space-x-4 min-w-max">
@@ -176,13 +167,17 @@ const LevelRewards = () => {
                           className={`flex flex-col items-center w-32 p-4 rounded-lg transition-all duration-200
                             ${
                               isCurrentLevel
-                                ? "bg-primary/20 border-2 border-primary"
-                                : "bg-gray-800/50 hover:bg-gray-700/50"
+                                ? "bg-primary/20 dark:bg-dark-mode-highlight border-2 border-primary dark:border-background"
+                                : "bg-gray-800/50 dark:bg-dark-mode-bg hover:bg-gray-700/50 dark:hover:bg-dark-mode-highlight"
                             }
                           `}
                         >
-                          <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center mb-3">
-                            <span className="text-2xl font-bold text-white">
+                          <div className="w-16 h-16 rounded-full bg-gray-700 dark:bg-dark-inner-bg flex items-center justify-center mb-3">
+                            <span className={`text-2xl font-bold ${
+                              isCurrentLevel
+                                ? "text-white"
+                                : "text-white"
+                            }`}>
                               {level}
                             </span>
                           </div>
@@ -213,7 +208,7 @@ const LevelRewards = () => {
 
                 <button
                   onClick={scrollRight}
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 rounded-full p-2 hover:bg-gray-700/90 transition-colors"
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800/90 dark:bg-dark-inner-bg rounded-full p-2 hover:bg-gray-700/90 dark:hover:bg-dark-mode-bg transition-colors"
                 >
                   <ChevronRightIcon className="h-6 w-6 text-white" />
                 </button>
@@ -222,7 +217,9 @@ const LevelRewards = () => {
 
             <DrawerFooter>
               <DrawerClose asChild>
-                <Button variant="outline">Close</Button>
+                <Button variant="outline" className="border-foreground dark:border-dark-mode-highlight">
+                  Close
+                </Button>
               </DrawerClose>
             </DrawerFooter>
           </div>

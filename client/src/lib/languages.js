@@ -1,15 +1,4 @@
 export const languages = [
   { id: 1, name: "Filipino", value: "fil" },
   { id: 2, name: "English", value: "en" },
-  { id: 3, name: "Spanish", value: "es" },
-  { id: 4, name: "French", value: "fr" },
-  { id: 5, name: "German", value: "de" },
-  { id: 6, name: "Chinese", value: "zh" },
-  { id: 7, name: "Japanese", value: "ja" },
-  { id: 8, name: "Korean", value: "ko" },
-  { id: 9, name: "Russian", value: "ru" },
-  { id: 10, name: "Italian", value: "it" },
-  { id: 11, name: "Portuguese", value: "pt" },
-  { id: 12, name: "Arabic", value: "ar" },
-  { id: 13, name: "Hindi", value: "hi" },
 ]
