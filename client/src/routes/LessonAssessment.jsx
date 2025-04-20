@@ -17,7 +17,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuestStore } from "@/store/useQuestStore";
+import { useQuestStore } from "@/store/useQuestStore"; // Import useQuestStore
 import { useAuth } from "@/config/AuthContext";
 import { useStreakStore } from "@/store/useStreakStore";
 import { handleUpdateStreak } from "@/lib/check-day-streak";
@@ -43,6 +43,7 @@ export default function Assessment() {
   const updateStreakFromLesson = useStreakStore(
     (state) => state.updateStreakFromLesson
   );
+  const completeLessonTest = useQuestStore((state) => state.completeLessonTest); // Get quest action
   const [isAnswers, setAnswers] = useState([
     {
       id: isCurrentSlide,
@@ -201,7 +202,7 @@ export default function Assessment() {
 
     try {
       // Calculate final score and determine lives lost
-      const totalQuestions = lessonData.questions.length - 1;
+      const totalQuestions = lessonData.questions.length - 1; // Define totalQuestions here
       const successRate = isCount.score / totalQuestions;
 
       // Get the fixed rewards based on difficulty only
@@ -230,6 +231,18 @@ export default function Assessment() {
         });
 
         console.log(`Lesson ${lessonFetch.id} marked as completed`);
+
+        // --- Call completeLessonTest quest action ---
+        try {
+          await completeLessonTest(userId, isCount.score, totalQuestions);
+          console.log("completeLessonTest quest action triggered.");
+        } catch (questError) {
+          console.error(
+            "Error triggering completeLessonTest quest action:",
+            questError
+          );
+        }
+        // --- End quest action call ---
 
         // Check if streak should be updated
         let streakUpdated = false;

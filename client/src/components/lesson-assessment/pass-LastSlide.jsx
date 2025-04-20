@@ -129,14 +129,14 @@ export default function LastSlide({
     }
 
     try {
-      // Update lesson progress
-      updateLesson({
-        userId: currentUserId,
-        lessonId,
-        lastAccessed: new Date().toISOString(),
-        progress: 100,
-        status: "Completed",
-      });
+      // REMOVED: updateLesson call was here, it's now handled only in LessonAssessment.jsx
+      // updateLesson({
+      //   userId: currentUserId,
+      //   lessonId,
+      //   lastAccessed: new Date().toISOString(),
+      //   progress: 100,
+      //   status: "Completed",
+      // });
 
       // Get calculated rewards
       const { gems: actualGems, exp: actualExp } = calculatedRewards;
@@ -261,13 +261,12 @@ export default function LastSlide({
             <div>
               <p>Rewards</p>
               <div className="flex gap-5 *:flex *:items-center *:gap-0.5">
-                <h2 className="text-xl font-semibold pt-1">
-                  +<Gem size={18} />
-                  {calculatedRewards.gems}
+                {/* Changed reward display format */}
+                <h2 className="text-xl font-semibold pt-1 flex items-center gap-1">
+                  {calculatedRewards.gems} <Gem size={18} />
                 </h2>
-                <h2 className="text-xl font-semibold pt-1">
-                  +<ZapIcon size={20} />
-                  {calculatedRewards.exp}
+                <h2 className="text-xl font-semibold pt-1 flex items-center gap-1">
+                  {calculatedRewards.exp} <ZapIcon size={20} />
                 </h2>
               </div>
             </div>

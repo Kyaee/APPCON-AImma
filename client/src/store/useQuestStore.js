@@ -2,6 +2,15 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { supabase } from "@/config/supabase";
 
+// Helper function to get the ISO week number
+const getWeekNumber = (date) => {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+};
+
 export const useQuestStore = create(
   persist(
     (set, get) => ({
@@ -66,16 +75,26 @@ export const useQuestStore = create(
       perfectScores: 0,
       lessonsReviewed: [], // Array of lesson IDs to track reviews
       
-      // Reset quests daily
-      lastResetDate: new Date().toDateString(),
+      // Reset quests daily and weekly
+      lastResetDate: new Date().toDateString(), // Keep track of the last reset date
+      lastResetWeek: getWeekNumber(new Date()), // Keep track of the last reset week
       
-      // Check and reset daily quests if needed
+      // Check and reset daily and weekly quests if needed
       checkAndResetQuests: () => {
-        const currentDate = new Date().toDateString();
-        const { lastResetDate } = get();
+        const now = new Date();
+        const currentDateString = now.toDateString();
+        const currentWeekNumber = getWeekNumber(now);
+        const { lastResetDate, lastResetWeek } = get();
         
-        if (currentDate !== lastResetDate) {
-          set({
+        let needsUpdate = false;
+        let newState = {};
+
+        // Check for daily reset
+        if (currentDateString !== lastResetDate) {
+          console.log("New day detected, resetting daily quests and tracking.");
+          needsUpdate = true;
+          newState = {
+            ...newState,
             dailyQuests: get().dailyQuests.map(quest => ({
               ...quest,
               completed: false
@@ -84,8 +103,27 @@ export const useQuestStore = create(
             lessonTestsCompleted: 0,
             perfectScores: 0,
             lessonsReviewed: [],
-            lastResetDate: currentDate
-          });
+            lastResetDate: currentDateString // Update last reset date
+          };
+        }
+
+        // Check for weekly reset
+        if (currentWeekNumber !== lastResetWeek) {
+          console.log("New week detected, resetting weekly quests.");
+          needsUpdate = true;
+          newState = {
+            ...newState,
+            weeklyQuests: get().weeklyQuests.map(quest => ({
+              ...quest,
+              completed: false
+            })),
+            lastResetWeek: currentWeekNumber // Update last reset week
+          };
+        }
+
+        // Apply updates if needed
+        if (needsUpdate) {
+          set(newState);
         }
       },
       
@@ -154,7 +192,7 @@ export const useQuestStore = create(
       },
       
       // Track study time (in minutes)
-      updateStudyTime: (minutes) => {
+      updateStudyTime: (minutes, userId) => { // Accept userId
         const newStudyTime = get().studyTime + minutes;
         set({ studyTime: newStudyTime });
         
@@ -164,11 +202,13 @@ export const useQuestStore = create(
         const oneHourQuest = dailyQuests.find(q => q.id === "3");
         
         if (thirtyMinQuest && !thirtyMinQuest.completed && newStudyTime >= 30) {
-          get().completeQuest("2", true);
+          console.log("Completing 30 min study quest for user:", userId);
+          get().completeQuest("2", true, userId); // Pass userId
         }
         
         if (oneHourQuest && !oneHourQuest.completed && newStudyTime >= 60) {
-          get().completeQuest("3", true);
+          console.log("Completing 1 hour study quest for user:", userId);
+          get().completeQuest("3", true, userId); // Pass userId
         }
       },
       
@@ -226,7 +266,8 @@ export const useQuestStore = create(
         perfectScores: state.perfectScores,
         lessonsReviewed: state.lessonsReviewed,
         lastResetDate: state.lastResetDate,
+        lastResetWeek: state.lastResetWeek, // Persist last reset week
       }),
     }
   )
-); 
+);
