@@ -28,24 +28,34 @@ OpenAI package, Deepseek, and Gemini Services
 # ⚙️ Getting Started
 **1. Go to the server directory**
 
+```
 cd server
+```
 
 **2. Create and activate a virtual environment**
 
+```
 python -m venv .venv
 source .venv/Scripts/activate  # Windows
+```
 
 ## or
 
+```
 source .venv/bin/activate  # macOS/Linux
+```
 
 **3. Install dependencies**
 
+```
 pip install -r requirements.txt
+```
 
 **4. Start the server**
 
+```
 uvicorn app:app --reload
+```
 
 ## Environment Variables
 
