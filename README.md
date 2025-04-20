@@ -6,7 +6,7 @@ A brief description of what this project does and who it's for
 
 insert gif or link here
 
-# 🧰 Tech Stack
+## 🧰 Tech Stack
 
 ## Client:
 **Frameworks:**
@@ -25,7 +25,7 @@ Python, FastAPI,
 **AI Integrations:**
 OpenAI package, Deepseek, and Gemini Services
 
-# ⚙️ Getting Started
+## ⚙️ Getting Started
 **1. Go to the server directory**
 
 ```
@@ -57,7 +57,7 @@ pip install -r requirements.txt
 uvicorn app:app --reload
 ```
 
-## Environment Variables
+## 🔐 Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
 
