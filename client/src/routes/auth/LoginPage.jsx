@@ -45,7 +45,7 @@ export default function LoginPage() {
       </div>
 
       {/* Content Container */}
-      <div 
+      <div
         className={`flex w-full max-w-sm flex-col gap-6 z-10 transition-all duration-700 ${
           contentLoaded
             ? "opacity-100 translate-y-0"
