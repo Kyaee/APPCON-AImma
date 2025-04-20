@@ -6,22 +6,22 @@ export default function LandingFooter() {
 
   return (
     <footer className="bg-foreground text-background">
-      <div className="w-4/5 mx-auto py-12">
+      <div className="w-[90%] md:w-4/5 mx-auto py-8 md:py-12">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-4">
             {/* Brand Column - now spans more space */}
             <div className="md:col-span-5">
               <div className="flex items-center gap-2 mb-4">
                 <img
                   src="/favicon.svg"
-                  alt="Capycademy Logo"
-                  className="h-10 w-10 p-1"
+                  alt="CapyCademy Logo"
+                  className="h-8 w-8 md:h-10 md:w-10 p-1"
                 />
                 <span className="text-xl font-bold text-background">
-                  Capycademy
+                  CapyCademy
                 </span>
               </div>
-              <p className="text-sm mb-4 max-w-xs">
+              <p className="text-base mb-4 max-w-xs">
                 The AI-powered learning platform that helps you master new
                 skills through personalized, gamified learning experiences.
               </p>
@@ -54,14 +54,16 @@ export default function LandingFooter() {
             </div>
 
             {/* Navigation Columns - now grouped together and moved right */}
-            <div className="md:col-span-7 md:flex md:justify-end">
+            <div className="md:col-span-7 md:flex md:justify-end mt-8 md:mt-0">
               <div className="md:w-1/4 md:mr-8">
-                <h3 className="font-bold text-foreground mb-4">Platform</h3>
+                <h3 className="font-bold text-foreground mb-3 md:mb-4 text-lg">
+                  Platform
+                </h3>
                 <ul className="space-y-2">
                   <li>
                     <a
                       href="#features"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Features
                     </a>
@@ -69,7 +71,7 @@ export default function LandingFooter() {
                   <li>
                     <Link
                       to="/shop/1"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Pricing
                     </Link>
@@ -77,7 +79,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#testimonials"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Testimonials
                     </a>
@@ -85,7 +87,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Affiliate Program
                     </a>
@@ -94,12 +96,14 @@ export default function LandingFooter() {
               </div>
 
               <div className="md:w-1/4 md:mr-8 mt-6 md:mt-0">
-                <h3 className="font-bold text-foreground mb-4">Resources</h3>
+                <h3 className="font-bold text-foreground mb-3 md:mb-4 text-lg">
+                  Resources
+                </h3>
                 <ul className="space-y-2">
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Blog
                     </a>
@@ -107,7 +111,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Documentation
                     </a>
@@ -115,7 +119,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Community
                     </a>
@@ -123,7 +127,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Help Center
                     </a>
@@ -132,12 +136,14 @@ export default function LandingFooter() {
               </div>
 
               <div className="md:w-1/4 mt-6 md:mt-0">
-                <h3 className="font-bold text-foreground mb-4">Company</h3>
+                <h3 className="font-bold text-foreground mb-3 md:mb-4 text-lg">
+                  Company
+                </h3>
                 <ul className="space-y-2">
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       About Us
                     </a>
@@ -145,7 +151,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Careers
                     </a>
@@ -153,7 +159,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Contact
                     </a>
@@ -161,7 +167,7 @@ export default function LandingFooter() {
                   <li>
                     <a
                       href="#"
-                      className="hover:text-foreground transition-colors"
+                      className="text-base hover:text-foreground transition-colors"
                     >
                       Press Kit
                     </a>
@@ -171,24 +177,26 @@ export default function LandingFooter() {
             </div>
           </div>
 
-          <div className="border-t border-dark-mode-highlight mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
-            <p>© {currentYear} Capycademy. All rights reserved.</p>
-            <div className="flex gap-6 mt-4 md:mt-0">
+          <div className="border-t border-dark-mode-highlight mt-8 md:mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-base">
+              © {currentYear} CapyCademy. All rights reserved.
+            </p>
+            <div className="flex gap-4 md:gap-6 mt-4 md:mt-0">
               <a
                 href="#"
-                className="text-sm hover:text-foreground transition-colors"
+                className="text-base hover:text-foreground transition-colors"
               >
                 Privacy Policy
               </a>
               <a
                 href="#"
-                className="text-sm hover:text-foreground transition-colors"
+                className="text-base hover:text-foreground transition-colors"
               >
                 Terms of Service
               </a>
               <a
                 href="#"
-                className="text-sm hover:text-foreground transition-colors"
+                className="text-base hover:text-foreground transition-colors"
               >
                 Cookie Policy
               </a>

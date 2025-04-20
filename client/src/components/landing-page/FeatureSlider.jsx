@@ -1,12 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  BookOpen,
-  BarChart,
-  Route,
-  Zap,
-} from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ChevronRight, BookOpen, BarChart, Route, Zap } from "lucide-react";
 
 // Feature data with icons and descriptions
 const featureData = [
@@ -48,124 +41,142 @@ export default function FeatureSlider() {
   const [currentFeature, setCurrentFeature] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const intervalRef = useRef(null);
+  const sliderRef = useRef(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   const nextFeature = () => {
     if (isAnimating) return;
-
-    // Remove animation delay, make it instant
     setCurrentFeature((prev) => (prev + 1) % featureData.length);
   };
 
   const prevFeature = () => {
     if (isAnimating) return;
-
-    // Remove animation delay, make it instant
     setCurrentFeature(
       (prev) => (prev - 1 + featureData.length) % featureData.length
     );
   };
 
-  // Auto-play functionality
-  useEffect(() => {
-    const startAutoPlay = () => {
-      intervalRef.current = window.setInterval(() => {
-        nextFeature();
-      }, 5000);
-    };
-
-    startAutoPlay();
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
-
   // Reset interval when manually navigating
-  const handleNavigation = (direction) => {
+  const handleNavigation = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
+    nextFeature();
+    resetAutoPlayInterval();
+  };
 
-    if (direction === "prev") {
-      prevFeature();
-    } else {
-      nextFeature();
-    }
-
+  const resetAutoPlayInterval = () => {
     intervalRef.current = window.setInterval(() => {
       nextFeature();
     }, 5000);
   };
 
+  // Touch event handlers for mobile swipe
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = useCallback(() => {
+    // Minimum swipe distance to register as a swipe (in pixels)
+    const minSwipeDistance = 50;
+    const swipeDistance = touchStartX.current - touchEndX.current;
+
+    if (Math.abs(swipeDistance) > minSwipeDistance) {
+      if (swipeDistance > 0) {
+        // Swipe left, go to next
+        nextFeature();
+      } else {
+        // Swipe right, go to previous
+        prevFeature();
+      }
+
+      // Reset the auto-play interval after manual navigation
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      resetAutoPlayInterval();
+    }
+  }, []);
+
+  // Auto-play functionality
+  useEffect(() => {
+    resetAutoPlayInterval();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
   return (
     <section
       id="features"
-      className="w-full py-16 mb-35 overflow-hidden flex justify-center"
+      className="w-full py-8 md:py-16 mb-35 overflow-hidden flex justify-center"
     >
       {/* Main container with auto height based on content */}
-      <div className="w-4/5 border-[3px] border-black rounded-xl relative flex flex-col">
-        {/* Image section with fixed height */}
-        <div className="w-full h-[60vh] relative overflow-hidden">
+      <div className="w-[90%] md:w-4/5 border-[2px] md:border-[3px] border-black rounded-xl relative flex flex-col overflow-hidden">
+        {/* Image section with responsive height - now with touch events */}
+        <div
+          ref={sliderRef}
+          className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] relative overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="absolute inset-0">
             <img
               src={featureData[currentFeature].image}
               alt={featureData[currentFeature].title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-t-lg"
+              draggable="false" // Prevent image dragging during swipe
             />
           </div>
 
-          {/* Navigation and indicators floating at bottom of image section */}
-          <div className="absolute bottom-8 left-0 right-0 flex justify-center items-center gap-8">
-            {/* Left navigation button */}
-            <button
-              className="w-10 h-7 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow-lg border border-gray-300"
-              onClick={() => handleNavigation("prev")}
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-
-            {/* Indicators */}
-            <div className="flex gap-3 bg-white/50 px-6 py-2 rounded-full">
+          {/* Indicators at bottom of image section - no background */}
+          <div className="absolute bottom-4 md:bottom-8 left-0 right-0 flex justify-center items-center">
+            <div className="flex gap-2 md:gap-3">
               {featureData.map((_, index) => (
                 <div
                   key={index}
-                  className={`h-3 rounded-full transition-all ${
+                  className={`h-2 md:h-3 rounded-full transition-all ${
                     currentFeature === index
-                      ? "bg-primary w-10"
-                      : "bg-gray-400 w-3"
+                      ? "bg-primary w-8 md:w-10"
+                      : "bg-gray-400 w-2 md:w-3"
                   }`}
                 />
               ))}
             </div>
-
-            {/* Right navigation button */}
-            <button
-              className="w-10 h-7 rounded-full bg-white/80 hover:bg-white flex items-center justify-center shadow-lg border border-gray-300"
-              onClick={() => handleNavigation("next")}
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
           </div>
         </div>
 
         {/* Content section with white background */}
-        <div className="w-full bg-white py-8 rounded-b-lg border-t-2 border-black">
-          <div className="container ml-0 max-w-6xl px-8">
-            <div className="flex items-start gap-8">
-              {/* Larger icon on the left */}
-              <div className="p-5 bg-primary/10 rounded-full">
-                <div className="w-14 h-14 flex items-center justify-center">
+        <div className="w-full bg-white py-6 md:py-8 rounded-b-lg border-t-2 border-black relative">
+          {/* Navigation button - only visible on tablet and larger screens */}
+          <button
+            className="hidden md:flex absolute right-8 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-white hover:bg-gray-100 items-center justify-center shadow-md border-2 border-black"
+            onClick={() => handleNavigation()}
+            aria-label="Next feature"
+          >
+            <ChevronRight className="h-6 w-6 text-black" />
+          </button>
+
+          <div className="container ml-0 max-w-7xl px-4 md:px-8">
+            <div className="flex items-start gap-4 md:gap-8">
+              {/* Larger icon on the left - hidden on mobile */}
+              <div className="hidden md:block p-3 md:p-5 bg-primary/10 rounded-full">
+                <div className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center">
                   {featureData[currentFeature].icon}
                 </div>
               </div>
 
-              {/* Content on the right */}
-              <div className="flex-1">
-                {/* Title at the top */}
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3 text-left">
+              {/* Content on the right without the button */}
+              <div className="flex-1 md:pr-28 lg:pr-32">
+                {/* Title at the top - centered on mobile, left-aligned on desktop */}
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1 md:mb-3 text-center md:text-left">
                   {featureData[currentFeature].title}
                 </h2>
 
-                {/* Description below title */}
-                <p className="text-lg text-muted-foreground text-left">
+                {/* Description below title - centered on mobile, left-aligned on desktop  */}
+                <p className="text-sm sm:text-base md:text-lg text-muted-foreground text-center md:text-left md:max-w-none md:whitespace-normal">
                   {featureData[currentFeature].description}
                 </p>
               </div>

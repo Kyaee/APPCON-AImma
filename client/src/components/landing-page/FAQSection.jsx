@@ -30,32 +30,32 @@ const FAQSection = () => {
     {
       question: "How does the gamification system work?",
       answer:
-        "Our gamification system includes daily streaks, badges, experience points, and level progression. Complete lessons, quizzes, and challenges to earn rewards, unlock new content, and compete with friends on leaderboards.",
+        "Our gamification system includes daily streaks, badges, experience points, and level progression. Complete lessons, quizzes, and challenges to earn rewards, and unlock new content.",
     },
   ];
 
   return (
-    <section id="faq" className="py-20">
-      <div className="w-4/5 mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-center">
+    <section id="faq" className="py-10 md:py-20">
+      <div className="w-[90%] md:w-4/5 mx-auto">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4 text-center">
           Frequently Asked Questions
         </h2>
-        <p className="text-xl text-muted-foreground mb-10 mx-auto text-center max-w-2xl">
+        <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-10 mx-auto text-center max-w-2xl px-4">
           Get answers to common questions about CapyCademy and how it works
         </p>
 
-        <div className="max-w-3xl mx-auto mt-12" style={{ height: "500px" }}>
+        <div className="max-w-3xl mx-auto mt-6 md:mt-12">
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="mb-4 bg-card rounded-lg border-2 border-black"
+                className="mb-3 md:mb-4 bg-card rounded-lg border-[1px] md:border-2 border-black"
               >
-                <AccordionTrigger className="px-6 py-4 text-lg font-medium text-foreground hover:text-primary hover:no-underline">
+                <AccordionTrigger className="px-4 md:px-6 py-3 md:py-4 text-base md:text-lg font-medium text-foreground hover:text-primary hover:no-underline">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-muted-foreground">
+                <AccordionContent className="px-4 md:px-6 pb-3 md:pb-4 text-sm md:text-base text-muted-foreground">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
