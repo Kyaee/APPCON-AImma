@@ -61,14 +61,14 @@ export default function StatsDisplay({ hearts, gems, userId }) {
     <>
       <div onClick={() => onClose(!isOpen)} className="flex items-center gap-2">
         <HeartIcon className="[&_path]:dark:stroke-primary" />
-        <span className="text-black font-inter text-lg font-black leading-7">
+        <span className="text-black dark:text-primary font-inter text-lg font-black leading-7">
           {hearts || "Error"}
         </span>
         <p className="px-3 py-1 bg-muted border border-foreground rounded-full">
           {formatTime(timeLeft)}
         </p>
       </div>
-
+      
       {isOpen && (
         <HeartTimerCard
           onClose={() => onClose(false)}
@@ -80,8 +80,7 @@ export default function StatsDisplay({ hearts, gems, userId }) {
 
       <div className="flex items-center gap-2">
         <GemIcon className="[&_path]:dark:stroke-primary" />
-
-        <span className="text-black font-inter text-lg font-black leading-7">
+        <span className="text-black dark:text-primary font-inter text-lg font-black leading-7">
           {gems || "Error"}
         </span>
       </div>

@@ -40,12 +40,11 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
   const displayProgress = lesson.progress || 0;
 
   return (
-    <div className="transition animate-panel-in fixed transform left-0 top-0 h-full w-full lg:max-w-lg z-[100] bg-gray-50 border-1 border-solid border-black">
-      <div className="flex flex-col h-full justify-between gap-8 relative w-full p-10 ">
-        {/* Header with title and actions */}
+    <div className="transition animate-panel-in fixed transform left-0 top-0 h-full w-full lg:max-w-lg z-[100] bg-gray-50 dark:bg-dark-inner-bg border-r-3 border-black dark:border-dark-mode-highlight">
+      <div className="flex flex-col h-full justify-between gap-8 relative w-full p-10">
         <section>
           <article className="mt-15 mb-4 flex w-full items-start justify-between">
-            <h1 className="transition animate-text-reveal  font-extrabold text-[#464646] text-3xl tracking-[-1px] leading-8 font-['Poppins-ExtraBold',Helvetica]">
+            <h1 className="transition animate-text-reveal font-extrabold text-black dark:text-primary text-3xl tracking-[-1px] leading-8 font-['Poppins-ExtraBold',Helvetica]">
               {lesson.lesson_name}
             </h1>
 
@@ -53,17 +52,17 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="p-0 rounded-full bg-card"
+                className="p-0 rounded-full bg-white dark:bg-dark-inner-bg hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight"
               >
-                <Share2 className="size-6" />
+                <Share2 className="size-6 text-black dark:text-primary" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="p-0 rounded-full bg-card"
+                className="p-0 rounded-full bg-white dark:bg-dark-inner-bg hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight"
                 onClick={() => setOpenLesson(false)}
               >
-                <X className="size-6" />
+                <X className="size-6 text-black dark:text-primary" />
               </Button>
             </div>
           </article>
@@ -112,12 +111,12 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
             </div>
             <div className="flex gap-2">
               {lesson.gems && (
-                <Badge className="h-7 px-2 py-[7px] bg-card text-foreground rounded-sm border border-solid border-black hover:bg-[#fff7f7]">
+                <Badge className="h-7 px-2 py-[7px] bg-white dark:bg-dark-inner-bg text-black dark:text-primary rounded-sm border border-solid border-black dark:border-dark-mode-highlight hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight">
                   +{lesson.gems} gems
                 </Badge>
               )}
               {lesson.exp && (
-                <Badge className="h-7 px-2 py-[7px] bg-card text-foreground rounded-sm border border-solid border-black hover:bg-[#fff7f7]">
+                <Badge className="h-7 px-2 py-[7px] bg-white dark:bg-dark-inner-bg text-black dark:text-primary rounded-sm border border-solid border-black dark:border-dark-mode-highlight hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight">
                   +{lesson.exp} exp
                 </Badge>
               )}
@@ -126,10 +125,10 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
         </section>
 
         <section className="overflow-y-auto h-full">
-          <h2 className="text-[#4b4b4b] font-bold text-base mb-3">
+          <h2 className="text-[#4b4b4b] dark:text-primary font-bold text-base mb-3">
             Description
           </h2>
-          <p className="mb-5 pr-2 transition animate-text-fade text-[#7b7b7b] text-base font-normal font-['Inter-Regular',Helvetica] leading-[22px]">
+          <p className="mb-5 pr-2 transition animate-text-fade text-[#7b7b7b] dark:text-primary text-base font-normal font-['Inter-Regular',Helvetica] leading-[22px]">
             {lesson.description
               ? lesson.description
               : "No description available. Sorry! :(("}
@@ -150,9 +149,9 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
           )}
           <div className="max-w-lg w-108 flex flex-col gap-7">
             {/* Progress card */}
-            <Card className="bg-[#fff7f7] border-black shadow-[4px_4px_0px_#00000080] rounded-md py-5">
+            <Card className="bg-[#fff7f7] dark:bg-dark-mode-highlight border-black dark:border-[color:var(--dark-mode-highlight)] shadow-[4px_4px_0px_#00000080] rounded-md py-5">
               <CardContent className="flex flex-col items-center justify-center px-6">
-                <p className="w-full flex justify-between text-[#444444] text-base font-medium">
+                <p className="w-full flex justify-between text-[#444444] dark:text-primary text-base font-medium">
                   {isCompleted ? (
                     <span className="flex items-center gap-2 text-green-600">
                       <CheckCircle className="size-5" /> Completed
@@ -177,7 +176,7 @@ export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
             <div>
               <Button
                 onClick={createLesson}
-                className="disabled:animated-gradient-bg-subtle disabled:cursor-loading w-full h-12 bg-light-brown text-foreground text-lg font-semibold border border-solid border-black shadow-[4px_4px_0px_#00000080] rounded-md hover:bg-[#fff7f7] hover:text-[#444444]"
+                className="disabled:animated-gradient-bg-subtle disabled:cursor-loading w-full h-12 bg-white dark:bg-dark-inner-bg text-black dark:text-primary text-lg font-semibold border border-solid border-black dark:border-dark-mode-highlight shadow-[4px_4px_0px_#00000080] rounded-md hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight"
               >
                 {isCompleted ? "Review Lesson" : "Start Learning"}
               </Button>

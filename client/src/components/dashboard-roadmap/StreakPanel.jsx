@@ -58,21 +58,21 @@ const StreakPanel = () => {
   }, [session?.user?.id, fetch, checkAndUpdateStreak]);
 
   return (
-    <div className="relative bg-white rounded-lg border-2 border-black custom-shadow-75 p-4 w-98">
+    <div className="relative bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-dark-mode-highlight custom-shadow-75 p-4 w-98">
       <img
         src={CapySlide}
         alt="Sleeping capybara with orang"
         className="absolute -top-29 w-2/5 right-0"
       />
-      <h2 className="text-lg font-medium mb-3 text-black">Streaks</h2>
+      <h2 className="text-lg font-medium mb-3 text-black dark:text-primary">Streaks</h2>
 
       <div className="flex items-center justify-center gap-2 mb-4">
-        <img src={fireStreak} alt="Fire streak" className="w-8 h-8" />
+        <img src={fireStreak} alt="Fire streak" className="w-8 h-8 dark:invert" />
         <div className="flex items-baseline">
-          <span className="text-3xl font-bold text-black">
+          <span className="text-3xl font-bold text-black dark:text-primary">
             {loading ? "..." : supabaseStreak || 0}
           </span>
-          <span className="text-black ml-1">days</span>
+          <span className="text-black dark:text-primary ml-1">days</span>
         </div>
       </div>
 
@@ -80,13 +80,13 @@ const StreakPanel = () => {
         {parsedDailyStatus?.map((data, index) => (
           <div key={index} className="flex flex-col items-center">
             {data.status === "completed" ? (
-              <img src={capyDay} alt="Present" className="w-8 h-8" />
+              <img src={capyDay} alt="Present" className="w-8 h-8 dark:invert" />
             ) : data.status === "missed" ? (
-              <img src={sadFace} alt="Absent" className="w-8 h-8" />
+              <img src={sadFace} alt="Absent" className="w-8 h-8 dark:invert" />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-[#CBB09B] border-2 border-[#A18778]"></div>
+              <div className="w-8 h-8 rounded-full bg-[#CBB09B] dark:bg-dark-mode-highlight border-2 border-[#A18778] dark:border-dark-mode-highlight"></div>
             )}
-            <span className="text-xs mt-1 font-medium text-gray-600">
+            <span className="text-xs mt-1 font-medium text-gray-600 dark:text-primary">
               {data.day}
             </span>
           </div>
