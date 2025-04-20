@@ -52,7 +52,6 @@ export default function Assessment() {
       validated: false,
     },
   ]);
-  const { createSummary, isError } = useSummary();
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -60,15 +59,6 @@ export default function Assessment() {
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(userId);
-
-  // Track assessment performance
-  const [assessmentResults, setAssessmentResults] = useState({
-    score: 0,
-    totalQuestions: 0,
-    gemsEarned: 0,
-    expEarned: 0,
-    livesLost: 0,
-  });
 
   // Calculate rewards based on difficulty
   const calculateRewards = useCallback((difficulty) => {
@@ -102,38 +92,7 @@ export default function Assessment() {
     return { gems: baseGemsReward, exp: baseExpReward };
   }, []);
 
-  // Update when assessment is completed
-  const handleAssessmentSubmit = useCallback(
-    (score, total) => {
-      if (!lessonFetch || !userId) return;
-
-      // Calculate success rate
-      const successRate = score / total;
-
-      // Calculate rewards based on difficulty
-      const { gems, exp } = calculateRewards(lessonFetch.difficulty);
-
-      // Determine lives lost - lose 1 life if score is less than 50%
-      const livesLost = successRate < 0.5 ? 1 : 0;
-
-      // Update the assessment results
-      setAssessmentResults({
-        score,
-        totalQuestions: total,
-        gemsEarned: gems,
-        expEarned: exp,
-        livesLost: livesLost,
-      });
-
-      console.log(
-        `Assessment results: ${score}/${total}, Rewards: ${gems} gems, ${exp} exp, Lives lost: ${livesLost}`
-      );
-
-      return { gems, exp, livesLost };
-    },
-    [lessonFetch, userId, calculateRewards]
-  );
-
+ 
   const handleCheck = () => {
     setValidateAnswer(true);
     const isCorrect =
@@ -344,23 +303,6 @@ export default function Assessment() {
     }
   };
 
-  const handleAssessmentComplete = async () => {
-    try {
-      // Save both lesson progress and user stats
-      await saveLessonProgress();
-      await updateUserStats();
-
-      // Invalidate and refetch user stats query to update UI
-      queryClient.invalidateQueries(["userStats", userId]);
-
-      // Navigate to dashboard with timestamp parameter to force refresh
-      navigate(`/dashboard/${userId}?t=${Date.now()}`);
-    } catch (error) {
-      console.error("Error completing assessment:", error);
-      navigate(`/dashboard/${userId}?t=${Date.now()}`);
-    }
-  };
-
   if (isLoading) return <Loading />;
 
   if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
@@ -376,11 +318,11 @@ export default function Assessment() {
             //       FIRST PAGE
             // -------------------------
             <IntroSlide
-              lessonData={lessonFetch}
-              image={Image}
-              gems={lessonFetch.gems}
-              exp={lessonFetch.exp}
+              lessonData={(lessonData) ? lessonData : {}}
+              gems={lessonFetch?.gems}
+              exp={lessonFetch?.exp}
               setIntroSlide={() => setIntroSlide(false)}
+              disabled={isLoading}
             />
           ) : isLastSlide ? (
             isCount.score >= 3 ? (
@@ -388,17 +330,17 @@ export default function Assessment() {
               //   USER PASSED ASSESSMENT
               // -------------------------
               <PassLastSlide
-                score={isCount.score}
-                total={lessonData.questions.length - 1}
-                gems={lessonFetch.gems}
-                exp={lessonFetch.exp}
+                score={isCount?.score}
+                total={lessonData?.questions?.length - 1}
+                gems={lessonFetch?.gems}
+                exp={lessonFetch?.exp}
                 userId={userId}
-                lessonId={lessonFetch.id}
-                lessonName={lessonFetch.name}
-                lessonDifficulty={lessonFetch.difficulty}
+                lessonId={lessonFetch?.id}
+                lessonName={lessonFetch?.name}
+                lessonDifficulty={lessonFetch?.difficulty}
                 userLives={isCount.lives}
                 userScore={isCount.score}
-                userTotal={lessonData.questions.length - 1}
+                userTotal={lessonData?.questions?.length - 1}
                 answers={isAnswers}
                 onClick={handleFinishAssessment}
               />
@@ -407,10 +349,10 @@ export default function Assessment() {
               //   USER FAILED ASSESSMENT
               // -------------------------
               <FailLastSlide
-                lessonId={lessonFetch.id}
+                lessonId={lessonFetch?.id}
                 passing={3}
                 score={isCount.score}
-                total={lessonData.questions.length - 1}
+                total={lessonData?.questions?.length - 1}
                 onClick={handleFinishAssessment}
               />
             )
@@ -419,14 +361,14 @@ export default function Assessment() {
               display_wrong_answer={isCount.wrong}
               lesson_name={lessonData.name}
               type={"multiple-choice"}
-              question={lessonData.questions[isCurrentSlide].text}
-              options={lessonData.questions[isCurrentSlide].options}
+              question={lessonData?.questions[isCurrentSlide]?.text}
+              options={lessonData?.questions[isCurrentSlide]?.options}
               questionNumber={isCurrentSlide}
-              correct={lessonData.questions[isCurrentSlide].correct_answer}
+              correct={lessonData?.questions[isCurrentSlide]?.correct_answer}
               isSelectedAnswer={isAnswers}
               setSelectedAnswer={setAnswers}
               validate={isValidateAnswer}
-              explanation={lessonData.questions[isCurrentSlide].explanation}
+              explanation={lessonData?.questions[isCurrentSlide]?.explanation}
             />
           )}
         </form>
