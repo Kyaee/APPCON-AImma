@@ -3,6 +3,7 @@
 # CapyCademy
 
 CapyCademy is an AI-powered e-learning platform tailored to bridge skill gaps in the Information Technology sector. By assessing individual skill levels, it generates personalized learning roadmaps enhanced with gamification, interactive tools, and AI-driven insights for an engaging and effective learning experience. With flexible subscription plans—including student discounts and enterprise packages—CapyCademy makes upskilling accessible, promoting career growth and workforce efficiency across diverse user groups.
+
 insert gif or link here
 
 ## 🧰 Tech Stack
