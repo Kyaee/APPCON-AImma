@@ -3,7 +3,7 @@ Chart.register(CategoryScale);
 import Chart from "chart.js/auto";
 import { useQuery } from "@tanstack/react-query";
 import { useFetchStore } from "@/store/useUserData";
-import { fetchProfile, fetchRoadmap, fetchLesson } from "@/api/FETCH"
+import { fetchProfile, fetchRoadmap, fetchLesson } from "@/api/FETCH";
 import { useEffect, useState } from "react";
 import { useStreakStore } from "@/store/useStreakStore";
 
@@ -43,15 +43,7 @@ export default function Profile() {
     enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
   });
 
-  // Effect to check and update streak
-  useEffect(() => {
-    if (fetch?.id) {
-      useStreakStore.getState().checkAndUpdateStreak(fetch.id);
-    }
-  }, [fetch?.id]);
-
-  if (load_profile || loadingRoadmap || loadingLessons)
-    return <Loading />;
+  if (load_profile || loadingRoadmap || loadingLessons) return <Loading />;
 
   // Calculate current level progress
   const calculateLevelProgress = (currentExp, level) => {
@@ -91,7 +83,11 @@ export default function Profile() {
             {/* Provide filler data to ProfileDetails if data is inaccessible */}
             <ProfileDetails
               initialImageUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              name={fetch?.first_name && fetch?.last_name ? fetch.first_name + " " + fetch.last_name : "Guest User"}
+              name={
+                fetch?.first_name && fetch?.last_name
+                  ? fetch.first_name + " " + fetch.last_name
+                  : "Guest User"
+              }
               level={fetch?.level || 1}
               experience={
                 calculateLevelProgress(fetch?.current_exp || 0).current
@@ -99,19 +95,22 @@ export default function Profile() {
               totalExperience={
                 calculateLevelProgress(fetch?.current_exp || 0).total
               }
-              lessonData={lessonData
-                ? lessonData
-                    .filter(
-                      (lesson) =>
-                        lesson.previous_lesson &&
-                        new Date(lesson.previous_lesson) <= new Date()
-                    )
-                    .sort(
-                      (a, b) =>
-                        new Date(b.previous_lesson) - new Date(a.previous_lesson)
-                    )
-                    .slice(0, 1)
-                : []}
+              lessonData={
+                lessonData
+                  ? lessonData
+                      .filter(
+                        (lesson) =>
+                          lesson.previous_lesson &&
+                          new Date(lesson.previous_lesson) <= new Date()
+                      )
+                      .sort(
+                        (a, b) =>
+                          new Date(b.previous_lesson) -
+                          new Date(a.previous_lesson)
+                      )
+                      .slice(0, 1)
+                  : []
+              }
               hours={2}
               withAssessment={true}
               progress={40}

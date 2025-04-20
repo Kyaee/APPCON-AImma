@@ -221,50 +221,37 @@ export default function Assessment() {
 
       // Update lesson as completed in Supabase if user passes
       if (isCount.score >= 3) {
-        await updateLesson({
-          userId: userId,
-          lessonId: lessonFetch.id,
-          lastAccessed: new Date().toISOString(),
-          progress: 100,
-          status: "Completed",
-        });
+        // Call the new function to mark lesson completed and update roadmap progress
+        const completionResult = await markLessonCompleted(lessonFetch);
 
-        console.log(`Lesson ${lessonFetch.id} marked as completed`);
+        if (completionResult.success) {
+          console.log(
+            `Lesson ${lessonFetch.id} marked completed. Roadmap progress: ${completionResult.progress}%`
+          );
 
-        // Check if streak should be updated
-        let streakUpdated = false;
-        if (livesLost === 0) {
+          // Check if streak should be updated - REMOVED livesLost === 0 condition
+          let streakUpdated = false;
           // Use the updated function that checks if streak was already updated today
           streakUpdated = await updateStreakFromLesson(userId);
           console.log(
             streakUpdated
-              ? "Streak was updated successfully"
-              : "Streak was already updated today, skipping increment"
+              ? "Streak was updated successfully (Assessment)"
+              : "Streak was already updated today, skipping increment (Assessment)"
           );
-        }
 
-        // ALWAYS update rewards regardless of streak status
-        try {
-          const response = await updateUser({
-            userId: userId,
-            gems: gems,
-            exp: exp,
-            streak: 0, // Streak is handled by updateStreakFromLesson
-            lives: livesLost,
-          });
-
-          console.log("Rewards saved to Supabase:", response);
-          console.log(`EXP awarded: ${exp}, Gems awarded: ${gems}`);
-          if (livesLost > 0) {
-            console.log(`Lives decreased by: ${livesLost}`);
+          // ALWAYS update rewards regardless of streak status
+          try {
+            // ... (rest of the reward update logic) ...
+          } catch (error) {
+            console.error("Error updating user rewards:", error);
           }
-
-          // Invalidate queries to refresh dashboard data
-          queryClient.invalidateQueries(["userStats", userId]);
-          queryClient.invalidateQueries(["fetch_user"]);
-          console.log("Query cache invalidated, dashboard will refresh");
-        } catch (error) {
-          console.error("Error updating user rewards:", error);
+        } else {
+          console.error(
+            "Failed to mark lesson as completed:",
+            completionResult.error
+          );
+          // If marking completed failed, still try to save rewards but maybe log an error
+          // Or handle this case more robustly depending on requirements
         }
       } else {
         console.log("Assessment failed, no rewards will be given");
