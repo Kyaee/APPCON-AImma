@@ -4,6 +4,8 @@ import AssessmentLayout from "@/components/assessment/AssessmentLayout";
 import { assessmentFlow } from "@/lib/assessment-flow";
 import { useAssessmentStore } from "@/store/useAssessmentStore";
 import { useGenerateRoadmap } from "@/api/INSERT";
+import { useAuth } from "@/config/AuthContext";
+import Loading from "@/routes/Loading";
 
 // Import step components
 import LanguageStep from "@/components/assessment/steps/LanguageStep";
@@ -23,18 +25,42 @@ import TechInterestStep from "@/components/assessment/steps/TechInterestStep";
 import CompleteStep from "@/components/assessment/steps/CompletionStep";
 
 export default function UserAssessment() {
+  // Loading states
+  const [isReady, setIsReady] = useState(false);
+
+  // Set up loading effect - wait for all necessary data
+  useEffect(() => {
+    // Use a small timeout to ensure everything is loaded
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Store actions and state
   const setLanguage = useAssessmentStore((state) => state.setLanguage);
   const language = useAssessmentStore((state) => state.language);
   const setUserType = useAssessmentStore((state) => state.setUserType);
-  const setEducationLevel = useAssessmentStore((state) => state.setEducationLevel);
-  const setCareerTransition = useAssessmentStore((state) => state.setCareerTransition);
-  const setPreviousExperience = useAssessmentStore((state) => state.setPreviousExperience);
+  const setEducationLevel = useAssessmentStore(
+    (state) => state.setEducationLevel
+  );
+  const setCareerTransition = useAssessmentStore(
+    (state) => state.setCareerTransition
+  );
+  const setPreviousExperience = useAssessmentStore(
+    (state) => state.setPreviousExperience
+  );
   const setDailyGoal = useAssessmentStore((state) => state.setDailyGoal);
-  const setTechnicalInterest = useAssessmentStore((state) => state.setTechnicalInterest);
-  const setTechnicalAnswers = useAssessmentStore((state) => state.setTechnicalAnswers);
+  const setTechnicalInterest = useAssessmentStore(
+    (state) => state.setTechnicalInterest
+  );
+  const setTechnicalAnswers = useAssessmentStore(
+    (state) => state.setTechnicalAnswers
+  );
   const resetAssessment = useAssessmentStore((state) => state.resetAssessment);
   const { createRoadmap, isSuccess } = useGenerateRoadmap();
+  const { session } = useAuth();
 
   // Local state
   const [currentStep, setCurrentStep] = useState(() => {
@@ -319,7 +345,7 @@ export default function UserAssessment() {
     // Custom validation and navigation logic for each step
     switch (currentStep) {
       case "language":
-        resetAssessment()
+        resetAssessment();
         navigateToNextStep("userType");
         break;
 
@@ -532,9 +558,8 @@ export default function UserAssessment() {
             // First click on Next: Show the questions for the selected interest
             setTechQuestionsVisible(true);
           } else {
-            // Second click on Next: Move to completion
+            // Second click on Next: Move to completion without creating roadmap yet
             setTechQuestionsVisible(false);
-            createRoadmap()
             navigateToNextStep("complete");
           }
         } else {
@@ -548,7 +573,7 @@ export default function UserAssessment() {
         console.log("Language:", language);
         console.log("User Type:", selectedType);
         console.log("Education Level:", selectedLevel);
-        
+
         // User type specific data
         if (selectedType?.id === "student") {
           console.log("Education Level:", selectedLevel?.label);
@@ -573,32 +598,52 @@ export default function UserAssessment() {
         } else if (selectedType?.id === "careerShifter") {
           console.log("Career Transition:", transition);
         }
-        
+
         console.log("Daily Goal:", dailyGoal);
-        console.log("Technical Interest:", technicalInterest ? `${technicalInterest.label} (${technicalInterest.id})` : "None");
+        console.log(
+          "Technical Interest:",
+          technicalInterest
+            ? `${technicalInterest.label} (${technicalInterest.id})`
+            : "None"
+        );
         console.log("Technical Answers:", technicalAnswers);
+
         // Additional details about technical interest answers
         if (technicalInterest) {
           console.group(`${technicalInterest.label} Questions and Answers`);
-          const questionSet = technicalInterest.id === "other" 
-            ? assessmentFlow.otherInterests 
-            : assessmentFlow[technicalInterest.id + "Questions"];
-            
+          const questionSet =
+            technicalInterest.id === "other"
+              ? assessmentFlow.otherInterests
+              : assessmentFlow[technicalInterest.id + "Questions"];
+
           if (questionSet && questionSet.questions) {
-            questionSet.questions.forEach(question => {
+            questionSet.questions.forEach((question) => {
               const answer = technicalAnswers[question.id];
               console.log(`Q: ${question.label}`);
-              console.log(`A: ${Array.isArray(answer) ? answer.join(', ') : answer || "Not answered"}`);
-              console.log('---');
+              console.log(
+                `A: ${
+                  Array.isArray(answer)
+                    ? answer.join(", ")
+                    : answer || "Not answered"
+                }`
+              );
+              console.log("---");
             });
           } else {
-            console.log(`No questions found for ${technicalInterest.label} (${technicalInterest.id})`);
-            console.log('Available question sets:', Object.keys(assessmentFlow).filter(key => key.includes('Questions')));
+            console.log(
+              `No questions found for ${technicalInterest.label} (${technicalInterest.id})`
+            );
+            console.log(
+              "Available question sets:",
+              Object.keys(assessmentFlow).filter((key) =>
+                key.includes("Questions")
+              )
+            );
           }
           console.groupEnd();
         }
         console.log("Feedback:", feedback);
-        
+
         // Create a formatted summary of all answers
         const summaryData = {
           basicInfo: {
@@ -606,27 +651,25 @@ export default function UserAssessment() {
             userType: selectedType?.label,
             dailyGoal: `${dailyGoal} minutes`,
           },
-          pathDetails: selectedType?.id === "student" 
-            ? { educationLevel: selectedLevel?.label }
-            : selectedType?.id === "professional"
+          pathDetails:
+            selectedType?.id === "student"
+              ? { educationLevel: selectedLevel?.label }
+              : selectedType?.id === "professional"
               ? { experienceLevel: selectedLevel?.label }
               : selectedType?.id === "jobSeeker"
-                ? { previousExperience }
-                : { careerTransition: transition },
+              ? { previousExperience }
+              : { careerTransition: transition },
           technicalInterests: {
             primaryInterest: technicalInterest?.label,
-            answers: technicalAnswers
+            answers: technicalAnswers,
           },
         };
-        
-        // Display the summary as an alert for user visibility
-        // alert("Assessment Complete! Summary:\n\n" + JSON.stringify(summaryData, null, 2));
-        // console.groupEnd();
-        
-        // Navigate to dashboard after completion
-        
-        // THIS ONE SHOULD POST FETCH THE DATA AND POST 
-        navigate("/dashboard/p");
+
+        // Only generate roadmap when clicking "Generate Roadmap" on the final page
+        createRoadmap();
+
+        // Navigate to the process dashboard to generate the roadmap
+        navigate(`/dashboard/p?user=${session.user.id}`);
         break;
 
       default:
@@ -673,8 +716,8 @@ export default function UserAssessment() {
       midQuestions: "Middle Level Assessment",
       seniorQuestions: "Senior Level Assessment",
       dailyGoal: "Daily Learning Goal",
-      techInterest: techQuestionsVisible 
-        ? `${technicalInterest?.label || 'Technical'} Questions` 
+      techInterest: techQuestionsVisible
+        ? `${technicalInterest?.label || "Technical"} Questions`
         : "Technical Interests",
       complete: "Assessment Complete",
     };
@@ -686,7 +729,7 @@ export default function UserAssessment() {
   const getButtonProps = () => {
     if (currentStep === "complete") {
       return {
-        nextButtonText: "Go to Dashboard",
+        nextButtonText: "Generate Roadmap",
         mascotZIndex: "-1",
       };
     }
@@ -824,7 +867,7 @@ export default function UserAssessment() {
       buttonPosition="center"
       {...getButtonProps()}
     >
-      {renderCurrentStep()}
+      {isReady ? renderCurrentStep() : <Loading />}
     </AssessmentLayout>
   );
 }

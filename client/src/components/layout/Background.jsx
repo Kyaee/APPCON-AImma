@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-function Background({className}) {
+function Background({ className }) {
   return (
     <div
-      className={cn("fixed top-0 -z-10 min-h-screen w-screen bg-[#fffaf4] dark:bg-[#1a1a1e]", className)}
+      className={cn(
+        "fixed top-0 -z-10 min-h-screen w-screen bg-[#fffaf4] dark:bg-[#1a1a1e]",
+        className
+      )}
       style={{
         backgroundImage: "url('/background/lines-bg.png')",
         backgroundRepeat: "repeat",

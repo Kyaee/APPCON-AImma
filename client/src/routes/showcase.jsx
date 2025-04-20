@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { VideoBackground } from "@/components/layout/Background";
 import brandIcon from "@/assets/general/brandicon.png";
+import Loading from "@/routes/Loading"; // Import the Loading component
 
 const IntroSlides = [
   {
@@ -64,6 +65,16 @@ const IntroSlides = [
 
 const Showcase = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isReady, setIsReady] = useState(false); // Add loading state
+
+  // Add useEffect for loading delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 800); // Adjust delay as needed
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleNext = () => {
     if (currentSlide < IntroSlides.length - 1) {
@@ -76,6 +87,11 @@ const Showcase = () => {
   };
 
   const currentSlideData = IntroSlides[currentSlide];
+
+  // Conditionally render Loading component
+  if (!isReady) {
+    return <Loading />;
+  }
 
   return (
     <div className="w-full h-screen flex items-center justify-center px-6 md:px-16 lg:px-32 xl:px-48 relative">

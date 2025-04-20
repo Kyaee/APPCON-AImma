@@ -29,11 +29,13 @@ export default function Dashboard({ setAssessed }) {
     localStorage.setItem("selectedRoadmapIndex", roadmapIndex.toString());
   }, [roadmapIndex]);
 
+  const queryOptions = fetchRoadmap(id);
+
   const {
     data: roadmapData,
     isLoading: loadingRoadmap,
     isError: roadmapError,
-  } = useQuery(fetchRoadmap(id));
+  } = useQuery(queryOptions);
 
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
   const roadmapId = currentRoadmap?.roadmap_id;
@@ -55,23 +57,25 @@ export default function Dashboard({ setAssessed }) {
     }
   }, [roadmapId, refetchLessons]);
 
-  // Replace your current refetch effect with this one
+  // Update this effect to only run when roadmapId is defined
   useEffect(() => {
-    // Force refetch when component mounts or URL has timestamp parameter
-    const doRefetch = async () => {
-      console.log("Forcing refetch of lesson data...");
-      // Use invalidateQueries to ensure we get fresh data
-      await queryClient.invalidateQueries(["lessons", roadmapId]);
-      await refetchLessons();
-    };
+    // Only proceed with refetching if we have a valid roadmapId
+    if (roadmapId) {
+      const doRefetch = async () => {
+        console.log("Forcing refetch of lesson data for roadmap:", roadmapId);
+        // Use invalidateQueries to ensure we get fresh data
+        await queryClient.invalidateQueries(["lessons", roadmapId]);
+        await refetchLessons();
+      };
 
-    doRefetch();
-
-    // Check for timestamp parameter which indicates we returned from a lesson
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has("t")) {
-      console.log("Returned from lesson with timestamp:", urlParams.get("t"));
       doRefetch();
+
+      // Check for timestamp parameter which indicates we returned from a lesson
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("t")) {
+        console.log("Returned from lesson with timestamp:", urlParams.get("t"));
+        doRefetch();
+      }
     }
   }, [refetchLessons, roadmapId, queryClient]);
 
@@ -140,13 +144,13 @@ export default function Dashboard({ setAssessed }) {
                         style={{ width: "430px" }}
                       >
                         <h2
-                          className="text-3xl font-bold text-black text-balance"
+                          className="text-3xl font-bold text-black dark:text-primary text-balance"
                           style={{ maxWidth: "430px" }}
                         >
                           {currentRoadmap?.roadmap_name || "Select a roadmap"}
                         </h2>
                         <ChevronRight
-                          className="w-8 h-8 text-black group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 mt-1"
+                          className="w-8 h-8 text-black dark:text-primary group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 mt-1"
                           style={{
                             transform: isLeftDropdownOpen
                               ? "rotate(90deg)"
@@ -156,9 +160,9 @@ export default function Dashboard({ setAssessed }) {
                       </div>
                     )}
 
-                    {/* Horizontal Line - width now matches header container exactly */}
+                    {/* Horizontal Line */}
                     <div
-                      className="h-[3px] bg-black mt-3"
+                      className="h-[3px] bg-black dark:bg-primary mt-3"
                       style={{ width: "100%" }}
                     />
                   </div>
@@ -171,21 +175,21 @@ export default function Dashboard({ setAssessed }) {
                   Unable to load progression data
                 </p>
               ) : (
-                <p className="text-black font-medium mt-4 text-lg">
+                <p className={`font-medium mt-4 text-lg ${isSidebarExpanded ? "text-black dark:text-primary" : "text-black dark:text-primary"}`}>
                   Current Progression: {currentRoadmap?.progress || 0}%
                 </p>
               )}
 
-              {/* Dropdown menu moved here - below the progression text */}
+              {/* Dropdown menu */}
               {isLeftDropdownOpen && !condition && (
                 <div
-                  className="mt-4 border-2 border-black rounded-lg shadow-md bg-white z-30"
+                  className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-dark-mode-bg z-30"
                   style={{ width: "450px" }}
                 >
                   {roadmapData.map((roadmap, index) => (
                     <div
                       key={roadmap.roadmap_id}
-                      className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-md truncate"
+                      className="p-3 hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight rounded cursor-pointer text-black dark:text-primary text-md truncate"
                       onClick={() => handleCourseSelect(index)}
                       title={roadmap.roadmap_name}
                     >

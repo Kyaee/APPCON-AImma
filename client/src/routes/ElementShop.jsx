@@ -153,7 +153,7 @@ export default function ElementShop() {
   ];
 
   return (
-    <div className="w-full min-h-screen text-black overflow-hidden">
+    <div className="w-full min-h-screen text-black dark:text-primary overflow-hidden">
       {/* Apply Background component when coming from lesson */}
       {isFromLesson ? (
         <Background />
@@ -167,7 +167,7 @@ export default function ElementShop() {
 
       {/* Main Content */}
       <div className="mt-32 ml-32 py-6">
-        <h1 className="text-3xl font-semibold mb-2 ml-8">In-App Purchases</h1>
+        <h1 className="text-3xl font-semibold mb-2 ml-8 text-black dark:text-primary">In-App Purchases</h1>
 
         <div
           className=" flex items-center w-11/12 gap-7 mb-5 px-7 pb-10 pt-5 overflow-auto hide-scrollbar [-ms-overflow-style:'none'] [scrollbar-width:'none']
@@ -190,12 +190,10 @@ export default function ElementShop() {
           {shopItems.map((item) => (
             <Card
               key={item.id}
-              className="border border-black rounded-[20px] bg-white transform transition-transform hover:scale-105 custom-shadow-50"
+              className="border border-foreground dark:border-dark-mode-highlight rounded-[20px] bg-card dark:bg-dark-inner-bg transform transition-transform hover:scale-105 custom-shadow-50"
             >
               <CardContent className="flex flex-col items-center justify-center gap-1 h-[280px]">
-                {" "}
-                {/* Fixed height for content */}
-                <div className="relative w-56 h-56 ">
+                <div className="relative w-56 h-56">
                   <div
                     className="absolute size-35 top-9 left-9 rounded-full"
                     style={{ backgroundColor: item.bgColor }}
@@ -207,14 +205,13 @@ export default function ElementShop() {
                       src={item.image}
                     />
                   )}
-                  <div className="absolute top-12 left-[117px] font-extrabold text-black text-sm">
+                  <div className="absolute top-12 left-[117px] font-extrabold text-primary text-sm">
                     {item.icon}
                   </div>
                 </div>
                 <h3
-                  className="font-extrabold text-[#444444] text-[1.5rem] tracking-tight text-center overflow-hidden"
-                  style={{ height: "5rem" }} // Fixed height instead of minHeight
-                >
+                  className="font-extrabold text-primary text-[1.5rem] tracking-tight text-center overflow-hidden"
+                  style={{ height: "5rem" }}>
                   {item.title}
                 </h3>
               </CardContent>
@@ -231,31 +228,31 @@ export default function ElementShop() {
 
       {/* Pricing cards */}
       <div className="mt-6 ">
-        <h2 className="ml-40 text-3xl font-semibold mb-8">User Plan</h2>
+        <h2 className="ml-40 text-3xl font-semibold mb-8 text-black dark:text-primary">User Plan</h2>
 
         <div className="flex flex-wrap gap-8 justify-center">
           {pricingPlans.map((plan, index) => (
             <Card
               key={index}
-              className="max-w-xl bg-white rounded-[20px] border border-solid border-black custom-shadow-50"
+              className="max-w-xl bg-card dark:bg-dark-inner-bg rounded-[20px] border border-solid border-foreground dark:border-dark-mode-highlight custom-shadow-50"
             >
               <CardHeader className="pb-0">
-                <CardTitle className="text-black text-2xl font-semibold flex items-center gap-2">
+                <CardTitle className="text-primary text-2xl font-semibold flex items-center gap-2">
                   {plan.icon && plan.icon}
                   {plan.title}
                 </CardTitle>
 
                 <div className="mt-4 flex flex-col">
                   {plan.discount && (
-                    <div className="text-black flex items-center gap-2 mb-2">
+                    <div className="text-primary flex items-center gap-2 mb-2">
                       <Badge
                         variant="outline"
-                        className="text-blackbg-[#dfdfdf] border border-solid border-black rounded-[10px] font-normal"
+                        className="text-primary bg-background dark:bg-dark-mode-highlight border border-solid border-foreground dark:border-dark-mode-highlight rounded-[10px] font-normal"
                       >
                         {plan.discount}
                       </Badge>
                       {plan.originalPrice && (
-                        <span className="text-black text-base line-through">
+                        <span className="text-primary text-base line-through">
                           {plan.originalPrice}
                         </span>
                       )}
@@ -263,10 +260,10 @@ export default function ElementShop() {
                   )}
 
                   <div className="flex items-end">
-                    <span className="mt-3 text-black text-5xl tracking-[-3.46px] leading-[48px] font-normal">
+                    <span className="mt-3 text-primary text-5xl tracking-[-3.46px] leading-[48px] font-normal">
                       {plan.price}
                     </span>
-                    <span className="text-black text-base ml-1">
+                    <span className="text-primary text-base ml-1">
                       &nbsp;{plan.period}
                     </span>
                   </div>
@@ -274,13 +271,13 @@ export default function ElementShop() {
               </CardHeader>
 
               <CardContent className="pt-5">
-                <p className="text-black text-base font-medium mb-3">
+                <p className="text-primary text-base font-medium mb-3">
                   {plan.description}
                 </p>
 
                 <ul className="space-y-2">
                   {plan.perks.map((perk, i) => (
-                    <li key={i} className="text-black text-base font-medium">
+                    <li key={i} className="text-primary text-base font-medium">
                       • {perk}
                     </li>
                   ))}

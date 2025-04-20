@@ -11,7 +11,7 @@ export default function SkinBadgesTabs() {
       </h2>
 
       <TabsContent value="skins">
-        <Card className="border-2 border-foreground">
+        <Card className="border-2 border-foreground dark:border-dark-mode-highlight bg-background dark:bg-dark-mode-bg">
           <CardContent className="p-4 py-0">
             <CapySkin />
           </CardContent>

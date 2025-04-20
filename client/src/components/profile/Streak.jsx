@@ -59,7 +59,7 @@ export default function ProfileStreak({
             <img
               src={fireStreak}
               alt="Fire streak"
-              className="w-14 h-14 self-center"
+              className="w-14 h-14 self-center dark:invert"
             />
             {streak} days
           </span>
