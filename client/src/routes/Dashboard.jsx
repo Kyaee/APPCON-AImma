@@ -29,11 +29,13 @@ export default function Dashboard({ setAssessed }) {
     localStorage.setItem("selectedRoadmapIndex", roadmapIndex.toString());
   }, [roadmapIndex]);
 
+  const queryOptions = fetchRoadmap(id);
+
   const {
     data: roadmapData,
     isLoading: loadingRoadmap,
     isError: roadmapError,
-  } = useQuery(fetchRoadmap(id));
+  } = useQuery(queryOptions);
 
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
   const roadmapId = currentRoadmap?.roadmap_id;
@@ -55,23 +57,25 @@ export default function Dashboard({ setAssessed }) {
     }
   }, [roadmapId, refetchLessons]);
 
-  // Replace your current refetch effect with this one
+  // Update this effect to only run when roadmapId is defined
   useEffect(() => {
-    // Force refetch when component mounts or URL has timestamp parameter
-    const doRefetch = async () => {
-      console.log("Forcing refetch of lesson data...");
-      // Use invalidateQueries to ensure we get fresh data
-      await queryClient.invalidateQueries(["lessons", roadmapId]);
-      await refetchLessons();
-    };
+    // Only proceed with refetching if we have a valid roadmapId
+    if (roadmapId) {
+      const doRefetch = async () => {
+        console.log("Forcing refetch of lesson data for roadmap:", roadmapId);
+        // Use invalidateQueries to ensure we get fresh data
+        await queryClient.invalidateQueries(["lessons", roadmapId]);
+        await refetchLessons();
+      };
 
-    doRefetch();
-
-    // Check for timestamp parameter which indicates we returned from a lesson
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has("t")) {
-      console.log("Returned from lesson with timestamp:", urlParams.get("t"));
       doRefetch();
+
+      // Check for timestamp parameter which indicates we returned from a lesson
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("t")) {
+        console.log("Returned from lesson with timestamp:", urlParams.get("t"));
+        doRefetch();
+      }
     }
   }, [refetchLessons, roadmapId, queryClient]);
 

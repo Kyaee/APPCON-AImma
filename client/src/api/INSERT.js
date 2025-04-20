@@ -22,7 +22,7 @@ const technicalAnswers = useAssessmentStore.getState().technicalAnswers;
 export function useGenerateRoadmap() {
   const prompt_roadmap = {
   prompt_roadmap_generate: `
-    Generate a roadmap in ${JSON.stringify(language)} with the following details:
+    Generate a comprehensive, structured, and focused learning roadmap in ${JSON.stringify(language)} with approximately 20-30 lessons.
 
     Roadmap tailored for a "${userType?.label}" ${JSON.stringify(educationLevel?.label || previousExperience || careerTransition)} user, 
     with a daily goal of ${JSON.stringify(dailyGoal)} (if two digits its minutes, else hours) .
@@ -32,7 +32,7 @@ export function useGenerateRoadmap() {
     Format:
     - Roadmap Name, roadmap dailyGoal 
     - Lesson Categories in ARRAY 
-    - Lesson description
+    - Lesson description: Provide a verbose and detailed description covering the key topics and learning objectives for each lesson.
     - Lesson difficulty(return only "Easy", "Intermediate", "Hard")
     - Lesson status(returns "locked" for premium access, "in_progress", or no output if unlocked)
     - Lesson Assessment(returns true or false)
@@ -44,27 +44,43 @@ export function useGenerateRoadmap() {
 
   const postPrompt1 = async () => {
     try {
+      console.log("Generating roadmap with user data:", { 
+        language, 
+        userType: userType?.label, 
+        educationLevel: educationLevel?.label, 
+        dailyGoal, 
+        technicalInterest: technicalInterest?.label 
+      });
+      
       const response = await axios.post(
         "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/generate-roadmap",
         prompt_roadmap
       );
-  
-      if (response.error) console.error("Error:", response.error);
+      
+      if (response.data?.error) {
+        console.error("API Error:", response.data.error);
+        throw new Error(response.data.error);
+      }
+      
+      console.log("Roadmap API response received successfully");
+      return response.data;
     } catch (error) {
-      console.error("Error:", error);
-  }};
+      console.error("Error generating roadmap:", error);
+      throw error;
+    }
+  };
 
-  const { mutate: createRoadmap, isSuccess } = useMutation({
+  const { mutate: createRoadmap, isSuccess, isError, error, isPending } = useMutation({
     mutationFn: postPrompt1,
     onSuccess: (data) => {
-      console.log("Data: Successful")
+      console.log("Roadmap generation successful:", data);
     },
     onError: (error) => {
-      console.error("Error:", error);
+      console.error("Roadmap generation error:", error);
     },
   });
 
-  return { createRoadmap, isSuccess };
+  return { createRoadmap, isSuccess, isError, error, isPending };
 }
 
 
@@ -84,7 +100,7 @@ export const postPrompt2 = async (
   lesson_progress
 ) => {
   const prompt_lesson = `
-    Generate a ${lesson_name} lesson for the user
+    Generate a ${lesson_name} lesson for the user.
 
     Format:
     - (do not include lesson name as title)
@@ -97,7 +113,9 @@ export const postPrompt2 = async (
       #### C. Real world examples or scenarios
     - ### Activity/Indenpdent Practice 
     - ## Conclusion 
-    - ### References (if possible) 
+    - ### References (if possible)
+
+    IMPORTANT: Do NOT wrap the entire lesson content in a single Markdown code block (\`\`\` \`\`\`). Use Markdown code blocks ONLY for specific code examples within the lesson text.
   `;
   try {
     const requestBody = {
@@ -137,7 +155,8 @@ export function useAssessment() {
     const requestBody = {
       prompt_assessment_generate: `
       Generate 11 assessment questions for ${lesson_name} with the following content: ${lesson_content}
-      The questions must only be "multiple-choice", and don't make the answers too obvious by making it longer than others.
+      The questions must only be "multiple-choice".
+      IMPORTANT: Ensure the length of the correct answer option is varied and not consistently longer than the incorrect options, to avoid making the correct answer obvious.
       `,
       id: lesson_id,
       name: lesson_name,

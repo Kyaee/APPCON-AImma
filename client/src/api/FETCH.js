@@ -1,4 +1,3 @@
-import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/config/supabase";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -16,7 +15,7 @@ import axios from "axios";
  ************************************/
 
 export function fetchUserdata() {
-  return queryOptions({
+  return {
     queryKey: ["fetch_user"],
     queryFn: async () => {
       const { data: userData, error } = await supabase
@@ -31,15 +30,15 @@ export function fetchUserdata() {
     refetchOnMount: true,      // Refetch on component mount
     refetchOnWindowFocus: true, // Refetch when window regains focus
     staleTime: 1000,           // Consider data stale after 1 second
-  });
+  };
 }
 
 /***********************************
 2*        FETCH ROADMAP DATA
  ************************************/
 export function fetchRoadmap(id) {
-  return queryOptions({
-    queryKey: ["roadmap"],
+  return {
+    queryKey: ["roadmap", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("roadmap")
@@ -49,18 +48,27 @@ export function fetchRoadmap(id) {
       if (error) throw new Error(error.message);
       return data;
     },
-  });
+  };
 }
 
 /***********************************
 3*        FETCH LESSON DATA
  ************************************/
 
-export const fetchLesson = async (lessonId) => {
+export const fetchLesson = async (roadmapId) => {
+  // Add validation to prevent API calls with undefined roadmapId
+  if (!roadmapId) {
+    // Only show warning in development environment
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[Info] fetchLesson skipped - no roadmapId provided');
+    }
+    return []; // Return empty array instead of making invalid API call
+  }
+  
   const { data, error } = await supabase
     .from("lessons")
     .select("*")
-    .eq("roadmap_id", lessonId)
+    .eq("roadmap_id", roadmapId)
     .order("id", { ascending: true });
   if (error) throw new Error(error.message);
   return data;
@@ -70,10 +78,10 @@ export const fetchLesson = async (lessonId) => {
  *          FETCH PROFILE
  **************************************/
 export function fetchProfile(userId) {
-  return queryOptions({
-    queryKey: ["profile"],
+  return {
+    queryKey: ["profile", userId],
     queryFn: () => fetchProfileData(userId),
-  });
+  };
 }
 
 const fetchProfileData = async (id) => {
@@ -90,17 +98,17 @@ const fetchProfileData = async (id) => {
  *          FETCH ALL
  * ************************************/
 export function fetchAll() {
-  return queryOptions({
+  return {
     queryKey: ["all"],
-    queryFn: {},
-  });
+    queryFn: async () => ({}),
+  };
 }
 
 /***********************************
  *        FETCH FROM AI DATA
  ************************************/
 export function fetchRoadmapAIdata() {
-  return queryOptions({
+  return {
     queryKey: ["roadmapAi"],
     queryFn: async () => {
       const response = await axios
@@ -114,11 +122,11 @@ export function fetchRoadmapAIdata() {
       }
       return response.data;
     },
-  });
+  };
 }
 
 export function fetchLessonAIdata() {
-  return queryOptions({
+  return {
     queryKey: ["lessonAi"],
     queryFn: async () => {
       const response = await axios
@@ -132,7 +140,7 @@ export function fetchLessonAIdata() {
       }
       return response.data;
     },
-  });
+  };
 }
 
 export function useLessonAIData() {
@@ -170,7 +178,7 @@ export function useLessonAIData() {
 }
 
 export function fetchLessonAssessmentData() {
-  return queryOptions({
+  return {
     queryKey: ["lessonAssessment"],
     queryFn: async () => {
       const response = await axios
@@ -184,17 +192,12 @@ export function fetchLessonAssessmentData() {
       }
       return response.data;
     },
-  });
+  };
 }
 
 export function useFetchSummary() { 
-  const fetchEvaluation = async () => {
-    return queryOptions({
-      
-    })
-  }
-
-  const { data: evaluationData, isLoading: isEvaluationLoading } = useQuery({queryKey: ["evaluation"],
+  const { data: evaluationData, isLoading: isEvaluationLoading } = useQuery({
+    queryKey: ["evaluation"],
     queryFn: async () => {
       const response = await axios
         .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-summary")
@@ -206,7 +209,8 @@ export function useFetchSummary() {
         throw new Error("Failed to fetch evaluation data");
       }
       return response.data;
-    },});
+    },
+  });
 
   return {
     evaluationData,
