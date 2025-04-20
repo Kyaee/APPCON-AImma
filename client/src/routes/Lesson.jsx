@@ -3,16 +3,19 @@ import { Background } from "@/components/layout/Background"; // Add this import
 import Loading from "./Loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
+import CapyStart from "@/assets/lesson-assessment/CapyStart.png";
+
+
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/config/supabase";
-
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useAssessment, useEvaluation } from "@/api/INSERT";
 import { useAuth } from "@/config/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
+// import {  }
 
 export default function ElementLesson() {
   const navigate = useNavigate();
@@ -398,24 +401,6 @@ export default function ElementLesson() {
     }
   };
 
-  // Update performance metrics based on user actions
-  const handleLessonCompletion = (success) => {
-    // Calculate rewards based on performance
-    const gems = success ? calculateGemReward(lessonDifficulty) : 0;
-    const exp = success ? calculateExpReward(lessonDifficulty) : 0;
-    const lives = success ? 0 : 1; // Lose a life if failed
-
-    setUserPerformance({
-      gemsEarned: gems,
-      expEarned: exp,
-      livesLost: lives,
-      streakIncrement: success ? 1 : 0,
-    });
-
-    // Save performance data to be used later
-    savePerformanceData(userPerformance);
-  };
-
   if (isPending) return <Loading generate_assessment={true} />;
 
   return (
@@ -428,9 +413,9 @@ export default function ElementLesson() {
       >
         <ProgressBar progress={scrollProgress} />
       </Suspense>
-      <Background className="opacity-90" />
+      <Background className="bg-[#FFECD0] opacity-35" />
 
-      <section className="mt-40 max-w-2xl mx-auto overflow-hidden">
+      <section className="mt-50 max-w-2xl mx-auto overflow-hidden">
         <LessonArticle
           name={lessonFetch?.name}
           difficulty={lessonFetch?.difficulty}
@@ -462,6 +447,7 @@ export default function ElementLesson() {
         can make mistakes, check important info.
       </div>
       <footer className="mb-20"></footer>
+      <img src={CapyStart} className="fixed transform top-1/2 -translate-y-1/2 w-55 h-auto -right-20 -rotate-55"/>
     </main>
   );
 }
