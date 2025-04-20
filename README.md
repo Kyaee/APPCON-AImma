@@ -8,22 +8,16 @@ insert gif or link here
 
 ## 🧰 Tech Stack
 
-## Client:
-**Frameworks:**
-React, ShadCN, TailwindCSS, 
+| Client | Tools |
+| ------ | ----- |
+| Frameworks   | React, ShadCN, Tailwind CSS |
+| State & Data | Zustand, TanStack Query     |
+| Tools & API  | Axios, and Supabase         |
 
-**State & Data:**
-Zustand, TanStack Query
-
-**Tools & API:**
- Axios, and Supabase
-
-## Server:
-**Languages & Frameworks:**
-Python, FastAPI, 
-
-**AI Integrations:**
-OpenAI package, Deepseek, and Gemini Services
+| Server | Tools |
+| ------ | ----- |
+| Languages & Frameworks   | Python, FastAPI |
+| AI Integrations | OpenAI package, Deepseek, and Gemini Services     |
 
 ## ⚙️ Getting Started
 **1. Go to the server directory**
