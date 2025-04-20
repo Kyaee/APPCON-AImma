@@ -1,9 +1,8 @@
 ![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
 
-# CAPYCADEMY
+# CapyCademy
 
-A brief description of what this project does and who it's for
-
+CapyCademy is an AI-powered e-learning platform tailored to bridge skill gaps in the Information Technology sector. By assessing individual skill levels, it generates personalized learning roadmaps enhanced with gamification, interactive tools, and AI-driven insights for an engaging and effective learning experience. With flexible subscription plans—including student discounts and enterprise packages—CapyCademy makes upskilling accessible, promoting career growth and workforce efficiency across diverse user groups.
 insert gif or link here
 
 ## 🧰 Tech Stack
@@ -52,7 +51,7 @@ uvicorn app:app --reload
 
 ## 🔐 Environment Variables
 
-Create a .env file in the root directory and add the following:
+**Create a .env file in the root directory and add the following:**
 
 | Client | URL   |
 | ---- | ---- | 
@@ -66,9 +65,14 @@ Create a .env file in the root directory and add the following:
 | GEMINI_API_KEY | ```GEMINI_API_KEY=AIzaSyBi57LIg2UFpQrwpHdaAcsVkrlGJrzzNz8``` |
 | GEMINI_API_URL | ```https://generativelanguage.googleapis.com/v1beta/openai/```|
 
-## Deployment
+## 🚀 Deployment
+**To deploy this project:**
 
-## Authors
+```
+npm run deploy
+```
+
+## 👥 Contributors
 
 - [Emmanuel Fabella](https://github.com/MasterTraits)
 - [Joselito Ayon](https://github.com/Junjuyun)
@@ -80,15 +84,7 @@ Create a .env file in the root directory and add the following:
 - [Catherine Notado]()
 - [Jogiofernesto Ardales]()
 
+## 💬 Feedback
+**We'd love to hear from you✨!**
 
-## Feedback
-
-If you have any feedback, please reach out to us emmanuelfabella606@gmail.com or notadocath@gmail.com
-
-## Deployment
-
-To deploy this project run
-
-```bash
-  npm run deploy
-```
+**If you have any feedback, please reach out to us:* emmanuelfabella606@gmail.com or notadocath@gmail.com
