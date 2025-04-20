@@ -4,10 +4,10 @@ quantum.register();
 import { bouncy } from "ldrs";
 bouncy.register();
 
-export default function loading({ generate_lesson, generate_assessment }) {
+export default function loading({ generate_roadmap, generate_lesson, generate_assessment }) {
   const { theme } = useTheme();
 
-  if (generate_lesson) {
+  if (generate_roadmap) {
     return (
       <main className="absolute top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
         <l-quantum
@@ -22,7 +22,23 @@ export default function loading({ generate_lesson, generate_assessment }) {
         </p>
       </main>
     );
-  } else if (generate_assessment) {
+  } else if (generate_lesson) {
+    return (
+      <main className="absolute top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
+        <l-quantum
+          size="80"
+          speed="1.5"
+          color={theme === "dark" ? "#fff" : "#000"}
+          className="mb-8"
+        ></l-quantum>
+        <h3 className="font-extrabold text-xl mb-2">On the Way!</h3>
+        <p className="animate-text-pulse max-w-1/4 text-center text-foreground">
+          Generating your personal lesson NIGGA
+        </p>
+      </main>
+    );
+  }
+  else if (generate_assessment) {
     return (
       <main className="absolute top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
         <l-quantum
@@ -49,6 +65,8 @@ export default function loading({ generate_lesson, generate_assessment }) {
       "Capybaras are known as 'nature's chairs' because other animals often sit on them",
       "They can jump up to 4 feet high despite their chubby appearance",
       "Capybaras are close relatives of guinea pigs",
+      "Be like a Capybara, relax and wait while we load your content!",
+      "The faster you mash buttons, the slower it loads. (Just kidding… or am I?)"
     ];
 
     const randomTip = tips[Math.floor(Math.random() * tips.length)];
