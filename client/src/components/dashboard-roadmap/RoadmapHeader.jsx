@@ -90,7 +90,7 @@ const RoadmapHeader = ({
     return ReactDOM.createPortal(
       <div
         id="roadmap-dropdown"
-        className="fixed bg-white border-2 border-black rounded-lg shadow-md"
+        className="fixed bg-primary dark:bg-dark-inner-bg border-2 border-black dark:border-dark-mode-highlight  rounded-lg shadow-md"
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,
@@ -101,7 +101,7 @@ const RoadmapHeader = ({
         {courseOptions.map((course, index) => (
           <div
             key={index}
-            className="p-3 hover:bg-[#CBB09B] cursor-pointer text-black text-lg truncate"
+            className="p-3 hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight cursor-pointer text-black dark:text-primary text-lg truncate"
             onClick={() => handleCourseSelection(index)}
             title={course}
           >
@@ -123,7 +123,7 @@ const RoadmapHeader = ({
             className="inline-flex items-start gap-3 cursor-pointer group"
           >
             <h2
-              className={`text-2xl font-bold text-black ${
+              className={`text-2xl font-bold text-black dark:text-primary  ${
                 isSidebarExpanded
                   ? "max-w-[660px] line-clamp-2"
                   : "max-w-[240px] break-words"
@@ -141,19 +141,22 @@ const RoadmapHeader = ({
               {currentCourse}
             </h2>
             <ChevronRight
-              className={`w-8 h-8 text-black flex-shrink-0 mt-1 transition-transform duration-200 ${
+              className={`w-8 h-8 text-black dark:text-primary flex-shrink-0 mt-1 transition-transform duration-200 ${
                 isDropdownOpen ? "rotate-90" : "rotate-0"
               }`}
             />
           </div>
 
-          <div className="h-[3px] bg-black mt-3" style={{ width: lineWidth }} />
+          <div
+            className="h-[3px] bg-black dark:bg-primary mt-3"
+            style={{ width: lineWidth }}
+          />
         </div>
       </div>
 
       {renderDropdown()}
 
-      <p className="text-black font-medium mt-4 text-md">
+      <p className="text-black dark:text-primary  font-medium mt-4 text-md">
         Current Progression: {progression}%
       </p>
     </div>

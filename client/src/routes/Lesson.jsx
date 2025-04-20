@@ -77,6 +77,50 @@ export default function ElementLesson() {
     return Math.round(scrollPercentage);
   }, []);
 
+  // Calculate rewards based on lesson difficulty
+  const calculateRewards = useCallback(() => {
+    // Default rewards (no assessment: 15 exp, 10 gems)
+    let gems = 10;
+    let exp = 15;
+
+    // If the lesson has specific rewards defined, use those
+    if (lessonFetch?.gems && lessonFetch?.exp) {
+      gems = lessonFetch.gems;
+      exp = lessonFetch.exp;
+    }
+
+    return { gems, exp };
+  }, [lessonFetch]);
+
+  // Function to award rewards for completing a lesson without assessment
+  const awardLessonRewards = useCallback(async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const { gems, exp } = calculateRewards();
+
+      console.log(`Awarding rewards: ${gems} gems, ${exp} exp`);
+
+      // Update user data with rewards - REMOVED streak: 1
+      await updateUser({
+        userId: session.user.id,
+        gems: gems,
+        exp: exp,
+        // streak: 1, // REMOVED - Streak is handled by updateStreakFromLesson in assessments
+        lives: 0, // No lives lost for lessons without assessment
+      });
+
+      // Invalidate user data queries to refresh dashboard when user returns
+      queryClient.invalidateQueries({
+        queryKey: ["userStats", session.user.id],
+      });
+
+      console.log("Rewards awarded successfully");
+    } catch (error) {
+      console.error("Error awarding rewards:", error);
+    }
+  }, [session, calculateRewards, updateUser, queryClient]);
+
   // Function to save progress to Supabase
   const saveProgress = useCallback(async () => {
     if (session?.user?.id && lessonFetch?.id && highestProgress > 0) {
@@ -184,50 +228,6 @@ export default function ElementLesson() {
     awardLessonRewards,
     updateStreakFromLesson, // Add updateStreakFromLesson to dependencies
   ]);
-
-  // Calculate rewards based on lesson difficulty
-  const calculateRewards = useCallback(() => {
-    // Default rewards (no assessment: 15 exp, 10 gems)
-    let gems = 10;
-    let exp = 15;
-
-    // If the lesson has specific rewards defined, use those
-    if (lessonFetch?.gems && lessonFetch?.exp) {
-      gems = lessonFetch.gems;
-      exp = lessonFetch.exp;
-    }
-
-    return { gems, exp };
-  }, [lessonFetch]);
-
-  // Function to award rewards for completing a lesson without assessment
-  const awardLessonRewards = useCallback(async () => {
-    if (!session?.user?.id) return;
-
-    try {
-      const { gems, exp } = calculateRewards();
-
-      console.log(`Awarding rewards: ${gems} gems, ${exp} exp`);
-
-      // Update user data with rewards - REMOVED streak: 1
-      await updateUser({
-        userId: session.user.id,
-        gems: gems,
-        exp: exp,
-        // streak: 1, // REMOVED - Streak is handled by updateStreakFromLesson in assessments
-        lives: 0, // No lives lost for lessons without assessment
-      });
-
-      // Invalidate user data queries to refresh dashboard when user returns
-      queryClient.invalidateQueries({
-        queryKey: ["userStats", session.user.id],
-      });
-
-      console.log("Rewards awarded successfully");
-    } catch (error) {
-      console.error("Error awarding rewards:", error);
-    }
-  }, [session, calculateRewards, updateUser, queryClient]);
 
   // Add this function to your component
   const handleQuit = async (e) => {
