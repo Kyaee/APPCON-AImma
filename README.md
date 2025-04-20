@@ -8,14 +8,14 @@ insert gif or link here
 
 # Tech Stack
 
-## Client
+## Client:
 **Frameworks:**
 React, ShadCN, TailwindCSS, 
 
-**State and Data:**
+**State & Data:**
 Zustand, TanStack Query
 
-**Tools and API:**
+**Tools & API:**
  Axios, and Supabase
 
 ## Server:
