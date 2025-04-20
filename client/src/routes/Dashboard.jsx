@@ -1,4 +1,5 @@
-import CombinedPanel from "@/components/dashboard-roadmap/CombinedPanel"; // Import the new component
+import QuestPanel from "@/components/dashboard-roadmap/QuestPanel";
+import StreakPanel from "@/components/dashboard-roadmap/StreakPanel";
 import Sidebar from "@/components/dashboard-roadmap/Sidebar";
 import RoadmapHeader from "@/components/dashboard-roadmap/RoadmapHeader";
 import RoadmapContent from "@/components/dashboard-roadmap/RoadmapContent";
@@ -6,7 +7,7 @@ import { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchRoadmap, fetchLesson } from "@/api/FETCH"; // Ensure fetchRoadmap is imported
+import { fetchRoadmap, fetchLesson } from "@/api/FETCH";
 import Loading from "@/routes/Loading";
 
 export default function Dashboard({ setAssessed }) {
@@ -28,26 +29,17 @@ export default function Dashboard({ setAssessed }) {
     localStorage.setItem("selectedRoadmapIndex", roadmapIndex.toString());
   }, [roadmapIndex]);
 
-  // Fetch roadmap data
+  const queryOptions = fetchRoadmap(id);
+
   const {
     data: roadmapData,
     isLoading: loadingRoadmap,
     isError: roadmapError,
-    refetch: refetchRoadmaps, // <<< Add refetch function for roadmaps
-  } = useQuery(fetchRoadmap(id)); // Assuming fetchRoadmap returns query options like { queryKey: ["roadmaps", id], queryFn: ... }
-
-  // <<< Add logging here
-  console.log("Dashboard: Fetched roadmapData:", roadmapData);
+  } = useQuery(queryOptions);
 
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
-
-  // <<< Add logging here
-  console.log("Dashboard: Selected currentRoadmap:", currentRoadmap);
-  console.log("Dashboard: Progression value:", currentRoadmap?.progress);
-
   const roadmapId = currentRoadmap?.roadmap_id;
 
-  // Fetch lesson data
   const {
     data: lessonData,
     isLoading: loadingLessons,
@@ -65,44 +57,27 @@ export default function Dashboard({ setAssessed }) {
     }
   }, [roadmapId, refetchLessons]);
 
-  // Refetch data when returning from a lesson/assessment or when roadmapId changes
+  // Update this effect to only run when roadmapId is defined
   useEffect(() => {
-    // Only proceed if we have a valid roadmapId and userId (id)
-    if (roadmapId && id) {
+    // Only proceed with refetching if we have a valid roadmapId
+    if (roadmapId) {
       const doRefetch = async () => {
-        console.log(
-          "Dashboard: Forcing refetch of data for roadmap:",
-          roadmapId,
-          "and user:",
-          id
-        );
-        // Invalidate queries first to mark them as stale
-        await queryClient.invalidateQueries({
-          queryKey: ["lessons", roadmapId],
-        });
-        await queryClient.invalidateQueries({ queryKey: ["roadmaps", id] });
-
-        // Explicitly refetch both after invalidation to ensure fresh data is loaded
+        console.log("Forcing refetch of lesson data for roadmap:", roadmapId);
+        // Use invalidateQueries to ensure we get fresh data
+        await queryClient.invalidateQueries(["lessons", roadmapId]);
         await refetchLessons();
-        await refetchRoadmaps(); // <<< Explicitly refetch roadmaps
-        console.log("Dashboard: Refetch complete.");
       };
 
-      // Check for timestamp parameter
+      doRefetch();
+
+      // Check for timestamp parameter which indicates we returned from a lesson
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has("t")) {
-        console.log(
-          "Dashboard: Returned from lesson/assessment with timestamp:",
-          urlParams.get("t")
-        );
+        console.log("Returned from lesson with timestamp:", urlParams.get("t"));
         doRefetch();
-      } else {
-        // Refetch lessons if only roadmapId changes (no timestamp)
-        refetchLessons();
       }
     }
-    // Ensure all dependencies are included
-  }, [roadmapId, id, queryClient, refetchLessons, refetchRoadmaps]); // <<< Added refetchRoadmaps and id
+  }, [refetchLessons, roadmapId, queryClient]);
 
   if (loadingRoadmap || loadingLessons) return <Loading />;
 
@@ -286,10 +261,10 @@ export default function Dashboard({ setAssessed }) {
             </>
           )}
         </div>
-        {/* Right Section - Combined Panel */}
-        <div className="p-4 fixed mt-20 right-7 z-10">
-          {/* Replace separate panels with the combined panel */}
-          <CombinedPanel userId={id} />
+        {/* Right Section - Panels */}
+        <div className="p-4 fixed space-y-5 mt-20 right-7 z-10">
+          <StreakPanel userId={id} />
+          <QuestPanel userId={id} />
         </div>
       </div>
     </div>
