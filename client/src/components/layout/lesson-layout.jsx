@@ -7,6 +7,10 @@ import { useLessonFetchStore } from "@/store/useLessonData";
 import { useEffect } from "react";
 import { useNavigation } from "@/context/navigationContext";
 
+const message = {
+  message: ""
+}
+
 export default function LessonLayout({ children }) {
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const setLessonFetch = useLessonFetchStore((state) => state.setFetch);

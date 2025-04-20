@@ -24,7 +24,7 @@ export default function CapySkin() {
       <div className="flex flex-col md:flex-row gap-1 w-full">
         {/* Preview Image */}
         <div className="flex-1 flex justify-center items-center">
-          <div className="w-10/12 flex flex-col justify-center items-center rounded-lg overflow-hidden h-[300px]">
+          <div className="w-10/12 flex flex-col justify-center items-center rounded-lg overflow-hidden h-[300px] bg-background dark:bg-dark-mode-bg">
             <div className="flex flex-col justify-center items-center h-full">
               <img 
                 src={selectedSkin.image} 

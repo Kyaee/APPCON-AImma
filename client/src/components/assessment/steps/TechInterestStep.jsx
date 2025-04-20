@@ -5,9 +5,9 @@ import ProgrammingQuestionsStep from "./tech/ProgrammingQuestionsStep";
 import NetworkingQuestionsStep from "./tech/NetworkingQuestionsStep";
 
 export default function TechInterestStep({
-  technicalInterest, 
-  technicalAnswers, 
-  onInterestSelect, 
+  technicalInterest,
+  technicalAnswers,
+  onInterestSelect,
   onAnswerChange,
   showQuestions = false, // New prop to control visibility of questions
 }) {
@@ -16,7 +16,10 @@ export default function TechInterestStep({
 
   // Set initial selected interest from props
   useEffect(() => {
-    if (technicalInterest && (!selectedInterest || selectedInterest.id !== technicalInterest.id)) {
+    if (
+      technicalInterest &&
+      (!selectedInterest || selectedInterest.id !== technicalInterest.id)
+    ) {
       setSelectedInterest(technicalInterest);
     }
   }, [technicalInterest]);
@@ -24,7 +27,7 @@ export default function TechInterestStep({
   const handleInterestSelect = (option) => {
     // Set the selected interest directly (no toggling)
     setSelectedInterest(option);
-    
+
     // Call the parent handler to update the store
     onInterestSelect(option);
   };
@@ -35,12 +38,14 @@ export default function TechInterestStep({
 
     // Create a scrollable container for questions with custom scrollbar styling
     const QuestionsContainer = ({ children }) => (
-      <div className="max-h-[65vh] overflow-y-auto pr-4" 
-           style={{ 
-             scrollbarWidth: 'thin', 
-             scrollbarColor: 'rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1)' 
-           }}>
-        <style jsx>{`
+      <div
+        className="max-h-[65vh] overflow-y-auto pr-4"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <style>{`
           div::-webkit-scrollbar {
             width: 8px;
           }
@@ -65,35 +70,38 @@ export default function TechInterestStep({
       case "programming":
         return (
           <QuestionsContainer>
-            <ProgrammingQuestionsStep 
-              answers={technicalAnswers} 
-              onAnswerChange={onAnswerChange} 
+            <ProgrammingQuestionsStep
+              answers={technicalAnswers}
+              onAnswerChange={onAnswerChange}
             />
           </QuestionsContainer>
         );
       case "networking":
         return (
           <QuestionsContainer>
-            <NetworkingQuestionsStep 
-              answers={technicalAnswers} 
-              onAnswerChange={onAnswerChange} 
+            <NetworkingQuestionsStep
+              answers={technicalAnswers}
+              onAnswerChange={onAnswerChange}
             />
           </QuestionsContainer>
         );
       default:
         // For other interest types, use a generic approach
-        const questionSet = selectedInterest.id === "other" 
-          ? assessmentFlow.otherInterests 
-          : assessmentFlow[selectedInterest.id + "Questions"];
-        
+        const questionSet =
+          selectedInterest.id === "other"
+            ? assessmentFlow.otherInterests
+            : assessmentFlow[selectedInterest.id + "Questions"];
+
         if (!questionSet || !questionSet.questions) {
           return (
             <div className="mt-8 border-t border-white/30 pt-6">
-              <p className="text-white">No questions available for this interest yet.</p>
+              <p className="text-white">
+                No questions available for this interest yet.
+              </p>
             </div>
           );
         }
-        
+
         return (
           <QuestionsContainer>
             <div className="mt-8 border-t border-white/30 pt-6">
@@ -112,7 +120,8 @@ export default function TechInterestStep({
                           <button
                             key={option}
                             onClick={() => {
-                              const currentAnswers = technicalAnswers[question.id] || [];
+                              const currentAnswers =
+                                technicalAnswers[question.id] || [];
                               const newAnswers = currentAnswers.includes(option)
                                 ? currentAnswers.filter((a) => a !== option)
                                 : [...currentAnswers, option];
@@ -120,7 +129,9 @@ export default function TechInterestStep({
                             }}
                             className={`p-3 rounded-lg transition-all duration-200 bg-white
                               ${
-                                (technicalAnswers[question.id] || []).includes(option)
+                                (technicalAnswers[question.id] || []).includes(
+                                  option
+                                )
                                   ? "border-[#3F6CFF] border-3 custom-shadow-75"
                                   : "border-black border-2 hover:border-black hover:border-3"
                               }`}
@@ -132,7 +143,9 @@ export default function TechInterestStep({
                     ) : question.type === "text" ? (
                       <textarea
                         value={technicalAnswers[question.id] || ""}
-                        onChange={(e) => onAnswerChange(question.id, e.target.value)}
+                        onChange={(e) =>
+                          onAnswerChange(question.id, e.target.value)
+                        }
                         className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
                         rows={4}
                         placeholder="Enter your answer..."
@@ -149,7 +162,13 @@ export default function TechInterestStep({
 
   // Show either interest selection or questions based on the showQuestions prop
   return (
-    <AssessmentStep title={showQuestions ? `${selectedInterest?.label || "Technical"} Questions` : "Technical Interests"}>
+    <AssessmentStep
+      title={
+        showQuestions
+          ? `${selectedInterest?.label || "Technical"} Questions`
+          : "Technical Interests"
+      }
+    >
       {!showQuestions ? (
         // Interest selection view
         <div>
@@ -181,9 +200,7 @@ export default function TechInterestStep({
                     </h3>
                   </div>
                   {isSelected && (
-                    <div className="mt-2 text-white font-bold">
-                      ✓ Selected
-                    </div>
+                    <div className="mt-2 text-white font-bold">✓ Selected</div>
                   )}
                 </button>
               );
@@ -195,7 +212,8 @@ export default function TechInterestStep({
         <div>
           <div className="bg-white/10 p-4 rounded-lg mb-6">
             <p className="text-white text-center">
-              You selected: <span className="font-bold">{selectedInterest?.label}</span>
+              You selected:{" "}
+              <span className="font-bold">{selectedInterest?.label}</span>
             </p>
           </div>
           {renderQuestions()}

@@ -1,18 +1,21 @@
+import { markLessonCompleted } from "@/api/UPDATE"; // Add this import
 import ProgressBar from "@/components/lesson-assessment/scroll-progressbar";
 import { Background } from "@/components/layout/Background"; // Add this import
 import Loading from "./Loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
+import CapyStart from "@/assets/lesson-assessment/CapyStart.png";
+
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/config/supabase";
-
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useAssessment, useEvaluation } from "@/api/INSERT";
 import { useAuth } from "@/config/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useStreakStore } from "@/store/useStreakStore"; // Import the streak store
 
 export default function ElementLesson() {
   const navigate = useNavigate();
@@ -33,6 +36,9 @@ export default function ElementLesson() {
   const contentRef = useRef(null); // Attach to main
   const [isLoading, setLoading] = useState(false); // State to manage loading status
   const { createAssessment, isPending } = useAssessment();
+  const updateStreakFromLesson = useStreakStore(
+    (state) => state.updateStreakFromLesson
+  ); // Get the streak update function
 
   // Add state to track user performance
   const [userPerformance, setUserPerformance] = useState({
@@ -105,16 +111,60 @@ export default function ElementLesson() {
           status: status,
         });
 
-        // If lesson is completed (100% progress) and has no assessment, award rewards
+        // If lesson is completed (100% progress) and has no assessment, mark it completed
         // Only award if the lesson wasn't previously completed
         if (shouldComplete && status === "Completed" && !wasAlreadyCompleted) {
           console.log(
-            "Lesson completed without assessment - awarding rewards automatically"
+            "Lesson completed without assessment - marking completed, awarding rewards, and updating streak"
           );
-          await awardLessonRewards();
-          // Invalidate queries to refresh dashboard data when user returns
-          queryClient.invalidateQueries(["userStats", session.user.id]);
-          queryClient.invalidateQueries(["fetch_user"]);
+          // Call the function to mark lesson completed and update roadmap progress
+          const completionResult = await markLessonCompleted(lessonFetch);
+
+          if (completionResult.success) {
+            console.log(
+              `Lesson ${lessonFetch.id} marked completed. Roadmap progress: ${completionResult.progress}%`
+            );
+            await awardLessonRewards();
+
+            // Attempt to update streak
+            const streakUpdated = await updateStreakFromLesson(session.user.id);
+            console.log(
+              streakUpdated
+                ? "Streak was updated successfully (Lesson)"
+                : "Streak was already updated today, skipping increment (Lesson)"
+            );
+
+            // Invalidate queries to refresh dashboard data when user returns
+            queryClient.invalidateQueries({
+              queryKey: ["userStats", session.user.id],
+            });
+            queryClient.invalidateQueries({ queryKey: ["fetch_user"] });
+            // Invalidate lessons query for the specific roadmap to update progress display
+            queryClient.invalidateQueries({
+              queryKey: ["lessons", lessonFetch.roadmap_id],
+            });
+            // Invalidate roadmap query as well
+            if (session?.user?.id) {
+              queryClient.invalidateQueries({
+                queryKey: ["roadmaps", session.user.id],
+              }); // Invalidate roadmap data
+            }
+          } else {
+            console.error(
+              "Failed to mark lesson as completed:",
+              completionResult.error
+            );
+            // Optionally, revert status or handle error
+          }
+        } else if (!shouldComplete) {
+          // If not completing, just update progress and last accessed time
+          await updateLesson({
+            userId: session.user.id,
+            lessonId: lessonFetch.id,
+            lastAccessed: new Date().toISOString(),
+            progress: finalProgress,
+            status: status, // Use the determined status (likely 'in_progress' or existing)
+          });
         }
 
         console.log("Progress saved successfully");
@@ -125,7 +175,15 @@ export default function ElementLesson() {
       }
     }
     return false;
-  }, [session, lessonFetch, highestProgress, updateLesson, queryClient]);
+  }, [
+    session,
+    lessonFetch,
+    highestProgress,
+    updateLesson,
+    queryClient,
+    awardLessonRewards,
+    updateStreakFromLesson, // Add updateStreakFromLesson to dependencies
+  ]);
 
   // Calculate rewards based on lesson difficulty
   const calculateRewards = useCallback(() => {
@@ -143,7 +201,7 @@ export default function ElementLesson() {
   }, [lessonFetch]);
 
   // Function to award rewards for completing a lesson without assessment
-  const awardLessonRewards = async () => {
+  const awardLessonRewards = useCallback(async () => {
     if (!session?.user?.id) return;
 
     try {
@@ -151,23 +209,25 @@ export default function ElementLesson() {
 
       console.log(`Awarding rewards: ${gems} gems, ${exp} exp`);
 
-      // Update user data with rewards
+      // Update user data with rewards - REMOVED streak: 1
       await updateUser({
         userId: session.user.id,
         gems: gems,
         exp: exp,
-        streak: 1, // Increment streak by 1 for completing a lesson
+        // streak: 1, // REMOVED - Streak is handled by updateStreakFromLesson in assessments
         lives: 0, // No lives lost for lessons without assessment
       });
 
       // Invalidate user data queries to refresh dashboard when user returns
-      queryClient.invalidateQueries(["userStats", session.user.id]);
+      queryClient.invalidateQueries({
+        queryKey: ["userStats", session.user.id],
+      });
 
       console.log("Rewards awarded successfully");
     } catch (error) {
       console.error("Error awarding rewards:", error);
     }
-  };
+  }, [session, calculateRewards, updateUser, queryClient]);
 
   // Add this function to your component
   const handleQuit = async (e) => {
@@ -398,24 +458,6 @@ export default function ElementLesson() {
     }
   };
 
-  // Update performance metrics based on user actions
-  const handleLessonCompletion = (success) => {
-    // Calculate rewards based on performance
-    const gems = success ? calculateGemReward(lessonDifficulty) : 0;
-    const exp = success ? calculateExpReward(lessonDifficulty) : 0;
-    const lives = success ? 0 : 1; // Lose a life if failed
-
-    setUserPerformance({
-      gemsEarned: gems,
-      expEarned: exp,
-      livesLost: lives,
-      streakIncrement: success ? 1 : 0,
-    });
-
-    // Save performance data to be used later
-    savePerformanceData(userPerformance);
-  };
-
   if (isPending) return <Loading generate_assessment={true} />;
 
   return (
@@ -428,9 +470,9 @@ export default function ElementLesson() {
       >
         <ProgressBar progress={scrollProgress} />
       </Suspense>
-      <Background className="opacity-90" />
+      <Background className="bg-[#FFECD0] opacity-35" />
 
-      <section className="mt-40 max-w-2xl mx-auto overflow-hidden">
+      <section className="mt-50 max-w-2xl mx-auto overflow-hidden">
         <LessonArticle
           name={lessonFetch?.name}
           difficulty={lessonFetch?.difficulty}
@@ -462,6 +504,10 @@ export default function ElementLesson() {
         can make mistakes, check important info.
       </div>
       <footer className="mb-20"></footer>
+      <img
+        src={CapyStart}
+        className="fixed transform top-1/2 -translate-y-1/2 w-55 h-auto -right-20 -rotate-55"
+      />
     </main>
   );
 }
