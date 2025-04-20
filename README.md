@@ -6,12 +6,24 @@ A brief description of what this project does and who it's for
 
 insert gif or link here
 
-## Tech Stack
+# Tech Stack
 
-**Client:** React, ShadCN, TailwindCSS, Zustand, TanStack Query, Axios, and Supabase
+## Client
+**Frameworks:**
+React, ShadCN, TailwindCSS, 
 
-**Server:** Python, FastAPI, OpenAI package, Deepseek, and Gemini Services
+**State and Data:**
+Zustand, TanStack Query
 
+**Tools and API:**
+ Axios, and Supabase
+
+## Server:
+**Languages & Frameworks:**
+Python, FastAPI, 
+
+**AI Integrations:**
+OpenAI package, Deepseek, and Gemini Services
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
