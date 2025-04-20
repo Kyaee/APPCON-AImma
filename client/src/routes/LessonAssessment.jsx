@@ -8,6 +8,7 @@ import NoLivesPage from "@/components/lesson-assessment/no-lives";
 import IntroSlide from "@/components/lesson-assessment/IntroSlide";
 import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
+import { markLessonCompleted } from "@/api/UPDATE";
 
 // Use Hooks
 import { useState, useEffect, useCallback } from "react";
@@ -93,7 +94,6 @@ export default function Assessment() {
     return { gems: baseGemsReward, exp: baseExpReward };
   }, []);
 
- 
   const handleCheck = () => {
     setValidateAnswer(true);
     const isCorrect =
@@ -181,72 +181,141 @@ export default function Assessment() {
 
       // Update lesson as completed in Supabase if user passes
       if (isCount.score >= 3) {
+        console.log(
+          `Assessment passed for lesson ${lessonFetch.id}. Marking complete and updating progress.`
+        );
+
+        // --- MODIFICATION START ---
+        // Use markLessonCompleted instead of direct updateLesson for completion
+        // Ensure lessonFetch.roadmap_id is available and passed
+        const completionResult = await markLessonCompleted(
+          lessonFetch.id,
+          lessonFetch.roadmap_id
+        );
+
+        if (completionResult.success) {
+          console.log(
+            `Lesson ${lessonFetch.id} marked completed via assessment. Roadmap progress: ${completionResult.progress}%`
+          );
+
+          // --- Call completeLessonTest quest action ---
+          try {
+            await completeLessonTest(userId, isCount.score, totalQuestions);
+            console.log("completeLessonTest quest action triggered.");
+          } catch (questError) {
+            console.error(
+              "Error triggering completeLessonTest quest action:",
+              questError
+            );
+          }
+          // --- End quest action call ---
+
+          // Check if streak should be updated (only if passed with 0 lives lost)
+          let streakUpdated = false;
+          if (livesLost === 0) {
+            streakUpdated = await updateStreakFromLesson(userId);
+            console.log(
+              streakUpdated
+                ? "Streak was updated successfully (Assessment)"
+                : "Streak was already updated today, skipping increment (Assessment)"
+            );
+          } else {
+            console.log(
+              `Streak not updated because ${livesLost} lives were lost during the assessment.`
+            );
+          }
+
+          // ALWAYS update rewards regardless of streak status if passed
+          try {
+            const response = await updateUser({
+              userId: userId,
+              gems: gems,
+              exp: exp,
+              streak: 0, // Streak is handled by updateStreakFromLesson
+              lives: livesLost, // Pass the actual lives lost during assessment
+            });
+            console.log("User rewards/lives updated via assessment:", response);
+
+            // Invalidate queries to refresh dashboard data
+            queryClient.invalidateQueries({ queryKey: ["userStats", userId] });
+            queryClient.invalidateQueries({ queryKey: ["fetch_user"] });
+            queryClient.invalidateQueries({
+              queryKey: ["lessons", lessonFetch.roadmap_id],
+            }); // Invalidate lessons for this roadmap
+            queryClient.invalidateQueries({ queryKey: ["roadmaps", userId] }); // Invalidate roadmap data to update progress %
+          } catch (error) {
+            console.error(
+              "Error updating user rewards/lives via assessment:",
+              error
+            );
+          }
+        } else {
+          console.error(
+            "Failed to mark lesson as completed via assessment:",
+            completionResult.error
+          );
+          // Fallback: Update lesson locally if server update fails
+          await updateLesson({
+            userId: userId,
+            lessonId: lessonFetch.id,
+            lastAccessed: new Date().toISOString(),
+            progress: 100, // Still set progress to 100
+            status: "Completed", // Mark as completed locally anyway
+          });
+        }
+        // --- MODIFICATION END ---
+      } else {
+        // User failed
+        console.log(
+          "Assessment failed, lesson not marked completed, no rewards given."
+        );
+        // Still update lives lost even on failure
+        try {
+          await updateUser({
+            userId: userId,
+            gems: 0, // No gems on failure
+            exp: 0, // No exp on failure
+            streak: 0,
+            lives: livesLost, // Record lives lost
+          });
+          console.log("User lives updated after failed assessment.");
+          queryClient.invalidateQueries({ queryKey: ["userStats", userId] });
+          queryClient.invalidateQueries({ queryKey: ["fetch_user"] });
+        } catch (updateError) {
+          console.error(
+            "Error updating user lives after failed assessment:",
+            updateError
+          );
+        }
+        // Optionally update lesson progress even if failed
+        // You might want to save the score or keep the old progress
         await updateLesson({
           userId: userId,
           lessonId: lessonFetch.id,
           lastAccessed: new Date().toISOString(),
-          progress: 100,
-          status: "Completed",
+          // Example: Save score as progress percentage, capped at 99 if failed?
+          progress: Math.min(
+            99,
+            Math.max(
+              lessonFetch.progress || 0,
+              Math.round((isCount.score / totalQuestions) * 100)
+            )
+          ),
+          status: "in_progress", // Keep as in_progress
         });
-
-        console.log(`Lesson ${lessonFetch.id} marked as completed`);
-
-        // --- Call completeLessonTest quest action ---
-        try {
-          await completeLessonTest(userId, isCount.score, totalQuestions);
-          console.log("completeLessonTest quest action triggered.");
-        } catch (questError) {
-          console.error(
-            "Error triggering completeLessonTest quest action:",
-            questError
-          );
-        }
-        // --- End quest action call ---
-
-        // Check if streak should be updated
-        let streakUpdated = false;
-        if (livesLost === 0) {
-          // Use the updated function that checks if streak was already updated today
-          streakUpdated = await updateStreakFromLesson(userId);
-          console.log(
-            streakUpdated
-              ? "Streak was updated successfully"
-              : "Streak was already updated today, skipping increment"
-          );
-        }
-
-        // ALWAYS update rewards regardless of streak status
-        try {
-          const response = await updateUser({
-            userId: userId,
-            gems: gems,
-            exp: exp,
-            streak: 0, // Streak is handled by updateStreakFromLesson
-            lives: livesLost,
-          });
-
-          console.log("Rewards saved to Supabase:", response);
-          console.log(`EXP awarded: ${exp}, Gems awarded: ${gems}`);
-          if (livesLost > 0) {
-            console.log(`Lives decreased by: ${livesLost}`);
-          }
-
-          // Invalidate queries to refresh dashboard data
-          queryClient.invalidateQueries(["userStats", userId]);
-          queryClient.invalidateQueries(["fetch_user"]);
-          console.log("Query cache invalidated, dashboard will refresh");
-        } catch (error) {
-          console.error("Error updating user rewards:", error);
-        }
-      } else {
-        console.log("Assessment failed, no rewards will be given");
+        // Invalidate lesson data even on failure if progress was updated
+        queryClient.invalidateQueries({
+          queryKey: ["lessons", lessonFetch.roadmap_id],
+        });
       }
 
       // Redirect to dashboard with timestamp to force refresh
+      setIsSubmitting(false); // Reset state before navigating
       navigate(`/dashboard/${userId}?t=${Date.now()}`);
     } catch (error) {
       console.error("Error finishing assessment:", error);
       setIsSubmitting(false); // Reset submitting state on error
+      // Redirect even on error to avoid getting stuck
       navigate(`/dashboard/${userId}?t=${Date.now()}`);
     }
   };
@@ -331,7 +400,7 @@ export default function Assessment() {
             //       FIRST PAGE
             // -------------------------
             <IntroSlide
-              lessonData={(lessonData) ? lessonData : {}}
+              lessonData={lessonData ? lessonData : {}}
               gems={lessonFetch?.gems}
               exp={lessonFetch?.exp}
               setIntroSlide={() => setIntroSlide(false)}

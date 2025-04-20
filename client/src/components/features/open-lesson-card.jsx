@@ -14,8 +14,11 @@ import {
 } from "lucide-react";
 import React, { useEffect } from "react";
 import { postPrompt2 } from "@/api/INSERT";
+import { useNavigate } from "react-router-dom";
 
 export default function OpenLesson({ lesson, setOpenLesson, setLoading }) {
+  const navigate = useNavigate();
+
   const createLesson = () => {
     setLoading(true);
     postPrompt2(

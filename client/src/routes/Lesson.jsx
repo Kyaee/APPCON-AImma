@@ -165,8 +165,14 @@ export default function ElementLesson() {
           console.log(
             "Lesson completed without assessment - marking completed, awarding rewards, and updating streak"
           );
+          // --- MODIFICATION START ---
           // Call the function to mark lesson completed and update roadmap progress
-          const completionResult = await markLessonCompleted(lessonFetch);
+          // Pass lessonId and roadmapId explicitly
+          const completionResult = await markLessonCompleted(
+            lessonFetch.id,
+            lessonFetch.roadmap_id
+          );
+          // --- MODIFICATION END ---
 
           if (completionResult.success) {
             console.log(
@@ -231,6 +237,7 @@ export default function ElementLesson() {
     queryClient,
     awardLessonRewards,
     updateStreakFromLesson, // Add updateStreakFromLesson to dependencies
+    markLessonCompleted, // <<< Add markLessonCompleted dependency
   ]);
 
   // Add this function to your component

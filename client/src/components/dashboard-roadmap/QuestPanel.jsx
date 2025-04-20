@@ -16,7 +16,7 @@ import { useQuestStore } from "@/store/useQuestStore";
 import { supabase } from "@/config/supabase";
 import { useAuth } from "@/config/AuthContext";
 
-const QuestPanel = ({ userId }) => {
+const QuestPanel = ({ userId, embedded = false }) => {
   const { session } = useAuth();
   const [isDaily, setIsDaily] = useState(true);
   const [showAllQuests, setShowAllQuests] = useState(false); // State for showing all quests
@@ -73,8 +73,9 @@ const QuestPanel = ({ userId }) => {
     }
   };
 
-  return (
-    <div className="bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-dark-mode-highlight custom-shadow-75 p-4 w-98">
+  // Content for the quest panel
+  const questContent = (
+    <>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-lg font-medium text-black dark:text-primary">
           {isDaily ? "Daily Quests" : "Weekly Quests"}
@@ -137,6 +138,18 @@ const QuestPanel = ({ userId }) => {
           </button>
         </div>
       )}
+    </>
+  );
+
+  // If embedded, return just the content
+  if (embedded) {
+    return questContent;
+  }
+
+  // Otherwise, return the content in a container
+  return (
+    <div className="bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-dark-mode-highlight custom-shadow-75 p-4 w-98">
+      {questContent}
     </div>
   );
 };
