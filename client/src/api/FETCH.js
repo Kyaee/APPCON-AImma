@@ -1,6 +1,8 @@
 import { supabase } from "@/config/supabase";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { queryOptions } from "@tanstack/react-query";
+
 
 /*      TABLE OF CONTENTS
  ****************************************
@@ -15,7 +17,7 @@ import axios from "axios";
  ************************************/
 
 export function fetchUserdata() {
-  return {
+  return queryOptions({
     queryKey: ["fetch_user"],
     queryFn: async () => {
       const { data: userData, error } = await supabase
@@ -30,14 +32,14 @@ export function fetchUserdata() {
     refetchOnMount: true,      // Refetch on component mount
     refetchOnWindowFocus: true, // Refetch when window regains focus
     staleTime: 1000,           // Consider data stale after 1 second
-  };
+  });
 }
 
 /***********************************
 2*        FETCH ROADMAP DATA
  ************************************/
 export function fetchRoadmap(id) {
-  return {
+  return queryOptions({
     queryKey: ["roadmap", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -48,7 +50,7 @@ export function fetchRoadmap(id) {
       if (error) throw new Error(error.message);
       return data;
     },
-  };
+  });
 }
 
 /***********************************
@@ -56,15 +58,6 @@ export function fetchRoadmap(id) {
  ************************************/
 
 export const fetchLesson = async (roadmapId) => {
-  // Add validation to prevent API calls with undefined roadmapId
-  if (!roadmapId) {
-    // Only show warning in development environment
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug('[Info] fetchLesson skipped - no roadmapId provided');
-    }
-    return []; // Return empty array instead of making invalid API call
-  }
-  
   const { data, error } = await supabase
     .from("lessons")
     .select("*")
@@ -78,10 +71,10 @@ export const fetchLesson = async (roadmapId) => {
  *          FETCH PROFILE
  **************************************/
 export function fetchProfile(userId) {
-  return {
+  return queryOptions({
     queryKey: ["profile", userId],
     queryFn: () => fetchProfileData(userId),
-  };
+  });
 }
 
 const fetchProfileData = async (id) => {
@@ -98,17 +91,17 @@ const fetchProfileData = async (id) => {
  *          FETCH ALL
  * ************************************/
 export function fetchAll() {
-  return {
+  return queryOptions({
     queryKey: ["all"],
     queryFn: async () => ({}),
-  };
+  });
 }
 
 /***********************************
  *        FETCH FROM AI DATA
  ************************************/
 export function fetchRoadmapAIdata() {
-  return {
+  return queryOptions({
     queryKey: ["roadmapAi"],
     queryFn: async () => {
       const response = await axios
@@ -122,11 +115,11 @@ export function fetchRoadmapAIdata() {
       }
       return response.data;
     },
-  };
+  });
 }
 
 export function fetchLessonAIdata() {
-  return {
+  return queryOptions({
     queryKey: ["lessonAi"],
     queryFn: async () => {
       const response = await axios
@@ -140,45 +133,11 @@ export function fetchLessonAIdata() {
       }
       return response.data;
     },
-  };
-}
-
-export function useLessonAIData() {
-  const fetchLessonAI = async () => {
-    const response = await axios
-      .get("https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-lesson")
-      .catch((error) => {
-        console.error("Error fetching roadmap AI data:", error);
-        throw error;
-      });
-    if (!response.ok) throw new Error("Failed to fetch roadmap AI data");
-    return response.data;
-  };
-
-  const { data: lessonData, isLoading: isLessonAILoading } = useQuery({
-    queryKey: ["lessonAI"],
-    queryFn: fetchLessonAI,
   });
-
-  const insertToDatabase = async (passData, userId) => {
-    const { error } = await supabase
-      .from("lessons")
-      .update({ content: passData.lesson })
-      .eq("user_id", userId)
-      .eq("id", passData.id);
-    if (error) throw new Error(error.message);
-    console.log("Data inserted successfully:");
-  };
-
-  return {
-    lessonData,
-    isLessonAILoading,
-    insertToDatabase,
-  };
 }
 
 export function fetchLessonAssessmentData() {
-  return {
+  return queryOptions({
     queryKey: ["lessonAssessment"],
     queryFn: async () => {
       const response = await axios
@@ -192,7 +151,7 @@ export function fetchLessonAssessmentData() {
       }
       return response.data;
     },
-  };
+  });
 }
 
 export function useFetchSummary() { 

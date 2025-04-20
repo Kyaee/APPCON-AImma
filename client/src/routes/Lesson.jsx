@@ -37,14 +37,6 @@ export default function ElementLesson() {
   const [isLoading, setLoading] = useState(false); // State to manage loading status
   const { createAssessment, isPending } = useAssessment();
 
-  // Add state to track user performance
-  const [userPerformance, setUserPerformance] = useState({
-    gemsEarned: 0,
-    expEarned: 0,
-    livesLost: 0,
-    streakIncrement: 1, // Assuming completing a lesson adds 1 to streak
-  });
-
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(session?.user?.id);
 
