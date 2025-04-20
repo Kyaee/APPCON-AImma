@@ -16,14 +16,6 @@ insert gif or link here
 
 To run this project, you will need to add the following environment variables to your .env file
 
-1. cd server
-2. python -m venv .venv
-3. ./.venv/Scripts/Activate 
-4. pip install -r requirements
-5. uvicorn app:app --reload
-
-
-
 **CLIENT**:
 
 - VITE_SUPABASE_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndteHVnY3Fqa3Jkcmh3YXZseGplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Mzc0NDYsImV4cCI6MjA1NzUxMzQ0Nn0.ut6C9mnpXg9rZxt2yvmB3PWZ_em-IL3SD-roe0lmPcY`
@@ -35,6 +27,20 @@ To run this project, you will need to add the following environment variables to
 - DEEPSEEK_URL = `https://openrouter.ai/api/v1`
 - GEMINI_API_KEY = `GEMINI_API_KEY=AIzaSyBi57LIg2UFpQrwpHdaAcsVkrlGJrzzNz8`
 - GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/openai/`
+
+CLIENT
+1. cd client
+2. npm i
+3. npm run dev
+
+AI SERVER
+1. cd server
+2. python -m venv .venv
+3. ./.venv/Scripts/Activate 
+4. pip install -r requirements
+5. uvicorn app:app --reload
+
+
 
 ## Authors
 
