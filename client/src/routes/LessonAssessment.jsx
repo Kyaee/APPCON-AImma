@@ -438,11 +438,11 @@ export default function Assessment() {
           <></>
         ) : (
           <footer
-            className="absolute bottom-0 left-0 w-full py-5 flex items-center justify-around border-t border-background
+            className="absolute bottom-0 left-0 w-full py-5 flex items-center justify-around border-t border-primary
             *:flex *:py-3 *:rounded-lg *:gap-2 "
           >
             <button
-              className="border-background border px-10 text-background"
+              className="border-primary border px-10 text-primary"
               onClick={() =>
                 isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
               }
@@ -450,14 +450,14 @@ export default function Assessment() {
               <ArrowLeft />
               Back
             </button>
-            <div className="flex gap-2 h-15 text-xl text-background">
+            <div className="flex gap-2 h-15 text-xl text-primary">
               <HeartIcon />
               {isCount.lives}
             </div>
 
             {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (
               <button
-                className="bg-[#BF8648] border-2 disabled:bg-light-brown border-foreground px-6 custom-shadow-50 text-background"
+                className="bg-[#BF8648] border-2 disabled:bg-light-brown border-black px-6 custom-shadow-50 text-black"
                 onClick={handleCheck}
                 disabled={!isAnswers[isCurrentSlide]?.answer}
               >
@@ -468,7 +468,7 @@ export default function Assessment() {
             )}
             {isAnswers[isCurrentSlide]?.validated && (
               <button
-                className="mr-3 bg-[#BF8648] border-2 border-foreground px-6 custom-shadow-50 text-background"
+                className="mr-3 bg-[#BF8648] border-2 border-black px-6 custom-shadow-50 text-white"
                 onClick={handleNext}
                 disabled={isCurrentSlide === lessonData.questions.length - 1}
               >

@@ -32,16 +32,16 @@ const Questions = ({
           >
             <article className="flex flex-col items-start justify-center relative">
               <div>
-                <h1 className="font-extrabold text-4xl mb-7 text-background">
+                <h1 className="font-extrabold text-4xl mb-7 text-primary">
                   #{questionNumber + 1}
                 </h1>
-                <span className="border border-white bg-[rgba(106,11,188,0.49)] p-1 px-3 rounded-2xl text-background">
+                <span className="border border-primary bg-[rgba(106,11,188,0.49)] p-1 px-3 rounded-2xl text-white">
                   Multiple Choice
                 </span>
-                <p className="mt-5 mb-2 tracking-tight text-background font-lightx1">
+                <p className="mt-5 mb-2 tracking-tight text-primary font-lightx1">
                   {lesson_name}
                 </p>
-                <h1 className="font-bold text-3xl mb-8 max-w-xl tracking-tight text-background">
+                <h1 className="font-bold text-3xl mb-8 max-w-xl tracking-tight text-primary">
                   {question}
                 </h1>
               </div>
@@ -96,8 +96,11 @@ const Questions = ({
                 })}
               </div>
             </article>
-            {display_wrong_answer &&
-              <p className="text-background w-4/6 animate-text-fade">{explanation}</p>}
+            {display_wrong_answer && (
+              <p className="text-white w-4/6 animate-text-fade">
+                {explanation}
+              </p>
+            )}
           </div>
         </section>
       );

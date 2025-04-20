@@ -56,9 +56,9 @@ const Sidebar = ({
         <div className="fixed top-4 sm:top-6 left-4 sm:left-18 z-50">
           <button
             onClick={() => onToggle()}
-            className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg border border-border hover:bg-secondary transition-colors bg-background dark:bg-dark-inner-bg dark:border-dark-mode-highlight dark:hover:bg-dark-mode-highlight"
+            className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg border border-black hover:bg-secondary transition-colors bg-background dark:bg-dark-inner-bg dark:border-dark-mode-highlight dark:hover:bg-dark-mode-highlight "
           >
-            <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-foreground dark:text-primary" />
+            <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-foreground dark:text-primary " />
             <span className="text-sm sm:text-base text-foreground dark:text-primary">
               Expand
             </span>
@@ -84,7 +84,7 @@ const Sidebar = ({
             </div>
             <button
               onClick={() => onToggle()}
-              className="p-2 rounded-lg border border-border hover:bg-secondary transition-colors bg-background dark:bg-dark-inner-bg dark:border-dark-mode-highlight dark:hover:bg-dark-mode-highlight"
+              className="p-2 rounded-lg border border-black hover:bg-secondary transition-colors bg-background dark:bg-dark-inner-bg dark:border-dark-mode-highlight dark:hover:bg-dark-mode-highlight"
             >
               <X className="w-6 h-6 text-foreground dark:text-primary" />
             </button>

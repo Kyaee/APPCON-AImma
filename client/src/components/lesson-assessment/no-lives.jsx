@@ -8,10 +8,10 @@ const NoLives = ({ userId }) => {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <VideoBackground />
-      <h1 className="text-4xl font-bold mb-4 text-background">
+      <h1 className="text-4xl font-bold mb-4 text-primary">
         You have no lives left!
       </h1>
-      <p className="text-lg text-background">Wait for more lives.</p>
+      <p className="text-lg text-primary">Wait for more lives.</p>
       <Link
         to={dashboardUrl}
         className="py-3 px-4 mt-8 text-lg bg-white text-black font-extrabold custom-shadow-50 rounded-md hover:bg-neutral-300"

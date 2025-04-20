@@ -73,15 +73,13 @@ export default function Header({
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
       <h1
-        className={`text-2xl ${
-          location.pathname.split("/")[1] === "lesson"
-            ? "text-foreground"
-            : "text-primary" // Changed from "text-background" to ensure visibility
-        }`}
+        className={`text-2xl text-primary`} // Always use black text
       >
         CapyCademy
       </h1>
-      <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px] mr-10">
+      <nav className="flex items-center bg-white text-black border border-black custom-shadow-75 rounded-lg h-[48px] mr-10">
+        {" "}
+        {/* Use white bg, black text/border */}
         {filteredNavItems.map((item) => (
           <Link
             key={item.label}
@@ -100,7 +98,7 @@ export default function Header({
       </nav>
       <button
         onClick={handleQuit}
-        className="text-sm mr-6 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md"
+        className="text-sm mr-6 p-2 flex bg-white border border-black text-black gap-1 custom-shadow-50 rounded-md" // Use white bg, black text/border
       >
         <ArrowUpRight size="20" />
         Quit

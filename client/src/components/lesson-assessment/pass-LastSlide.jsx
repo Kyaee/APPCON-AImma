@@ -246,7 +246,7 @@ export default function LastSlide({
   switch (isPage) {
     case 1:
       return (
-        <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
+        <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-primary ">
           <h1 className="text-4xl font-extrabold mb-4 text-center">
             Congratulations!
             <br /> You have completed the assessment.
@@ -287,12 +287,12 @@ export default function LastSlide({
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full">
               <span className="mb-4">
-                <l-bouncy size="45" speed="1.75" color="white"></l-bouncy>
+                <l-bouncy size="45" speed="1.75" color="black"></l-bouncy>
               </span>
-              <p className="text-background">Processing your assessment...</p>
+              <p className="text-black">Processing your assessment...</p>
             </div>
           ) : (
-            <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
+            <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-black ">
               <h1 className="text-5xl font-extrabold mb-4 text-center">
                 +1 Streak!
               </h1>
