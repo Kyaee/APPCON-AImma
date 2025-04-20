@@ -81,7 +81,7 @@ export default function Header({
       >
         CapyCademy
       </h1>
-      <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px]">
+      <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px] mr-10">
         {filteredNavItems.map((item) => (
           <Link
             key={item.label}
@@ -100,7 +100,7 @@ export default function Header({
       </nav>
       <button
         onClick={handleQuit}
-        className="text-sm mr-8 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md"
+        className="text-sm mr-6 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md"
       >
         <ArrowUpRight size="20" />
         Quit

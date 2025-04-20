@@ -6,23 +6,50 @@ A brief description of what this project does and who it's for
 
 insert gif or link here
 
-## Tech Stack
+# 🧰 Tech Stack
 
-**Client:** React, ShadCN, TailwindCSS, Zustand, TanStack Query, Axios, and Supabase
+## Client:
+**Frameworks:**
+React, ShadCN, TailwindCSS, 
 
-**Server:** Python, FastAPI, OpenAI package, Deepseek, and Gemini Services
+**State & Data:**
+Zustand, TanStack Query
+
+**Tools & API:**
+ Axios, and Supabase
+
+## Server:
+**Languages & Frameworks:**
+Python, FastAPI, 
+
+**AI Integrations:**
+OpenAI package, Deepseek, and Gemini Services
+
+# ⚙️ Getting Started
+**1. Go to the server directory**
+
+cd server
+
+**2. Create and activate a virtual environment**
+
+python -m venv .venv
+source .venv/Scripts/activate  # Windows
+
+## or
+
+source .venv/bin/activate  # macOS/Linux
+
+**3. Install dependencies**
+
+pip install -r requirements.txt
+
+**4. Start the server**
+
+uvicorn app:app --reload
 
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
-
-1. cd server
-2. python -m venv .venv
-3. ./.venv/Scripts/Activate 
-4. pip install -r requirements
-5. uvicorn app:app --reload
-
-
 
 **CLIENT**:
 
@@ -35,6 +62,20 @@ To run this project, you will need to add the following environment variables to
 - DEEPSEEK_URL = `https://openrouter.ai/api/v1`
 - GEMINI_API_KEY = `GEMINI_API_KEY=AIzaSyBi57LIg2UFpQrwpHdaAcsVkrlGJrzzNz8`
 - GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/openai/`
+
+CLIENT
+1. cd client
+2. npm i
+3. npm run dev
+
+AI SERVER
+1. cd server
+2. python -m venv .venv
+3. ./.venv/Scripts/Activate 
+4. pip install -r requirements
+5. uvicorn app:app --reload
+
+
 
 ## Authors
 
