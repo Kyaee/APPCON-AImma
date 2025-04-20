@@ -2,14 +2,10 @@ import { Gem, ZapIcon } from "lucide-react";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import Loading from "@/routes/Loading";
 import { useAssessment } from "@/api/INSERT";
+import { useState } from "react";
+import CapyAssess from "@/assets/lesson-assessment/CapyAssess.png";
 
-export default function IntroSlide({
-  lessonData,
-  image,
-  gems,
-  exp,
-  setIntroSlide,
-}) {
+export default function IntroSlide({ lessonData, gems, exp, setIntroSlide }) {
   const generated_assessment = useLessonFetchStore(
     (state) => state.generated_assessment
   );
@@ -23,15 +19,18 @@ export default function IntroSlide({
 
     if (generated_assessment) {
       console.log("Proceeding...");
-      setGeneratedAssessment(false);
       setIntroSlide();
+      setClicked(true);
+      setGeneratedAssessment(false);
     } else {
-      setGeneratedAssessment(true);
+      console.log("Generating...");
       createAssessment({
         lesson_id: lessonData.id,
         lesson_name: lessonData.name,
         lesson_content: lessonData.lesson,
       });
+      // setClicked(true);
+      setGeneratedAssessment(true);
     }
   }
 
@@ -53,9 +52,10 @@ export default function IntroSlide({
         </div>
       </div>
       <button
-        className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                hover:bg-neutral-300"
+        className="py-3 w-full mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
+                hover:bg-neutral-300 disabled:bg-neutral-200 disabled:text-neutral-400"
         onClick={generateQuestions}
+        disabled={isClicked}
       >
         Start
       </button>

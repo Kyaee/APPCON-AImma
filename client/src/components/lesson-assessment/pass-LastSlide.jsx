@@ -1,5 +1,8 @@
 import { Gem, ZapIcon } from "lucide-react";
 import { bouncy } from "ldrs";
+import Capybaraillant from "@/assets/lesson-assessment/Capybaraillant.png";
+import YouDidIt from "@/assets/lesson-assessment/YouDidIt.png";
+import Capytastic from "@/assets/lesson-assessment/Capytastic.png";
 bouncy.register();
 
 import { useState, useCallback, useEffect } from "react";
@@ -9,6 +12,9 @@ import { useAuth } from "@/config/AuthContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useFetchSummary } from "@/api/FETCH";
 import { useStreakStore } from "@/store/useStreakStore";
+
+const images = [Capybaraillant, YouDidIt, Capytastic];
+const randomImage = images[Math.floor(Math.random() * images.length)];
 
 export default function LastSlide({
   lessonId,

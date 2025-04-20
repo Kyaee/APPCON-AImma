@@ -487,8 +487,8 @@ export default function ElementLesson() {
         lesson_name: lessonFetch.name,
         lesson_content: lessonFetch.lesson,
       });
-      setGeneratedAssessment(true);
       setLoading(false);
+      setGeneratedAssessment(true);
       setTimeout(() => navigate(`/l/${id}/assessment`), 2000);
     }
   };
