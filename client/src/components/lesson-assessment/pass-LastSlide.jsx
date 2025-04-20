@@ -13,7 +13,7 @@ import { useEvaluation } from "@/api/INSERT";
 import { useFetchSummary } from "@/api/FETCH";
 import { useStreakStore } from "@/store/useStreakStore";
 
-const images = [ Capybaraillant, YouDidIt, Capytastic]
+const images = [Capybaraillant, YouDidIt, Capytastic];
 const randomImage = images[Math.floor(Math.random() * images.length)];
 
 export default function LastSlide({
@@ -135,14 +135,14 @@ export default function LastSlide({
     }
 
     try {
-      // Update lesson progress
-      updateLesson({
-        userId: currentUserId,
-        lessonId,
-        lastAccessed: new Date().toISOString(),
-        progress: 100,
-        status: "Completed",
-      });
+      // REMOVED: updateLesson call was here, it's now handled only in LessonAssessment.jsx
+      // updateLesson({
+      //   userId: currentUserId,
+      //   lessonId,
+      //   lastAccessed: new Date().toISOString(),
+      //   progress: 100,
+      //   status: "Completed",
+      // });
 
       // Get calculated rewards
       const { gems: actualGems, exp: actualExp } = calculatedRewards;
@@ -252,8 +252,7 @@ export default function LastSlide({
   switch (isPage) {
     case 1:
       return (
-        <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
-          <img src={randomImage} className="w-55"/>
+        <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-primary ">
           <h1 className="text-4xl font-extrabold mb-4 text-center">
             Congratulations!
             <br /> You have completed the assessment.
@@ -268,13 +267,12 @@ export default function LastSlide({
             <div>
               <p>Rewards</p>
               <div className="flex gap-5 *:flex *:items-center *:gap-0.5">
-                <h2 className="text-xl font-semibold pt-1">
-                  +<Gem size={18} />
-                  {calculatedRewards.gems}
+                {/* Changed reward display format */}
+                <h2 className="text-xl font-semibold pt-1 flex items-center gap-1">
+                  {calculatedRewards.gems} <Gem size={18} />
                 </h2>
-                <h2 className="text-xl font-semibold pt-1">
-                  +<ZapIcon size={20} />
-                  {calculatedRewards.exp}
+                <h2 className="text-xl font-semibold pt-1 flex items-center gap-1">
+                  {calculatedRewards.exp} <ZapIcon size={20} />
                 </h2>
               </div>
             </div>
@@ -294,13 +292,12 @@ export default function LastSlide({
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full">
               <span className="mb-4">
-                <l-bouncy size="45" speed="1.75" color="white"></l-bouncy>
+                <l-bouncy size="45" speed="1.75" color="black"></l-bouncy>
               </span>
-              <p className="text-background">Processing your assessment...</p>
+              <p className="text-black">Processing your assessment...</p>
             </div>
           ) : (
-            <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
-              {/* <img src={CapyStreak} className="w-50"/> */}
+            <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-black ">
               <h1 className="text-5xl font-extrabold mb-4 text-center">
                 +1 Streak!
               </h1>

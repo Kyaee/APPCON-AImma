@@ -189,8 +189,8 @@ export default function Dashboard({ setAssessed }) {
               {/* Dropdown menu */}
               {isLeftDropdownOpen && !condition && (
                 <div
-                  className="mt-4 border-2  border-black dark:border-dark-mode-highlight  rounded-lg shadow-md bg-white dark:bg-dark-inner-bg z-30"
-                  style={{ width: "450px" }}
+                  className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30"
+                  style={{ width: "430px" }}
                 >
                   {roadmapData.map((roadmap, index) => (
                     <div

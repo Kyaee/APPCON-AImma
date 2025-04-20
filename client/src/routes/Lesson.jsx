@@ -16,6 +16,8 @@ import { useAssessment, useEvaluation } from "@/api/INSERT";
 import { useAuth } from "@/config/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useStreakStore } from "@/store/useStreakStore"; // Import the streak store
+import { useQuestStore } from "@/store/useQuestStore"; // Import quest store
+import { useTimeTracking } from "@/lib/timeTracker"; // Import time tracking hook
 
 export default function ElementLesson() {
   const navigate = useNavigate();
@@ -38,7 +40,17 @@ export default function ElementLesson() {
   const { createAssessment, isPending } = useAssessment();
   const updateStreakFromLesson = useStreakStore(
     (state) => state.updateStreakFromLesson
-  ); // Get the streak update function
+  );
+  const reviewLesson = useQuestStore((state) => state.reviewLesson); // Get reviewLesson action
+  const { startTracking, stopTracking } = useTimeTracking(session?.user?.id); // Get time tracking functions
+
+  // Add state to track user performance
+  const [userPerformance, setUserPerformance] = useState({
+    gemsEarned: 0,
+    expEarned: 0,
+    livesLost: 0,
+    streakIncrement: 1, // Assuming completing a lesson adds 1 to streak
+  });
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(session?.user?.id);
@@ -221,6 +233,68 @@ export default function ElementLesson() {
     updateStreakFromLesson, // Add updateStreakFromLesson to dependencies
   ]);
 
+  // Add this function to your component
+  const handleQuit = async (e) => {
+    if (e) e.preventDefault();
+    setLoading(true);
+
+    // Stop time tracking before saving progress and navigating
+    const minutes = stopTracking();
+    console.log(`Time tracking stopped on quit. ${minutes} minutes recorded.`);
+
+    if (session?.user?.id && lessonFetch?.id) {
+      try {
+        // First, get the current stored progress from Supabase
+        const { data: currentData } = await supabase
+          .from("lessons")
+          .select("progress, status")
+          .eq("user_id", session.user.id)
+          .eq("id", lessonFetch.id)
+          .single();
+
+        // Use the highest progress value between current progress in Supabase and new progress
+        const finalProgress = Math.max(
+          currentData?.progress || 0,
+          highestProgress
+        );
+        console.log(`Saving highest progress: ${finalProgress}%`);
+
+        // Determine if the lesson should be marked as completed
+        const shouldComplete = finalProgress >= 100 && !lessonFetch.assessment;
+        const newStatus = shouldComplete ? "Completed" : lessonFetch.status;
+
+        // Ensure we wait for this to complete
+        await updateLesson({
+          userId: session.user.id,
+          lessonId: lessonFetch.id,
+          lastAccessed: new Date().toISOString(),
+          progress: finalProgress, // Use the higher value
+          status: newStatus,
+        });
+
+        // If lesson is completed without assessment, award rewards
+        if (shouldComplete && newStatus === "Completed") {
+          console.log("Lesson completed without assessment - awarding rewards");
+          await awardLessonRewards();
+
+          // Invalidate queries to refresh dashboard data
+          queryClient.invalidateQueries(["userStats", session.user.id]);
+          queryClient.invalidateQueries(["fetch_user"]);
+        }
+
+        console.log(`Progress saved: ${finalProgress}%`);
+      } catch (error) {
+        console.error("Failed to save progress before quitting:", error);
+      } finally {
+        setLoading(false);
+        // Make sure we're navigating to the right URL with a timestamp to force refresh
+        navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
+      }
+    } else {
+      setLoading(false);
+      navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
+    }
+  };
 
   // Initialize unload listener
   useEffect(() => {
@@ -235,6 +309,11 @@ export default function ElementLesson() {
 
     // For page refresh or closing
     const handleBeforeUnload = (e) => {
+      // Stop tracking time before saving progress
+      const minutes = stopTracking();
+      console.log(
+        `Time tracking stopped on unload. ${minutes} minutes recorded.`
+      );
       saveProgress();
       // Standard practice to show "unsaved changes" dialog
       e.preventDefault();
@@ -248,7 +327,7 @@ export default function ElementLesson() {
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [saveProgress]);
+  }, [saveProgress, stopTracking]); // Add stopTracking dependency
 
   useEffect(() => {
     if (!contentRef.current) return;
@@ -352,6 +431,28 @@ export default function ElementLesson() {
     // Clear interval on unmount
     return () => clearInterval(intervalId);
   }, [session, lessonFetch, highestProgress, saveProgress]);
+
+  // Start time tracking on mount, stop on unmount
+  useEffect(() => {
+    startTracking();
+    console.log("Time tracking started for lesson.");
+    return () => {
+      const minutes = stopTracking();
+      console.log(`Time tracking stopped. ${minutes} minutes recorded.`);
+    };
+  }, [startTracking, stopTracking]); // Add dependencies
+
+  // Add useEffect to trigger reviewLesson when a completed lesson is loaded
+  useEffect(() => {
+    if (
+      session?.user?.id &&
+      lessonFetch?.id &&
+      lessonFetch.status === "Completed"
+    ) {
+      console.log(`Attempting to mark lesson ${lessonFetch.id} as reviewed.`);
+      reviewLesson(lessonFetch.id, session.user.id);
+    }
+  }, [lessonFetch, session, reviewLesson]);
 
   if (lessonFetch && lessonFetch.id !== parseInt(id)) {
     return (

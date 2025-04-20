@@ -14,7 +14,6 @@ const Questions = ({
   validate,
   explanation,
 }) => {
-
   switch (type) {
     case "multiple-choice":
       return (
@@ -32,16 +31,16 @@ const Questions = ({
           >
             <article className="flex flex-col items-start justify-center relative">
               <div>
-                <h1 className="font-extrabold text-4xl mb-7 text-background">
+                <h1 className="font-extrabold text-4xl mb-7 text-primary">
                   #{questionNumber + 1}
                 </h1>
-                <span className="border border-white bg-[rgba(106,11,188,0.49)] p-1 px-3 rounded-2xl text-background">
+                <span className="border border-primary bg-[rgba(106,11,188,0.49)] p-1 px-3 rounded-2xl text-white">
                   Multiple Choice
                 </span>
-                <p className="mt-5 mb-2 tracking-tight text-background font-lightx1">
+                <p className="mt-5 mb-2 tracking-tight text-primary font-lightx1">
                   {lesson_name}
                 </p>
-                <h1 className="font-bold text-3xl mb-8 max-w-xl tracking-tight text-background">
+                <h1 className="font-bold text-3xl mb-8 max-w-xl tracking-tight text-primary">
                   {question}
                 </h1>
               </div>
@@ -104,7 +103,7 @@ const Questions = ({
                   "
                 >
                   <h4 className="flex gap-2 items-center w-50 animate-text-reveal bg-green-400 rounded-lg py-1 px-2">
-                    <CheckCircleIcon size={20}/>
+                    <CheckCircleIcon size={20} />
                     The Correct Answer:
                   </h4>
                   <p className="pt-3">"{explanation}"</p>

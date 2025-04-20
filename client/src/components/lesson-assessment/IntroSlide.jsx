@@ -1,18 +1,14 @@
 import { Gem, ZapIcon } from "lucide-react";
 import { useLessonFetchStore } from "@/store/useLessonData";
-import Loading from "@/routes/Loading"
+import Loading from "@/routes/Loading";
 import { useAssessment } from "@/api/INSERT";
-import { useState } from "react"
+import { useState } from "react";
 import CapyAssess from "@/assets/lesson-assessment/CapyAssess.png";
 
-export default function IntroSlide({
-  lessonData,
-  gems,
-  exp,
-  setIntroSlide,
-}) {
-  const [isClicked, setClicked] = useState(false);
-  const generated_assessment = useLessonFetchStore((state) => state.generated_assessment);
+export default function IntroSlide({ lessonData, gems, exp, setIntroSlide }) {
+  const generated_assessment = useLessonFetchStore(
+    (state) => state.generated_assessment
+  );
   const setGeneratedAssessment = useLessonFetchStore(
     (state) => state.setGeneratedAssessment
   );
@@ -20,13 +16,12 @@ export default function IntroSlide({
 
   function generateQuestions(e) {
     e.preventDefault();
-    
+
     if (generated_assessment) {
       console.log("Proceeding...");
       setIntroSlide();
       setClicked(true);
       setGeneratedAssessment(false);
-      
     } else {
       console.log("Generating...");
       createAssessment({
@@ -39,13 +34,13 @@ export default function IntroSlide({
     }
   }
 
-if (isPending) return <Loading generate_assessment={true}/>
+  if (isPending) return <Loading generate_assessment={true} />;
 
   return (
-    <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-background ">
-      <img src={CapyAssess} alt="capybara superhero" className="w-100"/>
+    <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-primary ">
+      <img src={image} alt="capybara superhero" />
       <h1 className="text-4xl font-extrabold mb-4">Start Your Assessment.</h1>
-      <p className="mb-2 font-semibold border-b">Rewards</p>
+      <p className="mb-2 font-semibold border-b border-primary">Rewards</p>
       <div className="grid grid-cols-2 gap-x-8 mb-4 text-xl *:flex *:gap-2 *:items-center ">
         <div>
           <Gem size={20} />
