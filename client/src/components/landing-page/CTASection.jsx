@@ -4,26 +4,26 @@ import brandIcon from "@/assets/general/brandicon.png";
 
 export default function CTASection() {
   return (
-    <section className="py-20 mb-25">
-      <div className="w-4/5 mx-auto text-center">
+    <section className="py-10 md:py-20 mb-16 md:mb-25">
+      <div className="w-[90%] md:w-4/5 mx-auto text-center">
         <div className="flex flex-col items-center">
           <img
             src={brandIcon}
-            alt="Capycademy Brand"
-            className="w-62 h-62 mb-6"
+            alt="CapyCademy Brand"
+            className="w-40 h-40 md:w-62 md:h-62 mb-4 md:mb-6"
           />
-          <h2 className="text-4xl font-bold text-foreground mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 md:mb-6">
             Ready to start your coding journey?
           </h2>
-          <p className="text-xl text-foreground/80 mb-8 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-foreground/80 mb-6 md:mb-8 max-w-3xl mx-auto px-4">
             Join thousands of learners who are building their skills and
-            advancing their careers with Capycademy's interactive learning
+            advancing their careers with CapyCademy's interactive learning
             platform.
           </p>
           <Link to="/auth/register">
             <Button
               size="lg"
-              className="bg-[#F4CB57] custom-shadow-50 border-2 border-black px-8 py-8 hover:bg-[#e7b21d] text-black text-lg"
+              className="bg-[#F4CB57] custom-shadow-50 border-2 border-black px-6 py-6 md:px-8 md:py-8 hover:bg-[#e7b21d] text-black text-base md:text-lg"
             >
               Create Your Free Account
             </Button>

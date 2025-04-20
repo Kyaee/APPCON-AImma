@@ -72,11 +72,11 @@ const Sidebar = ({
             <div className="flex items-center gap-2">
               <img
                 src="/favicon.svg"
-                alt="Capycademy Logo"
+                alt="CapyCademy Logo"
                 className="w-8 h-8"
               />
               <span className="transition animate-text-reveal text-lg font-bold">
-                Capycademy
+                CapyCademy
               </span>
             </div>
             <button
