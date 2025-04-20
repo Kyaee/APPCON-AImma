@@ -79,7 +79,7 @@ export default function Header({
             : "text-background" // Changed from "text-background" to ensure visibility
         }`}
       >
-        Capycademy
+        CapyCademy
       </h1>
       <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px]">
         {filteredNavItems.map((item) => (

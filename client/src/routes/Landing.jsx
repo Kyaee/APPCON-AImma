@@ -22,23 +22,28 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="bg-background relative smooth-scroll scroll-smooth ">
-      {/* Full-height background SVG */}
+    <div className="bg-background relative smooth-scroll scroll-smooth overflow-x-hidden">
+      {/* Full-height background SVG - responsive */}
       <div className="absolute inset-0 w-full h-full z-0">
-        <img src={landingBg} alt="" className="w-full h-full object-cover" />
+        <img
+          src={landingBg}
+          alt=""
+          className="w-full h-full object-cover opacity-90 sm:opacity-100"
+        />
       </div>
 
-      {/* Background capybara image - moved earlier in the structure with lower z-index */}
+      {/* Background capybara image - enhanced mobile responsiveness */}
       <div className="absolute bottom-0 right-0 z-10 pointer-events-none select-none">
         <img
           src={landingBgCapy}
           alt=""
-          className="w-[1500px] h-auto object-contain"
+          className="w-[600px] xs:w-[700px] sm:w-[1000px] md:w-[1200px] lg:w-[1500px] h-auto object-contain opacity-50 xs:opacity-60 sm:opacity-80 md:opacity-100"
           style={{
-            transform: "translateY(-15%) translateX(0%)",
-            maxHeight: "190vh",
+            transform: "translateY(-5%) translateX(20%)",
+            maxHeight: "160vh",
+            maxWidth: "150vw", // Prevent image from being too large on small screens
             userSelect: "none",
-            pointerEvents: "none",
+            pointerEvents: "none"
           }}
           draggable="false"
         />
@@ -59,9 +64,9 @@ export default function Landing() {
               <FAQSection />
             </div>
 
-            {/* CTA Section */}
+            {/* CTA Section - removed conditional rendering */}
             <div className="relative z-10">
-              {!isLoggedIn && <CTASection />}
+              <CTASection />
             </div>
             <LandingFooter />
           </div>
