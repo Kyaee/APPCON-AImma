@@ -76,7 +76,7 @@ export default function Header({
         className={`text-2xl ${
           location.pathname.split("/")[1] === "lesson"
             ? "text-foreground"
-            : "text-background" // Changed from "text-background" to ensure visibility
+            : "text-primary" // Changed from "text-background" to ensure visibility
         }`}
       >
         CapyCademy
