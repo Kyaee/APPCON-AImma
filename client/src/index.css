@@ -126,6 +126,19 @@
   --animate-text-reveal: text-reveal 1s cubic-bezier(0.77, 0, 0.18, 1);
   --animate-text-pulse: pulse-text 1s ease-in-out infinite;
   --animate-text-color-cycle: color-cycle 4s linear infinite;
+  --animate-tilt-bounce: tilt-bounce 0.7s ease-in-out infinite;
+
+  @keyframes tilt-bounce {
+    0% {
+      transform: scaleX(-1)  translateY(-80px) rotate(-5deg);
+    }
+    50% {
+      transform: scaleX(-1) translateY(-85px) rotate(-10deg);
+    }
+    100% {
+      transform: scaleX(-1) translateY(-80px) rotate(-5deg);
+    }
+  }
 
   @keyframes slide-in {
     0% {

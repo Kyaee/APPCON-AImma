@@ -88,16 +88,6 @@ const fetchProfileData = async (id) => {
 };
 
 /***********************************
- *          FETCH ALL
- * ************************************/
-export function fetchAll() {
-  return queryOptions({
-    queryKey: ["all"],
-    queryFn: async () => ({}),
-  });
-}
-
-/***********************************
  *        FETCH FROM AI DATA
  ************************************/
 export function fetchRoadmapAIdata() {

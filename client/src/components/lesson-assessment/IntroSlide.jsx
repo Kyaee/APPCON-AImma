@@ -2,14 +2,16 @@ import { Gem, ZapIcon } from "lucide-react";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import Loading from "@/routes/Loading"
 import { useAssessment } from "@/api/INSERT";
+import { useState } from "react"
+import CapyAssess from "@/assets/lesson-assessment/CapyAssess.png";
 
 export default function IntroSlide({
   lessonData,
-  image,
   gems,
   exp,
   setIntroSlide,
 }) {
+  const [isClicked, setClicked] = useState(false);
   const generated_assessment = useLessonFetchStore((state) => state.generated_assessment);
   const setGeneratedAssessment = useLessonFetchStore(
     (state) => state.setGeneratedAssessment
@@ -21,15 +23,19 @@ export default function IntroSlide({
     
     if (generated_assessment) {
       console.log("Proceeding...");
-      setGeneratedAssessment(false);
       setIntroSlide();
+      setClicked(true);
+      setGeneratedAssessment(false);
+      
     } else {
-      setGeneratedAssessment(true);
+      console.log("Generating...");
       createAssessment({
         lesson_id: lessonData.id,
         lesson_name: lessonData.name,
         lesson_content: lessonData.lesson,
       });
+      // setClicked(true);
+      setGeneratedAssessment(true);
     }
   }
 
@@ -37,7 +43,7 @@ if (isPending) return <Loading generate_assessment={true}/>
 
   return (
     <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-background ">
-      <img src={image} alt="capybara superhero" />
+      <img src={CapyAssess} alt="capybara superhero" className="w-100"/>
       <h1 className="text-4xl font-extrabold mb-4">Start Your Assessment.</h1>
       <p className="mb-2 font-semibold border-b">Rewards</p>
       <div className="grid grid-cols-2 gap-x-8 mb-4 text-xl *:flex *:gap-2 *:items-center ">
@@ -51,9 +57,10 @@ if (isPending) return <Loading generate_assessment={true}/>
         </div>
       </div>
       <button
-        className="py-3 w-3/5 mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
-                hover:bg-neutral-300"
+        className="py-3 w-full mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
+                hover:bg-neutral-300 disabled:bg-neutral-200 disabled:text-neutral-400"
         onClick={generateQuestions}
+        disabled={isClicked}
       >
         Start
       </button>

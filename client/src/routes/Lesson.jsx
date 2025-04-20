@@ -221,64 +221,6 @@ export default function ElementLesson() {
     updateStreakFromLesson, // Add updateStreakFromLesson to dependencies
   ]);
 
-  // Add this function to your component
-  const handleQuit = async (e) => {
-    if (e) e.preventDefault();
-    setLoading(true);
-
-    if (session?.user?.id && lessonFetch?.id) {
-      try {
-        // First, get the current stored progress from Supabase
-        const { data: currentData } = await supabase
-          .from("lessons")
-          .select("progress, status")
-          .eq("user_id", session.user.id)
-          .eq("id", lessonFetch.id)
-          .single();
-
-        // Use the highest progress value between current progress in Supabase and new progress
-        const finalProgress = Math.max(
-          currentData?.progress || 0,
-          highestProgress
-        );
-        console.log(`Saving highest progress: ${finalProgress}%`);
-
-        // Determine if the lesson should be marked as completed
-        const shouldComplete = finalProgress >= 100 && !lessonFetch.assessment;
-        const newStatus = shouldComplete ? "Completed" : lessonFetch.status;
-
-        // Ensure we wait for this to complete
-        await updateLesson({
-          userId: session.user.id,
-          lessonId: lessonFetch.id,
-          lastAccessed: new Date().toISOString(),
-          progress: finalProgress, // Use the higher value
-          status: newStatus,
-        });
-
-        // If lesson is completed without assessment, award rewards
-        if (shouldComplete && newStatus === "Completed") {
-          console.log("Lesson completed without assessment - awarding rewards");
-          await awardLessonRewards();
-
-          // Invalidate queries to refresh dashboard data
-          queryClient.invalidateQueries(["userStats", session.user.id]);
-          queryClient.invalidateQueries(["fetch_user"]);
-        }
-
-        console.log(`Progress saved: ${finalProgress}%`);
-      } catch (error) {
-        console.error("Failed to save progress before quitting:", error);
-      } finally {
-        setLoading(false);
-        // Make sure we're navigating to the right URL with a timestamp to force refresh
-        navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
-      }
-    } else {
-      setLoading(false);
-      navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
-    }
-  };
 
   // Initialize unload listener
   useEffect(() => {
@@ -444,8 +386,8 @@ export default function ElementLesson() {
         lesson_name: lessonFetch.name,
         lesson_content: lessonFetch.lesson,
       });
-      setGeneratedAssessment(true);
       setLoading(false);
+      setGeneratedAssessment(true);
       setTimeout(() => navigate(`/l/${id}/assessment`), 2000);
     }
   };

@@ -1,5 +1,8 @@
 import { Gem, ZapIcon } from "lucide-react";
 import { bouncy } from "ldrs";
+import Capybaraillant from "@/assets/lesson-assessment/Capybaraillant.png";
+import YouDidIt from "@/assets/lesson-assessment/YouDidIt.png";
+import Capytastic from "@/assets/lesson-assessment/Capytastic.png";
 bouncy.register();
 
 import { useState, useCallback, useEffect } from "react";
@@ -9,6 +12,9 @@ import { useAuth } from "@/config/AuthContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useFetchSummary } from "@/api/FETCH";
 import { useStreakStore } from "@/store/useStreakStore";
+
+const images = [ Capybaraillant, YouDidIt, Capytastic]
+const randomImage = images[Math.floor(Math.random() * images.length)];
 
 export default function LastSlide({
   lessonId,
@@ -247,6 +253,7 @@ export default function LastSlide({
     case 1:
       return (
         <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
+          <img src={randomImage} className="w-55"/>
           <h1 className="text-4xl font-extrabold mb-4 text-center">
             Congratulations!
             <br /> You have completed the assessment.
@@ -293,6 +300,7 @@ export default function LastSlide({
             </div>
           ) : (
             <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
+              {/* <img src={CapyStreak} className="w-50"/> */}
               <h1 className="text-5xl font-extrabold mb-4 text-center">
                 +1 Streak!
               </h1>
