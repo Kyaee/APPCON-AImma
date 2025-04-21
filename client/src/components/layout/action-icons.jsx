@@ -95,7 +95,10 @@ export default function IconButton({notification}) {
                 <Button onClick={logOut} className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight max-w-30 hover:bg-light-brown dark:hover:bg-dark-mode-highlight">
                   Log-out
                 </Button>
-                <Button variant="outline" className="max-w-30 border border-foreground dark:border-dark-mode-highlight dark:text-primary">
+                <Button
+                  variant="outline"
+                  className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight max-w-30 hover:bg-light-brown dark:hover:bg-dark-mode-highlight"
+                >
                   Support Us
                 </Button>
               </div>

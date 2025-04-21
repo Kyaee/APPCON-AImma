@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+// Import useTheme hook
+import { useTheme } from "@/config/theme-provider";
 
 function Background({ className }) {
   return (
@@ -41,8 +43,11 @@ function StaticBackground() {
 function VideoBackground() {
   const location = useLocation();
   const [fallbackActive, setFallbackActive] = useState(false);
+  // Get the current theme
+  const { theme } = useTheme();
 
-  const handleVideoError = () => {
+  const handleVideoError = (e) => {
+    console.error("Video Error:", e); // Log the specific error
     console.log("Video failed to load, using fallback");
     setFallbackActive(true);
   };
@@ -51,9 +56,21 @@ function VideoBackground() {
     return <StaticBackground />;
   }
 
+  // Determine video sources based on theme
+  const videoSrcMp4 =
+    theme === "dark"
+      ? "/background/dark-gradient-bg.mp4"
+      : "/background/light-gradient-bg.mp4";
+  const videoSrcWebm =
+    theme === "dark"
+      ? "/background/dark-gradient-bg.webm"
+      : "/background/light-gradient-bg.webm";
+
   return (
     <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
       <video
+        // Add a key that changes with the theme to force re-render/reload
+        key={theme}
         autoPlay
         loop
         muted
@@ -61,7 +78,12 @@ function VideoBackground() {
         onError={handleVideoError}
         className="absolute w-full h-full object-cover"
       >
-        <source src="/background/dark-gradient-bg.mp4" type="video/mp4" />
+        {/* Provide multiple sources for better browser compatibility */}
+        {/* Use theme-based sources */}
+        <source src={videoSrcWebm} type="video/webm" />
+        <source src={videoSrcMp4} type="video/mp4" />
+        {/* Fallback text if video cannot be played */}
+        Your browser does not support the video tag.
       </video>
     </div>
   );

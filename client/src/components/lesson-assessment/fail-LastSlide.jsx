@@ -8,7 +8,7 @@ export default function LastSlide({
   onClick,
 }) {
   return (
-    <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-background ">
+    <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-black ">
       <h1 className="text-4xl font-extrabold mb-4 text-center">
         Hey! &nbsp;Let's try again
         <br />{" "}
@@ -26,7 +26,7 @@ export default function LastSlide({
         </div>
         <div>
           <p>Rewards</p>
-          <h2 className="text-xl font-semibold pt-1 text-gray-200">
+          <h2 className="text-xl font-semibold pt-1 text-gray-700">
             Reach at least {passing} points to earn rewards.
           </h2>
         </div>

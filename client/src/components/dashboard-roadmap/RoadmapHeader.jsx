@@ -33,7 +33,6 @@ const RoadmapHeader = ({
   useEffect(() => {
     const measureWidth = () => {
       if (containerRef.current) {
-        // Directly measure the width of the header container (h2 + chevron)
         const containerWidth =
           containerRef.current.getBoundingClientRect().width;
 
@@ -42,11 +41,9 @@ const RoadmapHeader = ({
           setDropdownWidth(`${containerWidth}px`);
         } else {
           setLineWidth("695px");
-          // Use the same dynamic width measurement for the dropdown even when sidebar is expanded
           setDropdownWidth(`${containerWidth}px`);
         }
 
-        // Calculate dropdown position
         const rect = containerRef.current.getBoundingClientRect();
         setDropdownPosition({
           top: rect.bottom + window.scrollY + 10,
@@ -55,13 +52,9 @@ const RoadmapHeader = ({
       }
     };
 
-    // Measure immediately
     measureWidth();
-
-    // Also measure after a small delay to ensure all elements are fully rendered
     const timeoutId = setTimeout(measureWidth, 50);
 
-    // Add event listener to close dropdown when clicking outside
     const handleClickOutside = (event) => {
       if (
         isDropdownOpen &&
@@ -75,14 +68,12 @@ const RoadmapHeader = ({
 
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Clean up
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [currentCourse, isDropdownOpen, isSidebarExpanded]);
 
-  // Create dropdown portal
   const renderDropdown = () => {
     if (!isDropdownOpen || !courseOptions || courseOptions.length === 0)
       return null;
@@ -90,7 +81,7 @@ const RoadmapHeader = ({
     return ReactDOM.createPortal(
       <div
         id="roadmap-dropdown"
-        className="fixed bg-white border-2 border-black rounded-lg shadow-md"
+        className="fixed bg-primary-foreground dark:bg-dark-inner-bg dark:bg-dark-mode-bg border-2 border-black dark:border-dark-mode-highlight dark:border-dark-mode-highlight  rounded-lg shadow-md"
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,
@@ -101,7 +92,7 @@ const RoadmapHeader = ({
         {courseOptions.map((course, index) => (
           <div
             key={index}
-            className="p-3 hover:bg-[#CBB09B] cursor-pointer text-black text-lg truncate"
+            className="p-3 hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight cursor-pointer text-black dark:text-primary text-lg truncate"
             onClick={() => handleCourseSelection(index)}
             title={course}
           >
@@ -123,7 +114,7 @@ const RoadmapHeader = ({
             className="inline-flex items-start gap-3 cursor-pointer group"
           >
             <h2
-              className={`text-2xl font-bold text-black ${
+              className={`text-2xl font-bold text-black dark:text-primary  dark:text-primary ${
                 isSidebarExpanded
                   ? "max-w-[660px] line-clamp-2"
                   : "max-w-[240px] break-words"
@@ -141,19 +132,26 @@ const RoadmapHeader = ({
               {currentCourse}
             </h2>
             <ChevronRight
-              className={`w-8 h-8 text-black flex-shrink-0 mt-1 transition-transform duration-200 ${
+              className={`w-8 h-8 text-black dark:text-primary flex-shrink-0 mt-1 transition-transform duration-200 ${
                 isDropdownOpen ? "rotate-90" : "rotate-0"
               }`}
             />
           </div>
 
-          <div className="h-[3px] bg-black mt-3" style={{ width: lineWidth }} />
+          <div
+            className="h-[3px] bg-black dark:bg-primary mt-3"
+            style={{ width: lineWidth }}
+          />
+          <div
+            className="h-[3px] bg-black dark:bg-primary mt-3"
+            style={{ width: lineWidth }}
+          />
         </div>
       </div>
 
       {renderDropdown()}
 
-      <p className="text-black font-medium mt-4 text-md">
+      <p className="text-black dark:text-primary dark:text-primary  font-medium mt-4 text-md">
         Current Progression: {progression}%
       </p>
     </div>

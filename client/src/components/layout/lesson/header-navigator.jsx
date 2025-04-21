@@ -12,7 +12,7 @@ export default function Header({
   inShop = false, // New prop to indicate when used in shop
 }) {
   const navigate = useNavigate(); // Initialize the navigate function
-  const { session } = useAuth(); // Get the session from the auth contex
+  const { session } = useAuth(); // Get the session from the auth context
   const { updateLesson } = useEvaluation(); // Function to update user data
 
   // Updated navigation items - using state for shop navigation
@@ -73,34 +73,42 @@ export default function Header({
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
       <h1
-        className={`text-2xl ${
-          location.pathname.split("/")[1] === "lesson"
-            ? "text-foreground"
-            : "text-background" // Changed from "text-background" to ensure visibility
-        }`}
+        className="text-2xl font-bold text-black dark:text-primary"
       >
         CapyCademy
       </h1>
-      <nav className="flex items-center bg-background text-foreground border border-foreground custom-shadow-75 rounded-lg h-[48px] mr-10">
+      <nav className="flex items-center bg-card dark:bg-dark-nav-bg border border-black dark:border-background custom-shadow-75 rounded-lg h-[48px] mr-10">
         {filteredNavItems.map((item) => (
           <Link
             key={item.label}
             to={item.path}
             state={item.state} // Use state if provided
-            className={`
-              flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg hover:bg-[#CBB09B] transition-all duration-300
-              ${isActive(item.path) ? "bg-[#CBB09B] border-x" : ""}
-             
-            `}
+            className={`group flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg transition-all duration-300 ${
+              isActive(item.path)
+                ? "bg-light-brown dark:bg-dark-mode-highlight border-x"
+                : "hover:bg-light-brown dark:hover:bg-dark-mode-bg"
+            }`}
           >
-            {item.icon}
-            <span className="ml-2">{item.label}</span>
+            <div
+              className={`flex items-center gap-2 text-black dark:text-[#64646a] dark:group-hover:text-white ${
+                isActive(item.path) ? "dark:!text-white" : ""
+              }`}
+            >
+              {item.icon}
+              <span
+                className={`text-sm text-black dark:text-[#64646a] dark:group-hover:text-white font-inter ${
+                  isActive(item.path) ? "dark:!text-white" : ""
+                }`}
+              >
+                {item.label}
+              </span>
+            </div>
           </Link>
         ))}
       </nav>
       <button
         onClick={handleQuit}
-        className="text-sm mr-6 p-2 flex bg-background border border-foreground text-foreground gap-1 custom-shadow-50 rounded-md"
+        className="text-sm mr-6 p-2 flex bg-card dark:bg-dark-nav-bg border border-black dark:border-background text-black dark:text-primary gap-1 custom-shadow-50 rounded-md hover:bg-light-brown dark:hover:bg-dark-mode-highlight"
       >
         <ArrowUpRight size="20" />
         Quit

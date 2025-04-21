@@ -8,6 +8,7 @@ import NoLivesPage from "@/components/lesson-assessment/no-lives";
 import IntroSlide from "@/components/lesson-assessment/IntroSlide";
 import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
+import { markLessonCompleted } from "@/api/UPDATE";
 
 // Use Hooks
 import { useState, useEffect, useCallback } from "react";
@@ -17,7 +18,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuestStore } from "@/store/useQuestStore";
+import { useQuestStore } from "@/store/useQuestStore"; // Import useQuestStore
 import { useAuth } from "@/config/AuthContext";
 import { useStreakStore } from "@/store/useStreakStore";
 import { handleUpdateStreak } from "@/lib/check-day-streak";
@@ -43,6 +44,7 @@ export default function Assessment() {
   const updateStreakFromLesson = useStreakStore(
     (state) => state.updateStreakFromLesson
   );
+  const completeLessonTest = useQuestStore((state) => state.completeLessonTest); // Get quest action
   const [isAnswers, setAnswers] = useState([
     {
       id: isCurrentSlide,
@@ -52,7 +54,6 @@ export default function Assessment() {
       validated: false,
     },
   ]);
-  const { createSummary, isError } = useSummary();
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -60,15 +61,6 @@ export default function Assessment() {
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(userId);
-
-  // Track assessment performance
-  const [assessmentResults, setAssessmentResults] = useState({
-    score: 0,
-    totalQuestions: 0,
-    gemsEarned: 0,
-    expEarned: 0,
-    livesLost: 0,
-  });
 
   // Calculate rewards based on difficulty
   const calculateRewards = useCallback((difficulty) => {
@@ -101,38 +93,6 @@ export default function Assessment() {
     // Return fixed rewards values based only on difficulty (not success rate)
     return { gems: baseGemsReward, exp: baseExpReward };
   }, []);
-
-  // Update when assessment is completed
-  const handleAssessmentSubmit = useCallback(
-    (score, total) => {
-      if (!lessonFetch || !userId) return;
-
-      // Calculate success rate
-      const successRate = score / total;
-
-      // Calculate rewards based on difficulty
-      const { gems, exp } = calculateRewards(lessonFetch.difficulty);
-
-      // Determine lives lost - lose 1 life if score is less than 50%
-      const livesLost = successRate < 0.5 ? 1 : 0;
-
-      // Update the assessment results
-      setAssessmentResults({
-        score,
-        totalQuestions: total,
-        gemsEarned: gems,
-        expEarned: exp,
-        livesLost: livesLost,
-      });
-
-      console.log(
-        `Assessment results: ${score}/${total}, Rewards: ${gems} gems, ${exp} exp, Lives lost: ${livesLost}`
-      );
-
-      return { gems, exp, livesLost };
-    },
-    [lessonFetch, userId, calculateRewards]
-  );
 
   const handleCheck = () => {
     setValidateAnswer(true);
@@ -201,7 +161,7 @@ export default function Assessment() {
 
     try {
       // Calculate final score and determine lives lost
-      const totalQuestions = lessonData.questions.length - 1;
+      const totalQuestions = lessonData.questions.length - 1; // Define totalQuestions here
       const successRate = isCount.score / totalQuestions;
 
       // Get the fixed rewards based on difficulty only
@@ -221,60 +181,141 @@ export default function Assessment() {
 
       // Update lesson as completed in Supabase if user passes
       if (isCount.score >= 3) {
+        console.log(
+          `Assessment passed for lesson ${lessonFetch.id}. Marking complete and updating progress.`
+        );
+
+        // --- MODIFICATION START ---
+        // Use markLessonCompleted instead of direct updateLesson for completion
+        // Ensure lessonFetch.roadmap_id is available and passed
+        const completionResult = await markLessonCompleted(
+          lessonFetch.id,
+          lessonFetch.roadmap_id
+        );
+
+        if (completionResult.success) {
+          console.log(
+            `Lesson ${lessonFetch.id} marked completed via assessment. Roadmap progress: ${completionResult.progress}%`
+          );
+
+          // --- Call completeLessonTest quest action ---
+          try {
+            await completeLessonTest(userId, isCount.score, totalQuestions);
+            console.log("completeLessonTest quest action triggered.");
+          } catch (questError) {
+            console.error(
+              "Error triggering completeLessonTest quest action:",
+              questError
+            );
+          }
+          // --- End quest action call ---
+
+          // Check if streak should be updated (only if passed with 0 lives lost)
+          let streakUpdated = false;
+          if (livesLost === 0) {
+            streakUpdated = await updateStreakFromLesson(userId);
+            console.log(
+              streakUpdated
+                ? "Streak was updated successfully (Assessment)"
+                : "Streak was already updated today, skipping increment (Assessment)"
+            );
+          } else {
+            console.log(
+              `Streak not updated because ${livesLost} lives were lost during the assessment.`
+            );
+          }
+
+          // ALWAYS update rewards regardless of streak status if passed
+          try {
+            const response = await updateUser({
+              userId: userId,
+              gems: gems,
+              exp: exp,
+              streak: 0, // Streak is handled by updateStreakFromLesson
+              lives: livesLost, // Pass the actual lives lost during assessment
+            });
+            console.log("User rewards/lives updated via assessment:", response);
+
+            // Invalidate queries to refresh dashboard data
+            queryClient.invalidateQueries({ queryKey: ["userStats", userId] });
+            queryClient.invalidateQueries({ queryKey: ["fetch_user"] });
+            queryClient.invalidateQueries({
+              queryKey: ["lessons", lessonFetch.roadmap_id],
+            }); // Invalidate lessons for this roadmap
+            queryClient.invalidateQueries({ queryKey: ["roadmaps", userId] }); // Invalidate roadmap data to update progress %
+          } catch (error) {
+            console.error(
+              "Error updating user rewards/lives via assessment:",
+              error
+            );
+          }
+        } else {
+          console.error(
+            "Failed to mark lesson as completed via assessment:",
+            completionResult.error
+          );
+          // Fallback: Update lesson locally if server update fails
+          await updateLesson({
+            userId: userId,
+            lessonId: lessonFetch.id,
+            lastAccessed: new Date().toISOString(),
+            progress: 100, // Still set progress to 100
+            status: "Completed", // Mark as completed locally anyway
+          });
+        }
+        // --- MODIFICATION END ---
+      } else {
+        // User failed
+        console.log(
+          "Assessment failed, lesson not marked completed, no rewards given."
+        );
+        // Still update lives lost even on failure
+        try {
+          await updateUser({
+            userId: userId,
+            gems: 0, // No gems on failure
+            exp: 0, // No exp on failure
+            streak: 0,
+            lives: livesLost, // Record lives lost
+          });
+          console.log("User lives updated after failed assessment.");
+          queryClient.invalidateQueries({ queryKey: ["userStats", userId] });
+          queryClient.invalidateQueries({ queryKey: ["fetch_user"] });
+        } catch (updateError) {
+          console.error(
+            "Error updating user lives after failed assessment:",
+            updateError
+          );
+        }
+        // Optionally update lesson progress even if failed
+        // You might want to save the score or keep the old progress
         await updateLesson({
           userId: userId,
           lessonId: lessonFetch.id,
           lastAccessed: new Date().toISOString(),
-          progress: 100,
-          status: "Completed",
+          // Example: Save score as progress percentage, capped at 99 if failed?
+          progress: Math.min(
+            99,
+            Math.max(
+              lessonFetch.progress || 0,
+              Math.round((isCount.score / totalQuestions) * 100)
+            )
+          ),
+          status: "in_progress", // Keep as in_progress
         });
-
-        console.log(`Lesson ${lessonFetch.id} marked as completed`);
-
-        // Check if streak should be updated
-        let streakUpdated = false;
-        if (livesLost === 0) {
-          // Use the updated function that checks if streak was already updated today
-          streakUpdated = await updateStreakFromLesson(userId);
-          console.log(
-            streakUpdated
-              ? "Streak was updated successfully"
-              : "Streak was already updated today, skipping increment"
-          );
-        }
-
-        // ALWAYS update rewards regardless of streak status
-        try {
-          const response = await updateUser({
-            userId: userId,
-            gems: gems,
-            exp: exp,
-            streak: 0, // Streak is handled by updateStreakFromLesson
-            lives: livesLost,
-          });
-
-          console.log("Rewards saved to Supabase:", response);
-          console.log(`EXP awarded: ${exp}, Gems awarded: ${gems}`);
-          if (livesLost > 0) {
-            console.log(`Lives decreased by: ${livesLost}`);
-          }
-
-          // Invalidate queries to refresh dashboard data
-          queryClient.invalidateQueries(["userStats", userId]);
-          queryClient.invalidateQueries(["fetch_user"]);
-          console.log("Query cache invalidated, dashboard will refresh");
-        } catch (error) {
-          console.error("Error updating user rewards:", error);
-        }
-      } else {
-        console.log("Assessment failed, no rewards will be given");
+        // Invalidate lesson data even on failure if progress was updated
+        queryClient.invalidateQueries({
+          queryKey: ["lessons", lessonFetch.roadmap_id],
+        });
       }
 
       // Redirect to dashboard with timestamp to force refresh
+      setIsSubmitting(false); // Reset state before navigating
       navigate(`/dashboard/${userId}?t=${Date.now()}`);
     } catch (error) {
       console.error("Error finishing assessment:", error);
       setIsSubmitting(false); // Reset submitting state on error
+      // Redirect even on error to avoid getting stuck
       navigate(`/dashboard/${userId}?t=${Date.now()}`);
     }
   };
@@ -344,23 +385,6 @@ export default function Assessment() {
     }
   };
 
-  const handleAssessmentComplete = async () => {
-    try {
-      // Save both lesson progress and user stats
-      await saveLessonProgress();
-      await updateUserStats();
-
-      // Invalidate and refetch user stats query to update UI
-      queryClient.invalidateQueries(["userStats", userId]);
-
-      // Navigate to dashboard with timestamp parameter to force refresh
-      navigate(`/dashboard/${userId}?t=${Date.now()}`);
-    } catch (error) {
-      console.error("Error completing assessment:", error);
-      navigate(`/dashboard/${userId}?t=${Date.now()}`);
-    }
-  };
-
   if (isLoading) return <Loading />;
 
   if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
@@ -376,11 +400,11 @@ export default function Assessment() {
             //       FIRST PAGE
             // -------------------------
             <IntroSlide
-              lessonData={lessonFetch}
-              image={Image}
-              gems={lessonFetch.gems}
-              exp={lessonFetch.exp}
+              lessonData={lessonData ? lessonData : {}}
+              gems={lessonFetch?.gems}
+              exp={lessonFetch?.exp}
               setIntroSlide={() => setIntroSlide(false)}
+              disabled={isLoading}
             />
           ) : isLastSlide ? (
             isCount.score >= 3 ? (
@@ -388,17 +412,17 @@ export default function Assessment() {
               //   USER PASSED ASSESSMENT
               // -------------------------
               <PassLastSlide
-                score={isCount.score}
-                total={lessonData.questions.length - 1}
-                gems={lessonFetch.gems}
-                exp={lessonFetch.exp}
+                score={isCount?.score}
+                total={lessonData?.questions?.length - 1}
+                gems={lessonFetch?.gems}
+                exp={lessonFetch?.exp}
                 userId={userId}
-                lessonId={lessonFetch.id}
-                lessonName={lessonFetch.name}
-                lessonDifficulty={lessonFetch.difficulty}
+                lessonId={lessonFetch?.id}
+                lessonName={lessonFetch?.name}
+                lessonDifficulty={lessonFetch?.difficulty}
                 userLives={isCount.lives}
                 userScore={isCount.score}
-                userTotal={lessonData.questions.length - 1}
+                userTotal={lessonData?.questions?.length - 1}
                 answers={isAnswers}
                 onClick={handleFinishAssessment}
               />
@@ -407,10 +431,10 @@ export default function Assessment() {
               //   USER FAILED ASSESSMENT
               // -------------------------
               <FailLastSlide
-                lessonId={lessonFetch.id}
+                lessonId={lessonFetch?.id}
                 passing={3}
                 score={isCount.score}
-                total={lessonData.questions.length - 1}
+                total={lessonData?.questions?.length - 1}
                 onClick={handleFinishAssessment}
               />
             )
@@ -419,14 +443,14 @@ export default function Assessment() {
               display_wrong_answer={isCount.wrong}
               lesson_name={lessonData.name}
               type={"multiple-choice"}
-              question={lessonData.questions[isCurrentSlide].text}
-              options={lessonData.questions[isCurrentSlide].options}
+              question={lessonData?.questions[isCurrentSlide]?.text}
+              options={lessonData?.questions[isCurrentSlide]?.options}
               questionNumber={isCurrentSlide}
-              correct={lessonData.questions[isCurrentSlide].correct_answer}
+              correct={lessonData?.questions[isCurrentSlide]?.correct_answer}
               isSelectedAnswer={isAnswers}
               setSelectedAnswer={setAnswers}
               validate={isValidateAnswer}
-              explanation={lessonData.questions[isCurrentSlide].explanation}
+              explanation={lessonData?.questions[isCurrentSlide]?.explanation}
             />
           )}
         </form>
@@ -438,11 +462,11 @@ export default function Assessment() {
           <></>
         ) : (
           <footer
-            className="absolute bottom-0 left-0 w-full py-5 flex items-center justify-around border-t border-background
+            className="absolute bottom-0 left-0 w-full py-5 flex items-center justify-around border-t border-primary
             *:flex *:py-3 *:rounded-lg *:gap-2 "
           >
             <button
-              className="border-background border px-10 text-background"
+              className="border-primary border px-10 text-primary"
               onClick={() =>
                 isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
               }
@@ -450,14 +474,14 @@ export default function Assessment() {
               <ArrowLeft />
               Back
             </button>
-            <div className="flex gap-2 h-15 text-xl text-background">
+            <div className="flex gap-2 h-15 text-xl text-primary">
               <HeartIcon />
               {isCount.lives}
             </div>
 
             {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (
               <button
-                className="bg-[#BF8648] border-2 disabled:bg-light-brown border-foreground px-6 custom-shadow-50 text-background"
+                className="bg-[#BF8648] border-2 disabled:bg-light-brown border-black px-6 custom-shadow-50 text-black"
                 onClick={handleCheck}
                 disabled={!isAnswers[isCurrentSlide]?.answer}
               >
@@ -468,7 +492,7 @@ export default function Assessment() {
             )}
             {isAnswers[isCurrentSlide]?.validated && (
               <button
-                className="mr-3 bg-[#BF8648] border-2 border-foreground px-6 custom-shadow-50 text-background"
+                className="mr-3 bg-[#BF8648] border-2 border-black px-6 custom-shadow-50 text-white"
                 onClick={handleNext}
                 disabled={isCurrentSlide === lessonData.questions.length - 1}
               >

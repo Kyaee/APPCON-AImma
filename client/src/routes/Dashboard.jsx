@@ -175,7 +175,13 @@ export default function Dashboard({ setAssessed }) {
                   Unable to load progression data
                 </p>
               ) : (
-                <p className={`font-medium mt-4 text-lg ${isSidebarExpanded ? "text-black dark:text-primary" : "text-black dark:text-primary"}`}>
+                <p
+                  className={`font-medium mt-4 text-lg ${
+                    isSidebarExpanded
+                      ? "text-black dark:text-primary"
+                      : "text-black dark:text-primary"
+                  }`}
+                >
                   Current Progression: {currentRoadmap?.progress || 0}%
                 </p>
               )}
@@ -183,8 +189,8 @@ export default function Dashboard({ setAssessed }) {
               {/* Dropdown menu */}
               {isLeftDropdownOpen && !condition && (
                 <div
-                  className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-dark-mode-bg z-30"
-                  style={{ width: "450px" }}
+                  className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30"
+                  style={{ width: "430px" }}
                 >
                   {roadmapData.map((roadmap, index) => (
                     <div

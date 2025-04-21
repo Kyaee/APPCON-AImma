@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Rocket,
   ChevronRight,
@@ -16,9 +16,10 @@ import { useQuestStore } from "@/store/useQuestStore";
 import { supabase } from "@/config/supabase";
 import { useAuth } from "@/config/AuthContext";
 
-const QuestPanel = ({ userId }) => {
+const QuestPanel = ({ userId, embedded = false }) => {
   const { session } = useAuth();
   const [isDaily, setIsDaily] = useState(true);
+  const [showAllQuests, setShowAllQuests] = useState(false); // State for showing all quests
 
   // Get quest data and functions from our store
   const dailyQuests = useQuestStore((state) => state.dailyQuests);
@@ -29,6 +30,12 @@ const QuestPanel = ({ userId }) => {
   const completeQuest = useQuestStore((state) => state.completeQuest);
 
   const quests = isDaily ? dailyQuests : weeklyQuests;
+
+  // Memoize sorted and sliced quests
+  const displayedQuests = useMemo(() => {
+    const sortedQuests = [...quests].sort((a, b) => a.completed - b.completed);
+    return showAllQuests ? sortedQuests : sortedQuests.slice(0, 3);
+  }, [quests, showAllQuests]);
 
   // Check if we need to reset quests when component mounts
   useEffect(() => {
@@ -66,42 +73,9 @@ const QuestPanel = ({ userId }) => {
     }
   };
 
-  // Update this function to save quest completion to Supabase
-  const handleQuestComplete = async (quest) => {
-    if (quest.completed || !session?.user?.id) return;
-
-    try {
-      // Mark as completed in local state
-      completeQuest(quest.id);
-
-      // Update Supabase - increment the finished_quests count
-      const { data, error } = await supabase
-        .from("users")
-        .select("finished_quests")
-        .eq("id", session.user.id)
-        .single();
-
-      if (error) throw error;
-
-      const currentCount = data?.finished_quests || 0;
-
-      await supabase
-        .from("users")
-        .update({
-          finished_quests: currentCount + 1,
-          gems: data.gems + quest.rewards.gems,
-          current_exp: data.current_exp + quest.rewards.xp,
-        })
-        .eq("id", session.user.id);
-
-      console.log(`Quest completed and saved to database: ${quest.title}`);
-    } catch (error) {
-      console.error("Error updating quest completion:", error);
-    }
-  };
-
-  return (
-    <div className="bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-dark-mode-highlight custom-shadow-75 p-4 w-98">
+  // Content for the quest panel
+  const questContent = (
+    <>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-lg font-medium text-black dark:text-primary">
           {isDaily ? "Daily Quests" : "Weekly Quests"}
@@ -118,32 +92,64 @@ const QuestPanel = ({ userId }) => {
       </div>
 
       <div className="space-y-3">
-        {quests.map((quest) => (
-          <div
-            key={quest.id}
-            className={`flex items-start gap-3 p-3 rounded-md ${
-              !quest.completed ? "hover:bg-gray-100 dark:hover:bg-dark-mode-highlight cursor-pointer" : ""
-            }`}
-            onClick={() => !quest.completed && handleQuestComplete(quest)}
-          >
-            {quest.completed ? (
-              <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
-            ) : (
-              <div className="mt-0.5">{getQuestIcon(quest)}</div>
-            )}
-            <div>
-              <p className="font-medium text-gray-900 dark:text-primary">{quest.title}</p>
-              <p className="text-xs text-gray-500 dark:text-primary/70">
-                {quest.completed
-                  ? "Completed"
-                  : `${quest.rewards.xp} XP, ${quest.rewards.gems} Gems${
-                      quest.rewards.booster ? " + Booster" : ""
-                    }`}
-              </p>
+        {displayedQuests.map(
+          (
+            quest // Use displayedQuests here
+          ) => (
+            <div
+              key={quest.id}
+              // Remove onClick handler and cursor-pointer
+              className={`flex items-start gap-3 p-3 rounded-md ${
+                !quest.completed
+                  ? "hover:bg-gray-100 dark:hover:bg-dark-mode-highlight" // Removed cursor-pointer
+                  : ""
+              }`}
+            >
+              {quest.completed ? (
+                <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+              ) : (
+                <div className="mt-0.5">{getQuestIcon(quest)}</div>
+              )}
+              <div>
+                <p className="font-medium text-gray-900 dark:text-primary">
+                  {quest.title}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-primary/70">
+                  {quest.completed
+                    ? "Completed"
+                    : `${quest.rewards.xp} XP, ${quest.rewards.gems} Gems${
+                        quest.rewards.booster ? " + Booster" : ""
+                      }`}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </div>
+
+      {/* See More / See Less Button */}
+      {quests.length > 3 && (
+        <div className="flex justify-end mt-3">
+          <button
+            onClick={() => setShowAllQuests(!showAllQuests)}
+            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            {showAllQuests ? "See Less" : "See More"}
+          </button>
+        </div>
+      )}
+    </>
+  );
+
+  // If embedded, return just the content
+  if (embedded) {
+    return questContent;
+  }
+
+  // Otherwise, return the content in a container
+  return (
+    <div className="bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-dark-mode-highlight custom-shadow-75 p-4 w-98">
+      {questContent}
     </div>
   );
 };

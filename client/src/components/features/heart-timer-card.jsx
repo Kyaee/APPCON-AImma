@@ -6,7 +6,7 @@ export default function HeartTimerCard({ onClose, timeLeft, formatTime, hearts }
   return (
     <div 
       className="animate-text-bounce fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-      bg-background bg-opacity-50 border-2 border-foreground dark:border-dark-mode-highlight custom-shadow-50
+      bg-background dark:bg-dark-inner-bg bg-opacity-50 border-2 border-foreground dark:border-dark-mode-highlight custom-shadow-50
       w-96 py-2 h-auto rounded-md
       flex items-center justify-center"
     >

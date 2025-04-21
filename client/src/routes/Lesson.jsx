@@ -1,21 +1,19 @@
+import { markLessonCompleted } from "@/api/UPDATE"; // Add this import
 import ProgressBar from "@/components/lesson-assessment/scroll-progressbar";
 import { Background } from "@/components/layout/Background"; // Add this import
 import Loading from "./Loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
-import CapyStart from "@/assets/lesson-assessment/CapyStart.png";
-
-
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/config/supabase";
+
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useAssessment, useEvaluation } from "@/api/INSERT";
 import { useAuth } from "@/config/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
-// import {  }
 
 export default function ElementLesson() {
   const navigate = useNavigate();
@@ -36,6 +34,11 @@ export default function ElementLesson() {
   const contentRef = useRef(null); // Attach to main
   const [isLoading, setLoading] = useState(false); // State to manage loading status
   const { createAssessment, isPending } = useAssessment();
+  const updateStreakFromLesson = useStreakStore(
+    (state) => state.updateStreakFromLesson
+  );
+  const reviewLesson = useQuestStore((state) => state.reviewLesson); // Get reviewLesson action
+  const { startTracking, stopTracking } = useTimeTracking(session?.user?.id); // Get time tracking functions
 
   // Add state to track user performance
   const [userPerformance, setUserPerformance] = useState({
@@ -74,6 +77,50 @@ export default function ElementLesson() {
     return Math.round(scrollPercentage);
   }, []);
 
+  // Calculate rewards based on lesson difficulty
+  const calculateRewards = useCallback(() => {
+    // Default rewards (no assessment: 15 exp, 10 gems)
+    let gems = 10;
+    let exp = 15;
+
+    // If the lesson has specific rewards defined, use those
+    if (lessonFetch?.gems && lessonFetch?.exp) {
+      gems = lessonFetch.gems;
+      exp = lessonFetch.exp;
+    }
+
+    return { gems, exp };
+  }, [lessonFetch]);
+
+  // Function to award rewards for completing a lesson without assessment
+  const awardLessonRewards = useCallback(async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const { gems, exp } = calculateRewards();
+
+      console.log(`Awarding rewards: ${gems} gems, ${exp} exp`);
+
+      // Update user data with rewards - REMOVED streak: 1
+      await updateUser({
+        userId: session.user.id,
+        gems: gems,
+        exp: exp,
+        // streak: 1, // REMOVED - Streak is handled by updateStreakFromLesson in assessments
+        lives: 0, // No lives lost for lessons without assessment
+      });
+
+      // Invalidate user data queries to refresh dashboard when user returns
+      queryClient.invalidateQueries({
+        queryKey: ["userStats", session.user.id],
+      });
+
+      console.log("Rewards awarded successfully");
+    } catch (error) {
+      console.error("Error awarding rewards:", error);
+    }
+  }, [session, calculateRewards, updateUser, queryClient]);
+
   // Function to save progress to Supabase
   const saveProgress = useCallback(async () => {
     if (session?.user?.id && lessonFetch?.id && highestProgress > 0) {
@@ -108,16 +155,66 @@ export default function ElementLesson() {
           status: status,
         });
 
-        // If lesson is completed (100% progress) and has no assessment, award rewards
+        // If lesson is completed (100% progress) and has no assessment, mark it completed
         // Only award if the lesson wasn't previously completed
         if (shouldComplete && status === "Completed" && !wasAlreadyCompleted) {
           console.log(
-            "Lesson completed without assessment - awarding rewards automatically"
+            "Lesson completed without assessment - marking completed, awarding rewards, and updating streak"
           );
-          await awardLessonRewards();
-          // Invalidate queries to refresh dashboard data when user returns
-          queryClient.invalidateQueries(["userStats", session.user.id]);
-          queryClient.invalidateQueries(["fetch_user"]);
+          // --- MODIFICATION START ---
+          // Call the function to mark lesson completed and update roadmap progress
+          // Pass lessonId and roadmapId explicitly
+          const completionResult = await markLessonCompleted(
+            lessonFetch.id,
+            lessonFetch.roadmap_id
+          );
+          // --- MODIFICATION END ---
+
+          if (completionResult.success) {
+            console.log(
+              `Lesson ${lessonFetch.id} marked completed. Roadmap progress: ${completionResult.progress}%`
+            );
+            await awardLessonRewards();
+
+            // Attempt to update streak
+            const streakUpdated = await updateStreakFromLesson(session.user.id);
+            console.log(
+              streakUpdated
+                ? "Streak was updated successfully (Lesson)"
+                : "Streak was already updated today, skipping increment (Lesson)"
+            );
+
+            // Invalidate queries to refresh dashboard data when user returns
+            queryClient.invalidateQueries({
+              queryKey: ["userStats", session.user.id],
+            });
+            queryClient.invalidateQueries({ queryKey: ["fetch_user"] });
+            // Invalidate lessons query for the specific roadmap to update progress display
+            queryClient.invalidateQueries({
+              queryKey: ["lessons", lessonFetch.roadmap_id],
+            });
+            // Invalidate roadmap query as well
+            if (session?.user?.id) {
+              queryClient.invalidateQueries({
+                queryKey: ["roadmaps", session.user.id],
+              }); // Invalidate roadmap data
+            }
+          } else {
+            console.error(
+              "Failed to mark lesson as completed:",
+              completionResult.error
+            );
+            // Optionally, revert status or handle error
+          }
+        } else if (!shouldComplete) {
+          // If not completing, just update progress and last accessed time
+          await updateLesson({
+            userId: session.user.id,
+            lessonId: lessonFetch.id,
+            lastAccessed: new Date().toISOString(),
+            progress: finalProgress,
+            status: status, // Use the determined status (likely 'in_progress' or existing)
+          });
         }
 
         console.log("Progress saved successfully");
@@ -128,54 +225,25 @@ export default function ElementLesson() {
       }
     }
     return false;
-  }, [session, lessonFetch, highestProgress, updateLesson, queryClient]);
-
-  // Calculate rewards based on lesson difficulty
-  const calculateRewards = useCallback(() => {
-    // Default rewards (no assessment: 15 exp, 10 gems)
-    let gems = 10;
-    let exp = 15;
-
-    // If the lesson has specific rewards defined, use those
-    if (lessonFetch?.gems && lessonFetch?.exp) {
-      gems = lessonFetch.gems;
-      exp = lessonFetch.exp;
-    }
-
-    return { gems, exp };
-  }, [lessonFetch]);
-
-  // Function to award rewards for completing a lesson without assessment
-  const awardLessonRewards = async () => {
-    if (!session?.user?.id) return;
-
-    try {
-      const { gems, exp } = calculateRewards();
-
-      console.log(`Awarding rewards: ${gems} gems, ${exp} exp`);
-
-      // Update user data with rewards
-      await updateUser({
-        userId: session.user.id,
-        gems: gems,
-        exp: exp,
-        streak: 1, // Increment streak by 1 for completing a lesson
-        lives: 0, // No lives lost for lessons without assessment
-      });
-
-      // Invalidate user data queries to refresh dashboard when user returns
-      queryClient.invalidateQueries(["userStats", session.user.id]);
-
-      console.log("Rewards awarded successfully");
-    } catch (error) {
-      console.error("Error awarding rewards:", error);
-    }
-  };
+  }, [
+    session,
+    lessonFetch,
+    highestProgress,
+    updateLesson,
+    queryClient,
+    awardLessonRewards,
+    updateStreakFromLesson, // Add updateStreakFromLesson to dependencies
+    markLessonCompleted, // <<< Add markLessonCompleted dependency
+  ]);
 
   // Add this function to your component
   const handleQuit = async (e) => {
     if (e) e.preventDefault();
     setLoading(true);
+
+    // Stop time tracking before saving progress and navigating
+    const minutes = stopTracking();
+    console.log(`Time tracking stopped on quit. ${minutes} minutes recorded.`);
 
     if (session?.user?.id && lessonFetch?.id) {
       try {
@@ -244,6 +312,11 @@ export default function ElementLesson() {
 
     // For page refresh or closing
     const handleBeforeUnload = (e) => {
+      // Stop tracking time before saving progress
+      const minutes = stopTracking();
+      console.log(
+        `Time tracking stopped on unload. ${minutes} minutes recorded.`
+      );
       saveProgress();
       // Standard practice to show "unsaved changes" dialog
       e.preventDefault();
@@ -257,7 +330,7 @@ export default function ElementLesson() {
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [saveProgress]);
+  }, [saveProgress, stopTracking]); // Add stopTracking dependency
 
   useEffect(() => {
     if (!contentRef.current) return;
@@ -362,6 +435,28 @@ export default function ElementLesson() {
     return () => clearInterval(intervalId);
   }, [session, lessonFetch, highestProgress, saveProgress]);
 
+  // Start time tracking on mount, stop on unmount
+  useEffect(() => {
+    startTracking();
+    console.log("Time tracking started for lesson.");
+    return () => {
+      const minutes = stopTracking();
+      console.log(`Time tracking stopped. ${minutes} minutes recorded.`);
+    };
+  }, [startTracking, stopTracking]); // Add dependencies
+
+  // Add useEffect to trigger reviewLesson when a completed lesson is loaded
+  useEffect(() => {
+    if (
+      session?.user?.id &&
+      lessonFetch?.id &&
+      lessonFetch.status === "Completed"
+    ) {
+      console.log(`Attempting to mark lesson ${lessonFetch.id} as reviewed.`);
+      reviewLesson(lessonFetch.id, session.user.id);
+    }
+  }, [lessonFetch, session, reviewLesson]);
+
   if (lessonFetch && lessonFetch.id !== parseInt(id)) {
     return (
       <div className="mt-32 max-w-2xl mx-auto text-center">
@@ -395,10 +490,28 @@ export default function ElementLesson() {
         lesson_name: lessonFetch.name,
         lesson_content: lessonFetch.lesson,
       });
-      setGeneratedAssessment(true);
       setLoading(false);
+      setGeneratedAssessment(true);
       setTimeout(() => navigate(`/l/${id}/assessment`), 2000);
     }
+  };
+
+  // Update performance metrics based on user actions
+  const handleLessonCompletion = (success) => {
+    // Calculate rewards based on performance
+    const gems = success ? calculateGemReward(lessonDifficulty) : 0;
+    const exp = success ? calculateExpReward(lessonDifficulty) : 0;
+    const lives = success ? 0 : 1; // Lose a life if failed
+
+    setUserPerformance({
+      gemsEarned: gems,
+      expEarned: exp,
+      livesLost: lives,
+      streakIncrement: success ? 1 : 0,
+    });
+
+    // Save performance data to be used later
+    savePerformanceData(userPerformance);
   };
 
   if (isPending) return <Loading generate_assessment={true} />;
@@ -413,9 +526,9 @@ export default function ElementLesson() {
       >
         <ProgressBar progress={scrollProgress} />
       </Suspense>
-      <Background className="bg-[#FFECD0] opacity-35" />
+      <Background className="opacity-90" />
 
-      <section className="mt-50 max-w-2xl mx-auto overflow-hidden">
+      <section className="mt-40 max-w-2xl mx-auto overflow-hidden">
         <LessonArticle
           name={lessonFetch?.name}
           difficulty={lessonFetch?.difficulty}
@@ -447,7 +560,6 @@ export default function ElementLesson() {
         can make mistakes, check important info.
       </div>
       <footer className="mb-20"></footer>
-      <img src={CapyStart} className="fixed transform top-1/2 -translate-y-1/2 w-55 h-auto -right-20 -rotate-55"/>
     </main>
   );
 }

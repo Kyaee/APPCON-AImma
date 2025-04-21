@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import CapyShout from "@/assets/lesson-assessment/CapyShout.png";
+import { CheckCircleIcon } from "lucide-react";
 
 const Questions = ({
   display_wrong_answer,
@@ -13,8 +14,6 @@ const Questions = ({
   validate,
   explanation,
 }) => {
-  const [isSHORT_Answer_Value, setSHORT_Answer_Value] = useState("");
-
   switch (type) {
     case "multiple-choice":
       return (
@@ -26,22 +25,22 @@ const Questions = ({
           <div
             className={`grid ${
               display_wrong_answer
-                ? `grid-cols-2 place-items-center sm:w-full sm:mx-15 md:w-4/6`
+                ? `grid-cols-2 place-items-center sm:w-full sm:mx-15 gap-15`
                 : `grid-cols-1 animate-text-fade`
             }`}
           >
             <article className="flex flex-col items-start justify-center relative">
               <div>
-                <h1 className="font-extrabold text-4xl mb-7 text-background">
+                <h1 className="font-extrabold text-4xl mb-7 text-primary">
                   #{questionNumber + 1}
                 </h1>
-                <span className="border border-white bg-[rgba(106,11,188,0.49)] p-1 px-3 rounded-2xl text-background">
+                <span className="border border-primary bg-[rgba(106,11,188,0.49)] p-1 px-3 rounded-2xl text-white">
                   Multiple Choice
                 </span>
-                <p className="mt-5 mb-2 tracking-tight text-background font-lightx1">
+                <p className="mt-5 mb-2 tracking-tight text-primary font-lightx1">
                   {lesson_name}
                 </p>
-                <h1 className="font-bold text-3xl mb-8 max-w-xl tracking-tight text-background">
+                <h1 className="font-bold text-3xl mb-8 max-w-xl tracking-tight text-primary">
                   {question}
                 </h1>
               </div>
@@ -96,8 +95,27 @@ const Questions = ({
                 })}
               </div>
             </article>
-            {display_wrong_answer &&
-              <p className="text-background w-4/6 animate-text-fade">{explanation}</p>}
+            {display_wrong_answer && (
+              <div>
+                <div
+                  className="text-foreground bg-background font-semibold
+                  w-4/6 py-6 px-8 tracking-tight rounded-sm 
+                  "
+                >
+                  <h4 className="flex gap-2 items-center w-50 animate-text-reveal bg-green-400 rounded-lg py-1 px-2">
+                    <CheckCircleIcon size={20} />
+                    The Correct Answer:
+                  </h4>
+                  <p className="pt-3">"{explanation}"</p>
+                </div>
+                <img
+                  src={CapyShout}
+                  alt="capybara superhero"
+                  className="absolute -right-55 animate-tilt-bounce  w-auto h-150 mb-4"
+                />
+              </div>
+            )}
+            {/* {isSelectedAnswer[questionNumber]?.validated && (} */}
           </div>
         </section>
       );
@@ -142,79 +160,6 @@ const Questions = ({
                 />
                 <span>False</span>
               </label>
-            </div>
-          </div>
-        </article>
-      );
-    case "short-answer":
-      return (
-        <article className="flex items-center justify-center mt-52">
-          <div className="flex flex-col items-center justify-center p-8 md:p-12 relative">
-            <div>
-              <h1 className="font-extrabold text-4xl mb-5">
-                #{questionNumber}
-              </h1>
-              <span className="border border-white bg-[rgba(106,11,188,0.49)]  p-1 px-3 rounded-2xl">
-                Short Answer
-              </span>
-              <h1 className="mt-3 font-bold text-3xl mb-8 max-w-xl ">
-                What is the event-loop in asynchronous Javascript?
-              </h1>
-            </div>
-            <textarea
-              value={isSHORT_Answer_Value}
-              onChange={(e) => setSHORT_Answer_Value(e.target.value)}
-              placeholder="Write here"
-              className="p-0 text-lg border-white w-full
-            outline-none ring-0 rounded-none border-none focus-visible:ring-0 
-            focus-visible:border-none resize-none min-h-[40px] overflow-hidden"
-              style={{
-                borderBottom: "2px solid white",
-                height: "auto",
-              }}
-              onInput={(e) => {
-                e.target.style.height = "auto";
-                e.target.style.height = e.target.scrollHeight + "px";
-              }}
-            />
-          </div>
-        </article>
-      );
-    case "checkbox":
-      return (
-        <article className="flex items-center justify-center w-full mt-52">
-          <div className="flex flex-col items-center justify-center p-8 md:p-12 relative">
-            <div>
-              <h1 className="font-extrabold text-4xl mb-5">
-                #{questionNumber}
-              </h1>
-              <span className="border border-white bg-[rgba(106,11,188,0.49)]  p-1 px-3 rounded-2xl">
-                Checkbox
-              </span>
-              <h1 className="mt-3 font-bold text-3xl mb-8 max-w-xl ">
-                What is the event-loop in asynchronous Javascript?
-              </h1>
-            </div>
-            <div
-              className="grid grid-cols-2 gap-4 max-w-xl sm:w-full 
-              *:flex *:p-4 *:bg-white *:text-black *:gap-4 *:rounded-xs"
-            >
-              {options.map((option, index) => (
-                <label
-                  key={index}
-                  className="custom-shadow-50 group cursor-pointer flex p-4 bg-white text-black gap-4 rounded-sm hover:bg-blue-500 [&:has(input:checked)]:bg-blue-600"
-                >
-                  <input
-                    type="checkbox"
-                    name="answer"
-                    id={`answer${index + 1}`}
-                    value={option}
-                    checked={isSelectedAnswer === option}
-                    onChange={(e) => setSelectedAnswer(e.target.value)}
-                  />
-                  <span>{option}</span>
-                </label>
-              ))}
             </div>
           </div>
         </article>
