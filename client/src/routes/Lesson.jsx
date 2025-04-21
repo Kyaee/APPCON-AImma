@@ -565,13 +565,10 @@ export default function ElementLesson() {
         can make mistakes, check important info.
       </div>
       <footer className="mb-20"></footer>
-<<<<<<< HEAD
-=======
       <img
         src={CapyStart}
         className="fixed transform top-1/2 -translate-y-1/2 w-55 h-auto -right-20 -rotate-55"
       />
->>>>>>> eedeae77d18c2fbfac6c04189f6db12ae1bbec0d
     </main>
   );
 }
