@@ -1,4 +1,4 @@
-![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
+<img width="857" alt="Group 2860" src="https://github.com/user-attachments/assets/b9467edb-4f69-41d2-bc9a-913ec7d4787d" />
 
 # CapyCademy
 
