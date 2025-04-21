@@ -4,6 +4,8 @@ import { Background } from "@/components/layout/Background"; // Add this import
 import Loading from "./Loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
+import CapyStart from "@/assets/lesson-assessment/CapyStart.png";
+
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/config/supabase";
@@ -14,6 +16,9 @@ import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the impor
 import { useAssessment, useEvaluation } from "@/api/INSERT";
 import { useAuth } from "@/config/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useStreakStore } from "@/store/useStreakStore"; // Import the streak store
+import { useQuestStore } from "@/store/useQuestStore"; // Import quest store
+import { useTimeTracking } from "@/lib/timeTracker"; // Import time tracking hook
 
 export default function ElementLesson() {
   const navigate = useNavigate();
@@ -560,6 +565,13 @@ export default function ElementLesson() {
         can make mistakes, check important info.
       </div>
       <footer className="mb-20"></footer>
+<<<<<<< HEAD
+=======
+      <img
+        src={CapyStart}
+        className="fixed transform top-1/2 -translate-y-1/2 w-55 h-auto -right-20 -rotate-55"
+      />
+>>>>>>> eedeae77d18c2fbfac6c04189f6db12ae1bbec0d
     </main>
   );
 }

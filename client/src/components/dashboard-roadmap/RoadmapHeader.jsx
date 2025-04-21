@@ -81,7 +81,7 @@ const RoadmapHeader = ({
     return ReactDOM.createPortal(
       <div
         id="roadmap-dropdown"
-        className="fixed bg-primary-foreground dark:bg-dark-inner-bg dark:bg-dark-mode-bg border-2 border-black dark:border-dark-mode-highlight dark:border-dark-mode-highlight  rounded-lg shadow-md"
+        className="fixed bg-primary-foreground dark:bg-dark-inner-bg border-2 border-black dark:border-dark-mode-highlight  rounded-lg shadow-md"
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,
@@ -114,7 +114,7 @@ const RoadmapHeader = ({
             className="inline-flex items-start gap-3 cursor-pointer group"
           >
             <h2
-              className={`text-2xl font-bold text-black dark:text-primary  dark:text-primary ${
+              className={`text-2xl font-bold text-black dark:text-primary  ${
                 isSidebarExpanded
                   ? "max-w-[660px] line-clamp-2"
                   : "max-w-[240px] break-words"
@@ -142,16 +142,12 @@ const RoadmapHeader = ({
             className="h-[3px] bg-black dark:bg-primary mt-3"
             style={{ width: lineWidth }}
           />
-          <div
-            className="h-[3px] bg-black dark:bg-primary mt-3"
-            style={{ width: lineWidth }}
-          />
         </div>
       </div>
 
       {renderDropdown()}
 
-      <p className="text-black dark:text-primary dark:text-primary  font-medium mt-4 text-md">
+      <p className="text-black dark:text-primary  font-medium mt-4 text-md">
         Current Progression: {progression}%
       </p>
     </div>

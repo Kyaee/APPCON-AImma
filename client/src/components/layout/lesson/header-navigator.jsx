@@ -73,11 +73,13 @@ export default function Header({
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
       <h1
-        className="text-2xl font-bold text-black dark:text-primary"
+        className={`text-2xl text-primary`} // Always use black text
       >
         CapyCademy
       </h1>
-      <nav className="flex items-center bg-card dark:bg-dark-nav-bg border border-black dark:border-background custom-shadow-75 rounded-lg h-[48px] mr-10">
+      <nav className="flex items-center bg-white text-black border border-black custom-shadow-75 rounded-lg h-[48px] mr-10">
+        {" "}
+        {/* Use white bg, black text/border */}
         {filteredNavItems.map((item) => (
           <Link
             key={item.label}
@@ -108,7 +110,7 @@ export default function Header({
       </nav>
       <button
         onClick={handleQuit}
-        className="text-sm mr-6 p-2 flex bg-card dark:bg-dark-nav-bg border border-black dark:border-background text-black dark:text-primary gap-1 custom-shadow-50 rounded-md hover:bg-light-brown dark:hover:bg-dark-mode-highlight"
+        className="text-sm mr-6 p-2 flex bg-white border border-black text-black gap-1 custom-shadow-50 rounded-md" // Use white bg, black text/border
       >
         <ArrowUpRight size="20" />
         Quit
