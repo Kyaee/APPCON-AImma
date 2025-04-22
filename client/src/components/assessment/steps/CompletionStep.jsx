@@ -1,32 +1,36 @@
 import React from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
+import capyGreet from "@/assets/general/capy-greet.svg";
+import { Button } from "@/components/ui/button";
 
-export default function CompletionStep({ title, feedback, onFeedbackChange }) {
+export default function CompletionStep({ title, onProceed }) {
   return (
     <AssessmentStep title={title}>
-      <div className="space-y-6 mt-8">
+      <div className="space-y-8 mt-12 flex flex-col items-center">
+        {/* Capy greeting image at the top - increased size */}
+        <div className="flex justify-center">
+          <img
+            src={capyGreet}
+            alt="Capybara greeting"
+            className="w-60 h-60 md:w-72 md:h-72"
+          />
+        </div>
+
+        {/* Congratulation text */}
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
-            🎉 Congratulations! 🎉
-          </h2>
-          <p className="text-lg text-white/90 mb-8">
-            Thank you for completing the assessment! Your personalized learning
-            path is being generated.
+          <p className="text-lg text-white/90 mb-8 max-w-md mx-auto">
+            Your personalized learning roadmap is being generated based on your
+            skills and interests. Get ready for an amazing learning journey!
           </p>
         </div>
 
-        <div className="space-y-4">
-          <label className="block text-lg font-medium text-white">
-            Any additional feedback? (optional)
-          </label>
-          <textarea
-            value={feedback}
-            onChange={(e) => onFeedbackChange(e.target.value)}
-            className="w-full p-3 rounded-lg bg-white/10 border-2 border-white text-white"
-            rows={4}
-            placeholder="Share your thoughts with us..."
-          />
-        </div>
+        {/* Proceed button - increased size */}
+        <Button
+          onClick={onProceed}
+          className="py-7 px-10 text-lg bg-white text-black border-2 border-black font-bold hover:bg-gray-100 custom-shadow-50 rounded-lg"
+        >
+          Continue to Dashboard
+        </Button>
       </div>
     </AssessmentStep>
   );
