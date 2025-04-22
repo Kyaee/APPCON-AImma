@@ -13,10 +13,12 @@ const GenerateRoadmapPanel = ({ userId }) => {
   return (
     <button
       onClick={handleGenerateRoadmap}
-      className="flex items-center gap-3 w-full py-3 px-4 text-black dark:text-primary transition-colors hover:bg-[#CBB09B]/20 dark:hover:bg-dark-mode-highlight/40 rounded-lg"
+      className="flex items-center gap-[min(0.75rem,2vw)] w-full py-[min(0.75rem,1.5vh)] px-[min(1rem,2vw)] text-black dark:text-primary transition-colors hover:bg-[#CBB09B]/20 dark:hover:bg-dark-mode-highlight/40 rounded-lg"
     >
-      <BookPlus className="w-6 h-6 flex-shrink-0" />
-      <h2 className="text-xl font-bold">Generate New Roadmap</h2>
+      <BookPlus className="w-[clamp(1.25rem,1.2vw,1.5rem)] h-[clamp(1.25rem,1.2vw,1.5rem)] flex-shrink-0" />
+      <h2 className="text-[clamp(1.1rem,1.3vw,1.25rem)] font-bold">
+        Generate New Roadmap
+      </h2>
     </button>
   );
 };

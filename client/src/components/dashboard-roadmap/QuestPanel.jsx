@@ -19,7 +19,6 @@ import { useAuth } from "@/config/AuthContext";
 const QuestPanel = ({ userId, embedded = false }) => {
   const { session } = useAuth();
   const [isDaily, setIsDaily] = useState(true);
-  const [showAllQuests, setShowAllQuests] = useState(false); // State for showing all quests
 
   // Get quest data and functions from our store
   const dailyQuests = useQuestStore((state) => state.dailyQuests);
@@ -29,13 +28,16 @@ const QuestPanel = ({ userId, embedded = false }) => {
   );
   const completeQuest = useQuestStore((state) => state.completeQuest);
 
-  const quests = isDaily ? dailyQuests : weeklyQuests;
-
-  // Memoize sorted and sliced quests
-  const displayedQuests = useMemo(() => {
-    const sortedQuests = [...quests].sort((a, b) => a.completed - b.completed);
-    return showAllQuests ? sortedQuests : sortedQuests.slice(0, 3);
-  }, [quests, showAllQuests]);
+  // Memoize sorted quests with completed ones at the bottom
+  const sortedQuests = useMemo(() => {
+    const quests = isDaily ? dailyQuests : weeklyQuests;
+    return [...quests].sort((a, b) => {
+      if (a.completed === b.completed) {
+        return 0;
+      }
+      return a.completed ? 1 : -1; // Incomplete quests first
+    });
+  }, [dailyQuests, weeklyQuests, isDaily]);
 
   // Check if we need to reset quests when component mounts
   useEffect(() => {
@@ -77,7 +79,7 @@ const QuestPanel = ({ userId, embedded = false }) => {
   const questContent = (
     <>
       <div className="flex justify-between items-center mb-3">
-        <h2 className="text-lg font-medium text-black dark:text-primary">
+        <h2 className="text-[clamp(1rem,1.2vw,1.25rem)] font-medium text-black dark:text-primary">
           {isDaily ? "Daily Quests" : "Weekly Quests"}
         </h2>
         <div className="flex gap-2">
@@ -91,53 +93,43 @@ const QuestPanel = ({ userId, embedded = false }) => {
         </div>
       </div>
 
-      <div className="space-y-3">
-        {displayedQuests.map(
-          (
-            quest // Use displayedQuests here
-          ) => (
-            <div
-              key={quest.id}
-              // Remove onClick handler and cursor-pointer
-              className={`flex items-start gap-3 p-3 rounded-md ${
-                !quest.completed
-                  ? "hover:bg-gray-100 dark:hover:bg-dark-mode-highlight" // Removed cursor-pointer
-                  : ""
-              }`}
-            >
-              {quest.completed ? (
-                <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
-              ) : (
-                <div className="mt-0.5">{getQuestIcon(quest)}</div>
-              )}
-              <div>
-                <p className="font-medium text-gray-900 dark:text-primary">
-                  {quest.title}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-primary/70">
-                  {quest.completed
-                    ? "Completed"
-                    : `${quest.rewards.xp} XP, ${quest.rewards.gems} Gems${
-                        quest.rewards.booster ? " + Booster" : ""
-                      }`}
-                </p>
-              </div>
-            </div>
-          )
-        )}
-      </div>
-
-      {/* See More / See Less Button */}
-      {quests.length > 3 && (
-        <div className="flex justify-end mt-3">
-          <button
-            onClick={() => setShowAllQuests(!showAllQuests)}
-            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+      {/* Scrollable quest container - shows 3 initially, scrolls for more */}
+      <div
+        className="space-y-3 max-h-[calc(3*5rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500 scroll-smooth"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(156, 163, 175, 0.5) transparent",
+        }}
+      >
+        {sortedQuests.map((quest) => (
+          <div
+            key={quest.id}
+            className={`flex items-start gap-3 p-3 rounded-md ${
+              !quest.completed
+                ? "hover:bg-gray-100 dark:hover:bg-dark-mode-highlight"
+                : ""
+            }`}
           >
-            {showAllQuests ? "See Less" : "See More"}
-          </button>
-        </div>
-      )}
+            {quest.completed ? (
+              <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+            ) : (
+              <div className="mt-0.5 flex-shrink-0">{getQuestIcon(quest)}</div>
+            )}
+            <div>
+              <p className="font-medium text-gray-900 dark:text-primary text-[clamp(0.8rem,0.9vw,1rem)]">
+                {quest.title}
+              </p>
+              <p className="text-[clamp(0.7rem,0.75vw,0.875rem)] text-gray-500 dark:text-primary/70">
+                {quest.completed
+                  ? "Completed"
+                  : `${quest.rewards.xp} XP, ${quest.rewards.gems} Gems${
+                      quest.rewards.booster ? " + Booster" : ""
+                    }`}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 

@@ -33,6 +33,7 @@ const RoadmapHeader = ({
   useEffect(() => {
     const measureWidth = () => {
       if (containerRef.current) {
+        // Directly measure the width of the header container (h2 + chevron)
         const containerWidth =
           containerRef.current.getBoundingClientRect().width;
 
@@ -41,9 +42,11 @@ const RoadmapHeader = ({
           setDropdownWidth(`${containerWidth}px`);
         } else {
           setLineWidth("695px");
+          // Use the same dynamic width measurement for the dropdown even when sidebar is expanded
           setDropdownWidth(`${containerWidth}px`);
         }
 
+        // Calculate dropdown position
         const rect = containerRef.current.getBoundingClientRect();
         setDropdownPosition({
           top: rect.bottom + window.scrollY + 10,
@@ -52,9 +55,13 @@ const RoadmapHeader = ({
       }
     };
 
+    // Measure immediately
     measureWidth();
+
+    // Also measure after a small delay to ensure all elements are fully rendered
     const timeoutId = setTimeout(measureWidth, 50);
 
+    // Add event listener to close dropdown when clicking outside
     const handleClickOutside = (event) => {
       if (
         isDropdownOpen &&
@@ -68,12 +75,14 @@ const RoadmapHeader = ({
 
     document.addEventListener("mousedown", handleClickOutside);
 
+    // Clean up
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [currentCourse, isDropdownOpen, isSidebarExpanded]);
 
+  // Create dropdown portal
   const renderDropdown = () => {
     if (!isDropdownOpen || !courseOptions || courseOptions.length === 0)
       return null;

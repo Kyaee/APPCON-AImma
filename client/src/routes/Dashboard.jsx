@@ -148,11 +148,11 @@ export default function Dashboard({ setAssessed }) {
           } sticky top-20`}
         >
           {!isSidebarExpanded && (
-            <div className="ml-[60px] w-1/4 top-30 p-3 fixed">
-              <div className="relative inline-block">
-                <div className="relative inline-block">
+            <div className="ml-[calc(3vw+12px)] w-[calc(20%+5vw)] top-30 p-3 fixed">
+              <div className="relative inline-block w-full">
+                <div className="relative inline-block w-full">
                   {/* Header content with inline horizontal line */}
-                  <div className="flex flex-col">
+                  <div className="flex flex-col w-full">
                     {condition ? (
                       <div className="relative inline-flex items-center gap-3 p-0">
                         <h2 className="text-3xl font-bold text-red-500">
@@ -164,18 +164,17 @@ export default function Dashboard({ setAssessed }) {
                         onClick={() =>
                           setIsLeftDropdownOpen(!isLeftDropdownOpen)
                         }
-                        className="relative inline-flex items-start gap-3 cursor-pointer group p-0"
+                        className="relative inline-flex items-start gap-3 cursor-pointer group p-0 w-full"
                         id="headerContainer"
-                        style={{ width: "430px" }}
                       >
                         <h2
-                          className="text-3xl font-bold text-black dark:text-primary text-balance"
-                          style={{ maxWidth: "430px" }}
+                          className="text-[calc(1.5rem+0.5vw)] font-bold text-black dark:text-primary text-balance pr-10"
+                          style={{ width: "calc(100% - 0rem)" }}
                         >
                           {currentRoadmap?.roadmap_name || "Select a roadmap"}
                         </h2>
                         <ChevronRight
-                          className="w-8 h-8 text-black dark:text-primary group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 mt-1"
+                          className="w-8 h-8 text-black dark:text-primary group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 mt-1 absolute right-0"
                           style={{
                             transform: isLeftDropdownOpen
                               ? "rotate(90deg)"
@@ -186,22 +185,19 @@ export default function Dashboard({ setAssessed }) {
                     )}
 
                     {/* Horizontal Line */}
-                    <div
-                      className="h-[3px] bg-black dark:bg-primary mt-3"
-                      style={{ width: "100%" }}
-                    />
+                    <div className="h-[3px] bg-black dark:bg-primary mt-3 w-full" />
                   </div>
                 </div>
               </div>
 
               {/* Progression Text */}
               {condition ? (
-                <p className="text-red-500 font-medium mt-4 text-lg">
+                <p className="text-red-500 font-medium mt-4 text-[calc(1rem+0.2vw)]">
                   Unable to load progression data
                 </p>
               ) : (
                 <p
-                  className={`font-medium mt-4 text-lg ${
+                  className={`font-medium mt-4 text-[calc(1rem+0.2vw)] ${
                     isSidebarExpanded
                       ? "text-black dark:text-primary"
                       : "text-black dark:text-primary"
@@ -213,14 +209,11 @@ export default function Dashboard({ setAssessed }) {
 
               {/* Dropdown menu */}
               {isLeftDropdownOpen && !condition && (
-                <div
-                  className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30"
-                  style={{ width: "430px" }}
-                >
+                <div className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30 w-full">
                   {roadmapData.map((roadmap, index) => (
                     <div
                       key={roadmap.roadmap_id}
-                      className="p-3 hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight rounded cursor-pointer text-black dark:text-primary text-md truncate"
+                      className="p-3 hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight rounded cursor-pointer text-black dark:text-primary text-[calc(0.875rem+0.1vw)] truncate"
                       onClick={() => handleCourseSelect(index)}
                       title={roadmap.roadmap_name}
                     >
