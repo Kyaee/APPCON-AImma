@@ -16,7 +16,7 @@ export default function EducationLevelStep({
             <button
               key={option.id}
               onClick={() => onLevelSelect(option)}
-              className={`flex flex-col items-center p-8 sm:p-10 rounded-xl transition-all duration-300 transform hover:scale-115
+              className={`flex flex-col items-center p-8 sm:p-10 rounded-xl transition-all duration-300 transform hover:scale-115 select-none
                 ${
                   selectedLevel?.id === option.id
                     ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
@@ -24,20 +24,15 @@ export default function EducationLevelStep({
                 }`}
             >
               <div className="flex justify-center mb-6">
-                <span className="text-8xl sm:text-9xl">{option.icon}</span>
+                <span className="text-8xl sm:text-9xl select-none">{option.icon}</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-medium text-white text-center">
+              <h3 className="text-2xl sm:text-3xl font-medium text-white text-center select-none">
                 {option.label}
               </h3>
               {option.description && (
-                <p className="mt-4 text-base sm:text-lg text-gray-300 text-center">
+                <p className="mt-4 text-base sm:text-lg text-gray-300 text-center select-none">
                   {option.description}
                 </p>
-              )}
-              {selectedLevel?.id === option.id && (
-                <div className="mt-4 text-white font-bold">
-                  ✓ Selected
-                </div>
               )}
             </button>
           ))}

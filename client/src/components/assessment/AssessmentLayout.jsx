@@ -1,44 +1,21 @@
 import React from "react";
 import ProgressBar from "./ProgressBar";
-import NavigationButtons from "./NavigationButtons";
 import { VideoBackground } from "@/components/layout/Background";
-import Capydetect from "@/assets/user-assessment/DetectiveCapybara.png";
 
 const AssessmentLayout = ({
   children,
   title,
   progress,
   prevPage,
-  nextPage,
-  showMascot,
-  buttonPosition,
 }) => {
   return (
     <div className="flex flex-col h-full min-h-screen relative overflow-hidden">
       <VideoBackground />
-      <ProgressBar progress={progress} title={title} />
+      <ProgressBar progress={progress} title={title} onBack={prevPage} />
 
       <div className="flex-grow flex flex-col items-center justify-center px-4 py-6 relative overflow-hidden">
         <div className="w-full max-w-max">{children}</div>
-        {showMascot && (
-          <div
-            className="absolute bottom-0 justify-center"
-            style={{ zIndex: -1 }}
-          >
-            <img
-              src={Capydetect}
-              alt="Mascot character"
-              className="w-5/6 h-5/6 object-cover pointer-events-none"
-            />
-          </div>
-        )}
       </div>
-
-      <NavigationButtons
-        prevPage={prevPage}
-        nextPage={nextPage}
-        buttonPosition={buttonPosition}
-      />
     </div>
   );
 };

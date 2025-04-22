@@ -1,28 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function EntryQuestionsStep({ formData, setFormData }) {
+  // Create local state for form inputs
+  const [localFormData, setLocalFormData] = useState({
+    currentRole: formData.currentRole || "",
+    companyIndustry: formData.companyIndustry || "",
+    skillsUsed: formData.skillsUsed || [],
+  });
+
+  // Update local state from props when component mounts
+  useEffect(() => {
+    setLocalFormData({
+      currentRole: formData.currentRole || "",
+      companyIndustry: formData.companyIndustry || "",
+      skillsUsed: formData.skillsUsed || [],
+    });
+  }, []);
+
+  // Only update parent state when form submission is triggered
+  const syncToParent = () => {
+    setFormData(localFormData);
+  };
+
   const handleInputChange = (field, value) => {
-    // Only update React state, don't write to localStorage here
-    const newFormData = {
-      ...formData,
+    setLocalFormData((prev) => ({
+      ...prev,
       [field]: value,
-    };
-    setFormData(newFormData);
-    // Remove the localStorage.setItem call here
+    }));
   };
 
   const handleSkillsChange = (skill) => {
-    const newSkills = formData.skillsUsed.includes(skill)
-      ? formData.skillsUsed.filter((s) => s !== skill)
-      : [...formData.skillsUsed, skill];
-
-    const newFormData = {
-      ...formData,
-      skillsUsed: newSkills,
-    };
-    setFormData(newFormData);
-    // Remove the localStorage.setItem call here
+    setLocalFormData((prev) => ({
+      ...prev,
+      skillsUsed: prev.skillsUsed.includes(skill)
+        ? prev.skillsUsed.filter((s) => s !== skill)
+        : [...prev.skillsUsed, skill],
+    }));
   };
 
   return (
@@ -35,7 +49,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
           </label>
           <input
             type="text"
-            value={formData.currentRole}
+            value={localFormData.currentRole}
             onChange={(e) => handleInputChange("currentRole", e.target.value)}
             className="w-full p-3 rounded-lg border-2 border-gray-200"
             placeholder="Enter your current role"
@@ -48,7 +62,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
             What industry is your company in?
           </label>
           <select
-            value={formData.companyIndustry}
+            value={localFormData.companyIndustry}
             onChange={(e) =>
               handleInputChange("companyIndustry", e.target.value)
             }
@@ -95,7 +109,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
                 onClick={() => handleSkillsChange(skill)}
                 className={`p-3 rounded-lg border-2 text-left transition-all duration-200
                   ${
-                    formData.skillsUsed.includes(skill)
+                    localFormData.skillsUsed.includes(skill)
                       ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
                       : "border-gray-200 hover:border-primary/50"
                   }`}
@@ -106,6 +120,18 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
           </div>
         </div>
       </div>
+      
+      {/* Hidden button to sync state on form submission */}
+      <button 
+        type="button" 
+        style={{ display: 'none' }} 
+        onClick={syncToParent}
+        ref={el => {
+          if (el) {
+            el.addEventListener('syncToParent', syncToParent);
+          }
+        }}
+      />
     </AssessmentStep>
   );
 }

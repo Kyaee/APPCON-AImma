@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import AssessmentLayout from "@/components/assessment/AssessmentLayout";
 import { assessmentFlow } from "@/lib/assessment-flow";
 import { useAssessmentStore } from "@/store/useAssessmentStore";
@@ -8,7 +8,6 @@ import { useAuth } from "@/config/AuthContext";
 import Loading from "@/routes/Loading";
 
 // Import step components
-import LanguageStep from "@/components/assessment/steps/LanguageStep";
 import UserTypeStep from "@/components/assessment/steps/UserTypeStep";
 import EducationLevelStep from "@/components/assessment/steps/EducationLevelStep";
 import ExperienceStep from "@/components/assessment/steps/ExperienceStep";
@@ -28,44 +27,22 @@ export default function UserAssessment() {
   // Loading states
   const [isReady, setIsReady] = useState(false);
 
-  // Set up loading effect - wait for all necessary data
-  useEffect(() => {
-    // Use a small timeout to ensure everything is loaded
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // Store actions and state
-  const setLanguage = useAssessmentStore((state) => state.setLanguage);
-  const language = useAssessmentStore((state) => state.language);
   const setUserType = useAssessmentStore((state) => state.setUserType);
-  const setEducationLevel = useAssessmentStore(
-    (state) => state.setEducationLevel
-  );
-  const setCareerTransition = useAssessmentStore(
-    (state) => state.setCareerTransition
-  );
-  const setPreviousExperience = useAssessmentStore(
-    (state) => state.setPreviousExperience
-  );
+  const setEducationLevel = useAssessmentStore((state) => state.setEducationLevel);
+  const setCareerTransition = useAssessmentStore((state) => state.setCareerTransition);
+  const setPreviousExperience = useAssessmentStore((state) => state.setPreviousExperience);
   const setDailyGoal = useAssessmentStore((state) => state.setDailyGoal);
-  const setTechnicalInterest = useAssessmentStore(
-    (state) => state.setTechnicalInterest
-  );
-  const setTechnicalAnswers = useAssessmentStore(
-    (state) => state.setTechnicalAnswers
-  );
+  const setTechnicalInterest = useAssessmentStore((state) => state.setTechnicalInterest);
+  const setTechnicalAnswers = useAssessmentStore((state) => state.setTechnicalAnswers);
   const resetAssessment = useAssessmentStore((state) => state.resetAssessment);
-  const { createRoadmap, isSuccess } = useGenerateRoadmap();
+  const { createRoadmap } = useGenerateRoadmap();
   const { session } = useAuth();
 
   // Local state
   const [currentStep, setCurrentStep] = useState(() => {
     const saved = localStorage.getItem("currentAssessmentPage");
-    return saved || "language";
+    return saved || "userType";
   });
 
   const [selectedType, setSelectedType] = useState(() => {
@@ -153,15 +130,42 @@ export default function UserAssessment() {
   });
 
   const [feedback, setFeedback] = useState("");
+  const [techQuestionsVisible, setTechQuestionsVisible] = useState(false);
+  
+  // Refs for form handling
+  const formRefs = {
+    previousExperience: useRef(null),
+    careerTransition: useRef(null),
+    hsQuestions: useRef(null),
+    collegeQuestions: useRef(null),
+    gradQuestions: useRef(null),
+    entryQuestions: useRef(null),
+    midQuestions: useRef(null),
+    seniorQuestions: useRef(null),
+    techInterest: useRef(null),
+    complete: useRef(null)
+  };
 
   const navigate = useNavigate();
-  const location = useLocation();
 
+  // Set up loading effect - wait for all necessary data
+  useEffect(() => {
+    // Reset assessment when component mounts
+    resetAssessment();
+    
+    // Use a small timeout to ensure everything is loaded
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Effects for localStorage handling
   useEffect(() => {
     localStorage.setItem("currentAssessmentPage", currentStep);
   }, [currentStep]);
 
-  // Save current state
   useEffect(() => {
     if (selectedType)
       localStorage.setItem("selectedType", JSON.stringify(selectedType));
@@ -236,34 +240,100 @@ export default function UserAssessment() {
       );
     }
   }, [technicalAnswers]);
+  
+  // Setup form submission handlers with Enter key
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      // Only handle Enter key when NOT in form fields
+      if (event.key === 'Enter') {
+        // Check if the active element is an input, textarea, or select
+        const activeElement = document.activeElement;
+        const isFormElement = 
+          activeElement.tagName === 'INPUT' || 
+          activeElement.tagName === 'TEXTAREA' || 
+          activeElement.tagName === 'SELECT' ||
+          activeElement.isContentEditable ||
+          activeElement.closest('.form-control');
+          
+        // Only proceed if we're not in a form field
+        if (!isFormElement) {
+          handleFormSubmission();
+        }
+      }
+    };
 
-  // Add a new state to track if we're showing questions for the selected tech interest
-  const [techQuestionsVisible, setTechQuestionsVisible] = useState(false);
+    document.addEventListener('keydown', handleKeyPress);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [currentStep]);
 
   // Handlers
-  const handleLanguageChange = (value) => {
-    setLanguage(value);
-  };
-
   const handleTypeSelection = (option) => {
     setSelectedType(option);
     setUserType(option);
+    
+    // Directly navigate to next step based on selection
+    if (option.id === "student") {
+      navigateToNextStep("educationLevel");
+    } else if (option.id === "professional") {
+      navigateToNextStep("experience");
+    } else if (option.id === "jobSeeker") {
+      navigateToNextStep("previousExperience");
+    } else if (option.id === "careerShifter") {
+      navigateToNextStep("careerTransition");
+    }
   };
 
   const handleLevelSelection = (option) => {
     setSelectedLevel(option);
     setEducationLevel(option);
+    
+    // For education level selection
+    if (currentStep === "educationLevel") {
+      localStorage.setItem("educationLevelData", JSON.stringify(option));
+      
+      if (option.id === "highSchool") {
+        navigateToNextStep("hsQuestions");
+      } else if (option.id === "college") {
+        navigateToNextStep("collegeQuestions");
+      } else if (option.id === "graduateSchool") {
+        navigateToNextStep("gradQuestions");
+      }
+    }
+    
+    // For experience level selection
+    if (currentStep === "experience") {
+      localStorage.setItem("yearsOfExpSavepoint", JSON.stringify(option));
+      
+      if (option.id === "entryLevel") {
+        navigateToNextStep("entryQuestions");
+      } else if (option.id === "midLevel") {
+        navigateToNextStep("midQuestions");
+      } else if (option.id === "seniorLevel") {
+        navigateToNextStep("seniorQuestions");
+      }
+    }
   };
 
   const handleDailyGoalSelect = (value) => {
     setDailyGoalState(value);
     setDailyGoal(value);
     localStorage.setItem("daily-goal", value);
+    navigateToNextStep("techInterest");
   };
 
   const handleTechInterestSelect = (option) => {
+    // Set both the local state and global store
     setTechnicalInterestState(option);
     setTechnicalInterest(option);
+    
+    // Ensure it's properly stored in localStorage
+    localStorage.setItem("technicalInterest", JSON.stringify(option));
+    
+    // Show questions after selecting interest
+    setTechQuestionsVisible(true);
   };
 
   const handleTechAnswerChange = (questionId, value) => {
@@ -279,146 +349,35 @@ export default function UserAssessment() {
     setFeedback(value);
   };
 
-  const navigateToNextStep = (step) => {
-    setCurrentStep(step);
+  const handleSubmitTechAnswers = () => {
+    navigateToNextStep("complete");
   };
 
-  // Handle back button click
-  const handleBack = () => {
-    if (currentStep === "language") return;
-
-    // If on tech interest questions view, go back to interest selection
-    if (currentStep === "techInterest" && techQuestionsVisible) {
-      setTechQuestionsVisible(false);
-      return;
-    }
-
-    const backMapping = {
-      userType: "language",
-      educationLevel: "userType",
-      experience: "userType",
-      previousExperience: "userType",
-      careerTransition: "userType",
-      hsQuestions: "educationLevel",
-      collegeQuestions: "educationLevel",
-      gradQuestions: "educationLevel",
-      entryQuestions: "experience",
-      midQuestions: "experience",
-      seniorQuestions: "experience",
-      dailyGoal: getPreviousStepForDailyGoal(),
-      techInterest: "dailyGoal",
-      complete: "techInterest",
-    };
-
-    setCurrentStep(backMapping[currentStep] || "language");
+  const handleSubmitCompletion = () => {
+    createRoadmap();
+    // Navigate to the process dashboard to generate the roadmap
+    navigate(`/dashboard/p?user=${session?.user?.id}`);
   };
 
-  // Determine previous step for daily goal based on state
-  function getPreviousStepForDailyGoal() {
-    const savedType = localStorage.getItem("userType");
-
-    if (savedType === "student") {
-      if (localStorage.getItem("hsQuestionsSavepoint")) return "hsQuestions";
-      if (localStorage.getItem("collegeQuestionsSavepoint"))
-        return "collegeQuestions";
-      if (localStorage.getItem("gradQuestionsSavepoint"))
-        return "gradQuestions";
-    } else if (savedType === "professional") {
-      const expChoice = localStorage.getItem("yearsOfExpSavepoint");
-      if (expChoice) {
-        const choice = JSON.parse(expChoice);
-        if (choice.id === "entryLevel") return "entryQuestions";
-        if (choice.id === "midLevel") return "midQuestions";
-        if (choice.id === "seniorLevel") return "seniorQuestions";
-      }
-    } else if (savedType === "jobSeeker") {
-      return "previousExperience";
-    } else if (savedType === "careerShifter") {
-      return "careerTransition";
-    }
-
-    return "userType";
-  }
-
-  // Handle next button click
-  const handleNext = () => {
-    // Custom validation and navigation logic for each step
+  const handleFormSubmission = () => {
     switch (currentStep) {
-      case "language":
-        resetAssessment();
-        navigateToNextStep("userType");
-        break;
-
-      case "userType":
-        if (selectedType) {
-          localStorage.setItem("userType", selectedType.id);
-          if (selectedType.id === "student") {
-            navigateToNextStep("educationLevel");
-          } else if (selectedType.id === "professional") {
-            navigateToNextStep("experience");
-          } else if (selectedType.id === "jobSeeker") {
-            navigateToNextStep("previousExperience");
-          } else if (selectedType.id === "careerShifter") {
-            navigateToNextStep("careerTransition");
-          }
-        }
-        break;
-
-      case "educationLevel":
-        if (selectedLevel) {
-          localStorage.setItem(
-            "educationLevelData",
-            JSON.stringify(selectedLevel)
-          );
-
-          // Route based on education level
-          switch (selectedLevel.id) {
-            case "highSchool":
-              navigateToNextStep("hsQuestions");
-              break;
-            case "college":
-              navigateToNextStep("collegeQuestions");
-              break;
-            case "graduateSchool":
-              navigateToNextStep("gradQuestions");
-              break;
-          }
-        }
-        break;
-
-      case "experience":
-        if (selectedLevel) {
-          localStorage.setItem(
-            "yearsOfExpSavepoint",
-            JSON.stringify(selectedLevel)
-          );
-
-          // Route based on years of experience
-          switch (selectedLevel.id) {
-            case "entryLevel":
-              navigateToNextStep("entryQuestions");
-              break;
-            case "midLevel":
-              navigateToNextStep("midQuestions");
-              break;
-            case "seniorLevel":
-              navigateToNextStep("seniorQuestions");
-              break;
-          }
-        }
-        break;
-
       case "previousExperience":
+        // Trigger sync from child component before validating
+        const previousExperienceForm = formRefs.previousExperience.current;
+        if (previousExperienceForm) {
+          const syncButton = previousExperienceForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+
         if (
           previousExperience.lastRole.trim() !== "" &&
           previousExperience.yearsExperience.trim() !== "" &&
           previousExperience.reasonForChange.trim() !== ""
         ) {
           setPreviousExperience(previousExperience);
-          localStorage.setItem(
-            "previousExpData",
-            JSON.stringify(previousExperience)
-          );
+          localStorage.setItem("previousExpData", JSON.stringify(previousExperience));
           navigateToNextStep("dailyGoal");
         } else {
           alert("Please fill in all fields for Previous Experience");
@@ -426,16 +385,22 @@ export default function UserAssessment() {
         break;
 
       case "careerTransition":
+        // Trigger sync from child component before validating
+        const careerTransitionForm = formRefs.careerTransition.current;
+        if (careerTransitionForm) {
+          const syncButton = careerTransitionForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+
         if (
           transition.currentField.trim() !== "" &&
           transition.desiredField.trim() !== "" &&
           transition.transitionReason.trim() !== ""
         ) {
           setCareerTransition(transition);
-          localStorage.setItem(
-            "careerTransitionData",
-            JSON.stringify(transition)
-          );
+          localStorage.setItem("careerTransitionData", JSON.stringify(transition));
           navigateToNextStep("dailyGoal");
         } else {
           alert("Please fill in all fields for Career Transition");
@@ -443,6 +408,15 @@ export default function UserAssessment() {
         break;
 
       case "hsQuestions":
+        // Trigger sync from child component before validating
+        const hsForm = formRefs.hsQuestions.current;
+        if (hsForm) {
+          const syncButton = hsForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+        
         if (
           hsFormData.strand &&
           hsFormData.planningCollege !== null &&
@@ -458,16 +432,22 @@ export default function UserAssessment() {
         break;
 
       case "collegeQuestions":
+        // Trigger sync from child component before validating
+        const collegeForm = formRefs.collegeQuestions.current;
+        if (collegeForm) {
+          const syncButton = collegeForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+        
         if (
           collegeFormData.course &&
           collegeFormData.yearLevel &&
           collegeFormData.technicalSkills.length > 0 &&
           collegeFormData.careerPath
         ) {
-          localStorage.setItem(
-            "collegeResponses",
-            JSON.stringify(collegeFormData)
-          );
+          localStorage.setItem("collegeResponses", JSON.stringify(collegeFormData));
           localStorage.setItem("collegeQuestionsSavepoint", "true");
           navigateToNextStep("dailyGoal");
         } else {
@@ -476,6 +456,15 @@ export default function UserAssessment() {
         break;
 
       case "gradQuestions":
+        // Trigger sync from child component before validating
+        const gradForm = formRefs.gradQuestions.current;
+        if (gradForm) {
+          const syncButton = gradForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+        
         if (
           gradFormData.fieldStudy &&
           gradFormData.researchFocus &&
@@ -492,20 +481,22 @@ export default function UserAssessment() {
         break;
 
       case "entryQuestions":
+        // Trigger sync from child component before validating
+        const entryForm = formRefs.entryQuestions.current;
+        if (entryForm) {
+          const syncButton = entryForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+        
         if (
           entryFormData.currentRole &&
           entryFormData.companyIndustry &&
           entryFormData.skillsUsed.length > 0
         ) {
-          // Save to localStorage only when moving to the next step
-          localStorage.setItem(
-            "entryLevelSavepoint",
-            JSON.stringify(entryFormData)
-          );
-          localStorage.setItem(
-            "entryLevelResponses",
-            JSON.stringify(entryFormData)
-          );
+          localStorage.setItem("entryLevelSavepoint", JSON.stringify(entryFormData));
+          localStorage.setItem("entryLevelResponses", JSON.stringify(entryFormData));
           navigateToNextStep("dailyGoal");
         } else {
           alert("Please complete all fields before proceeding");
@@ -513,15 +504,21 @@ export default function UserAssessment() {
         break;
 
       case "midQuestions":
+        // Trigger sync from child component before validating
+        const midForm = formRefs.midQuestions.current;
+        if (midForm) {
+          const syncButton = midForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+        
         if (
           midFormData.currentRole &&
           midFormData.companyIndustry &&
           midFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem(
-            "midLevelResponses",
-            JSON.stringify(midFormData)
-          );
+          localStorage.setItem("midLevelResponses", JSON.stringify(midFormData));
           navigateToNextStep("dailyGoal");
         } else {
           alert("Please complete all fields before proceeding");
@@ -529,224 +526,227 @@ export default function UserAssessment() {
         break;
 
       case "seniorQuestions":
+        // Trigger sync from child component before validating
+        const seniorForm = formRefs.seniorQuestions.current;
+        if (seniorForm) {
+          const syncButton = seniorForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
+          }
+        }
+        
         if (
           seniorFormData.currentRole &&
           seniorFormData.companyIndustry &&
           seniorFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem(
-            "seniorLevelResponses",
-            JSON.stringify(seniorFormData)
-          );
+          localStorage.setItem("seniorLevelResponses", JSON.stringify(seniorFormData));
           navigateToNextStep("dailyGoal");
         } else {
           alert("Please complete all fields before proceeding");
         }
         break;
-
-      case "dailyGoal":
-        if (dailyGoal) {
-          navigateToNextStep("techInterest");
-        } else {
-          alert("Please select a daily goal");
-        }
-        break;
-
+        
       case "techInterest":
-        if (technicalInterest) {
-          if (!techQuestionsVisible) {
-            // First click on Next: Show the questions for the selected interest
-            setTechQuestionsVisible(true);
-          } else {
-            // Second click on Next: Move to completion without creating roadmap yet
-            setTechQuestionsVisible(false);
-            navigateToNextStep("complete");
+        // Trigger sync from child component before validating
+        if (techQuestionsVisible) {
+          const techInterestForm = formRefs.techInterest.current;
+          if (techInterestForm) {
+            const syncButton = techInterestForm.querySelector('button[style*="display: none"]');
+            if (syncButton) {
+              syncButton.dispatchEvent(new Event('syncToParent'));
+            }
           }
-        } else {
-          alert("Please select a technical interest");
+          handleSubmitTechAnswers();
         }
         break;
-
+        
       case "complete":
-        // Log all collected data
-        console.group("Assessment Results");
-        console.log("Language:", language);
-        console.log("User Type:", selectedType);
-        console.log("Education Level:", selectedLevel);
-
-        // User type specific data
-        if (selectedType?.id === "student") {
-          console.log("Education Level:", selectedLevel?.label);
-          if (selectedLevel?.id === "highSchool") {
-            console.log("High School Data:", hsFormData);
-          } else if (selectedLevel?.id === "college") {
-            console.log("College Data:", collegeFormData);
-          } else if (selectedLevel?.id === "graduateSchool") {
-            console.log("Graduate School Data:", gradFormData);
+        // Sync feedback before submission
+        const completeForm = formRefs.complete.current;
+        if (completeForm) {
+          const syncButton = completeForm.querySelector('button[style*="display: none"]');
+          if (syncButton) {
+            syncButton.dispatchEvent(new Event('syncToParent'));
           }
-        } else if (selectedType?.id === "professional") {
-          console.log("Experience Level:", selectedLevel?.label);
-          if (selectedLevel?.id === "entryLevel") {
-            console.log("Entry Level Data:", entryFormData);
-          } else if (selectedLevel?.id === "midLevel") {
-            console.log("Mid Level Data:", midFormData);
-          } else if (selectedLevel?.id === "seniorLevel") {
-            console.log("Senior Level Data:", seniorFormData);
-          }
-        } else if (selectedType?.id === "jobSeeker") {
-          console.log("Previous Experience:", previousExperience);
-        } else if (selectedType?.id === "careerShifter") {
-          console.log("Career Transition:", transition);
         }
-
-        console.log("Daily Goal:", dailyGoal);
-        console.log(
-          "Technical Interest:",
-          technicalInterest
-            ? `${technicalInterest.label} (${technicalInterest.id})`
-            : "None"
-        );
-        console.log("Technical Answers:", technicalAnswers);
-
-        // Additional details about technical interest answers
-        if (technicalInterest) {
-          console.group(`${technicalInterest.label} Questions and Answers`);
-          const questionSet =
-            technicalInterest.id === "other"
-              ? assessmentFlow.otherInterests
-              : assessmentFlow[technicalInterest.id + "Questions"];
-
-          if (questionSet && questionSet.questions) {
-            questionSet.questions.forEach((question) => {
-              const answer = technicalAnswers[question.id];
-              console.log(`Q: ${question.label}`);
-              console.log(
-                `A: ${
-                  Array.isArray(answer)
-                    ? answer.join(", ")
-                    : answer || "Not answered"
-                }`
-              );
-              console.log("---");
-            });
-          } else {
-            console.log(
-              `No questions found for ${technicalInterest.label} (${technicalInterest.id})`
-            );
-            console.log(
-              "Available question sets:",
-              Object.keys(assessmentFlow).filter((key) =>
-                key.includes("Questions")
-              )
-            );
-          }
-          console.groupEnd();
-        }
-        console.log("Feedback:", feedback);
-
-        // Create a formatted summary of all answers
-        const summaryData = {
-          basicInfo: {
-            language,
-            userType: selectedType?.label,
-            dailyGoal: `${dailyGoal} minutes`,
-          },
-          pathDetails:
-            selectedType?.id === "student"
-              ? { educationLevel: selectedLevel?.label }
-              : selectedType?.id === "professional"
-              ? { experienceLevel: selectedLevel?.label }
-              : selectedType?.id === "jobSeeker"
-              ? { previousExperience }
-              : { careerTransition: transition },
-          technicalInterests: {
-            primaryInterest: technicalInterest?.label,
-            answers: technicalAnswers,
-          },
-        };
-
-        // Only generate roadmap when clicking "Generate Roadmap" on the final page
-        createRoadmap();
-
-        // Navigate to the process dashboard to generate the roadmap
-        navigate(`/dashboard/p?user=${session.user.id}`);
+        handleSubmitCompletion();
         break;
-
-      default:
-        return null;
     }
   };
+
+  const navigateToNextStep = (step) => {
+    setCurrentStep(step);
+  };
+
+  const handleBack = () => {
+    if (currentStep === "userType") return;
+
+    // If on tech interest questions view, go back to interest selection
+    if (currentStep === "techInterest" && techQuestionsVisible) {
+      setTechQuestionsVisible(false);
+      return;
+    }
+
+    const backMapping = {
+      userType: null, // No going back from first step
+      educationLevel: "userType",
+      experience: "userType",
+      previousExperience: "userType",
+      careerTransition: "userType",
+      hsQuestions: "educationLevel",
+      collegeQuestions: "educationLevel",
+      gradQuestions: "educationLevel",
+      entryQuestions: "experience",
+      midQuestions: "experience",
+      seniorQuestions: "experience",
+      dailyGoal: getPreviousStepForDailyGoal(),
+      techInterest: "dailyGoal",
+      complete: "techInterest",
+    };
+
+    const prevStep = backMapping[currentStep];
+    if (prevStep) setCurrentStep(prevStep);
+  };
+
+  // Determine previous step for daily goal based on state
+  function getPreviousStepForDailyGoal() {
+    // We need to look at the selectedType stored in state rather than localStorage
+    // to ensure we get the correct user type
+    if (selectedType) {
+      if (selectedType.id === "student") {
+        if (localStorage.getItem("hsQuestionsSavepoint")) return "hsQuestions";
+        if (localStorage.getItem("collegeQuestionsSavepoint")) return "collegeQuestions";
+        if (localStorage.getItem("gradQuestionsSavepoint")) return "gradQuestions";
+        return "educationLevel";
+      } else if (selectedType.id === "professional") {
+        const expChoice = localStorage.getItem("yearsOfExpSavepoint");
+        if (expChoice) {
+          const choice = JSON.parse(expChoice);
+          if (choice.id === "entryLevel") return "entryQuestions";
+          if (choice.id === "midLevel") return "midQuestions";
+          if (choice.id === "seniorLevel") return "seniorQuestions";
+        }
+        return "experience";
+      } else if (selectedType.id === "jobSeeker") {
+        return "previousExperience";
+      } else if (selectedType.id === "careerShifter") {
+        return "careerTransition";
+      }
+    }
+    
+    // Fallback to localStorage check only if selectedType is not available
+    const savedType = localStorage.getItem("selectedType");
+    if (savedType) {
+      const type = JSON.parse(savedType);
+      if (type.id === "jobSeeker") return "previousExperience";
+      if (type.id === "careerShifter") return "careerTransition";
+    }
+
+    return "userType";
+  }
 
   // Determine the progress based on currentStep
   const getProgress = () => {
     const stepProgressMap = {
-      language: 0,
-      userType: 10,
-      educationLevel: 20,
-      experience: 20,
-      previousExperience: 20,
-      careerTransition: 20,
-      hsQuestions: 35,
-      collegeQuestions: 35,
-      gradQuestions: 35,
-      entryQuestions: 35,
-      midQuestions: 35,
-      seniorQuestions: 35,
+      userType: 0,
+      educationLevel: 15,
+      experience: 15,
+      previousExperience: 15,
+      careerTransition: 15,
+      hsQuestions: 30,
+      collegeQuestions: 30,
+      gradQuestions: 30,
+      entryQuestions: 30,
+      midQuestions: 30,
+      seniorQuestions: 30,
       dailyGoal: 50,
       techInterest: 75,
-      complete: 100,
+      complete: 95,
     };
 
     return stepProgressMap[currentStep] || 0;
   };
 
-  // Determine the title based on currentStep
+  // Determine the title based on currentStep and user type
   const getTitle = () => {
-    const stepTitleMap = {
-      language: "Preferred language",
+    // First check if we have a specific title for the current step
+    const genericStepTitleMap = {
       userType: "Career Assessment",
-      educationLevel: "Skill Level Assessment",
-      experience: "Years of Experience",
-      previousExperience: "Previous Experience",
-      careerTransition: "Career Transition",
-      hsQuestions: "High School Assessment",
-      collegeQuestions: "College Assessment",
-      gradQuestions: "Graduate Path",
-      entryQuestions: "Entry Level Assessment",
-      midQuestions: "Middle Level Assessment",
-      seniorQuestions: "Senior Level Assessment",
       dailyGoal: "Daily Learning Goal",
-      techInterest: techQuestionsVisible
-        ? `${technicalInterest?.label || "Technical"} Questions`
+      techInterest: techQuestionsVisible && technicalInterest
+        ? `${technicalInterest.label || "Technical"} Questions`
         : "Technical Interests",
       complete: "Assessment Complete",
     };
-
-    return stepTitleMap[currentStep] || "Assessment";
-  };
-
-  // Special props for buttons on complete page
-  const getButtonProps = () => {
-    if (currentStep === "complete") {
-      return {
-        nextButtonText: "Generate Roadmap",
-        mascotZIndex: "-1",
-      };
+    
+    // If we have a generic title, use it
+    if (genericStepTitleMap[currentStep]) {
+      return genericStepTitleMap[currentStep];
     }
-    return {};
+    
+    // Otherwise, determine title based on user type
+    if (selectedType) {
+      if (selectedType.id === "student") {
+        const educationStepMap = {
+          educationLevel: "Skill Level Assessment",
+          hsQuestions: "High School Assessment",
+          collegeQuestions: "College Assessment",
+          gradQuestions: "Graduate Path",
+        };
+        return educationStepMap[currentStep] || "Student Assessment";
+      }
+      else if (selectedType.id === "professional") {
+        const professionalStepMap = {
+          experience: "Years of Experience",
+          entryQuestions: "Entry Level Assessment",
+          midQuestions: "Middle Level Assessment",
+          seniorQuestions: "Senior Level Assessment",
+        };
+        return professionalStepMap[currentStep] || "Professional Assessment";
+      }
+      else if (selectedType.id === "jobSeeker") {
+        return currentStep === "previousExperience" 
+          ? "Previous Experience" 
+          : "Job Seeker Assessment";
+      }
+      else if (selectedType.id === "careerShifter") {
+        return currentStep === "careerTransition" 
+          ? "Career Transition" 
+          : "Career Shifter Assessment";
+      }
+    }
+
+    // Default title if nothing else matches
+    return "Assessment";
   };
 
-  // Render the current step
+  // Render the current step with a form wrapper when appropriate
   const renderCurrentStep = () => {
+    const FormWrapper = ({ children, stepName }) => {
+      return (
+        <form 
+          ref={formRefs[stepName]}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleFormSubmission();
+          }}
+          className="w-full"
+        >
+          {children}
+          <div className="flex justify-center mt-8">
+            <button 
+              type="submit"
+              className="px-10 py-3 bg-brown hover:bg-dark-brown text-white rounded-md transition-colors border-2 border-black"
+            >
+              {stepName === "complete" ? "Continue to Dashboard" : "Continue"}
+            </button>
+          </div>
+        </form>
+      );
+    };
+
     switch (currentStep) {
-      case "language":
-        return (
-          <LanguageStep
-            language={language}
-            onLanguageChange={handleLanguageChange}
-            onNext={handleNext}
-          />
-        );
       case "userType":
         return (
           <UserTypeStep
@@ -774,56 +774,72 @@ export default function UserAssessment() {
         );
       case "previousExperience":
         return (
-          <PreviousExperienceStep
-            experience={previousExperience}
-            setExperience={setPreviousExp}
-          />
+          <FormWrapper stepName="previousExperience">
+            <PreviousExperienceStep
+              experience={previousExperience}
+              setExperience={setPreviousExp}
+            />
+          </FormWrapper>
         );
       case "careerTransition":
         return (
-          <CareerTransitionStep
-            transition={transition}
-            setTransition={setTransition}
-          />
+          <FormWrapper stepName="careerTransition">
+            <CareerTransitionStep
+              transition={transition}
+              setTransition={setTransition}
+            />
+          </FormWrapper>
         );
       case "hsQuestions":
         return (
-          <HSQuestionsStep formData={hsFormData} setFormData={setHsFormData} />
+          <FormWrapper stepName="hsQuestions">
+            <HSQuestionsStep formData={hsFormData} setFormData={setHsFormData} />
+          </FormWrapper>
         );
       case "collegeQuestions":
         return (
-          <CollegeQuestionsStep
-            formData={collegeFormData}
-            setFormData={setCollegeFormData}
-          />
+          <FormWrapper stepName="collegeQuestions">
+            <CollegeQuestionsStep
+              formData={collegeFormData}
+              setFormData={setCollegeFormData}
+            />
+          </FormWrapper>
         );
       case "gradQuestions":
         return (
-          <GradQuestionsStep
-            formData={gradFormData}
-            setFormData={setGradFormData}
-          />
+          <FormWrapper stepName="gradQuestions">
+            <GradQuestionsStep
+              formData={gradFormData}
+              setFormData={setGradFormData}
+            />
+          </FormWrapper>
         );
       case "entryQuestions":
         return (
-          <EntryQuestionsStep
-            formData={entryFormData}
-            setFormData={setEntryFormData}
-          />
+          <FormWrapper stepName="entryQuestions">
+            <EntryQuestionsStep
+              formData={entryFormData}
+              setFormData={setEntryFormData}
+            />
+          </FormWrapper>
         );
       case "midQuestions":
         return (
-          <MidQuestionsStep
-            formData={midFormData}
-            setFormData={setMidFormData}
-          />
+          <FormWrapper stepName="midQuestions">
+            <MidQuestionsStep
+              formData={midFormData}
+              setFormData={setMidFormData}
+            />
+          </FormWrapper>
         );
       case "seniorQuestions":
         return (
-          <SeniorQuestionsStep
-            formData={seniorFormData}
-            setFormData={setSeniorFormData}
-          />
+          <FormWrapper stepName="seniorQuestions">
+            <SeniorQuestionsStep
+              formData={seniorFormData}
+              setFormData={setSeniorFormData}
+            />
+          </FormWrapper>
         );
       case "dailyGoal":
         return (
@@ -834,23 +850,36 @@ export default function UserAssessment() {
           />
         );
       case "techInterest":
-        return (
+        return techQuestionsVisible ? (
+          <FormWrapper stepName="techInterest">
+            <TechInterestStep
+              techInterestOptions={assessmentFlow.techInterest.options}
+              selectedInterest={technicalInterest}
+              onInterestSelect={handleTechInterestSelect}
+              technicalAnswers={technicalAnswers}
+              onAnswerChange={handleTechAnswerChange}
+              showQuestions={true}
+            />
+          </FormWrapper>
+        ) : (
           <TechInterestStep
             techInterestOptions={assessmentFlow.techInterest.options}
             selectedInterest={technicalInterest}
             onInterestSelect={handleTechInterestSelect}
             technicalAnswers={technicalAnswers}
             onAnswerChange={handleTechAnswerChange}
-            showQuestions={techQuestionsVisible}
+            showQuestions={false}
           />
         );
       case "complete":
         return (
-          <CompleteStep
-            title={assessmentFlow.complete.title}
-            feedback={feedback}
-            onFeedbackChange={handleFeedbackChange}
-          />
+          <FormWrapper stepName="complete">
+            <CompleteStep
+              title={assessmentFlow.complete.title}
+              feedback={feedback}
+              onFeedbackChange={handleFeedbackChange}
+            />
+          </FormWrapper>
         );
       default:
         return null;
@@ -861,13 +890,9 @@ export default function UserAssessment() {
     <AssessmentLayout
       title={getTitle()}
       progress={getProgress()}
-      prevPage={currentStep === "language" ? null : handleBack}
-      nextPage={currentStep === "language" ? null : handleNext}
-      showMascot={currentStep !== "language"}
-      buttonPosition="center"
-      {...getButtonProps()}
+      prevPage={currentStep === "userType" ? null : handleBack}
     >
-      {isReady ? renderCurrentStep() : <Loading />}
+      {isReady ? renderCurrentStep() : <Loading className="flex-grow flex justify-center items-center" />}
     </AssessmentLayout>
   );
 }

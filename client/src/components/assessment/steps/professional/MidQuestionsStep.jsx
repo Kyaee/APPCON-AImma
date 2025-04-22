@@ -1,25 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function MidQuestionsStep({ formData, setFormData }) {
+  // Create local state for form inputs
+  const [localFormData, setLocalFormData] = useState({
+    currentRole: formData.currentRole || "",
+    companyIndustry: formData.companyIndustry || "",
+    skillsUsed: formData.skillsUsed || [],
+  });
+
+  // Update local state from props when component mounts
+  useEffect(() => {
+    setLocalFormData({
+      currentRole: formData.currentRole || "",
+      companyIndustry: formData.companyIndustry || "",
+      skillsUsed: formData.skillsUsed || [],
+    });
+  }, []);
+
+  // Only update parent state when form submission is triggered
+  const syncToParent = () => {
+    setFormData(localFormData);
+  };
+
   const handleInputChange = (field, value) => {
-    const newFormData = {
-      ...formData,
+    setLocalFormData((prev) => ({
+      ...prev,
       [field]: value,
-    };
-    setFormData(newFormData);
+    }));
   };
 
   const handleSkillsChange = (skill) => {
-    const newSkills = formData.skillsUsed.includes(skill)
-      ? formData.skillsUsed.filter((s) => s !== skill)
-      : [...formData.skillsUsed, skill];
-
-    const newFormData = {
-      ...formData,
-      skillsUsed: newSkills,
-    };
-    setFormData(newFormData);
+    setLocalFormData((prev) => ({
+      ...prev,
+      skillsUsed: prev.skillsUsed.includes(skill)
+        ? prev.skillsUsed.filter((s) => s !== skill)
+        : [...prev.skillsUsed, skill],
+    }));
   };
 
   return (
@@ -32,7 +49,7 @@ export default function MidQuestionsStep({ formData, setFormData }) {
           </label>
           <input
             type="text"
-            value={formData.currentRole}
+            value={localFormData.currentRole}
             onChange={(e) => handleInputChange("currentRole", e.target.value)}
             className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
             placeholder="Enter your current role"
@@ -45,7 +62,7 @@ export default function MidQuestionsStep({ formData, setFormData }) {
             What industry is your company in?
           </label>
           <select
-            value={formData.companyIndustry}
+            value={localFormData.companyIndustry}
             onChange={(e) =>
               handleInputChange("companyIndustry", e.target.value)
             }
@@ -92,7 +109,7 @@ export default function MidQuestionsStep({ formData, setFormData }) {
                 onClick={() => handleSkillsChange(skill)}
                 className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
-                    formData.skillsUsed.includes(skill)
+                    localFormData.skillsUsed.includes(skill)
                       ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
                       : "border-black border-2 hover:border-black hover:border-3"
                   }`}
@@ -103,6 +120,18 @@ export default function MidQuestionsStep({ formData, setFormData }) {
           </div>
         </div>
       </div>
+      
+      {/* Hidden button to sync state on form submission */}
+      <button 
+        type="button" 
+        style={{ display: 'none' }} 
+        onClick={syncToParent}
+        ref={el => {
+          if (el) {
+            el.addEventListener('syncToParent', syncToParent);
+          }
+        }}
+      />
     </AssessmentStep>
   );
 }

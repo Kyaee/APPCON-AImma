@@ -1,23 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function HSQuestionsStep({ formData, setFormData }) {
+  // Create local state for form inputs
+  const [localFormData, setLocalFormData] = useState({
+    strand: formData.strand || "",
+    planningCollege: formData.planningCollege ?? null,
+    interestAreas: formData.interestAreas || [],
+    careerGoals: formData.careerGoals || "",
+  });
+
+  // Update local state from props when component mounts
+  useEffect(() => {
+    setLocalFormData({
+      strand: formData.strand || "",
+      planningCollege: formData.planningCollege ?? null,
+      interestAreas: formData.interestAreas || [],
+      careerGoals: formData.careerGoals || "",
+    });
+  }, []);
+
+  // Only update parent state when form submission is triggered
+  const syncToParent = () => {
+    setFormData(localFormData);
+  };
+
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
+    setLocalFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    // No localStorage writes here
   };
 
   const handleInterestChange = (area) => {
-    setFormData((prev) => ({
+    setLocalFormData((prev) => ({
       ...prev,
       interestAreas: prev.interestAreas.includes(area)
         ? prev.interestAreas.filter((a) => a !== area)
         : [...prev.interestAreas, area],
     }));
-    // No localStorage writes here
   };
 
   return (
@@ -29,7 +50,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
             Which strand are you currently in?
           </label>
           <select
-            value={formData.strand}
+            value={localFormData.strand}
             onChange={(e) => handleInputChange("strand", e.target.value)}
             className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
           >
@@ -61,7 +82,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
                 }
                 className={`p-3 rounded-lg text-center transition-all duration-200 bg-white
                   ${
-                    formData.planningCollege === option.value
+                    localFormData.planningCollege === option.value
                       ? "border-[#3F6CFF] border-3 custom-shadow-75"
                       : "border-black border-2 hover:border-black hover:border-3"
                   }`}
@@ -90,7 +111,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
                 onClick={() => handleInterestChange(area)}
                 className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
-                    formData.interestAreas.includes(area)
+                    localFormData.interestAreas.includes(area)
                       ? "border-[#3F6CFF] border-3 custom-shadow-75"
                       : "border-black border-2 hover:border-black hover:border-3"
                   }`}
@@ -107,13 +128,25 @@ export default function HSQuestionsStep({ formData, setFormData }) {
             What are your career goals?
           </label>
           <textarea
-            value={formData.careerGoals}
+            value={localFormData.careerGoals}
             onChange={(e) => handleInputChange("careerGoals", e.target.value)}
             className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
             placeholder="Share your career aspirations"
           />
         </div>
       </div>
+      
+      {/* Hidden button to sync state on form submission */}
+      <button 
+        type="button" 
+        style={{ display: 'none' }} 
+        onClick={syncToParent}
+        ref={el => {
+          if (el) {
+            el.addEventListener('syncToParent', syncToParent);
+          }
+        }}
+      />
     </AssessmentStep>
   );
 }

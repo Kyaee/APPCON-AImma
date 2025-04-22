@@ -1,16 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function GradQuestionsStep({ formData, setFormData }) {
+  // Create local state for form inputs
+  const [localFormData, setLocalFormData] = useState({
+    fieldStudy: formData.fieldStudy || "",
+    researchFocus: formData.researchFocus || "",
+    industryExperience: formData.industryExperience ?? null,
+    careerPlans: formData.careerPlans || "",
+    technicalExpertise: formData.technicalExpertise || 3,
+    researchInterests: formData.researchInterests || [],
+  });
+
+  // Update local state from props when component mounts
+  useEffect(() => {
+    setLocalFormData({
+      fieldStudy: formData.fieldStudy || "",
+      researchFocus: formData.researchFocus || "",
+      industryExperience: formData.industryExperience ?? null,
+      careerPlans: formData.careerPlans || "",
+      technicalExpertise: formData.technicalExpertise || 3,
+      researchInterests: formData.researchInterests || [],
+    });
+  }, []);
+
+  // Only update parent state when form submission is triggered
+  const syncToParent = () => {
+    setFormData(localFormData);
+  };
+
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
+    setLocalFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
   const handleInterestChange = (interest) => {
-    setFormData((prev) => ({
+    setLocalFormData((prev) => ({
       ...prev,
       researchInterests: prev.researchInterests.includes(interest)
         ? prev.researchInterests.filter((i) => i !== interest)
@@ -32,7 +59,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
             </label>
             <input
               type="text"
-              value={formData.fieldStudy}
+              value={localFormData.fieldStudy}
               onChange={(e) => handleInputChange("fieldStudy", e.target.value)}
               className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
               placeholder="Enter your field of study"
@@ -46,7 +73,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
             </label>
             <input
               type="text"
-              value={formData.researchFocus}
+              value={localFormData.researchFocus}
               onChange={(e) =>
                 handleInputChange("researchFocus", e.target.value)
               }
@@ -72,7 +99,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
                   }
                   className={`p-3 rounded-lg transition-all duration-200 bg-white
                     ${
-                      formData.industryExperience === option.value
+                      localFormData.industryExperience === option.value
                         ? "border-[#3F6CFF] border-3 custom-shadow-75"
                         : "border-black border-2 hover:border-black hover:border-3"
                     }`}
@@ -89,7 +116,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
               What are your career plans after graduation?
             </label>
             <textarea
-              value={formData.careerPlans}
+              value={localFormData.careerPlans}
               onChange={(e) => handleInputChange("careerPlans", e.target.value)}
               className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
               placeholder="Describe your career plans"
@@ -106,14 +133,14 @@ export default function GradQuestionsStep({ formData, setFormData }) {
                 type="range"
                 min="1"
                 max="5"
-                value={formData.technicalExpertise}
+                value={localFormData.technicalExpertise}
                 onChange={(e) =>
                   handleInputChange("technicalExpertise", e.target.value)
                 }
                 className="w-full"
               />
               <span className="text-lg text-white">
-                {formData.technicalExpertise}
+                {localFormData.technicalExpertise}
               </span>
             </div>
           </div>
@@ -138,7 +165,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
                   onClick={() => handleInterestChange(interest)}
                   className={`p-3 rounded-lg transition-all duration-200 bg-white
                     ${
-                      formData.researchInterests.includes(interest)
+                      localFormData.researchInterests.includes(interest)
                         ? "border-[#3F6CFF] border-3 custom-shadow-75"
                         : "border-black border-2 hover:border-black hover:border-3"
                     }`}
@@ -150,6 +177,18 @@ export default function GradQuestionsStep({ formData, setFormData }) {
           </div>
         </div>
       </div>
+      
+      {/* Hidden button to sync state on form submission */}
+      <button 
+        type="button" 
+        style={{ display: 'none' }} 
+        onClick={syncToParent}
+        ref={el => {
+          if (el) {
+            el.addEventListener('syncToParent', syncToParent);
+          }
+        }}
+      />
     </AssessmentStep>
   );
 }

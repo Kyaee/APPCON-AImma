@@ -13,7 +13,7 @@ export default function ExperienceStep({
           <button
             key={option.id}
             onClick={() => onLevelSelect(option)}
-              className={`flex flex-col items-center p-2 sm:p-4 rounded-xl transition-all duration-300 transform hover:scale-115
+              className={`flex flex-col items-center p-2 sm:p-4 rounded-xl transition-all duration-300 transform hover:scale-115 select-none
               ${
                 selectedLevel?.id === option.id
                     ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
@@ -24,19 +24,14 @@ export default function ExperienceStep({
               <img
                 src={option.icon}
                 alt={option.label}
-                className="w-60 h-30 sm:w-70 sm:h-35"
+                className="w-60 h-30 sm:w-70 sm:h-35 select-none"
               />
             </div>
             <div>
-              <h3 className="text-xl sm:text-2xl font-medium text-white">
+              <h3 className="text-xl sm:text-2xl font-medium text-white select-none">
                 {option.label}
               </h3>
             </div>
-            {selectedLevel?.id === option.id && (
-              <div className="mt-4 text-white font-bold text-lg">
-                ✓ Selected
-              </div>
-            )}
           </button>
         ))}
       </div>

@@ -1,21 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function PreviousExperienceStep({ experience, setExperience }) {
-  // For this component, ensure all onChange handlers don't make localStorage calls
-  // Example of how the handlers should look:
+  // Create local state to handle form inputs
+  const [localExperience, setLocalExperience] = useState({
+    lastRole: experience.lastRole || "",
+    yearsExperience: experience.yearsExperience || "",
+    reasonForChange: experience.reasonForChange || "",
+  });
+
+  // Update local state from props when component mounts
+  useEffect(() => {
+    setLocalExperience({
+      lastRole: experience.lastRole || "",
+      yearsExperience: experience.yearsExperience || "",
+      reasonForChange: experience.reasonForChange || "",
+    });
+  }, []);
+
+  // Only update parent state when form submission is triggered
+  // Removed onBlur to prevent unwanted state updates while typing
+  const syncToParent = () => {
+    setExperience(localExperience);
+  };
+
+  // Handle local changes without updating parent state
   const handleChange = (field, value) => {
-    setExperience((prev) => ({
+    setLocalExperience((prev) => ({
       ...prev,
       [field]: value,
     }));
-    // No localStorage writes here
   };
-
-  // For debugging - let's log what's happening
-  // useEffect(() => {
-  //   console.log("PreviousExperienceStep rendered with:", experience);
-  // }, [experience]);
 
   return (
     <AssessmentStep title="Previous Experience">
@@ -26,10 +41,12 @@ export default function PreviousExperienceStep({ experience, setExperience }) {
           </label>
           <input
             type="text"
-            value={experience.lastRole || ""}
+            value={localExperience.lastRole}
             onChange={(e) => handleChange("lastRole", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
+            // Remove onBlur handler that was causing issues
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black outline-none"
             placeholder="Enter your last role"
+            autoComplete="off" // Prevent browser autocomplete from interfering
           />
         </div>
 
@@ -38,9 +55,10 @@ export default function PreviousExperienceStep({ experience, setExperience }) {
             Years of experience
           </label>
           <select
-            value={experience.yearsExperience || ""}
+            value={localExperience.yearsExperience}
             onChange={(e) => handleChange("yearsExperience", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black"
+            // Remove onBlur handler
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black outline-none"
           >
             <option value="">Select years of experience</option>
             <option value="0-1">0-1 years</option>
@@ -55,13 +73,27 @@ export default function PreviousExperienceStep({ experience, setExperience }) {
             Reason for seeking new opportunity
           </label>
           <textarea
-            value={experience.reasonForChange || ""}
+            value={localExperience.reasonForChange}
             onChange={(e) => handleChange("reasonForChange", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32 z-50"
+            // Remove onBlur handler
+            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32 z-50 outline-none"
             placeholder="Tell us why you're looking for a new opportunity"
+            autoComplete="off"
           />
         </div>
       </div>
+      {/* Hidden button to sync state on form submission - will be triggered by the parent's submit button */}
+      <button 
+        type="button" 
+        style={{ display: 'none' }} 
+        onClick={syncToParent}
+        ref={el => {
+          if (el) {
+            // Create a custom event listener for syncToParent
+            el.addEventListener('syncToParent', syncToParent);
+          }
+        }}
+      />
     </AssessmentStep>
   );
 }

@@ -1,16 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 
 export default function CollegeQuestionsStep({ formData, setFormData }) {
+  // Create local state for form inputs
+  const [localFormData, setLocalFormData] = useState({
+    course: formData.course || "",
+    yearLevel: formData.yearLevel || "",
+    technicalSkills: formData.technicalSkills || [],
+    careerPath: formData.careerPath || "",
+  });
+
+  // Update local state from props when component mounts
+  useEffect(() => {
+    setLocalFormData({
+      course: formData.course || "",
+      yearLevel: formData.yearLevel || "",
+      technicalSkills: formData.technicalSkills || [],
+      careerPath: formData.careerPath || "",
+    });
+  }, []);
+
+  // Only update parent state when form submission is triggered
+  const syncToParent = () => {
+    setFormData(localFormData);
+  };
+
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
+    setLocalFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
   const handleSkillChange = (skill) => {
-    setFormData((prev) => ({
+    setLocalFormData((prev) => ({
       ...prev,
       technicalSkills: prev.technicalSkills.includes(skill)
         ? prev.technicalSkills.filter((s) => s !== skill)
@@ -27,7 +50,7 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
             What's your course?
           </label>
           <select
-            value={formData.course}
+            value={localFormData.course}
             onChange={(e) => handleInputChange("course", e.target.value)}
             className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
           >
@@ -51,7 +74,7 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
         <div>
           <label className="block text-lg mb-2 text-white">Year Level</label>
           <select
-            value={formData.yearLevel}
+            value={localFormData.yearLevel}
             onChange={(e) => handleInputChange("yearLevel", e.target.value)}
             className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
           >
@@ -87,7 +110,7 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
                 onClick={() => handleSkillChange(skill)}
                 className={`p-3 rounded-lg transition-all duration-200 bg-white
                   ${
-                    formData.technicalSkills.includes(skill)
+                    localFormData.technicalSkills.includes(skill)
                       ? "border-[#3F6CFF] border-3 custom-shadow-75"
                       : "border-black border-2 hover:border-black hover:border-3"
                   }`}
@@ -104,13 +127,25 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
             What's your intended career path?
           </label>
           <textarea
-            value={formData.careerPath}
+            value={localFormData.careerPath}
             onChange={(e) => handleInputChange("careerPath", e.target.value)}
             className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
             placeholder="Describe your career goals"
           />
         </div>
       </div>
+      
+      {/* Hidden button to sync state on form submission */}
+      <button 
+        type="button" 
+        style={{ display: 'none' }} 
+        onClick={syncToParent}
+        ref={el => {
+          if (el) {
+            el.addEventListener('syncToParent', syncToParent);
+          }
+        }}
+      />
     </AssessmentStep>
   );
 }

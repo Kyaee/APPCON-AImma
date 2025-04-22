@@ -1,7 +1,6 @@
 import React from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 import capyGreet from "@/assets/general/capy-greet.svg";
-import { Button } from "@/components/ui/button";
 
 export default function CompletionStep({ title, onProceed }) {
   return (
@@ -18,19 +17,13 @@ export default function CompletionStep({ title, onProceed }) {
 
         {/* Congratulation text */}
         <div className="text-center">
-          <p className="text-lg text-white/90 mb-8 max-w-md mx-auto">
+          <p className="text-lg text-white/90 mb-8 max-w-md mx-auto select-none">
             Your personalized learning roadmap is being generated based on your
             skills and interests. Get ready for an amazing learning journey!
           </p>
         </div>
-
-        {/* Proceed button - increased size */}
-        <Button
-          onClick={onProceed}
-          className="py-7 px-10 text-lg bg-white text-black border-2 border-black font-bold hover:bg-gray-100 custom-shadow-50 rounded-lg"
-        >
-          Continue to Dashboard
-        </Button>
+        
+        {/* Removed the button here since it's added by FormWrapper */}
       </div>
     </AssessmentStep>
   );

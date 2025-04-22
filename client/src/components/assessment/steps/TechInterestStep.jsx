@@ -9,7 +9,8 @@ export default function TechInterestStep({
   technicalAnswers,
   onInterestSelect,
   onAnswerChange,
-  showQuestions = false, // New prop to control visibility of questions
+  showQuestions = false,
+  techInterestOptions
 }) {
   // Change to track only a single selected interest instead of an array
   const [selectedInterest, setSelectedInterest] = useState(null);
@@ -95,7 +96,7 @@ export default function TechInterestStep({
         if (!questionSet || !questionSet.questions) {
           return (
             <div className="mt-8 border-t border-white/30 pt-6">
-              <p className="text-white">
+              <p className="text-white select-none">
                 No questions available for this interest yet.
               </p>
             </div>
@@ -105,13 +106,13 @@ export default function TechInterestStep({
         return (
           <QuestionsContainer>
             <div className="mt-8 border-t border-white/30 pt-6">
-              <h3 className="text-2xl font-bold text-white mb-4">
+              <h3 className="text-2xl font-bold text-white mb-4 select-none">
                 {questionSet.title || `${selectedInterest.label} Questions`}
               </h3>
               <div className="space-y-6">
                 {questionSet.questions.map((question) => (
                   <div key={question.id} className="space-y-4">
-                    <label className="block text-lg font-medium text-white">
+                    <label className="block text-lg font-medium text-white select-none">
                       {question.label}
                     </label>
                     {question.type === "multiselect" ? (
@@ -127,7 +128,7 @@ export default function TechInterestStep({
                                 : [...currentAnswers, option];
                               onAnswerChange(question.id, newAnswers);
                             }}
-                            className={`p-3 rounded-lg transition-all duration-200 bg-white
+                            className={`p-3 rounded-lg transition-all duration-200 bg-white select-none
                               ${
                                 (technicalAnswers[question.id] || []).includes(
                                   option
@@ -136,7 +137,7 @@ export default function TechInterestStep({
                                   : "border-black border-2 hover:border-black hover:border-3"
                               }`}
                           >
-                            <span className="text-black">{option}</span>
+                            <span className="text-black select-none">{option}</span>
                           </button>
                         ))}
                       </div>
@@ -160,31 +161,34 @@ export default function TechInterestStep({
     }
   };
 
+  // Get the options either from props or from assessment-flow directly
+  const options = techInterestOptions || assessmentFlow.techInterest.options;
+
   // Show either interest selection or questions based on the showQuestions prop
   return (
     <AssessmentStep
       title={
-        showQuestions
-          ? `${selectedInterest?.label || "Technical"} Questions`
+        showQuestions && selectedInterest
+          ? `${selectedInterest.label || "Technical"} Questions`
           : "Technical Interests"
       }
     >
       {!showQuestions ? (
         // Interest selection view
         <div>
-          <p className="text-white text-center mb-4">
+          <p className="text-white text-center mb-4 select-none">
             Select your primary technical interest:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 px-4 sm:px-0">
-            {assessmentFlow.techInterest.options.map((option) => {
+            {options.map((option) => {
               const isSelected = selectedInterest?.id === option.id;
 
               return (
                 <button
                   key={option.id}
                   onClick={() => handleInterestSelect(option)}
-                  className={`flex flex-col items-center p-8 sm:p-9 rounded-xl transition-all duration-300 transform hover:scale-105
+                  className={`flex flex-col items-center p-8 sm:p-9 rounded-xl transition-all duration-300 transform hover:scale-105 select-none
                     ${
                       isSelected
                         ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
@@ -195,13 +199,10 @@ export default function TechInterestStep({
                     <span className="text-4xl">{option.icon}</span>
                   </div>
                   <div>
-                    <h3 className="mt-5 font-medium text-l text-white">
+                    <h3 className="mt-5 font-medium text-l text-white select-none">
                       {option.label}
                     </h3>
                   </div>
-                  {isSelected && (
-                    <div className="mt-2 text-white font-bold">✓ Selected</div>
-                  )}
                 </button>
               );
             })}
@@ -211,7 +212,7 @@ export default function TechInterestStep({
         // Questions view for the selected interest
         <div>
           <div className="bg-white/10 p-4 rounded-lg mb-6">
-            <p className="text-white text-center">
+            <p className="text-white text-center select-none">
               You selected:{" "}
               <span className="font-bold">{selectedInterest?.label}</span>
             </p>
