@@ -41,14 +41,17 @@ export default function RegisterPage() {
     <div className="grid min-h-svh lg:grid-cols-2">
       {/* Left side - Form container */}
       <div
-        className={`flex flex-col gap-4 p-6 md:p-10 border-r-4 border-black transition-all duration-700 ${
+        className={`flex flex-col gap-4 p-6 md:p-10 border-r-4 border-black transition-all duration-700 bg-white ${
           contentLoaded
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-10"
         }`}
       >
         <div className="flex justify-center gap-2 md:justify-start">
-          <Link to="/" className="flex items-center gap-2 font-medium text-xl">
+          <Link
+            to="/"
+            className="flex items-center gap-2 font-medium text-xl text-black"
+          >
             <img
               src={brandIcon}
               alt="CapyCademy Logo"

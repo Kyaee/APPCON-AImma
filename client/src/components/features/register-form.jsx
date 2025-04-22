@@ -74,19 +74,21 @@ export function RegisterForm({ className, ...props }) {
 
   return (
     <form
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("flex flex-col gap-6 bg-white  text-black", className)}
       {...props}
       onSubmit={handleSignUp}
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Sign-up your account</h1>
-        <p className="text-sm text-muted-foreground mb-4">
+        <h1 className="text-2xl font-bold text-black">Sign-up your account</h1>
+        <p className="text-sm text-gray-600 mb-4">
           Start your personalized learning journey with us!
         </p>
       </div>
       <div className="grid gap-5">
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-gray-700">
+            Email
+          </Label>
           <Input
             id="email"
             type="email"
@@ -96,10 +98,11 @@ export function RegisterForm({ className, ...props }) {
               setFormData({ ...isFormData, email: e.target.value })
             }
             required
+            className="bg-white border-gray-200 text-black"
           />
         </div>
         <div className="grid gap-2">
-          <Label>Password</Label>
+          <Label className="text-gray-700">Password</Label>
           <div className="relative">
             <Input
               id="password"
@@ -110,6 +113,7 @@ export function RegisterForm({ className, ...props }) {
                 setFormData({ ...isFormData, password: e.target.value })
               }
               required
+              className="bg-white border-gray-200 text-black"
             />
             <button
               type="button"
@@ -126,7 +130,9 @@ export function RegisterForm({ className, ...props }) {
           </div>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Confirm Password</Label>
+          <Label htmlFor="password" className="text-gray-700">
+            Confirm Password
+          </Label>
           <div className="relative">
             <Input
               id="password"
@@ -137,6 +143,7 @@ export function RegisterForm({ className, ...props }) {
                 setFormData({ ...isFormData, confirmPassword: e.target.value })
               }
               required
+              className="bg-white border-gray-200 text-black"
             />
             <button
               type="button"
@@ -160,7 +167,7 @@ export function RegisterForm({ className, ...props }) {
         </div>
         <Button
           type="submit"
-          className="w-full"
+          className="w-full bg-black hover:bg-gray-800 text-white"
           disabled={
             !isFormData.email ||
             !isFormData.confirmPassword ||
@@ -171,12 +178,15 @@ export function RegisterForm({ className, ...props }) {
           Sign-up
         </Button>
         {isError && <p className="text-sm text-red-600">{isError}</p>}
-        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-background px-2 text-muted-foreground">
+        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-gray-200">
+          <span className="relative z-10 bg-white px-2 text-gray-500">
             Or continue with
           </span>
         </div>
-        <Button variant="outline" className="w-full">
+        <Button
+          variant="outline"
+          className="w-full text-gray-700 bg-white border-gray-300 hover:bg-gray-50"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
               d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
@@ -186,9 +196,12 @@ export function RegisterForm({ className, ...props }) {
           Sign-up with Google
         </Button>
       </div>
-      <div className="text-center text-sm">
+      <div className="text-center text-sm text-gray-600">
         Don&apos;t have an account?{" "}
-        <Link to="/auth/login" className="underline underline-offset-4">
+        <Link
+          to="/auth/login"
+          className="underline underline-offset-4 text-blue-600"
+        >
           Sign-in
         </Link>
       </div>
