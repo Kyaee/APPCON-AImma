@@ -4,10 +4,16 @@ quantum.register();
 import { bouncy } from "ldrs";
 bouncy.register();
 import boom from "@/assets/general/boom.gif";
+import amimir from "@/assets/general/a-mimir.gif";
 import { Background } from "@/components/layout/Background"; 
 
 export default function loading({ generate_roadmap, generate_lesson, generate_assessment }) {
   const { theme } = useTheme();
+
+  const images = [
+    boom,
+    amimir
+  ];
 
   const quotes = [
     "Be like a Capybara, relax and wait while we load your content!",
@@ -48,6 +54,7 @@ export default function loading({ generate_roadmap, generate_lesson, generate_as
     "Capybaras are close relatives of guinea pigs"
   ];
 
+  const randomImage = images[Math.floor(Math.random() * images.length)];
   const randomLoadText = loadtext[Math.floor(Math.random() * loadtext.length)];
   const randomqoute = quotes[Math.floor(Math.random() * quotes.length)];
   const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
@@ -75,7 +82,7 @@ export default function loading({ generate_roadmap, generate_lesson, generate_as
     return (
       <main className="absolute top-0 left-0 h-screen w-full  py-5 flex flex-col justify-center items-center select-none z-50">
         <Background />
-        <img src={boom} alt="Loading..." className="mb-5" />
+        {/* <img src={randomImage} alt="Loading..." className="mb-5" /> */}
         <h3 className="font-extrabold text-xl mb-2">{randomLoadText}</h3>
         <p className="animate-text-pulse max-w-1/4 text-center text-foreground mb-8">
           {randomqoute}
@@ -88,6 +95,7 @@ export default function loading({ generate_roadmap, generate_lesson, generate_as
   else if (generate_assessment) {
     return (
       <main className="absolute top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
+        <Background />
         <l-quantum
           size="80"
           speed="1.5"
@@ -103,7 +111,8 @@ export default function loading({ generate_roadmap, generate_lesson, generate_as
   } else {
     return (
       <main className="fixed top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
-        <img src={boom} alt="Loading..." className="mb-8" />
+        <Background />
+        {/* <img src={randomImage} alt="Loading..." className="mb-8" /> */}
         <h3 className="font-extrabold text-xl mb-2">{randomIdea}</h3>
         <p className="max-w-1/4 text-center text-foreground">{randomTip}</p>
       </main>
