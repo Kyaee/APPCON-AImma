@@ -30,7 +30,10 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
     }));
   };
 
-  const handleSkillsChange = (skill) => {
+  const handleSkillsChange = (skill, e) => {
+    // Prevent the default form submission
+    if (e) e.preventDefault();
+
     setLocalFormData((prev) => ({
       ...prev,
       skillsUsed: prev.skillsUsed.includes(skill)
@@ -106,7 +109,8 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
             ].map((skill) => (
               <button
                 key={skill}
-                onClick={() => handleSkillsChange(skill)}
+                type="button"
+                onClick={(e) => handleSkillsChange(skill, e)}
                 className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
                     localFormData.skillsUsed.includes(skill)

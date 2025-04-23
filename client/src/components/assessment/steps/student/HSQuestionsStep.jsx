@@ -25,14 +25,20 @@ export default function HSQuestionsStep({ formData, setFormData }) {
     setFormData(localFormData);
   };
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field, value, e) => {
+    // Prevent the default form submission
+    if (e) e.preventDefault();
+    
     setLocalFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleInterestChange = (area) => {
+  const handleInterestChange = (area, e) => {
+    // Prevent the default form submission
+    if (e) e.preventDefault();
+    
     setLocalFormData((prev) => ({
       ...prev,
       interestAreas: prev.interestAreas.includes(area)
@@ -77,8 +83,9 @@ export default function HSQuestionsStep({ formData, setFormData }) {
             ].map((option) => (
               <button
                 key={option.label}
-                onClick={() =>
-                  handleInputChange("planningCollege", option.value)
+                type="button"
+                onClick={(e) =>
+                  handleInputChange("planningCollege", option.value, e)
                 }
                 className={`p-3 rounded-lg text-center transition-all duration-200 bg-white
                   ${
@@ -108,7 +115,8 @@ export default function HSQuestionsStep({ formData, setFormData }) {
             ].map((area) => (
               <button
                 key={area}
-                onClick={() => handleInterestChange(area)}
+                type="button"
+                onClick={(e) => handleInterestChange(area, e)}
                 className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
                     localFormData.interestAreas.includes(area)
