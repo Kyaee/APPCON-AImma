@@ -12,10 +12,10 @@ export default function CTASection() {
             alt="CapyCademy Brand"
             className="w-40 h-40 md:w-62 md:h-62 mb-4 md:mb-6"
           />
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 md:mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-4 md:mb-6">
             Ready to start your coding journey?
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-foreground/80 mb-6 md:mb-8 max-w-3xl mx-auto px-4">
+          <p className="text-base sm:text-lg md:text-xl text-black mb-6 md:mb-8 max-w-3xl mx-auto px-4">
             Join thousands of learners who are building their skills and
             advancing their careers with CapyCademy's interactive learning
             platform.
