@@ -98,7 +98,7 @@ const Questions = ({
             {display_wrong_answer && (
               <div>
                 <div
-                  className="text-foreground bg-background font-semibold
+                  className="text-black bg-white font-semibold
                   w-4/6 py-6 px-8 tracking-tight rounded-sm 
                   "
                 >
@@ -111,7 +111,7 @@ const Questions = ({
                 <img
                   src={CapyShout}
                   alt="capybara superhero"
-                  className="absolute -right-55 animate-tilt-bounce  w-auto h-150 mb-4"
+                  className="absolute -right-55 animate-tilt-bounce w-auto h-150 mb-4"
                 />
               </div>
             )}

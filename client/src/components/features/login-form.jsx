@@ -15,7 +15,7 @@ import { useAuth } from "@/config/AuthContext";
 
 export function LoginForm({ className, ...props }) {
   const navigate = useNavigate();
-  const { signInUser } = useAuth();
+  const { signInUser, signInWithGoogle } = useAuth();
   const [isError, setError] = useState();
   const [showPassword, setShowPassword] = useState(false);
   const [isFormData, setFormData] = useState({
@@ -53,24 +53,25 @@ export function LoginForm({ className, ...props }) {
           <CardDescription className="text-gray-600">
             Login with your Google account
           </CardDescription>
+          <div className="mt-4 flex flex-col gap-4">
+            <Button
+              variant="outline"
+              className="w-full text-gray-700 bg-white border-gray-300 hover:bg-gray-50"
+              onClick={signInWithGoogle}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                  fill="currentColor"
+                />
+              </svg>
+              Login with Google
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignIn}>
             <div className="grid gap-6">
-              <div className="flex flex-col gap-4">
-                <Button
-                  variant="outline"
-                  className="w-full text-gray-700 bg-white border-gray-300 hover:bg-gray-50"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path
-                      d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  Login with Google
-                </Button>
-              </div>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-gray-200">
                 <span className="relative z-10 bg-white px-2 text-gray-500">
                   Or continue with
@@ -100,7 +101,7 @@ export function LoginForm({ className, ...props }) {
                     </Label>
                     <a
                       href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline text-blue-600"
+                      className="ml-auto text-sm underline-offset-4 hover:underline text-blue-400"
                     >
                       Forgot your password?
                     </a>
@@ -143,7 +144,7 @@ export function LoginForm({ className, ...props }) {
                 Don&apos;t have an account?{" "}
                 <Link
                   to="/auth/register"
-                  className="underline underline-offset-4 text-blue-600"
+                  className="underline underline-offset-4 text-blue-400"
                 >
                   Sign up
                 </Link>
@@ -152,7 +153,7 @@ export function LoginForm({ className, ...props }) {
           </form>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-white [&_a]:underline [&_a]:underline-offset-4 [&_a]:text-blue-600 [&_a]:hover:text-blue-800">
+      <div className="text-balance text-center text-xs text-white [&_a]:underline [&_a]:underline-offset-4 [&_a]:text-blue-50 [&_a]:hover:text-blue-300">
         By clicking continue, you agree to our{" "}
         <Link to="">Terms of Service</Link> and{" "}
         <Link to="">Privacy Policy</Link>.
