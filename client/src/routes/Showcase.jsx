@@ -52,15 +52,9 @@ const IntroSlides = [
     subtitle:
       "Monitor your skill development with detailed analytics and insights.",
     image: "/showcase-features/analytics.png",
-    button: "Next",
+    button: "Next", // This is now the last slide in the showcase flow
   },
-  {
-    id: "assessment",
-    title: "Before we begin",
-    subtitle: "Let us start by assessing you to know about you more.",
-    button: "Begin Assessment",
-    isLast: true,
-  },
+  // Removed the assessment slide from here
 ];
 
 const Showcase = () => {
@@ -109,16 +103,22 @@ const Showcase = () => {
   }, []);
 
   const handleNext = () => {
-    if (currentSlide < IntroSlides.length - 1) {
+    // Navigate to assessment if on the last showcase slide (analytics)
+    if (currentSlide === IntroSlides.length - 1) {
+      // This case should now be handled by the Link component in the render
+      console.log("Navigating via button logic - should use Link");
+    } else if (currentSlide < IntroSlides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     }
   };
 
   const handleSkip = () => {
+    // Skip to the last showcase slide (analytics)
     setCurrentSlide(IntroSlides.length - 1);
   };
 
   const currentSlideData = IntroSlides[currentSlide];
+  const isLastSlide = currentSlide === IntroSlides.length - 1;
 
   // Conditionally render Loading component
   if (!isReady) {
@@ -129,22 +129,24 @@ const Showcase = () => {
     <div className="w-full h-screen flex items-center justify-center px-6 md:px-16 lg:px-32 xl:px-48 relative">
       <VideoBackground />
       <div className="max-w-6xl w-full flex flex-col items-center p-8 md:p-12 relative">
-        {/* Skip button - aligned with image width */}
-        {currentSlide > 0 && currentSlide < 6 && (
+        {/* Skip button - aligned with image width, visible on all slides except the first */}
+        {currentSlide > 0 && ( // Show skip if not the first slide
           <div className="w-full max-w-4xl flex justify-end mb-4">
             <button
               onClick={handleSkip}
-              className="px-10 py-2 rounded-lg text-sm 
-              bg-white/10 backdrop-blur-sm text-gray-200 hover:bg-white/20 
+              className="px-10 py-2 shadow-lg rounded-lg text-sm
+              bg-[#BF9566] backdrop-blur-sm text-white hover:bg-[#BF8648]
               transition-colors border-2 border-black"
             >
               Skip
             </button>
           </div>
         )}
-
-        {/* Logo - Larger size for first and last slide */}
-        {(currentSlideData.logo || currentSlideData.isLast) && (
+        {/* Add placeholder div if skip button is not shown to maintain layout consistency */}
+        {currentSlide === 0 && <div className="h-[44px] mb-4"></div>}{" "}
+        {/* Adjust height based on skip button */}
+        {/* Logo - Larger size for first slide */}
+        {currentSlideData.logo && ( // Removed isLast condition here
           <div className="w-full flex justify-center mb-8">
             <div className="flex items-center justify-center">
               <img
@@ -155,7 +157,6 @@ const Showcase = () => {
             </div>
           </div>
         )}
-
         {/* Slide image - Full width, fixed height, consistent across slides */}
         {currentSlideData.image && (
           <div className="w-full max-w-4xl mb-8">
@@ -168,27 +169,20 @@ const Showcase = () => {
             />
           </div>
         )}
-
         {/* Content - Aligned with image width */}
         <div
           className={`w-full max-w-4xl space-y-2 ${
-            currentSlideData.logo || currentSlideData.isLast
-              ? "items-center text-center"
-              : ""
+            currentSlideData.logo ? "items-center text-center" : ""
           }`}
         >
           <div
             className={`w-full ${
-              currentSlideData.logo || currentSlideData.isLast
-                ? "flex flex-col items-center"
-                : ""
+              currentSlideData.logo ? "flex flex-col items-center" : ""
             }`}
           >
             <h1
               className={`text-white text-5xl font-bold ${
-                currentSlideData.logo || currentSlideData.isLast
-                  ? "text-center"
-                  : ""
+                currentSlideData.logo ? "text-center" : ""
               }`}
             >
               {currentSlideData.title}
@@ -200,70 +194,65 @@ const Showcase = () => {
             )}
             <p
               className={`text-gray-200 text-xl mt-4 ${
-                currentSlideData.logo || currentSlideData.isLast
-                  ? "text-center"
-                  : ""
+                currentSlideData.logo ? "text-center" : ""
               }`}
             >
               {currentSlideData.subtitle}
             </p>
           </div>
-        </div>
+        </div> {/* This closing div was potentially misplaced or missing */}
 
         {/* Footer with navigation and progress indicators - Aligned with image */}
         <div className="w-full max-w-4xl mt-8">
-          {!currentSlideData.isLast ? (
-            <div className="flex items-center justify-between">
-              {/* Progress indicators - Only show for middle slides */}
-              {!currentSlideData.logo && (
-                <div className="flex space-x-2">
-                  {IntroSlides.slice(1, 6).map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-5 h-5 rounded-full border-black border-2 transition-colors duration-200 ${
-                        index + 1 === currentSlide
-                          ? "bg-amber-500"
-                          : index + 1 < currentSlide
-                          ? "bg-gray-300"
-                          : "bg-gray-300/50"
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Navigation button for non-last slides. */}
-              <div
-                className={`${
-                  currentSlideData.logo ? "w-full flex justify-center" : ""
-                }`}
-              >
-                <button
-                  onClick={handleNext}
-                  className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg 
-                  shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
-                >
-                  {currentSlideData.button}
-                  <ArrowRight size={20} />
-                </button>
+          <div className="flex items-center justify-between">
+            {/* Progress indicators - Show on all slides except the first */}
+            {!currentSlideData.logo ? (
+              <div className="flex space-x-2">
+                {IntroSlides.slice(1).map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-5 h-5 rounded-full border-black border-2 transition-colors duration-200 ${
+                      index + 1 === currentSlide
+                        ? "bg-amber-500"
+                        : index + 1 < currentSlide
+                        ? "bg-gray-300" // Mark past slides
+                        : "bg-gray-300/50" // Future slides
+                    }`}
+                  />
+                ))}
               </div>
-            </div>
-          ) : (
-            // Only last slide gets Link component
-            <div className="w-full flex justify-center">
+            ) : (
+              /* Placeholder for alignment when logo is present (first slide) */
+              <div></div>
+            )}
+
+            {/* Navigation Button/Link */}
+            {/* Removed the extra div wrapping the button/link for non-logo slides */}
+            {isLastSlide ? (
               <Link
-                to="/start/assessment"
-                className="bg-[#BF9566] border-black border-2 text-white px-8 py-3 rounded-lg text-lg 
+                to="/start/assessment" // Navigate to assessment route
+                className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
                 shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+              >
+                {currentSlideData.button} {/* Should be "Next" */}
+                <ArrowRight size={20} />
+              </Link>
+            ) : (
+              <button
+                onClick={handleNext}
+                className={`bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
+                shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2 ${
+                  currentSlideData.logo ? "mx-auto" : "" /* Center only if logo slide */
+                }`}
               >
                 {currentSlideData.button}
                 <ArrowRight size={20} />
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+              </button>
+            )}
+          </div> {/* Closing tag for flex justify-between */}
+        </div> {/* Closing tag for footer container */}
+      </div> {/* Closing tag for max-w-6xl container */}
+    </div> /* Closing tag for main container */
   );
 };
 
