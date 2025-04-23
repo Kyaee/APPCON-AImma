@@ -110,7 +110,7 @@ export default function MidQuestionsStep({ formData, setFormData }) {
                 className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
                   ${
                     localFormData.skillsUsed.includes(skill)
-                      ? "border-light-brown border-3 custom-shadow-75  bg-white card-bg-opacity"
+                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
                       : "border-black border-2 hover:border-black hover:border-3"
                   }`}
               >
@@ -120,15 +120,15 @@ export default function MidQuestionsStep({ formData, setFormData }) {
           </div>
         </div>
       </div>
-      
+
       {/* Hidden button to sync state on form submission */}
-      <button 
-        type="button" 
-        style={{ display: 'none' }} 
+      <button
+        type="button"
+        style={{ display: "none" }}
         onClick={syncToParent}
-        ref={el => {
+        ref={(el) => {
           if (el) {
-            el.addEventListener('syncToParent', syncToParent);
+            el.addEventListener("syncToParent", syncToParent);
           }
         }}
       />

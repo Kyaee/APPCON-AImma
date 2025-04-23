@@ -172,17 +172,17 @@ const Showcase = () => {
         {/* Content - Aligned with image width */}
         <div
           className={`w-full max-w-4xl space-y-2 ${
-            currentSlideData.logo ? "items-center text-center" : ""
+            currentSlideData.logo ? "items-center text-center" : "" // Removed isLast condition
           }`}
         >
           <div
             className={`w-full ${
-              currentSlideData.logo ? "flex flex-col items-center" : ""
+              currentSlideData.logo ? "flex flex-col items-center" : "" // Removed isLast condition
             }`}
           >
             <h1
               className={`text-white text-5xl font-bold ${
-                currentSlideData.logo ? "text-center" : ""
+                currentSlideData.logo ? "text-center" : "" // Removed isLast condition
               }`}
             >
               {currentSlideData.title}
@@ -194,14 +194,13 @@ const Showcase = () => {
             )}
             <p
               className={`text-gray-200 text-xl mt-4 ${
-                currentSlideData.logo ? "text-center" : ""
+                currentSlideData.logo ? "text-center" : "" // Removed isLast condition
               }`}
             >
               {currentSlideData.subtitle}
             </p>
           </div>
-        </div> {/* This closing div was potentially misplaced or missing */}
-
+        </div>
         {/* Footer with navigation and progress indicators - Aligned with image */}
         <div className="w-full max-w-4xl mt-8">
           <div className="flex items-center justify-between">
@@ -227,32 +226,35 @@ const Showcase = () => {
             )}
 
             {/* Navigation Button/Link */}
-            {/* Removed the extra div wrapping the button/link for non-logo slides */}
-            {isLastSlide ? (
-              <Link
-                to="/start/assessment" // Navigate to assessment route
-                className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
-                shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
-              >
-                {currentSlideData.button} {/* Should be "Next" */}
-                <ArrowRight size={20} />
-              </Link>
-            ) : (
-              <button
-                onClick={handleNext}
-                className={`bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
-                shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2 ${
-                  currentSlideData.logo ? "mx-auto" : "" /* Center only if logo slide */
-                }`}
-              >
-                {currentSlideData.button}
-                <ArrowRight size={20} />
-              </button>
-            )}
-          </div> {/* Closing tag for flex justify-between */}
-        </div> {/* Closing tag for footer container */}
-      </div> {/* Closing tag for max-w-6xl container */}
-    </div> /* Closing tag for main container */
+            <div
+              className={`${
+                currentSlideData.logo ? "w-full flex justify-center" : ""
+              }`}
+            >
+              {isLastSlide ? (
+                <Link
+                  to="/start/assessment" // Navigate to assessment route
+                  className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
+                  shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+                >
+                  {currentSlideData.button} {/* Should be "Next" */}
+                  <ArrowRight size={20} />
+                </Link>
+              ) : (
+                <button
+                  onClick={handleNext}
+                  className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
+                  shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+                >
+                  {currentSlideData.button}
+                  <ArrowRight size={20} />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
