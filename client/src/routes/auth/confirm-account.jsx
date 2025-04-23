@@ -16,7 +16,7 @@ export default function ConfirmAccount() {
           Kindly check your inbox!
         </p>
         <div className="mt-10 flex items-center gap-4">
-          <Button className="">Resend email</Button>
+          {/* <Button className="">Resend email</Button> */}
           <Link to="/auth/login">
             <Button className="">Sign-in</Button>
           </Link>

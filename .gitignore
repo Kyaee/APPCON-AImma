@@ -1,11 +1,15 @@
 # Logs
+*.log
+.vscode
 
 ##################
 #    Client
 ##################
 client/logs
-*.log
 client/npm-debug.log*
+client/src/lib/storage
+client/src/lib/storage
+
 
 node_modules
 client/node_modules
@@ -16,14 +20,14 @@ client/.env
 client/.env.local
 
 
-*.log
-
 ##################
 #    Server
 ##################
 server/logs
 server/.venv
 server/.env
+server/__pycache__
+server/.pytest_cache
 
 # Editor directories and files
 .vscode/*

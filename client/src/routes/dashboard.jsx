@@ -1,176 +1,288 @@
-import { Background } from "@/components/layout/background";
-import MainNav from "@/components/layout/main-nav";
-import StatsDisplay from "@/components/features/stats-display";
-import ActionIcons from "@/components/layout/action-icons";
-import QuestPanel from "@/components/layout/dashboard-roadmap/QuestPanel";
-import StreakPanel from "@/components/layout/dashboard-roadmap/StreakPanel";
-import Sidebar from "@/components/layout/dashboard-roadmap/Sidebar";
-import RoadmapHeader from '@/components/layout/dashboard-roadmap/RoadmapHeader';
-import RoadmapContent from '@/components/layout/dashboard-roadmap/RoadmapContent';
-import { useState } from "react";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import CombinedPanel from "@/components/dashboard-roadmap/CombinedPanel"; // Import the new component
+import Sidebar from "@/components/dashboard-roadmap/Sidebar";
+import RoadmapHeader from "@/components/dashboard-roadmap/RoadmapHeader";
+import RoadmapContent from "@/components/dashboard-roadmap/RoadmapContent";
+import { useState, useEffect } from "react";
+import { ChevronRight } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchRoadmap, fetchLesson } from "@/api/FETCH"; // Ensure fetchRoadmap is imported
+import Loading from "@/routes/Loading";
 
-export default function Ayon() {
+export default function Dashboard({ setAssessed }) {
+  const { id } = useParams();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
+  // Initialize roadmapIndex from localStorage or default to 0
+  const [roadmapIndex, setRoadmapIndex] = useState(() => {
+    const savedIndex = localStorage.getItem("selectedRoadmapIndex");
+    return savedIndex !== null ? parseInt(savedIndex, 10) : 0;
+  });
   const [isLeftDropdownOpen, setIsLeftDropdownOpen] = useState(false);
+  const [getLoading, setLoading] = useState(false);
+  const [isLessonOpen, setIsLessonOpen] = useState(false);
+  const [userRewards, setUserRewards] = useState({ xp: 0, gems: 0 });
+  const queryClient = useQueryClient();
 
-  const handleSidebarToggle = () => {
-    console.log('Toggling sidebar');
-    setIsSidebarExpanded(prev => !prev);
-  };
+  // Save roadmapIndex to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("selectedRoadmapIndex", roadmapIndex.toString());
+  }, [roadmapIndex]);
 
-  // Available courses with varied number of stages
-  const courses = [
-    {
-      name: "Web Development",
-      progression: 10,
-      lessons: [
-        { id: 1, title: "HTML Basics", status: "completed" },
-        { id: 2, title: "CSS Fundamentals", status: "in_progress" },
-        { id: 3, title: "JavaScript Intro", status: "locked" },
-        { id: 4, title: "DOM Manipulation", status: "locked" },
-        { id: 5, title: "React Basics", status: "locked" },
-        { id: 6, title: "State Management", status: "locked" },
-        { id: 7, title: "API Integration", status: "locked" },
-        { id: 8, title: "Deployment", status: "locked" },
-      ]
-    },
-    {
-      name: "Quality Assurance",
-      progression: 5,
-      lessons: [
-        { id: 1, title: "Testing Fundamentals", status: "completed" },
-        { id: 2, title: "Unit Testing", status: "in_progress" },
-        { id: 3, title: "Integration Testing", status: "locked" },
-        { id: 4, title: "E2E Testing", status: "locked" },
-        { id: 5, title: "Test Automation", status: "locked" },
-      ]
-    },
-    {
-      name: "Mobile Development",
-      progression: 0,
-      lessons: [
-        { id: 1, title: "Mobile Basics", status: "locked" },
-        { id: 2, title: "React Native", status: "locked" },
-        { id: 3, title: "Native APIs", status: "locked" },
-        { id: 4, title: "App Publishing", status: "locked" },
-      ]
+  // Fetch roadmap data
+  const {
+    data: roadmapData,
+    isLoading: loadingRoadmap,
+    isError: roadmapError,
+    refetch: refetchRoadmaps, // <<< Add refetch function for roadmaps
+  } = useQuery(fetchRoadmap(id)); // Assuming fetchRoadmap returns query options like { queryKey: ["roadmaps", id], queryFn: ... }
+
+  // <<< Add logging here
+  console.log("Dashboard: Fetched roadmapData:", roadmapData);
+
+  const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
+
+  // <<< Add logging here
+  console.log("Dashboard: Selected currentRoadmap:", currentRoadmap);
+  console.log("Dashboard: Progression value:", currentRoadmap?.progress);
+
+  const roadmapId = currentRoadmap?.roadmap_id;
+
+  // Fetch lesson data
+  const {
+    data: lessonData,
+    isLoading: loadingLessons,
+    refetch: refetchLessons,
+  } = useQuery({
+    queryKey: ["lessons", roadmapId], // Add roadmapId to the queryKey to automatically refetch when it changes
+    queryFn: () => fetchLesson(roadmapId),
+    enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
+  });
+
+  // Refetch lessons when roadmapIndex changes
+  useEffect(() => {
+    if (roadmapId) {
+      refetchLessons();
     }
-  ];
+  }, [roadmapId, refetchLessons]);
 
-  const currentCourse = courses[currentCourseIndex];
+  // Refetch data when returning from a lesson/assessment or when roadmapId changes
+  useEffect(() => {
+    // Only proceed if we have a valid roadmapId and userId (id)
+    if (roadmapId && id) {
+      const doRefetch = async () => {
+        console.log(
+          "Dashboard: Forcing refetch of data for roadmap:",
+          roadmapId,
+          "and user:",
+          id
+        );
+        // Invalidate queries first to mark them as stale
+        await queryClient.invalidateQueries({
+          queryKey: ["lessons", roadmapId],
+        });
+        await queryClient.invalidateQueries({ queryKey: ["roadmaps", id] });
+
+        // Explicitly refetch both after invalidation to ensure fresh data is loaded
+        await refetchLessons();
+        await refetchRoadmaps(); // <<< Explicitly refetch roadmaps
+        console.log("Dashboard: Refetch complete.");
+      };
+
+      // Check for timestamp parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("t")) {
+        console.log(
+          "Dashboard: Returned from lesson/assessment with timestamp:",
+          urlParams.get("t")
+        );
+        doRefetch();
+      } else {
+        // Refetch lessons if only roadmapId changes (no timestamp)
+        refetchLessons();
+      }
+    }
+    // Ensure all dependencies are included
+  }, [roadmapId, id, queryClient, refetchLessons, refetchRoadmaps]); // <<< Added refetchRoadmaps and id
+
+  if (loadingRoadmap || loadingLessons) return <Loading />;
 
   // Handle course navigation
   const handleCourseChange = (direction) => {
-    if (direction === 'next') {
-      setCurrentCourseIndex(prev => (prev + 1) % courses.length);
-    } else if (direction === 'prev') {
-      setCurrentCourseIndex(prev => (prev - 1 + courses.length) % courses.length);
+    if (direction === "next" && roadmapData) {
+      setRoadmapIndex((prev) => (prev + 1) % roadmapData.length);
+    } else if (direction === "prev" && roadmapData) {
+      setRoadmapIndex(
+        (prev) => (prev - 1 + roadmapData.length) % roadmapData.length
+      );
     }
   };
 
   // Handle course selection from dropdown
   const handleCourseSelect = (index) => {
-    setCurrentCourseIndex(index);
+    setRoadmapIndex(index);
     setIsLeftDropdownOpen(false);
   };
 
-  return (
-    <div className="relative w-full min-h-screen">
-      <Background />
-      <MainNav />
-      {/* Stats and Action Icons */}
-      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
-        <StatsDisplay/>
-        <ActionIcons/>
-      </div>
+  const condition = roadmapError || !roadmapData || roadmapData.length === 0;
 
+  if (getLoading) {
+    return <Loading generate_lesson={true} />;
+  }
+
+  return (
+    <div className="relative w-full min-h-screen select-none overflow-hidden">
       {/* Sidebar */}
-      <Sidebar 
-        isExpanded={isSidebarExpanded} 
-        onToggle={handleSidebarToggle} 
+      <Sidebar
+        isExpanded={isSidebarExpanded}
+        onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
+        isLessonOpen={isLessonOpen}
+        isLessonData={lessonData}
+        // Add this prop
       />
 
       {/* Main Content Area - Three Column Layout */}
-      <div className="flex w-full pt-20">
-        {/* Left Section - Course Header (when sidebar is collapsed) */}
-        <div className={`transition-all duration-300 ${isSidebarExpanded ? 'w-0 overflow-hidden' : 'w-[25%] px-4'}`}>
+      <div className="flex w-full pt-20 h-auto min-h-[calc(100vh-80px)]">
+        <div
+          className={`transition-all duration-300 ${
+            isSidebarExpanded ? "w-0 " : "w-[25%] px-0"
+          } sticky top-20`}
+        >
           {!isSidebarExpanded && (
-            <div className="pl-[80px] p-4">
-              <div className="relative inline-block">
-                <div className="relative inline-block">
-                  {/* White background container - appears on dropdown open */}
-                  {isLeftDropdownOpen && (
-                    <>
-                      {/* Header background */}
-                      <div className="absolute inset-0 -m-4 pb-2 bg-white border-2 border-black rounded-t-lg shadow-md border-b-0" />
-                      {/* Dropdown container */}
-                      <div className="absolute left-0 top-full -m-4 bg-white border-2 border-black border-t-2 rounded-b-lg shadow-md w-full mt-1 z-30">
-                        {courses.map((course, index) => (
-                          <div
-                            key={course.name}
-                            className="p-3 hover:bg-[#CBB09B] rounded cursor-pointer text-black text-xl"
-                            onClick={() => handleCourseSelect(index)}
-                          >
-                            {course.name}
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                  
+            <div className="ml-[calc(3vw+12px)] w-[calc(20%+5vw)] top-30 p-3 fixed">
+              <div className="relative inline-block w-full">
+                <div className="relative inline-block w-full">
                   {/* Header content with inline horizontal line */}
-                  <div className="flex flex-col">
-                    <div 
-                      onClick={() => setIsLeftDropdownOpen(!isLeftDropdownOpen)}
-                      className="relative inline-flex items-center gap-3 cursor-pointer group p-0"
-                    >
-                      <h2 className="text-2xl font-bold text-black">{currentCourse.name}</h2>
-                      {isLeftDropdownOpen ? (
-                        <ChevronDown className="w-8 h-8 text-black group-hover:text-gray-600" />
-                      ) : (
-                        <ChevronRight className="w-8 h-8 text-black group-hover:text-gray-600" />
-                      )}
-                    </div>
-                    
-                    {/* Horizontal Line - limited width to match content */}
-                    <div className="h-[3px] bg-black mt-3 w-auto" style={{ width: 'fit-content', minWidth: '250px' }} />
+                  <div className="flex flex-col w-full">
+                    {condition ? (
+                      <div className="relative inline-flex items-center gap-3 p-0">
+                        <h2 className="text-3xl font-bold text-red-500">
+                          Failed to load roadmap
+                        </h2>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() =>
+                          setIsLeftDropdownOpen(!isLeftDropdownOpen)
+                        }
+                        className="relative inline-flex items-start gap-3 cursor-pointer group p-0 w-full"
+                        id="headerContainer"
+                      >
+                        <h2
+                          className="text-[calc(1.5rem+0.5vw)] font-bold text-black dark:text-primary text-balance pr-10"
+                          style={{ width: "calc(100% - 0rem)" }}
+                        >
+                          {currentRoadmap?.roadmap_name || "Select a roadmap"}
+                        </h2>
+                        <ChevronRight
+                          className="w-8 h-8 text-black dark:text-primary group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 mt-1 absolute right-0"
+                          style={{
+                            transform: isLeftDropdownOpen
+                              ? "rotate(90deg)"
+                              : "rotate(0deg)",
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Horizontal Line */}
+                    <div className="h-[3px] bg-black dark:bg-primary mt-3 w-full" />
                   </div>
                 </div>
               </div>
-              
+
               {/* Progression Text */}
-              <p className="text-black font-medium mt-4 text-md">
-                Current Progression: {currentCourse.progression}%
-              </p>
+              {condition ? (
+                <p className="text-red-500 font-medium mt-4 text-[calc(1rem+0.2vw)]">
+                  Unable to load progression data
+                </p>
+              ) : (
+                <p
+                  className={`font-medium mt-4 text-[calc(1rem+0.2vw)] ${
+                    isSidebarExpanded
+                      ? "text-black dark:text-primary"
+                      : "text-black dark:text-primary"
+                  }`}
+                >
+                  Current Progression: {currentRoadmap?.progress || 0}%
+                </p>
+              )}
+
+              {/* Dropdown menu */}
+              {isLeftDropdownOpen && !condition && (
+                <div className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30 w-full">
+                  {roadmapData.map((roadmap, index) => (
+                    <div
+                      key={roadmap.roadmap_id}
+                      className="p-3 hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight rounded cursor-pointer text-black dark:text-primary text-[calc(0.875rem+0.1vw)] truncate"
+                      onClick={() => handleCourseSelect(index)}
+                      title={roadmap.roadmap_name}
+                    >
+                      {roadmap.roadmap_name}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
-
         {/* Middle Section - Roadmap Content */}
-        <div className={`transition-all duration-300 ${isSidebarExpanded ? 'ml-[20%] w-[55%]' : 'w-[50%]'}`}>
-          {isSidebarExpanded && (
-            <RoadmapHeader 
-              currentCourse={currentCourse.name}
-              progression={currentCourse.progression}
-              courseOptions={courses.map(course => course.name)}
-              className="mb-6"
-              isSidebarExpanded={isSidebarExpanded}
-            />
+        <div
+          className={`transition-all duration-300 relative flex flex-col ${
+            isSidebarExpanded ? "ml-[20%] w-[55%]" : "w-[50%]"
+          }`}
+        >
+          {condition ? (
+            <div className="flex flex-col items-center justify-center h-full p-8">
+              <h2 className="text-2xl font-bold text-red-500 mb-4">
+                Failed to load roadmap
+              </h2>
+              <p className="text-gray-700">
+                Please try again later or contact support if the problem
+                persists.
+              </p>
+            </div>
+          ) : (
+            <>
+              {isSidebarExpanded && currentRoadmap && (
+                <div
+                  className="z-10 pb-0 mx-auto relative"
+                  style={{ isolation: "isolate" }}
+                >
+                  <RoadmapHeader
+                    currentCourse={currentRoadmap.roadmap_name}
+                    progression={currentRoadmap.progress}
+                    roadmapId={currentRoadmap.roadmap_id}
+                    courseOptions={roadmapData.map(
+                      (roadmap) => roadmap.roadmap_name
+                    )}
+                    className="mb-6"
+                    isSidebarExpanded={isSidebarExpanded}
+                    onCourseSelect={handleCourseSelect}
+                  />
+                </div>
+              )}
+              <div>
+                {currentRoadmap && lessonData && (
+                  <RoadmapContent
+                    lessons={lessonData}
+                    currentCourse={currentRoadmap.roadmap_name}
+                    onCourseChange={handleCourseChange}
+                    isSidebarExpanded={isSidebarExpanded}
+                    setIsSidebarExpanded={setIsSidebarExpanded} // Add this line
+                    isLoading={getLoading}
+                    setLoading={setLoading}
+                    setOpenLesson={setIsLessonOpen} // Pass the setter to RoadmapContent
+                    isOpenLesson={isLessonOpen} // Also pass the state
+                  />
+                )}
+              </div>
+            </>
           )}
-          <RoadmapContent 
-            lessons={currentCourse.lessons} 
-            currentCourse={currentCourse.name}
-            onCourseChange={handleCourseChange}
-            isSidebarExpanded={isSidebarExpanded}
-          />
         </div>
-
-        {/* Right Section - Panels */}
-        <div className="w-[25%] p-4 space-y-4 pr-8">
-          <StreakPanel />
-          <QuestPanel />
+        {/* Right Section - Combined Panel */}
+        <div className="p-4 fixed mt-20 right-7 z-10">
+          {/* Replace separate panels with the combined panel */}
+          <CombinedPanel userId={id} />
         </div>
       </div>
     </div>

@@ -73,30 +73,9 @@ export const useAssessmentStore = create(
           [question]: answer
         }
       })),
-      setPreviousExperience: (exp) => {
-        console.log('Setting previous experience in Zustand:', exp);
-        set({
-          previousExperience: {
-            label: exp.label,
-            answer: exp.answer
-          }}
-        );
-        // Log to confirm it was set
-        const newState = get().previousExperience;
-        console.log('Previous experience after setting:', newState);
-      },
-      setCareerTransition: (transition) => {
-        console.log('Setting career transition in Zustand:', transition);
-        set({
-          previousExperience: {
-            label: transition.label,
-            answer: transition.answer
-          }}
-        );
-        // Log to confirm it was set
-        const newState = get().careerTransition;
-        console.log('Career transition after setting:', newState);
-      },
+      transition: (data) => set({ data }),
+      setPreviousExperience: (data) => set({ previousExperience: data }),
+      setCareerTransition: (data) => set({ careerTransition: data }),
       setDailyGoal: (goal) => set({ dailyGoal: goal }),
       setTechnicalInterest: (interest) => set({ technicalInterest: interest }),
       setTechnicalAnswers: (answers) => set({ technicalAnswers: answers }),

@@ -1,135 +1,119 @@
 // THIS PAGE IS FOR ROUTING AND NAVIGATION PURPOSES
-
 import { ThemeProvider } from "./config/theme-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useState } from "react";
-import { useAuth } from "./config/authContext";
+import { useAuth } from "./config/AuthContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NavigationProvider } from "./context/navigationContext";
+import "react-image-crop/dist/ReactCrop.css";
 
 /*------------------------------------------
 WEB PAGES 
 - Check the `Routes` folder for more pages 
 ------------------------------------------*/
 
-import Landing from "./routes/landing";
+import Landing from "./routes/Landing";
+import MainLayout from "./components/layout/main-layout";
+import LessonLayout from "./components/layout/lesson-layout";
 // AUTHENTICATION
-import LoginPage from "./routes/auth/login";
-import RegisterPage from "./routes/auth/register";
+import LoginPage from "./routes/auth/LoginPage";
+import RegisterPage from "./routes/auth/RegisterPage";
 import ConfirmAccount from "./routes/auth/confirm-account";
 // INTRO ASSESSMENT
-import IntroShowcase from "./routes/showcase";
-import CombinedAssessment from "./routes/user-assessment/combined-assessment";
-import DailyGoal from "./routes/user-assessment/daily-goal";
-import EntryQuestions from "./routes/user-assessment/professional-types/entryQuestions";
-import MidQuestions from "./routes/user-assessment/professional-types/midQuestions";
-import SeniorQuestions from "./routes/user-assessment/professional-types/seniorQuestions";
-import HSQuestions from "./routes/user-assessment/student-types/hsQuestions";
-import CollegeQuestions from "./routes/user-assessment/student-types/collegeQuestions";
-import GradQuestions from "./routes/user-assessment/student-types/gradQuestions";
-import TechInterest from "./routes/user-assessment/techInterest";
-import Complete from "./routes/user-assessment/complete";
-import Goals from "./routes/user-assessment/goals";
-import Proficiency from "./routes/user-assessment/proficiency";
-import Questions from "./routes/user-assessment/questions";
-import Results from "./routes/user-assessment/results";
+import NameCustomization from "@/components/onboarding/NameCustomization";
+import Showcase from "./routes/Showcase";
+import UserAssessment from "./routes/UserAssessment";
+// REDIRECTS
+import ProcessDashboard from "./routes/redirects/ProcessDashboard";
+import RedirectDashboard from "./routes/redirects/RedirectDashboard";
+import RedirectProfile from "./routes/redirects/RedirectProfile";
+import RedirectShop from "./routes/redirects/RedirectShop";
+import RedirectJobOpportunities from "./routes/redirects/RedirectJobOpportunities";
 // GENERAL PAGES
-import Dashboard from "./routes/dashboard";
-import Profile from "./routes/profile";
-import Shop from "./routes/shop";
-import Lesson from "./routes/lesson";
-import LessonAssessment from "./routes/lesson-assessment/lesson-assessment";
-import JobOpportunities from "./routes/job-opportunities";
-import NotFound from "./routes/NotFound";   
-// TESTING PAGE
-import Ayon from "./Ayon-TestPage";
-import Emman from "./Emman-TestPage";
-// This is not a page @Jun, but a component
-import CourseSelect from "./components/features/course-select";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Dashboard from "./routes/Dashboard";
+import Profile from "./routes/Profile";
+import Lesson from "./routes/Lesson";
+import LessonAssessment from "./routes/LessonAssessment";
+import JobOpportunities from "./routes/JobOpportunities";
+import NotFound from "./routes/NotFound";
+import ElementShop from "./routes/ElementShop";
 
 function App() {
   const queryClient = new QueryClient();
-  const { session } = useAuth(); 
-  const [ isAssessed, setAssessed ] = useState(false);
-  const [ isUserLoggedin, setUserLoggedin ] = useState(true);
+  const { session } = useAuth();
 
   return (
     <>  
       <ThemeProvider defaultTheme="Light" storageKey="vite-ui-theme">
-        <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            {/* GENERAL ROUTES */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/ayon-testing" element={<Ayon />} />
-            <Route path="/emman-testing" element={<Emman />} />
-            <Route path="*" element={<NotFound />} />
-            
+        <NavigationProvider>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <Routes>
+                {/* GENERAL ROUTES */}
+                <Route path="/" element={<Landing />} />
+                <Route path="*" element={<NotFound />} />
 
-            {!session ? (
-              // IF USER IS NOT LOGGED-IN       
-              <>
-                <Route path="/auth/login" element={<LoginPage />} />
-                <Route path="/auth/register" element={<RegisterPage />} />
-                <Route
-                  path="/auth/confirm-account"
-                  element={<ConfirmAccount />}
-                />
-              </>
-            ) : !isAssessed ? (
-              // IF USER IS LOGGED-IN, AND NOT ASSESSED
-              <>
-                <Route path="/start/showcase" element={<IntroShowcase />} />
-                <Route path="/assessment" element={<CombinedAssessment />} />
-                <Route path="/assessment/daily-goal" element={<DailyGoal />} />
-                <Route path="/assessment/hsQuestions" element={<HSQuestions />} />
-                <Route path="/assessment/collegeQuestions" element={<CollegeQuestions />} />
-                <Route path="/assessment/gradQuestions" element={<GradQuestions />} />
-                <Route path="/assessment/entryQuestions" element={<EntryQuestions />} />
-                <Route path="/assessment/midQuestions" element={<MidQuestions />} />
-                <Route path="/assessment/seniorQuestions" element={<SeniorQuestions />} />
-                <Route path="/assessment/techInterest" element={<TechInterest />} />
-                <Route path="/assessment/programmingquestions" element={<TechInterest />} />
-                <Route path="/assessment/networkingquestions" element={<TechInterest />} />
-                <Route path="/assessment/webdevelopmentquestions" element={<TechInterest />} />
-                <Route path="/assessment/gamedevelopmentquestions" element={<TechInterest />} />
-                <Route path="/assessment/aimachinelearningquestions" element={<TechInterest />} />
-                <Route path="/assessment/datasciencequestions" element={<TechInterest />} />
-                <Route path="/assessment/cybersecurityquestions" element={<TechInterest />} />
-                <Route path="/assessment/roboticsquestions" element={<TechInterest />} />
-                <Route path="/assessment/humancomputerinteractionquestions" element={<TechInterest />} />
-                <Route path="/assessment/otherinterests" element={<TechInterest />} />
-                <Route path="/assessment/complete" element={<Complete />} />
-                <Route path="/assessment/goals" element={<Goals />} />
-                <Route
-                  path="/assessment/proficiency"
-                  element={<Proficiency />}
-                />
-                <Route path="/assessment/questions" element={<Questions />} />
-                <Route path="/assessment/results" element={<Results />} />
-                
-                <Route path="/select" element={<CourseSelect />} />
-              </>
-            ) : (
-              // IF USER IS LOGGED-IN AND ASSESSED
-              <>
-                {/* To access dynamic routes like /:id/profile, you can access the page by going to /1/profile  or /2/dashboard or /3/shop. */}
-                <Route path="/dashboard/:id" element={<Dashboard />} />
-                <Route path="/profile/:id" element={<Profile />} />
-                <Route path="/shop/:id" element={<Shop />} />
-                <Route
-                  path="/job-opportunities/:id"
-                  element={<JobOpportunities />}
-                />
-                <Route path="/:id/lesson/:id" element={<Lesson />} />
-                <Route
-                  path="/:id/lesson/assessment/:id"
-                  element={<LessonAssessment />}
-                />
-              </>
-            )}
-          </Routes>
-        </BrowserRouter>
-        </QueryClientProvider>
+
+                {!session ? (
+                  // IF USER IS NOT LOGGED-IN
+                  <>
+                    <Route path="/auth/login" element={<LoginPage />} />
+                    <Route path="/auth/register" element={<RegisterPage />} />
+                    <Route
+                      path="/auth/confirm-account"
+                      element={<ConfirmAccount />}
+                    />
+                  </>
+                ) : 
+                  // IF USER IS LOGGED-IN, AND NOT ASSESSED
+                  <>
+                    <Route path="/start/showcase" element={<Showcase />} />
+                    <Route path="/start/name" element={<NameCustomization />} />
+                    <Route
+                      path="/start/assessment/*"
+                      element={<UserAssessment />}
+                    />
+                    <Route
+                      path="/dashboard/p"
+                      element={<ProcessDashboard />}
+                    />
+                    <Route
+                      path="/dashboard"
+                      element={<RedirectDashboard />}
+                    />
+                    <Route path="/profile" element={<RedirectProfile />} />
+                    <Route path="/shop" element={<RedirectShop />} />
+                    <Route
+                      path="/job-opportunities"
+                      element={<RedirectJobOpportunities />}
+                    />
+                    <Route element={<MainLayout />}>
+                      <Route
+                        path="/dashboard/:id"
+                        element={<Dashboard />}
+                      />
+                      <Route path="/profile/:id" element={<Profile />} />
+                      <Route path="/shop/:id" element={<ElementShop />} />
+                      <Route
+                        path="/job-opportunities/:id"
+                        element={<JobOpportunities />}
+                      />
+                    </Route>
+
+                    <Route element={<LessonLayout />}>
+                      <Route path="/lesson/:id" element={<Lesson />} />
+                      <Route
+                        path="/l/:id/assessment"
+                        element={<LessonAssessment />}
+                      />
+                      {/* Use the same ElementShop component for lesson shop route */}
+                      <Route path="/l/shop/:id" element={<ElementShop />} />
+                    </Route>
+                  </>
+                }
+              </Routes>
+            </BrowserRouter>
+          </QueryClientProvider>
+        </NavigationProvider>
       </ThemeProvider>
     </>
   );
