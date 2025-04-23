@@ -346,6 +346,39 @@ export default function UserAssessment() {
       localStorage.setItem("assessmentFeedback", feedback);
     }
 
+    // Make sure all assessment data is collected before generating roadmap
+    const assessmentData = {
+      userType: selectedType,
+      educationLevel: selectedLevel,
+      dailyGoal: dailyGoal,
+      technicalInterest: technicalInterest,
+      technicalAnswers: technicalAnswers,
+      previousExperience: previousExperience,
+      careerTransition: transition,
+      feedback: feedback,
+      // Add relevant form data based on user type
+      formData:
+        selectedType?.id === "student"
+          ? selectedLevel?.id === "highSchool"
+            ? hsFormData
+            : selectedLevel?.id === "college"
+            ? collegeFormData
+            : gradFormData
+          : selectedType?.id === "professional"
+          ? selectedLevel?.id === "entryLevel"
+            ? entryFormData
+            : selectedLevel?.id === "midLevel"
+            ? midFormData
+            : seniorFormData
+          : {},
+    };
+
+    // Store complete assessment data for potential recovery/debugging
+    localStorage.setItem(
+      "completeAssessmentData",
+      JSON.stringify(assessmentData)
+    );
+
     // Generate roadmap based on all assessment data
     createRoadmap();
 

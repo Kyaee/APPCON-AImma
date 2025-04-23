@@ -1,8 +1,5 @@
 import React, { useCallback } from "react";
 import { assessmentFlow } from "@/lib/assessment-flow";
-import ProgrammingQuestionsStep from "./ProgrammingQuestionsStep";
-import NetworkingQuestionsStep from "./NetworkingQuestionsStep";
-import WebDevelopmentQuestionsStep from "./WebDevelopmentQuestionsStep";
 
 // Generic component that can render any question set
 const GenericQuestionSet = React.memo(
@@ -56,11 +53,12 @@ const GenericQuestionSet = React.memo(
                             currentAnswers
                           )
                         }
-                        className={`p-3 rounded-lg border-3 ${
-                          isSelected
-                            ? "border-[#3F6CFF] bg-white"
-                            : "border-black bg-white hover:text-blue-600"
-                        }`}
+                        className={`p-3 rounded-lg transition-all duration-200
+                          ${
+                            isSelected
+                              ? "border-[#3F6CFF] border-3 custom-shadow-75 bg-white"
+                              : "border-black border-2 hover:border-black hover:border-3 bg-white"
+                          }`}
                       >
                         <span className="text-black">{option}</span>
                       </button>
@@ -88,44 +86,36 @@ const GenericQuestionSet = React.memo(
 const TechQuestionFactory = ({ interestType, answers, onAnswerChange }) => {
   if (!interestType) return null;
 
-  // Use specialized components for common interests
-  switch (interestType.id) {
-    case "programming":
-      return (
-        <ProgrammingQuestionsStep
-          answers={answers}
-          onAnswerChange={onAnswerChange}
-        />
-      );
-    case "networking":
-      return (
-        <NetworkingQuestionsStep
-          answers={answers}
-          onAnswerChange={onAnswerChange}
-        />
-      );
-    case "webDevelopment":
-      return (
-        <WebDevelopmentQuestionsStep
-          answers={answers}
-          onAnswerChange={onAnswerChange}
-        />
-      );
-    default:
-      // For all other interest types, use the generic component with the appropriate question set
-      const questionSet =
-        interestType.id === "other"
-          ? assessmentFlow.otherInterests
-          : assessmentFlow[interestType.id + "Questions"];
+  // Get the appropriate question set based on the interest type
+  const questionSet =
+    interestType.id === "other"
+      ? assessmentFlow.otherInterests
+      : assessmentFlow[interestType.id + "Questions"];
 
-      return (
-        <GenericQuestionSet
-          questionSet={questionSet}
-          answers={answers}
-          onAnswerChange={onAnswerChange}
-        />
-      );
+  // Handle programming, networking, and web development specially to ensure consistent textarea behavior
+  if (
+    interestType.id === "programming" ||
+    interestType.id === "networking" ||
+    interestType.id === "webDevelopment"
+  ) {
+    // Return generic question set with forced defaultValue + onBlur pattern
+    return (
+      <GenericQuestionSet
+        questionSet={questionSet}
+        answers={answers}
+        onAnswerChange={onAnswerChange}
+      />
+    );
   }
+
+  // For all other question types, use the same pattern
+  return (
+    <GenericQuestionSet
+      questionSet={questionSet}
+      answers={answers}
+      onAnswerChange={onAnswerChange}
+    />
+  );
 };
 
 export default React.memo(TechQuestionFactory);

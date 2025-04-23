@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback, memo, useMemo } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 import { assessmentFlow } from "@/lib/assessment-flow";
-import ProgrammingQuestionsStep from "./tech/ProgrammingQuestionsStep";
-import NetworkingQuestionsStep from "./tech/NetworkingQuestionsStep";
-import WebDevelopmentQuestionsStep from "./tech/WebDevelopmentQuestionsStep";
 import TechQuestionFactory from "./tech/TechQuestionFactory";
 import { useAssessmentStore } from "@/store/useAssessmentStore";
 
-// Create stable memoized components
-const MemoizedProgrammingQuestions = memo(ProgrammingQuestionsStep);
-const MemoizedNetworkingQuestions = memo(NetworkingQuestionsStep);
-const MemoizedWebDevelopmentQuestions = memo(WebDevelopmentQuestionsStep);
-const MemoizedTechQuestionFactory = memo(TechQuestionFactory);
+// Memoized TechQuestionFactory with specific props comparison
+const MemoizedTechQuestionFactory = memo(
+  TechQuestionFactory,
+  (prevProps, nextProps) => {
+    return (
+      prevProps.interestType?.id === nextProps.interestType?.id &&
+      JSON.stringify(prevProps.answers) === JSON.stringify(nextProps.answers)
+    );
+  }
+);
 
 // Memoized scrollable container to prevent re-render
 const QuestionsContainer = memo(({ children }) => (
@@ -42,6 +44,7 @@ const QuestionsContainer = memo(({ children }) => (
   </div>
 ));
 
+// Main component - stabilize it with memo
 const TechInterestStep = ({
   technicalInterest,
   technicalAnswers,
@@ -49,10 +52,10 @@ const TechInterestStep = ({
   onAnswerChange,
   showQuestions = false,
 }) => {
-  // Change to track only a single selected interest instead of an array
+  // Track selected interest with useRef to maintain stability
   const [selectedInterest, setSelectedInterest] = useState(null);
 
-  // Connect to assessment store for global state access
+  // Store connection - access only once to prevent re-renders
   const storeTechnicalInterest = useAssessmentStore(
     (state) => state.technicalInterest
   );
@@ -60,18 +63,17 @@ const TechInterestStep = ({
     (state) => state.technicalAnswers
   );
 
-  // Set initial selected interest from props or store
+  // Set initial selected interest from props or store - WITH STABILITY
   useEffect(() => {
-    const interestToUse = technicalInterest || storeTechnicalInterest;
-    if (
-      interestToUse &&
-      (!selectedInterest || selectedInterest.id !== interestToUse.id)
-    ) {
-      setSelectedInterest(interestToUse);
+    if (!selectedInterest) {
+      const interestToUse = technicalInterest || storeTechnicalInterest;
+      if (interestToUse) {
+        setSelectedInterest(interestToUse);
+      }
     }
-  }, [technicalInterest, storeTechnicalInterest]);
+  }, []);
 
-  // Stable handler for interest selection
+  // STABLE handler for interest selection
   const handleInterestSelect = useCallback(
     (option) => {
       setSelectedInterest(option);
@@ -80,62 +82,23 @@ const TechInterestStep = ({
     [onInterestSelect]
   );
 
-  // Stable handler for answer changes
-  const memoizedAnswerChange = useCallback(
+  // Create a STABLE version of the current answers
+  const currentAnswers = useMemo(() => {
+    return technicalAnswers || storeTechnicalAnswers || {};
+  }, [technicalAnswers, storeTechnicalAnswers]);
+
+  // Use a stable debounced answer handler to avoid repeated renders
+  const handleAnswerChange = useCallback(
     (questionId, value) => {
-      onAnswerChange(questionId, value);
+      requestAnimationFrame(() => {
+        onAnswerChange(questionId, value);
+      });
     },
     [onAnswerChange]
   );
 
-  // Get the proper component based on interest type
-  const getQuestionComponent = useCallback(() => {
-    if (!selectedInterest) return null;
-
-    // Use the actual answers (from props or store)
-    const actualAnswers = technicalAnswers || storeTechnicalAnswers || {};
-
-    switch (selectedInterest.id) {
-      case "programming":
-        return (
-          <MemoizedProgrammingQuestions
-            answers={actualAnswers}
-            onAnswerChange={memoizedAnswerChange}
-          />
-        );
-      case "networking":
-        return (
-          <MemoizedNetworkingQuestions
-            answers={actualAnswers}
-            onAnswerChange={memoizedAnswerChange}
-          />
-        );
-      case "webDevelopment":
-        return (
-          <MemoizedWebDevelopmentQuestions
-            answers={actualAnswers}
-            onAnswerChange={memoizedAnswerChange}
-          />
-        );
-      default:
-        // For other interest types, use the generic approach
-        return (
-          <MemoizedTechQuestionFactory
-            interestType={selectedInterest}
-            answers={actualAnswers}
-            onAnswerChange={memoizedAnswerChange}
-          />
-        );
-    }
-  }, [
-    selectedInterest,
-    technicalAnswers,
-    storeTechnicalAnswers,
-    memoizedAnswerChange,
-  ]);
-
-  // Interest selection view
-  const renderInterestSelection = useCallback(
+  // STABLE interest selection view with box-sizing: border-box for consistent sizing
+  const renderInterestSelection = useMemo(
     () => (
       <div>
         <p className="text-white text-center mb-4">
@@ -148,11 +111,18 @@ const TechInterestStep = ({
               <button
                 key={option.id}
                 onClick={() => handleInterestSelect(option)}
-                className={`flex flex-col items-center p-8 sm:p-9 rounded-xl border-3 ${
+                className={`flex flex-col items-center p-8 sm:p-9 rounded-xl box-border transition-colors
+                ${
                   isSelected
-                    ? "border-light-brown custom-shadow-75 bg-white card-bg-opacity"
-                    : "border-white/30 hover:border-white/60"
+                    ? "border-light-brown border-3 custom-shadow-75 bg-white card-bg-opacity"
+                    : "border-white/30 border-2 hover:border-white/60 hover:border-3"
                 }`}
+                style={{
+                  // This is critical - maintains stable dimensions regardless of border size
+                  boxSizing: "border-box",
+                  // Add margin calculations to compensate for border differences
+                  margin: isSelected ? "0px" : "0.5px",
+                }}
                 type="button"
               >
                 <div className="flex justify-center">
@@ -169,34 +139,51 @@ const TechInterestStep = ({
         </div>
       </div>
     ),
-    [selectedInterest, handleInterestSelect]
+    [selectedInterest?.id, handleInterestSelect]
   );
 
-  // Questions view
-  const renderQuestionsView = useCallback(() => {
-    const questionComponent = getQuestionComponent();
+  // Create STABLE question component using factory for all interest types
+  const questionComponent = useMemo(() => {
+    if (!selectedInterest) return null;
+
+    // Use factory for all interest types
+    return (
+      <MemoizedTechQuestionFactory
+        interestType={selectedInterest}
+        answers={currentAnswers}
+        onAnswerChange={handleAnswerChange}
+      />
+    );
+  }, [selectedInterest, currentAnswers, handleAnswerChange]);
+
+  // Make the actual questions view stable with useMemo
+  const questionsView = useMemo(() => {
+    if (!selectedInterest) return null;
     return (
       <div>
         <div className="bg-white/10 p-4 rounded-lg mb-6">
           <p className="text-white text-center">
             You selected:{" "}
-            <span className="font-bold">{selectedInterest?.label}</span>
+            <span className="font-bold">{selectedInterest.label}</span>
           </p>
         </div>
         <QuestionsContainer>{questionComponent}</QuestionsContainer>
       </div>
     );
-  }, [selectedInterest, getQuestionComponent]);
+  }, [selectedInterest, questionComponent]);
 
+  // Title derived from selected interest - made stable
+  const title = useMemo(() => {
+    if (showQuestions && selectedInterest) {
+      return `${selectedInterest.label || "Technical"} Questions`;
+    }
+    return "Technical Interests";
+  }, [showQuestions, selectedInterest?.label]);
+
+  // Return the overall component with less dependencies
   return (
-    <AssessmentStep
-      title={
-        showQuestions && selectedInterest
-          ? `${selectedInterest.label || "Technical"} Questions`
-          : "Technical Interests"
-      }
-    >
-      {!showQuestions ? renderInterestSelection() : renderQuestionsView()}
+    <AssessmentStep title={title}>
+      {!showQuestions ? renderInterestSelection : questionsView}
     </AssessmentStep>
   );
 };
