@@ -337,7 +337,7 @@ export default function UserAssessment() {
     navigateToNextStep("complete");
   };
 
-  const handleSubmitCompletion = () => {
+  const handleSubmitCompletion = async () => {
     // Store assessment completion status
     localStorage.setItem("assessmentCompleted", "true");
 
@@ -379,11 +379,36 @@ export default function UserAssessment() {
       JSON.stringify(assessmentData)
     );
 
-    // Generate roadmap based on all assessment data
-    createRoadmap();
+    // Define user data for roadmap generation with explicit values
+    const userData = {
+      user_id: session?.user?.id,
+      roadmap_name: `${selectedType?.label || "Custom"} Learning Path`,
+      description: `Personalized learning path based on ${
+        selectedType?.label || "user"
+      } assessment.`,
+      daily_goal:
+        typeof dailyGoal === "number"
+          ? dailyGoal.toString()
+          : dailyGoal || "30min",
+      technicalInterest: technicalInterest?.label || null,
+      technicalAnswers:
+        Object.keys(technicalAnswers).length > 0 ? technicalAnswers : null,
+    };
 
-    // Navigate to the process dashboard
-    navigate(`/dashboard/p?user=${session?.user?.id}`);
+    try {
+      console.log("Generating roadmap with user data:", userData);
+
+      // Wait for roadmap generation to complete before navigating
+      const result = await createRoadmap(userData);
+
+      console.log("Roadmap generation completed successfully", result);
+
+      // Navigate to dashboard/processing page after successful roadmap generation
+      navigate(`/dashboard/p?user=${session?.user?.id}`);
+    } catch (error) {
+      console.error("Error generating roadmap:", error);
+      alert("Failed to generate your roadmap. Please try again.");
+    }
   };
 
   const handleFormSubmission = () => {

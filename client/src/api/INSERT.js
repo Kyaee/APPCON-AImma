@@ -22,7 +22,7 @@ const technicalAnswers = useAssessmentStore.getState().technicalAnswers;
 export function useGenerateRoadmap() {
   const prompt_roadmap = {
   prompt_roadmap_generate: `
-    Generate a comprehensive, structured, and focused learning roadmap in ${JSON.stringify(language)} with approximately 20-30 lessons.
+    Generate a comprehensive, structured, and focused learning roadmap in ${JSON.stringify(language)} with around 25-50 lessons, possibly more (the more the better).
 
     Roadmap tailored for a "${userType?.label}" ${JSON.stringify(educationLevel?.label || previousExperience || careerTransition)} user, 
     with a daily goal of ${JSON.stringify(dailyGoal)} (if two digits its minutes, else hours) .
@@ -42,14 +42,20 @@ export function useGenerateRoadmap() {
     with assessment: (Easy: 50 exp, 25 gems) (Intermediate: 100 exp, 50 gems) (Hard: 200 exp, 100 gems)
   `}
 
-  const postPrompt1 = async () => {
+  const postPrompt1 = async (userData) => {
     try {
+      // Validate that we have a user ID
+      if (!userData || !userData.user_id) {
+        throw new Error("User ID is required");
+      }
+      
       console.log("Generating roadmap with user data:", { 
         language, 
         userType: userType?.label, 
         educationLevel: educationLevel?.label, 
         dailyGoal, 
-        technicalInterest: technicalInterest?.label 
+        technicalInterest: technicalInterest?.label,
+        userId: userData.user_id
       });
       
       const response = await axios.post(
@@ -63,14 +69,68 @@ export function useGenerateRoadmap() {
       }
       
       console.log("Roadmap API response received successfully");
-      return response.data;
+      
+      // Check if the API returned valid data
+      const roadmapData = response.data;
+      console.log("Raw roadmap data:", roadmapData);
+      
+      // If API didn't return proper data, create a default roadmap structure
+      if (!roadmapData) {
+        console.warn("API returned null/empty data, creating default roadmap structure");
+        
+        // Create a basic default roadmap structure
+        const defaultRoadmap = {
+          roadmap_name: userData.roadmap_name || `${userType?.label || "Custom"} Roadmap`,
+          description: userData.description || "Personalized learning path",
+          daily_goal: userData.daily_goal || dailyGoal || "30min",
+          lessons: [
+            {
+              lesson_name: "Introduction to Programming",
+              description: "Learn the fundamentals of programming concepts and logic.",
+              category: technicalInterest?.label || "Programming",
+              status: "in_progress",
+              difficulty: "Easy",
+              duration: "30 minutes",
+              assessment: true,
+              gems: 25,
+              exp: 50
+            },
+            {
+              lesson_name: "Getting Started with Development",
+              description: "Set up your development environment and write your first program.",
+              category: technicalInterest?.label || "Programming",
+              status: "",
+              difficulty: "Easy",
+              duration: "30 minutes",
+              assessment: true,
+              gems: 25,
+              exp: 50
+            }
+          ]
+        };
+        
+        // Save the default roadmap to database
+        await createNewRoadmap([defaultRoadmap], userData.user_id);
+        console.log("Default roadmap saved to database successfully");
+        
+        return { success: true, data: [defaultRoadmap] };
+      }
+      
+      // Format response for database - simple check if array or object
+      const roadmapsToInsert = Array.isArray(roadmapData) ? roadmapData : [roadmapData];
+      
+      // Create the roadmaps in database and await the result
+      await createNewRoadmap(roadmapsToInsert, userData.user_id);
+      console.log("Roadmap saved to database successfully");
+      
+      return { success: true, data: roadmapsToInsert };
     } catch (error) {
       console.error("Error generating roadmap:", error);
       throw error;
     }
   };
 
-  const { mutate: createRoadmap, isSuccess, isError, error, isPending } = useMutation({
+  const { mutateAsync: createRoadmap, isSuccess, isError, error, isPending } = useMutation({
     mutationFn: postPrompt1,
     onSuccess: (data) => {
       console.log("Roadmap generation successful:", data);
@@ -82,7 +142,6 @@ export function useGenerateRoadmap() {
 
   return { createRoadmap, isSuccess, isError, error, isPending };
 }
-
 
 /**************************************
  *        POST LESSON PROMPT
