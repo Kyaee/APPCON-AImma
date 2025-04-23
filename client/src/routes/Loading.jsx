@@ -5,22 +5,32 @@ import { bouncy } from "ldrs";
 bouncy.register();
 import boom from "@/assets/general/boom.gif";
 import amimir from "@/assets/general/a-mimir.gif";
-import { Background } from "@/components/layout/Background"; 
+import { Background } from "@/components/layout/Background";
 
-export default function loading({ generate_roadmap, generate_lesson, generate_assessment }) {
+export default function loading({
+  generate_roadmap,
+  generate_lesson,
+  generate_assessment,
+}) {
   const { theme } = useTheme();
 
-  const images = [
-    boom,
-    amimir
+  // Random loading images that will be placed in /public/loading-images/
+  const loadingImages = [
+    "/loading-images/loading-capy-1.png",
+    "/loading-images/loading-capy-2.png",
+    "/loading-images/loading-capy-3.png",
+    "/loading-images/loading-capy-4.png",
+    "/loading-images/loading-capy-5.png",
   ];
+
+  const images = [boom, amimir];
 
   const quotes = [
     "Be like a Capybara, relax and wait while we load your content!",
     "The faster you mash buttons, the slower it loads. (Just kidding… or am I?)",
     "Patience is a virtue, even for Capybaras!",
     "Loading is like a Capybara's day: slow and steady wins",
-    "Just like a Capybara, we’re taking our time to make it perfect!",
+    "Just like a Capybara, we're taking our time to make it perfect!",
     "Good things come to those who wait, like a Capybara in a hot spring!",
   ];
 
@@ -31,9 +41,9 @@ export default function loading({ generate_roadmap, generate_lesson, generate_as
     "Loading...",
     "Almost there!",
     "Please wait!",
-    "This is taking a while huh?"
+    "This is taking a while huh?",
   ];
-  
+
   const ideas = [
     "Did you know?",
     "Here's a thought:",
@@ -41,6 +51,7 @@ export default function loading({ generate_roadmap, generate_lesson, generate_as
     "Here's a fun fact:",
     "Did you know that?",
   ];
+
   const tips = [
     "Capybaras can hold their breath underwater for up to 5 minutes!",
     "Capybaras are excellent swimmers and have webbed toes",
@@ -51,71 +62,65 @@ export default function loading({ generate_roadmap, generate_lesson, generate_as
     "These giant rodents are herbivores and eat about 6-8 pounds of grass per day",
     "Capybaras are known as 'nature's chairs' because other animals often sit on them",
     "They can jump up to 4 feet high despite their chubby appearance",
-    "Capybaras are close relatives of guinea pigs"
+    "Capybaras are close relatives of guinea pigs",
   ];
 
   const randomImage = images[Math.floor(Math.random() * images.length)];
+  const randomLoadingImage =
+    loadingImages[Math.floor(Math.random() * loadingImages.length)];
   const randomLoadText = loadtext[Math.floor(Math.random() * loadtext.length)];
-  const randomqoute = quotes[Math.floor(Math.random() * quotes.length)];
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
   const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
   const randomTip = tips[Math.floor(Math.random() * tips.length)];
 
-  if (generate_roadmap) {
-    return (
-      <main className="w-full min-h-screen text-black dark:text-primary overflow-hidden">
-        <Background/>
+  // Common loading screen structure with different loader styles based on context
+  return (
+    <main className="fixed top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
+      <Background />
+
+      {/* Load text moved above the image */}
+      <h3 className="font-extrabold text-3xl  mb-6">{randomLoadText}</h3>
+
+      <img
+        src={randomLoadingImage}
+        alt="Loading..."
+        className="mb-6 w-80 h-80 object-contain"
+      />
+
+      {/* Different loader styles based on context */}
+      {generate_roadmap ? (
         <l-quantum
           size="80"
           speed="1.5"
           color={theme === "dark" ? "#fff" : "#000"}
-          className="mb-8"
+          className="mb-6"
         ></l-quantum>
-        <h3 className="font-extrabold text-xl mb-2">{randomLoadText}</h3>
-        <p className="animate-text-pulse max-w-1/4 text-center text-foreground">
-          {randomqoute}
-        </p>
-        <h3 className="font-extrabold text-xl mb-2">{randomIdea}</h3>
-        <p className="max-w-1/4 text-center text-foreground">{randomTip}</p>
-      </main>
-    );
-  } else if (generate_lesson) {
-    return (
-      <main className="absolute top-0 left-0 h-screen w-full  py-5 flex flex-col justify-center items-center select-none z-50">
-        <Background />
-        {/* <img src={randomImage} alt="Loading..." className="mb-5" /> */}
-        <h3 className="font-extrabold text-xl mb-2">{randomLoadText}</h3>
-        <p className="animate-text-pulse max-w-1/4 text-center text-foreground mb-8">
-          {randomqoute}
-        </p>
-        <h3 className="font-extrabold text-xl mb-2">{randomIdea}</h3>
-        <p className="max-w-1/4 text-center text-foreground">{randomTip}</p>
-      </main>
-    );
-  }
-  else if (generate_assessment) {
-    return (
-      <main className="absolute top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
-        <Background />
+      ) : generate_assessment ? (
         <l-quantum
           size="80"
           speed="1.5"
           color={theme === "dark" ? "#fff" : "#000"}
-          className="mb-8"
+          className="mb-6"
         ></l-quantum>
-        <h3 className="font-extrabold text-xl mb-2">{randomLoadText}</h3>
-        <p className="animate-text-pulse max-w-1/4 text-center text-foreground">
-         {randomqoute}
-        </p>
-      </main>
-    );
-  } else {
-    return (
-      <main className="fixed top-0 left-0 h-screen w-full bg-background py-5 flex flex-col justify-center items-center select-none z-50">
-        <Background />
-        {/* <img src={randomImage} alt="Loading..." className="mb-8" /> */}
+      ) : (
+        <l-bouncy
+          size="45"
+          speed="1.75"
+          color={theme === "dark" ? "#fff" : "#000"}
+          className="mb-6"
+        ></l-bouncy>
+      )}
+
+      {/* Common loading text content */}
+      <p className="animate-text-pulse text-xl max-w-md text-center text-foreground mb-4">
+        {randomQuote}
+      </p>
+
+      {/* Ideas and tips moved to bottom left */}
+      <div className="absolute bottom-5 left-5 w-full">
         <h3 className="font-extrabold text-xl mb-2">{randomIdea}</h3>
-        <p className="max-w-1/4 text-center text-foreground">{randomTip}</p>
-      </main>
-    );
-  }
+        <p className="text-foreground">{randomTip}</p>
+      </div>
+    </main>
+  );
 }

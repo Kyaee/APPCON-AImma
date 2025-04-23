@@ -965,7 +965,9 @@ export default function UserAssessment() {
     <AssessmentLayout
       title={getTitle()}
       progress={getProgress()}
-      prevPage={currentStep === "userType" ? () => setShowIntro(true) : handleBack}
+      prevPage={
+        currentStep === "userType" ? () => setShowIntro(true) : handleBack
+      }
     >
       {renderCurrentStep()}
     </AssessmentLayout>
