@@ -51,11 +51,11 @@ export default function IntroSlide({
   if (isPending) return <Loading generate_assessment={true} />;
 
   return (
-    <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-background ">
+    <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-foreground">
       <img src={CapyAssess} alt="capybara superhero" className="w-100" />
       <h1 className="text-4xl font-extrabold mb-4">Start Your Assessment.</h1>
       <p className="mb-2 font-semibold border-b border-primary">Rewards</p>
-      <div className="grid grid-cols-2 gap-x-8 mb-4 text-xl *:flex *:gap-2 *:items-center ">
+      <div className="grid grid-cols-2 gap-x-8 mb-4 text-xl *:flex *:gap-2 *:items-center">
         <div>
           <Gem size={20} />
           {gems} gems

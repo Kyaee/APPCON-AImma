@@ -87,23 +87,13 @@ export default function Header({
             state={item.state} // Use state if provided
             className={`group flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg transition-all duration-300 ${
               isActive(item.path)
-                ? "bg-light-brown dark:bg-dark-mode-highlight border-x"
-                : "hover:bg-light-brown dark:hover:bg-dark-mode-bg"
+                ? "bg-light-brown border-x"
+                : "hover:bg-light-brown"
             }`}
           >
-            <div
-              className={`flex items-center gap-2 text-black dark:text-[#64646a] dark:group-hover:text-white ${
-                isActive(item.path) ? "dark:!text-white" : ""
-              }`}
-            >
+            <div className="flex items-center gap-2 text-black">
               {item.icon}
-              <span
-                className={`text-sm text-black dark:text-[#64646a] dark:group-hover:text-white font-inter ${
-                  isActive(item.path) ? "dark:!text-white" : ""
-                }`}
-              >
-                {item.label}
-              </span>
+              <span className="text-sm font-inter">{item.label}</span>
             </div>
           </Link>
         ))}
