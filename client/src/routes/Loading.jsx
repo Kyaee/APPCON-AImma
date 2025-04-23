@@ -3,8 +3,7 @@ import { quantum } from "ldrs";
 quantum.register();
 import { bouncy } from "ldrs";
 bouncy.register();
-import boom from "@/assets/general/boom.gif";
-import amimir from "@/assets/general/a-mimir.gif";
+import wait from "@/assets/general/waiting.gif";
 import { Background } from "@/components/layout/Background";
 
 export default function loading({
@@ -15,15 +14,7 @@ export default function loading({
   const { theme } = useTheme();
 
   // Random loading images that will be placed in /public/loading-images/
-  const loadingImages = [
-    "/loading-images/loading-capy-1.png",
-    "/loading-images/loading-capy-2.png",
-    "/loading-images/loading-capy-3.png",
-    "/loading-images/loading-capy-4.png",
-    "/loading-images/loading-capy-5.png",
-  ];
-
-  const images = [boom, amimir];
+  
 
   const quotes = [
     "Be like a Capybara, relax and wait while we load your content!",
@@ -65,9 +56,6 @@ export default function loading({
     "Capybaras are close relatives of guinea pigs",
   ];
 
-  const randomImage = images[Math.floor(Math.random() * images.length)];
-  const randomLoadingImage =
-    loadingImages[Math.floor(Math.random() * loadingImages.length)];
   const randomLoadText = loadtext[Math.floor(Math.random() * loadtext.length)];
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
   const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
@@ -82,7 +70,7 @@ export default function loading({
       <h3 className="font-extrabold text-3xl  mb-6">{randomLoadText}</h3>
 
       <img
-        src={randomLoadingImage}
+        src={wait}
         alt="Loading..."
         className="mb-6 w-80 h-80 object-contain"
       />
