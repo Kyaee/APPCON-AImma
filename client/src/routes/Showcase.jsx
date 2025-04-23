@@ -67,13 +67,45 @@ const Showcase = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isReady, setIsReady] = useState(false); // Add loading state
 
-  // Add useEffect for loading delay
+  // Preload images and handle initial delay
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 800); // Adjust delay as needed
+    const imageSources = IntroSlides.filter((slide) => slide.image).map(
+      (slide) => slide.image
+    );
 
-    return () => clearTimeout(timer);
+    const preloadImages = (sources) => {
+      return Promise.all(
+        sources.map((src) => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+        })
+      );
+    };
+
+    let timer;
+    const loadContent = async () => {
+      try {
+        await preloadImages(imageSources);
+        // Ensure minimum delay even if images load quickly
+        timer = setTimeout(() => {
+          setIsReady(true);
+        }, 800); // Adjust delay as needed
+      } catch (error) {
+        console.error("Failed to preload images:", error);
+        // Still show content after delay even if images fail
+        timer = setTimeout(() => {
+          setIsReady(true);
+        }, 800);
+      }
+    };
+
+    loadContent();
+
+    return () => clearTimeout(timer); // Cleanup timer on unmount
   }, []);
 
   const handleNext = () => {
@@ -104,7 +136,7 @@ const Showcase = () => {
               onClick={handleSkip}
               className="px-10 py-2 rounded-lg text-sm 
               bg-white/10 backdrop-blur-sm text-gray-200 hover:bg-white/20 
-              transition-colors"
+              transition-colors border-2 border-black"
             >
               Skip
             </button>
@@ -124,13 +156,15 @@ const Showcase = () => {
           </div>
         )}
 
-        {/* Slide image - Larger size */}
+        {/* Slide image - Full width, fixed height, consistent across slides */}
         {currentSlideData.image && (
-          <div className="w-full flex justify-center mb-8">
+          <div className="w-full max-w-4xl mb-8">
+            {" "}
+            {/* Container spans full width */}
             <img
               src={currentSlideData.image}
               alt={currentSlideData.title}
-              className="w-full max-w-4xl h-auto rounded-lg shadow-lg" // Increased max-width
+              className="w-full h-[432px] object-cover rounded-lg border-2 border-black shadow-lg" // Full width, fixed height (e.g., 432px), object-cover, keep border/rounded
             />
           </div>
         )}
