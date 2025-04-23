@@ -253,34 +253,6 @@ export default function UserAssessment() {
     }
   }, [technicalAnswers]);
 
-  // Setup form submission handlers with Enter key
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      // Only handle Enter key when NOT in form fields
-      if (event.key === "Enter") {
-        // Check if the active element is an input, textarea, or select
-        const activeElement = document.activeElement;
-        const isFormElement =
-          activeElement.tagName === "INPUT" ||
-          activeElement.tagName === "TEXTAREA" ||
-          activeElement.tagName === "SELECT" ||
-          activeElement.isContentEditable ||
-          activeElement.closest(".form-control");
-
-        // Only proceed if we're not in a form field
-        if (!isFormElement) {
-          handleFormSubmission();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [currentStep]);
-
   // Handlers
   const handleTypeSelection = (option) => {
     setSelectedType(option);

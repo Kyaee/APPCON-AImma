@@ -32,11 +32,6 @@ export default function DailyGoalStep({
                 {option.label}
               </h3>
             </div>
-            {selectedGoal === option.value && (
-              <div className="mt-4 text-white font-bold text-lg">
-                ✓ Selected
-              </div>
-            )}
           </button>
         ))}
       </div>
