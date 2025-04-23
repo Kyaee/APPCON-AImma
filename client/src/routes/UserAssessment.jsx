@@ -338,8 +338,18 @@ export default function UserAssessment() {
   };
 
   const handleSubmitCompletion = () => {
+    // Store assessment completion status
+    localStorage.setItem("assessmentCompleted", "true");
+
+    // Validate and save feedback if any
+    if (feedback.trim()) {
+      localStorage.setItem("assessmentFeedback", feedback);
+    }
+
+    // Generate roadmap based on all assessment data
     createRoadmap();
-    // Navigate to the process dashboard to generate the roadmap
+
+    // Navigate to the process dashboard
     navigate(`/dashboard/p?user=${session?.user?.id}`);
   };
 
@@ -580,7 +590,15 @@ export default function UserAssessment() {
               syncButton.dispatchEvent(new Event("syncToParent"));
             }
           }
-          handleSubmitTechAnswers();
+
+          // Save answers to localStorage for persistence
+          localStorage.setItem(
+            "technicalAnswers",
+            JSON.stringify(technicalAnswers)
+          );
+
+          // Always proceed to complete step after answering tech questions
+          navigateToNextStep("complete");
         }
         break;
 
@@ -893,8 +911,7 @@ export default function UserAssessment() {
         return techQuestionsVisible ? (
           <FormWrapper stepName="techInterest">
             <TechInterestStep
-              techInterestOptions={assessmentFlow.techInterest.options}
-              selectedInterest={technicalInterest}
+              technicalInterest={technicalInterest}
               onInterestSelect={handleTechInterestSelect}
               technicalAnswers={technicalAnswers}
               onAnswerChange={handleTechAnswerChange}
@@ -903,8 +920,7 @@ export default function UserAssessment() {
           </FormWrapper>
         ) : (
           <TechInterestStep
-            techInterestOptions={assessmentFlow.techInterest.options}
-            selectedInterest={technicalInterest}
+            technicalInterest={technicalInterest}
             onInterestSelect={handleTechInterestSelect}
             technicalAnswers={technicalAnswers}
             onAnswerChange={handleTechAnswerChange}
