@@ -28,7 +28,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
   const handleInputChange = (field, value, e) => {
     // Prevent the default form submission
     if (e) e.preventDefault();
-    
+
     setLocalFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -38,7 +38,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
   const handleInterestChange = (area, e) => {
     // Prevent the default form submission
     if (e) e.preventDefault();
-    
+
     setLocalFormData((prev) => ({
       ...prev,
       interestAreas: prev.interestAreas.includes(area)
@@ -87,11 +87,11 @@ export default function HSQuestionsStep({ formData, setFormData }) {
                 onClick={(e) =>
                   handleInputChange("planningCollege", option.value, e)
                 }
-                className={`p-3 rounded-lg text-center transition-all duration-200 bg-white
+                className={`p-3 rounded-lg text-center transition-all duration-200 bg-white border-2 box-border
                   ${
                     localFormData.planningCollege === option.value
-                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
-                      : "border-black border-2 hover:border-black hover:border-3"
+                      ? "border-[#3F6CFF] custom-shadow-75"
+                      : "border-black hover:bg-gray-50"
                   }`}
               >
                 <span className="text-black">{option.label}</span>
@@ -117,11 +117,11 @@ export default function HSQuestionsStep({ formData, setFormData }) {
                 key={area}
                 type="button"
                 onClick={(e) => handleInterestChange(area, e)}
-                className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
+                className={`p-3 rounded-lg text-left transition-all duration-200 bg-white border-2 box-border
                   ${
                     localFormData.interestAreas.includes(area)
-                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
-                      : "border-black border-2 hover:border-black hover:border-3"
+                      ? "border-[#3F6CFF] custom-shadow-75"
+                      : "border-black hover:bg-gray-50"
                   }`}
               >
                 <span className="text-black">{area}</span>
@@ -143,15 +143,15 @@ export default function HSQuestionsStep({ formData, setFormData }) {
           />
         </div>
       </div>
-      
+
       {/* Hidden button to sync state on form submission */}
-      <button 
-        type="button" 
-        style={{ display: 'none' }} 
+      <button
+        type="button"
+        style={{ display: "none" }}
         onClick={syncToParent}
-        ref={el => {
+        ref={(el) => {
           if (el) {
-            el.addEventListener('syncToParent', syncToParent);
+            el.addEventListener("syncToParent", syncToParent);
           }
         }}
       />

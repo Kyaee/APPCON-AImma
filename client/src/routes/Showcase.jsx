@@ -193,7 +193,7 @@ const Showcase = () => {
               </h1>
             )}
             <p
-              className={`text-gray-200 text-xl mt-4 ${
+              className={`text-white text-xl mt-4 ${
                 currentSlideData.logo ? "text-center" : "" // Removed isLast condition
               }`}
             >

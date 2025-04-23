@@ -758,24 +758,28 @@ export default function UserAssessment() {
   const renderCurrentStep = () => {
     const FormWrapper = ({ children, stepName }) => {
       return (
-        <form
-          ref={formRefs[stepName]}
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleFormSubmission();
-          }}
-          className="w-full"
-        >
-          {children}
+        <div className="w-full">
+          <div ref={formRefs[stepName]}>{children}</div>
           <div className="flex justify-center mt-8">
             <button
-              type="submit"
+              type="button"
+              onClick={handleFormSubmission}
               className="px-10 py-3 bg-brown hover:bg-dark-brown text-white rounded-md transition-colors border-2 border-black"
             >
               {stepName === "complete" ? "Continue to Dashboard" : "Continue"}
             </button>
           </div>
-        </form>
+          {/* Hidden button for sync events */}
+          <button
+            type="button"
+            style={{ display: "none" }}
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            Sync
+          </button>
+        </div>
       );
     };
 
