@@ -346,255 +346,369 @@ export default function UserAssessment() {
   const handleFormSubmission = () => {
     switch (currentStep) {
       case "previousExperience":
-        // Trigger sync from child component before validating
+        // Get form data directly from the form rather than relying on state
         const previousExperienceForm = formRefs.previousExperience.current;
         if (previousExperienceForm) {
-          const syncButton = previousExperienceForm.querySelector(
-            'button[style*="display: none"]'
+          const lastRoleInput = previousExperienceForm.querySelector(
+            'input[name="lastRole"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const yearsExpSelect = previousExperienceForm.querySelector(
+            'select[name="yearsExperience"]'
+          );
+          const reasonInput = previousExperienceForm.querySelector(
+            'textarea[name="reasonForChange"]'
+          );
 
-        if (
-          previousExperience.lastRole.trim() !== "" &&
-          previousExperience.yearsExperience.trim() !== "" &&
-          previousExperience.reasonForChange.trim() !== ""
-        ) {
-          setPreviousExperience(previousExperience);
-          localStorage.setItem(
-            "previousExpData",
-            JSON.stringify(previousExperience)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please fill in all fields for Previous Experience");
+          if (lastRoleInput && yearsExpSelect && reasonInput) {
+            const formData = {
+              lastRole: lastRoleInput.value.trim(),
+              yearsExperience: yearsExpSelect.value.trim(),
+              reasonForChange: reasonInput.value.trim(),
+            };
+
+            if (
+              formData.lastRole &&
+              formData.yearsExperience &&
+              formData.reasonForChange
+            ) {
+              setPreviousExperience(formData);
+              setPreviousExp(formData);
+              localStorage.setItem("previousExpData", JSON.stringify(formData));
+              navigateToNextStep("dailyGoal");
+            } else {
+              alert("Please fill in all fields for Previous Experience");
+            }
+          } else {
+            alert("Please fill in all fields for Previous Experience");
+          }
         }
         break;
 
       case "careerTransition":
-        // Trigger sync from child component before validating
+        // Get form data directly from the form rather than relying on state
         const careerTransitionForm = formRefs.careerTransition.current;
         if (careerTransitionForm) {
-          const syncButton = careerTransitionForm.querySelector(
-            'button[style*="display: none"]'
+          const currentFieldInput = careerTransitionForm.querySelector(
+            'input[name="currentField"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const desiredFieldSelect = careerTransitionForm.querySelector(
+            'select[name="desiredField"]'
+          );
+          const reasonInput = careerTransitionForm.querySelector(
+            'textarea[name="transitionReason"]'
+          );
 
-        if (
-          transition.currentField.trim() !== "" &&
-          transition.desiredField.trim() !== "" &&
-          transition.transitionReason.trim() !== ""
-        ) {
-          setCareerTransition(transition);
-          localStorage.setItem(
-            "careerTransitionData",
-            JSON.stringify(transition)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please fill in all fields for Career Transition");
+          if (currentFieldInput && desiredFieldSelect && reasonInput) {
+            const formData = {
+              currentField: currentFieldInput.value.trim(),
+              desiredField: desiredFieldSelect.value.trim(),
+              transitionReason: reasonInput.value.trim(),
+            };
+
+            if (
+              formData.currentField &&
+              formData.desiredField &&
+              formData.transitionReason
+            ) {
+              setCareerTransition(formData);
+              setTransition(formData);
+              localStorage.setItem(
+                "careerTransitionData",
+                JSON.stringify(formData)
+              );
+              navigateToNextStep("dailyGoal");
+            } else {
+              alert("Please fill in all fields for Career Transition");
+            }
+          } else {
+            alert("Please fill in all fields for Career Transition");
+          }
         }
         break;
 
       case "hsQuestions":
-        // Trigger sync from child component before validating
         const hsForm = formRefs.hsQuestions.current;
         if (hsForm) {
-          const syncButton = hsForm.querySelector(
-            'button[style*="display: none"]'
+          // Get direct values from form elements
+          const strandSelect = hsForm.querySelector('select[name="strand"]');
+          const planningCollegeYes = hsForm.querySelector(
+            'input[name="planningCollege"][value="true"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const planningCollegeNo = hsForm.querySelector(
+            'input[name="planningCollege"][value="false"]'
+          );
+          const interestCheckboxes = hsForm.querySelectorAll(
+            'input[name="interestAreas"]:checked'
+          );
+          const goalsInput = hsForm.querySelector(
+            'textarea[name="careerGoals"]'
+          );
 
-        if (
-          hsFormData.strand &&
-          hsFormData.planningCollege !== null &&
-          hsFormData.interestAreas.length > 0 &&
-          hsFormData.careerGoals
-        ) {
-          localStorage.setItem("hsResponses", JSON.stringify(hsFormData));
-          localStorage.setItem("hsQuestionsSavepoint", "true");
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          const interests = Array.from(interestCheckboxes).map(
+            (cb) => cb.value
+          );
+          const planningCollege = planningCollegeYes?.checked
+            ? true
+            : planningCollegeNo?.checked
+            ? false
+            : null;
+
+          if (
+            strandSelect?.value &&
+            planningCollege !== null &&
+            interests.length > 0 &&
+            goalsInput?.value.trim()
+          ) {
+            const formData = {
+              strand: strandSelect.value,
+              planningCollege: planningCollege,
+              interestAreas: interests,
+              careerGoals: goalsInput.value.trim(),
+            };
+
+            setHsFormData(formData);
+            localStorage.setItem("hsResponses", JSON.stringify(formData));
+            localStorage.setItem("hsQuestionsSavepoint", "true");
+            navigateToNextStep("dailyGoal");
+          } else {
+            alert("Please complete all fields before proceeding");
+          }
         }
         break;
 
       case "collegeQuestions":
-        // Trigger sync from child component before validating
         const collegeForm = formRefs.collegeQuestions.current;
         if (collegeForm) {
-          const syncButton = collegeForm.querySelector(
-            'button[style*="display: none"]'
+          // Get direct values from form elements
+          const courseInput = collegeForm.querySelector('input[name="course"]');
+          const yearLevelSelect = collegeForm.querySelector(
+            'select[name="yearLevel"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const skillsCheckboxes = collegeForm.querySelectorAll(
+            'input[name="technicalSkills"]:checked'
+          );
+          const careerPathInput = collegeForm.querySelector(
+            'input[name="careerPath"]'
+          );
 
-        if (
-          collegeFormData.course &&
-          collegeFormData.yearLevel &&
-          collegeFormData.technicalSkills.length > 0 &&
-          collegeFormData.careerPath
-        ) {
-          localStorage.setItem(
-            "collegeResponses",
-            JSON.stringify(collegeFormData)
-          );
-          localStorage.setItem("collegeQuestionsSavepoint", "true");
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          const skills = Array.from(skillsCheckboxes).map((cb) => cb.value);
+
+          if (
+            courseInput?.value.trim() &&
+            yearLevelSelect?.value &&
+            skills.length > 0 &&
+            careerPathInput?.value.trim()
+          ) {
+            const formData = {
+              course: courseInput.value.trim(),
+              yearLevel: yearLevelSelect.value,
+              technicalSkills: skills,
+              careerPath: careerPathInput.value.trim(),
+            };
+
+            setCollegeFormData(formData);
+            localStorage.setItem("collegeResponses", JSON.stringify(formData));
+            localStorage.setItem("collegeQuestionsSavepoint", "true");
+            navigateToNextStep("dailyGoal");
+          } else {
+            alert("Please complete all fields before proceeding");
+          }
         }
         break;
 
       case "gradQuestions":
-        // Trigger sync from child component before validating
         const gradForm = formRefs.gradQuestions.current;
         if (gradForm) {
-          const syncButton = gradForm.querySelector(
-            'button[style*="display: none"]'
+          // Get direct values from form elements
+          const fieldInput = gradForm.querySelector('input[name="fieldStudy"]');
+          const researchInput = gradForm.querySelector(
+            'input[name="researchFocus"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const expYes = gradForm.querySelector(
+            'input[name="industryExperience"][value="true"]'
+          );
+          const expNo = gradForm.querySelector(
+            'input[name="industryExperience"][value="false"]'
+          );
+          const careerInput = gradForm.querySelector(
+            'textarea[name="careerPlans"]'
+          );
+          const researchCheckboxes = gradForm.querySelectorAll(
+            'input[name="researchInterests"]:checked'
+          );
 
-        if (
-          gradFormData.fieldStudy &&
-          gradFormData.researchFocus &&
-          gradFormData.industryExperience !== null &&
-          gradFormData.careerPlans &&
-          gradFormData.researchInterests.length > 0
-        ) {
-          localStorage.setItem("gradResponses", JSON.stringify(gradFormData));
-          localStorage.setItem("gradQuestionsSavepoint", "true");
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          const researchInterests = Array.from(researchCheckboxes).map(
+            (cb) => cb.value
+          );
+          const industryExp = expYes?.checked
+            ? true
+            : expNo?.checked
+            ? false
+            : null;
+
+          if (
+            fieldInput?.value.trim() &&
+            researchInput?.value.trim() &&
+            industryExp !== null &&
+            careerInput?.value.trim() &&
+            researchInterests.length > 0
+          ) {
+            const formData = {
+              fieldStudy: fieldInput.value.trim(),
+              researchFocus: researchInput.value.trim(),
+              industryExperience: industryExp,
+              careerPlans: careerInput.value.trim(),
+              technicalExpertise: gradFormData.technicalExpertise || 3,
+              researchInterests: researchInterests,
+            };
+
+            setGradFormData(formData);
+            localStorage.setItem("gradResponses", JSON.stringify(formData));
+            localStorage.setItem("gradQuestionsSavepoint", "true");
+            navigateToNextStep("dailyGoal");
+          } else {
+            alert("Please complete all fields before proceeding");
+          }
         }
         break;
 
       case "entryQuestions":
-        // Trigger sync from child component before validating
         const entryForm = formRefs.entryQuestions.current;
         if (entryForm) {
-          const syncButton = entryForm.querySelector(
-            'button[style*="display: none"]'
+          // Get direct values from form elements
+          const roleInput = entryForm.querySelector(
+            'input[name="currentRole"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const industrySelect = entryForm.querySelector(
+            'select[name="companyIndustry"]'
+          );
+          const skillsCheckboxes = entryForm.querySelectorAll(
+            'input[name="skillsUsed"]:checked'
+          );
 
-        if (
-          entryFormData.currentRole &&
-          entryFormData.companyIndustry &&
-          entryFormData.skillsUsed.length > 0
-        ) {
-          localStorage.setItem(
-            "entryLevelSavepoint",
-            JSON.stringify(entryFormData)
-          );
-          localStorage.setItem(
-            "entryLevelResponses",
-            JSON.stringify(entryFormData)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          const skills = Array.from(skillsCheckboxes).map((cb) => cb.value);
+
+          if (
+            roleInput?.value.trim() &&
+            industrySelect?.value &&
+            skills.length > 0
+          ) {
+            const formData = {
+              currentRole: roleInput.value.trim(),
+              companyIndustry: industrySelect.value,
+              skillsUsed: skills,
+            };
+
+            setEntryFormData(formData);
+            localStorage.setItem(
+              "entryLevelSavepoint",
+              JSON.stringify(formData)
+            );
+            localStorage.setItem(
+              "entryLevelResponses",
+              JSON.stringify(formData)
+            );
+            navigateToNextStep("dailyGoal");
+          } else {
+            alert("Please complete all fields before proceeding");
+          }
         }
         break;
 
       case "midQuestions":
-        // Trigger sync from child component before validating
         const midForm = formRefs.midQuestions.current;
         if (midForm) {
-          const syncButton = midForm.querySelector(
-            'button[style*="display: none"]'
+          // Get direct values from form elements
+          const roleInput = midForm.querySelector('input[name="currentRole"]');
+          const industrySelect = midForm.querySelector(
+            'select[name="companyIndustry"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const skillsCheckboxes = midForm.querySelectorAll(
+            'input[name="skillsUsed"]:checked'
+          );
 
-        if (
-          midFormData.currentRole &&
-          midFormData.companyIndustry &&
-          midFormData.skillsUsed.length > 0
-        ) {
-          localStorage.setItem(
-            "midLevelResponses",
-            JSON.stringify(midFormData)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          const skills = Array.from(skillsCheckboxes).map((cb) => cb.value);
+
+          if (
+            roleInput?.value.trim() &&
+            industrySelect?.value &&
+            skills.length > 0
+          ) {
+            const formData = {
+              currentRole: roleInput.value.trim(),
+              companyIndustry: industrySelect.value,
+              skillsUsed: skills,
+            };
+
+            setMidFormData(formData);
+            localStorage.setItem("midLevelSavepoint", JSON.stringify(formData));
+            localStorage.setItem("midLevelResponses", JSON.stringify(formData));
+            navigateToNextStep("dailyGoal");
+          } else {
+            alert("Please complete all fields before proceeding");
+          }
         }
         break;
 
       case "seniorQuestions":
-        // Trigger sync from child component before validating
         const seniorForm = formRefs.seniorQuestions.current;
         if (seniorForm) {
-          const syncButton = seniorForm.querySelector(
-            'button[style*="display: none"]'
+          // Get direct values from form elements
+          const roleInput = seniorForm.querySelector(
+            'input[name="currentRole"]'
           );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+          const industrySelect = seniorForm.querySelector(
+            'select[name="companyIndustry"]'
+          );
+          const skillsCheckboxes = seniorForm.querySelectorAll(
+            'input[name="skillsUsed"]:checked'
+          );
 
-        if (
-          seniorFormData.currentRole &&
-          seniorFormData.companyIndustry &&
-          seniorFormData.skillsUsed.length > 0
-        ) {
-          localStorage.setItem(
-            "seniorLevelResponses",
-            JSON.stringify(seniorFormData)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          const skills = Array.from(skillsCheckboxes).map((cb) => cb.value);
+
+          if (
+            roleInput?.value.trim() &&
+            industrySelect?.value &&
+            skills.length > 0
+          ) {
+            const formData = {
+              currentRole: roleInput.value.trim(),
+              companyIndustry: industrySelect.value,
+              skillsUsed: skills,
+            };
+
+            setSeniorFormData(formData);
+            localStorage.setItem(
+              "seniorLevelSavepoint",
+              JSON.stringify(formData)
+            );
+            localStorage.setItem(
+              "seniorLevelResponses",
+              JSON.stringify(formData)
+            );
+            navigateToNextStep("dailyGoal");
+          } else {
+            alert("Please complete all fields before proceeding");
+          }
         }
         break;
 
       case "techInterest":
-        // Trigger sync from child component before validating
         if (techQuestionsVisible) {
-          const techInterestForm = formRefs.techInterest.current;
-          if (techInterestForm) {
-            const syncButton = techInterestForm.querySelector(
-              'button[style*="display: none"]'
-            );
-            if (syncButton) {
-              syncButton.dispatchEvent(new Event("syncToParent"));
+          // For tech interest, we'll check directly if answers are complete
+          const techForm = formRefs.techInterest.current;
+          if (techForm) {
+            if (technicalInterest && Object.keys(technicalAnswers).length > 0) {
+              handleSubmitTechAnswers();
+            } else {
+              alert("Please complete all questions before proceeding");
             }
           }
-          handleSubmitTechAnswers();
         }
         break;
 
       case "complete":
-        // Sync feedback before submission
-        const completeForm = formRefs.complete.current;
-        if (completeForm) {
-          const syncButton = completeForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+        // For completion form, just submit directly
         handleSubmitCompletion();
         break;
     }
