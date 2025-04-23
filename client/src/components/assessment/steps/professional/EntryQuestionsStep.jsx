@@ -33,7 +33,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
   const handleSkillsChange = (skill, e) => {
     // Prevent the default form submission
     if (e) e.preventDefault();
-    
+
     setLocalFormData((prev) => ({
       ...prev,
       skillsUsed: prev.skillsUsed.includes(skill)
@@ -109,13 +109,13 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
             ].map((skill) => (
               <button
                 key={skill}
-                type="button" 
+                type="button"
                 onClick={(e) => handleSkillsChange(skill, e)}
-                className={`p-3 rounded-lg text-left transition-all duration-200 bg-white
+                className={`p-3 rounded-lg text-left transition-all duration-200 bg-white border-2 box-border
                   ${
                     localFormData.skillsUsed.includes(skill)
-                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
-                      : "border-black border-2 hover:border-black hover:border-3"
+                      ? "border-[#3F6CFF] custom-shadow-75"
+                      : "border-black hover:bg-gray-50"
                   }`}
               >
                 <span className="text-black">{skill}</span>
