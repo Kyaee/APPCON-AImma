@@ -6,20 +6,17 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
 
-  // const signInWithGoogle = async () => {
-  //   const { user, session, error } = await supabase.auth.signIn({
-  //     provider: "google",
-  //   });  
+  const signInWithGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `https://appcon-a-imma-qz2.vercel.app/start/name`,
+      },
+    });
 
-  //   if (error) {
-  //     console.error("Error signing in with Google:", error);
-  //     return { success: false, error };
-  //   }
+  };
 
-  //   return { success: true, user, session };
-  // };
-
-//-------------------- Sign up -------------------------
+//-------------------- Sign up -------------------------p
   const signUpNewUser = async (email, password) => {
     const { data, error } = await supabase.auth.signUp({
       email: email.toLowerCase(),
@@ -88,7 +85,7 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ signUpNewUser, signInUser, session, signOut }}
+      value={{ signInWithGoogle, signUpNewUser, signInUser, session, signOut }}
     >
       {children}
     </AuthContext.Provider>
