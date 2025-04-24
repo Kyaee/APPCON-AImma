@@ -96,39 +96,25 @@ export default function Assessment() {
     return { gems: baseGemsReward, exp: baseExpReward };
   }, []);
 
-  // Add this useEffect to automatically proceed to questionnaire after loading
+  // Modify this useEffect to better handle assessment generation and loading states
   useEffect(() => {
-    // If we have lesson data and we're showing the intro slide
-    if (!isLoading && lessonData && isIntroSlide) {
-      // Check if assessment was just generated
+    // Only attempt to skip the intro slide if we have actual question data available
+    // This prevents transitioning to an empty questionnaire
+    if (!isLoading && lessonData?.questions?.length > 0 && isIntroSlide) {
       const generatedAssessment =
         useLessonFetchStore.getState().generated_assessment;
       if (generatedAssessment) {
-        // Automatically proceed to the questionnaire
-        console.log("Assessment generated, proceeding to questions");
+        console.log("Assessment questions loaded, proceeding to questionnaire");
         setIntroSlide(false);
+        // Reset the flag only after we've successfully transitioned
+        useLessonFetchStore.getState().setGeneratedAssessment(false);
       }
     }
   }, [isLoading, lessonData, isIntroSlide]);
 
-  // Update this useEffect to properly skip intro slide after assessment generation
-  useEffect(() => {
-    // If we have lesson data and we're showing the intro slide
-    if (!isLoading && lessonData) {
-      // Check if assessment was just generated
-      const generatedAssessment =
-        useLessonFetchStore.getState().generated_assessment;
-
-      if (generatedAssessment) {
-        // Reset the generated_assessment flag to false to avoid future auto-skips
-        useLessonFetchStore.getState().setGeneratedAssessment(false);
-
-        // Automatically proceed to the questionnaire
-        console.log("Assessment just generated, skipping intro slide");
-        setIntroSlide(false);
-      }
-    }
-  }, [isLoading, lessonData]);
+  // Remove the additional useEffect that might be causing duplicate transitions
+  // The single useEffect above will handle both checking for generated assessment
+  // and ensuring questions are actually loaded
 
   // Modified effect to only hide center navigation elements, not the entire header
   useEffect(() => {
@@ -435,7 +421,14 @@ export default function Assessment() {
     }
   };
 
-  if (isLoading) return <Loading generate_assessment={true} />; // Add generate_assessment prop
+  // Enhance the loading condition to be more comprehensive
+  // Show loading state when:
+  // 1. Data is being fetched initially
+  // 2. Questions array doesn't exist or is empty
+  const showLoading =
+    isLoading || !lessonData?.questions || lessonData.questions.length === 0;
+
+  if (showLoading) return <Loading generate_assessment={true} />;
 
   if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
 
@@ -460,7 +453,7 @@ export default function Assessment() {
               gems={lessonFetch?.gems}
               exp={lessonFetch?.exp}
               setIntroSlide={() => setIntroSlide(false)}
-              disabled={isLoading}
+              disabled={showLoading}
               // Always use "Start Assessment" button text, never "Generate and Start"
               buttonText="Start Assessment"
             />
@@ -498,8 +491,8 @@ export default function Assessment() {
                 onClick={handleFinishAssessment}
               />
             )
-          ) : hasValidQuestions ? (
-            // Only render Questions if we have valid question data
+          ) : (
+            // RENDER QUESTIONS - remove the ternary/fallback and just render Questions
             <Questions
               display_wrong_answer={isCount.wrong}
               lesson_name={lessonData.name || "Assessment"}
@@ -520,14 +513,6 @@ export default function Assessment() {
                 lessonData.questions[isCurrentSlide]?.explanation || ""
               }
             />
-          ) : (
-            // Fallback if questions aren't loaded properly
-            <div className="text-center p-8 animate-text-fade">
-              <h2 className="text-2xl font-bold mb-4">
-                Loading assessment questions...
-              </h2>
-              <p>Please wait while we prepare your questions.</p>
-            </div>
           )}
         </form>
         {/*********************************************
