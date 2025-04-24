@@ -28,6 +28,7 @@ export default function UserAssessment() {
   // Loading states
   const [isReady, setIsReady] = useState(false);
   const [showIntro, setShowIntro] = useState(true); // Start by showing intro
+  const [isGenerating, setIsGenerating] = useState(false); // Add this state to track roadmap generation
 
   // Store actions and state
   const setUserType = useAssessmentStore((state) => state.setUserType);
@@ -338,6 +339,9 @@ export default function UserAssessment() {
   };
 
   const handleSubmitCompletion = async () => {
+    // Set generating flag to true to show loading screen
+    setIsGenerating(true);
+
     // Store assessment completion status
     localStorage.setItem("assessmentCompleted", "true");
 
@@ -403,10 +407,11 @@ export default function UserAssessment() {
 
       console.log("Roadmap generation completed successfully", result);
 
-      // Navigate to dashboard/processing page after successful roadmap generation
-      navigate(`/dashboard/p?user=${session?.user?.id}`);
+      // Navigate to dashboard after successful roadmap generation
+      navigate(`/dashboard/${session?.user?.id}?t=${Date.now()}`);
     } catch (error) {
       console.error("Error generating roadmap:", error);
+      setIsGenerating(false); // Reset the generating flag on error
       alert("Failed to generate your roadmap. Please try again.");
     }
   };
@@ -1000,7 +1005,12 @@ export default function UserAssessment() {
     }
   };
 
-  // If still loading, show loading state
+  // If roadmap is currently being generated, show the loading screen
+  if (isGenerating) {
+    return <Loading generate_roadmap={true} />;
+  }
+
+  // If still loading initial data, show loading state
   if (!isReady) {
     return <Loading className="flex-grow flex justify-center items-center" />;
   }

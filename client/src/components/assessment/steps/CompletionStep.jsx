@@ -2,7 +2,7 @@ import React from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
 import capyGreet from "@/assets/general/capy-greet.svg";
 
-export default function CompletionStep({ title, onProceed }) {
+export default function CompleteStep({ title, feedback, onFeedbackChange }) {
   return (
     <AssessmentStep title={title}>
       <div className="space-y-8 mt-12 flex flex-col items-center">
@@ -22,8 +22,18 @@ export default function CompletionStep({ title, onProceed }) {
             skills and interests. Get ready for an amazing learning journey!
           </p>
         </div>
-        
-        {/* Removed the button here since it's added by FormWrapper */}
+
+        {/* Optional feedback textarea */}
+        <div className="w-full max-w-md">
+          <textarea
+            value={feedback}
+            onChange={(e) => onFeedbackChange(e.target.value)}
+            placeholder="Any feedback on the assessment process? (Optional)"
+            className="w-full h-32 p-3 rounded-lg border-2 border-white/20 bg-white/10 text-white placeholder-white/60"
+          />
+        </div>
+
+        {/* Button is added by FormWrapper */}
       </div>
     </AssessmentStep>
   );

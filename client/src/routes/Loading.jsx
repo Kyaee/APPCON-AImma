@@ -1,4 +1,5 @@
 import { useTheme } from "@/config/theme-provider";
+import { useState, useEffect } from "react"; // Add useState and useEffect
 import { quantum } from "ldrs";
 quantum.register();
 import { bouncy } from "ldrs";
@@ -12,9 +13,17 @@ export default function loading({
   generate_assessment,
 }) {
   const { theme } = useTheme();
+  const [imageLoaded, setImageLoaded] = useState(false); // Add state for tracking image load
+
+  // Preload the GIF image
+  useEffect(() => {
+    const img = new Image();
+    img.src = wait;
+    img.onload = () => setImageLoaded(true);
+    // No need for cleanup as this only runs once
+  }, []);
 
   // Random loading images that will be placed in /public/loading-images/
-  
 
   const quotes = [
     "Be like a Capybara, relax and wait while we load your content!",
@@ -69,11 +78,22 @@ export default function loading({
       {/* Load text moved above the image */}
       <h3 className="font-extrabold text-3xl  mb-6">{randomLoadText}</h3>
 
-      <img
-        src={wait}
-        alt="Loading..."
-        className="mb-6 w-80 h-80 object-contain"
-      />
+      {/* Only show GIF if loaded, otherwise show a loader */}
+      {imageLoaded ? (
+        <img
+          src={wait}
+          alt="Loading..."
+          className="mb-6 w-80 h-80 object-contain"
+        />
+      ) : (
+        <div className="mb-6 w-80 h-80 flex items-center justify-center">
+          <l-bouncy
+            size="60"
+            speed="2"
+            color={theme === "dark" ? "#fff" : "#000"}
+          ></l-bouncy>
+        </div>
+      )}
 
       {/* Different loader styles based on context */}
       {generate_roadmap ? (

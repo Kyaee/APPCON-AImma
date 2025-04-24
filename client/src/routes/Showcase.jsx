@@ -134,9 +134,9 @@ const Showcase = () => {
           <div className="w-full max-w-4xl flex justify-end mb-4">
             <button
               onClick={handleSkip}
-              className="px-10 py-2 shadow-lg rounded-lg text-sm
-              bg-[#BF9566] backdrop-blur-sm text-white hover:bg-[#BF8648]
-              transition-colors border-2 border-black"
+              className="
+              bg-[#BF9566] custom-shadow-50 border-black border-2 text-white px-10 py-2 rounded-lg text-sm  backdrop-blur-sm hover:bg-[#BF8648]
+              transition-colors  "
             >
               Skip
             </button>
@@ -159,13 +159,13 @@ const Showcase = () => {
         )}
         {/* Slide image - Full width, fixed height, consistent across slides */}
         {currentSlideData.image && (
-          <div className="w-full max-w-4xl mb-8">
+          <div className="w-full max-w-4xl mb-8 ">
             {" "}
             {/* Container spans full width */}
             <img
               src={currentSlideData.image}
               alt={currentSlideData.title}
-              className="w-full h-[432px] object-cover rounded-lg border-2 border-black shadow-lg" // Full width, fixed height (e.g., 432px), object-cover, keep border/rounded
+              className="w-full h-[432px] object-cover rounded-lg border-3 border-black custom-shadow-75" // Full width, fixed height (e.g., 432px), object-cover, keep border/rounded
             />
           </div>
         )}
@@ -243,7 +243,7 @@ const Showcase = () => {
               ) : (
                 <button
                   onClick={handleNext}
-                  className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
+                  className="custom-shadow-50 bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
                   shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
                 >
                   {currentSlideData.button}
