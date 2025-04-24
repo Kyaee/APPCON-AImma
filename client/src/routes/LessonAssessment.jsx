@@ -94,6 +94,21 @@ export default function Assessment() {
     return { gems: baseGemsReward, exp: baseExpReward };
   }, []);
 
+  // Add this useEffect to automatically proceed to questionnaire after loading
+  useEffect(() => {
+    // If we have lesson data and we're showing the intro slide
+    if (!isLoading && lessonData && isIntroSlide) {
+      // Check if assessment was just generated
+      const generatedAssessment =
+        useLessonFetchStore.getState().generated_assessment;
+      if (generatedAssessment) {
+        // Automatically proceed to the questionnaire
+        console.log("Assessment generated, proceeding to questions");
+        setIntroSlide(false);
+      }
+    }
+  }, [isLoading, lessonData, isIntroSlide]);
+
   const handleCheck = () => {
     setValidateAnswer(true);
     const isCorrect =
@@ -385,7 +400,7 @@ export default function Assessment() {
     }
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <Loading generate_assessment={true} />; // Add generate_assessment prop
 
   if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
 

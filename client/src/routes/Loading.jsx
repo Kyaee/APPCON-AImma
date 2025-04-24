@@ -124,8 +124,8 @@ export default function loading({
         {randomQuote}
       </p>
 
-      {/* Ideas and tips moved to bottom left */}
-      <div className="absolute bottom-5 left-5 w-full">
+      {/* Ideas and tips moved to center bottom */}
+      <div className="absolute bottom-5 left-0 right-0 mx-auto text-center w-fit max-w-md">
         <h3 className="font-extrabold text-xl mb-2">{randomIdea}</h3>
         <p className="text-foreground">{randomTip}</p>
       </div>

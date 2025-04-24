@@ -236,7 +236,6 @@ export default function Dashboard({ setAssessed }) {
                     currentCourse={currentRoadmap.roadmap_name}
                     onCourseChange={handleCourseChange}
                     isSidebarExpanded={isSidebarExpanded}
-                    setIsSidebarExpanded={setIsSidebarExpanded} // Add this line
                     isLoading={getLoading}
                     setLoading={setLoading}
                     setOpenLesson={setIsLessonOpen} // Pass the setter to RoadmapContent
