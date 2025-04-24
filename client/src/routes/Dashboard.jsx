@@ -142,7 +142,7 @@ export default function Dashboard({ setAssessed }) {
                           {currentRoadmap?.roadmap_name || "Select a roadmap"}
                         </h2>
                         <ChevronRight
-                          className="w-8 h-8 text-black dark:text-primary group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 mt-1 absolute right-0"
+                          className="w-8 h-8 text-black dark:text-primary group-hover:text-gray-600 transition-transform duration-200 flex-shrink-0 absolute right-0"
                           style={{
                             transform: isLeftDropdownOpen
                               ? "rotate(90deg)"
@@ -177,7 +177,16 @@ export default function Dashboard({ setAssessed }) {
 
               {/* Dropdown menu */}
               {isLeftDropdownOpen && !condition && (
-                <div className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30 w-full">
+                <div
+                  className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30 w-full scrollbar-thin scrollbar-thumb-[#CBB09B]/50 hover:scrollbar-thumb-[#CBB09B] scrollbar-track-transparent dark:scrollbar-thumb-dark-mode-highlight/50 dark:hover:scrollbar-thumb-dark-mode-highlight"
+                  style={{
+                    maxHeight: "300px",
+                    overflowY: "auto",
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "rgba(203, 176, 155, 0.5) transparent",
+                  }}
+                  onWheel={(e) => e.stopPropagation()}
+                >
                   {roadmapData.map((roadmap, index) => (
                     <div
                       key={roadmap.roadmap_id}
@@ -220,9 +229,9 @@ export default function Dashboard({ setAssessed }) {
                     currentCourse={currentRoadmap.roadmap_name}
                     progression={currentRoadmap.progress}
                     roadmapId={currentRoadmap.roadmap_id}
-                    courseOptions={roadmapData.map(
-                      (roadmap) => roadmap.roadmap_name
-                    )}
+                    courseOptions={
+                      roadmapData?.map((roadmap) => roadmap.roadmap_name) || []
+                    } // Ensure this is an array even if roadmapData is null
                     className="mb-6"
                     isSidebarExpanded={isSidebarExpanded}
                     onCourseSelect={handleCourseSelect}
@@ -255,3 +264,4 @@ export default function Dashboard({ setAssessed }) {
     </div>
   );
 }
+// This component is the main dashboard for the user, displaying their roadmap and progress. It includes a sidebar for navigation, a header for course selection, and a combined panel for user rewards and other information. The component uses React Query for data fetching and caching, ensuring efficient data management. The layout is responsive and adapts to different screen sizes, providing a seamless user experience.
