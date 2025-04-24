@@ -15,7 +15,7 @@ const ProgressBar = ({ progress, title, onBack }) => {
           </button>
         )}
 
-        <div className="w-9/12 bg-white rounded-full h-5 m-auto mt-8 border-2 border-black">
+        <div className="w-9/12 bg-white/50 rounded-full h-5 m-auto mt-8 border-2 border-black">
           <div
             className="bg-brown h-4 rounded-full transition-all duration-300 border-r-2 border-black"
             style={{ width: `${progress}%` }}

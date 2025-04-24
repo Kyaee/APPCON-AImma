@@ -1,8 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Sprout, Target, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/config/AuthContext";
 import { useEvaluation } from "@/api/INSERT";
-import { useNavigate } from "react-router-dom";
+import { useNavigation } from "@/context/navigationContext";
 
 export default function Header({
   id,
@@ -14,12 +14,13 @@ export default function Header({
   const { session } = useAuth();
   const { updateLesson } = useEvaluation();
   const location = useLocation();
+  const { suppressNavigation } = useNavigation(); // Get the current suppression state
 
   // Define navigation tabs only if the lesson has an assessment
   const navItems = [];
 
-  // Only add navigation tabs if the lesson has an assessment
-  if (isAssessment) {
+  // Only add navigation tabs if the lesson has an assessment AND we're not suppressing center nav
+  if (isAssessment && suppressNavigation !== "centerNav") {
     // Add Lesson tab
     navItems.push({
       icon: <Sprout size="20" />,
@@ -48,9 +49,14 @@ export default function Header({
     return false;
   };
 
-  // Handle quit button action
+  // Handle quit button action - MODIFIED to return to lesson
   const handleQuit = () => {
-    if (scrollProgress > previousProgress) {
+    // If we're in assessment, go back to the lesson page
+    if (location.pathname.includes("/assessment")) {
+      navigate(`/lesson/${id}`);
+    }
+    // Otherwise use the original dashboard navigation logic
+    else if (scrollProgress > previousProgress) {
       updateLesson({
         userId: session?.user?.id,
         lessonId: id,
@@ -65,7 +71,10 @@ export default function Header({
 
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
-      <h1 className="text-2xl text-primary">CapyCademy</h1>
+      <div className="flex items-center gap-2">
+        <img src="/favicon.svg" alt="CapyCademy Logo" className="w-8 h-8" />
+        <h1 className="text-2xl text-primary font-bold">CapyCademy</h1>
+      </div>
 
       {/* Only show nav if we have tabs to display (lesson has an assessment) */}
       {navItems.length > 0 && (
@@ -92,7 +101,7 @@ export default function Header({
       {/* Always show the quit button */}
       <button
         onClick={handleQuit}
-        className="text-sm mr-6 p-2 flex bg-white border border-black text-black gap-1 custom-shadow-50 rounded-md"
+        className="text-md px-10 py-2 flex bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border border-black text-white gap-1 custom-shadow-75 rounded-md"
       >
         <ArrowUpRight size="20" />
         Quit

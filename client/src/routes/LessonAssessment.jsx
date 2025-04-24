@@ -130,16 +130,19 @@ export default function Assessment() {
     }
   }, [isLoading, lessonData]);
 
-  // Fixed effect to suppress header navigation when in assessment
+  // Modified effect to only hide center navigation elements, not the entire header
   useEffect(() => {
-    // Suppress the lesson navigation header when in assessment
+    // Use "centerNav" to indicate we want to keep the header but hide the center tabs
+    // This new value will need to be handled in the header-navigator component
     if (!isIntroSlide && !isLastSlide) {
-      setSuppressNavigation("lesson");
+      setSuppressNavigation("centerNav");
+    } else {
+      setSuppressNavigation(null);
     }
 
     // Restore navigation when leaving
     return () => setSuppressNavigation(null);
-  }, [isIntroSlide, isLastSlide, setSuppressNavigation]); // Added setSuppressNavigation to deps
+  }, [isIntroSlide, isLastSlide, setSuppressNavigation]);
 
   const handleCheck = () => {
     setValidateAnswer(true);
@@ -436,11 +439,17 @@ export default function Assessment() {
 
   if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
 
+  // Add additional check to ensure lessonData and questions are available
+  const hasValidQuestions =
+    lessonData &&
+    Array.isArray(lessonData.questions) &&
+    lessonData.questions.length > 0;
+
   return (
     <>
       <main className="h-screen w-full flex justify-center items-center select-none relative overflow-hidden">
-        <VideoBackground />
-
+        <VideoBackground headerVisible={true} />{" "}
+        {/* Add prop to indicate header is visible */}
         <form>
           {isIntroSlide ? (
             // ------------------------
@@ -462,7 +471,7 @@ export default function Assessment() {
               // -------------------------
               <PassLastSlide
                 score={isCount?.score}
-                total={lessonData?.questions?.length - 1}
+                total={hasValidQuestions ? lessonData.questions.length - 1 : 0}
                 gems={lessonFetch?.gems}
                 exp={lessonFetch?.exp}
                 userId={userId}
@@ -471,7 +480,9 @@ export default function Assessment() {
                 lessonDifficulty={lessonFetch?.difficulty}
                 userLives={isCount.lives}
                 userScore={isCount.score}
-                userTotal={lessonData?.questions?.length - 1}
+                userTotal={
+                  hasValidQuestions ? lessonData.questions.length - 1 : 0
+                }
                 answers={isAnswers}
                 onClick={handleFinishAssessment}
               />
@@ -483,27 +494,42 @@ export default function Assessment() {
                 lessonId={lessonFetch?.id}
                 passing={3}
                 score={isCount.score}
-                total={lessonData?.questions?.length - 1}
+                total={hasValidQuestions ? lessonData.questions.length - 1 : 0}
                 onClick={handleFinishAssessment}
               />
             )
-          ) : (
+          ) : hasValidQuestions ? (
+            // Only render Questions if we have valid question data
             <Questions
               display_wrong_answer={isCount.wrong}
-              lesson_name={lessonData.name}
+              lesson_name={lessonData.name || "Assessment"}
               type={"multiple-choice"}
-              question={lessonData?.questions[isCurrentSlide]?.text}
-              options={lessonData?.questions[isCurrentSlide]?.options}
+              question={
+                lessonData.questions[isCurrentSlide]?.text ||
+                "Loading question..."
+              }
+              options={lessonData.questions[isCurrentSlide]?.options || []}
               questionNumber={isCurrentSlide}
-              correct={lessonData?.questions[isCurrentSlide]?.correct_answer}
+              correct={
+                lessonData.questions[isCurrentSlide]?.correct_answer || ""
+              }
               isSelectedAnswer={isAnswers}
               setSelectedAnswer={setAnswers}
               validate={isValidateAnswer}
-              explanation={lessonData?.questions[isCurrentSlide]?.explanation}
+              explanation={
+                lessonData.questions[isCurrentSlide]?.explanation || ""
+              }
             />
+          ) : (
+            // Fallback if questions aren't loaded properly
+            <div className="text-center p-8 animate-text-fade">
+              <h2 className="text-2xl font-bold mb-4">
+                Loading assessment questions...
+              </h2>
+              <p>Please wait while we prepare your questions.</p>
+            </div>
           )}
         </form>
-
         {/*********************************************
                   FOOTER DESIGN LOGIC
         **********************************************/}
@@ -511,11 +537,11 @@ export default function Assessment() {
           <></>
         ) : (
           <footer
-            className="absolute bottom-0 left-0 w-full py-5 flex items-center justify-around border-t border-primary
+            className="absolute bottom-0 left-0 w-full py-3 flex items-center justify-around border-3 bg-black/50 border-black
             *:flex *:py-3 *:rounded-lg *:gap-2 "
           >
             <button
-              className="border-primary border px-10 text-primary"
+              className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-primary px-10 text-white custom-shadow-75 border-2"
               onClick={() =>
                 isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
               }
@@ -523,14 +549,15 @@ export default function Assessment() {
               <ArrowLeft />
               Back
             </button>
-            <div className="flex gap-2 h-15 text-xl text-primary">
+            <div className="flex gap-2 h-15 text-xl text-white">
               <HeartIcon />
               {isCount.lives}
+              <p>HP</p>
             </div>
 
             {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (
               <button
-                className="bg-[#BF8648] border-2 disabled:bg-light-brown border-black px-6 custom-shadow-50 text-black"
+                className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-2 disabled:bg-light-brown border-black px-9 custom-shadow-75 text-white"
                 onClick={handleCheck}
                 disabled={!isAnswers[isCurrentSlide]?.answer}
               >
