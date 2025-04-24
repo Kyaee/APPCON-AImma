@@ -18,7 +18,6 @@ export default function JobOpportunities() {
 
   return (
     <div className="relative flex items-center w-full min-h-screen pb-20">
-
       {isNewUser ? (
         // New user welcome screen
         <div className="animate-text-fade w-full h-full flex flex-col justify-center items-center">
@@ -56,21 +55,21 @@ export default function JobOpportunities() {
               <h1 className="text-[#4C4C4C] dark:text-primary text-5xl font-extrabold mb-4 tracking-tight">
                 Personalized for You
               </h1>
-              <Button className="px-3 py-2 bg-light-brown border-2 border-foreground text-foreground hover:bg-light-brown/80 dark:bg-light-brown dark:hover:bg-light-brown/80">
+              <Button className="px-5 py-5 bg-brown border-2 border-black text-white hover:bg-dark-brown">
                 Generate Again
               </Button>
             </div>
             <p className="text-black dark:text-primary text-base font-medium mb-8 max-w-[760px]">
               We prepared possible opportunities based on your capabilities and
               learning.
-            </p>            
+            </p>
           </div>
 
           {/* Opportunities Grid */}
           <div className="px-55 relative w-full grid grid-cols-2 gap-15">
-            {SampleJobData.map((data)=> {
+            {SampleJobData.map((data) => {
               return (
-                <OpportunitiesMenu 
+                <OpportunitiesMenu
                   title={data.title}
                   salary={data.salary}
                   company={data.company}
@@ -79,7 +78,7 @@ export default function JobOpportunities() {
                   description={data.description}
                   link={data.link}
                 />
-              )
+              );
             })}
           </div>
         </div>

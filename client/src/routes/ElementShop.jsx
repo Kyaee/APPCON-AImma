@@ -167,7 +167,9 @@ export default function ElementShop() {
 
       {/* Main Content */}
       <div className="mt-32 ml-32 py-6">
-        <h1 className="text-3xl font-semibold mb-2 ml-8 text-black dark:text-primary">In-App Purchases</h1>
+        <h1 className="text-3xl font-semibold mb-2 ml-8 text-black dark:text-primary">
+          In-App Purchases
+        </h1>
 
         <div
           className=" flex items-center w-11/12 gap-7 mb-5 px-7 pb-10 pt-5 overflow-auto hide-scrollbar [-ms-overflow-style:'none'] [scrollbar-width:'none']
@@ -190,7 +192,7 @@ export default function ElementShop() {
           {shopItems.map((item) => (
             <Card
               key={item.id}
-              className="border border-foreground dark:border-dark-mode-highlight rounded-[20px] bg-card dark:bg-dark-inner-bg transform transition-transform hover:scale-105 custom-shadow-50"
+              className="border-2 border-foreground dark:border-dark-mode-highlight rounded-[20px] bg-card dark:bg-dark-inner-bg transform transition-transform hover:scale-105 custom-shadow-75"
             >
               <CardContent className="flex flex-col items-center justify-center gap-1 h-[280px]">
                 <div className="relative w-56 h-56">
@@ -211,12 +213,13 @@ export default function ElementShop() {
                 </div>
                 <h3
                   className="font-extrabold text-primary text-[1.5rem] tracking-tight text-center overflow-hidden"
-                  style={{ height: "5rem" }}>
+                  style={{ height: "5rem" }}
+                >
                   {item.title}
                 </h3>
               </CardContent>
               <CardFooter>
-                <Button className="h-10 w-full bg-[#f6cb4f] text-[#444444] rounded-[10px] border-2 border-black font-extrabold custom-shadow-50">
+                <Button className="h-10 w-full bg-[#FFD700] hover:bg-[#E6C200] transition-all duration-300 cursor-pointer text-[#444444] rounded-[10px] border-2 border-black font-extrabold custom-shadow-50">
                   <Gem className="w-6 h-6 mr-2" />
                   {item.price}
                 </Button>
@@ -228,13 +231,15 @@ export default function ElementShop() {
 
       {/* Pricing cards */}
       <div className="mt-6 ">
-        <h2 className="ml-40 text-3xl font-semibold mb-8 text-black dark:text-primary">User Plan</h2>
+        <h2 className="ml-40 text-3xl font-semibold mb-8 text-black dark:text-primary">
+          User Plan
+        </h2>
 
         <div className="flex flex-wrap gap-8 justify-center">
           {pricingPlans.map((plan, index) => (
             <Card
               key={index}
-              className="max-w-xl bg-card dark:bg-dark-inner-bg rounded-[20px] border border-solid border-foreground dark:border-dark-mode-highlight custom-shadow-50"
+              className="max-w-xl bg-card dark:bg-dark-inner-bg rounded-[20px] border-2 border-solid border-foreground dark:border-dark-mode-highlight custom-shadow-75"
             >
               <CardHeader className="pb-0">
                 <CardTitle className="text-primary text-2xl font-semibold flex items-center gap-2">
@@ -283,11 +288,11 @@ export default function ElementShop() {
                   ))}
                 </ul>
 
-                <Separator className="mt-10 mb-3 h-0.5" />
+                <Separator className="mt-10 mb-3 h-0.5 bg-primary" />
               </CardContent>
 
               <CardFooter>
-                <Button className="w-full h-[53px] bg-[#dfdfdf] text-[#444444] font-extrabold rounded-[10px] border border-solid border-black custom-shadow-50">
+                <Button className="w-full h-[53px] cursor-pointer bg-[#007CE8] hover:bg-[#0056b3] transition-all duration-300 text-white font-extrabold rounded-[10px] border border-solid border-black custom-shadow-75">
                   Buy Now
                 </Button>
               </CardFooter>

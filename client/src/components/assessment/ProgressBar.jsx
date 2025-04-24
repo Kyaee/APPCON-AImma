@@ -6,18 +6,18 @@ const ProgressBar = ({ progress, title, onBack }) => {
     <div className="container mx-auto relative">
       <div className="flex items-center justify-center">
         {onBack && (
-          <button 
+          <button
             onClick={onBack}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-white/50 hover:bg-white/70 transition-colors border-1 border-black"
             aria-label="Go back"
           >
-            <ArrowLeft className="text-white" size={20} />
+            <ArrowLeft className="text-black" size={20} />
           </button>
         )}
-        
-        <div className="w-9/12 bg-yellow-700 rounded-full h-5 m-auto mt-8 border-2 border-black">
+
+        <div className="w-9/12 bg-white rounded-full h-5 m-auto mt-8 border-2 border-black">
           <div
-            className="bg-white h-4 rounded-full transition-all duration-300 border-r-2 border-black"
+            className="bg-brown h-4 rounded-full transition-all duration-300 border-r-2 border-black"
             style={{ width: `${progress}%` }}
           />
         </div>

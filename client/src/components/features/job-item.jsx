@@ -30,9 +30,7 @@ const OpportunitiesMenu = ({
       <h2 className="text-3xl text-primary font-semibold tracking-tighter">
         {title}
       </h2>
-      <div className="text-primary text-lg font-medium mt-2 mb-1">
-        {salary}
-      </div>
+      <div className="text-primary text-lg font-medium mt-2 mb-1">{salary}</div>
       <div className="flex gap-2 text-primary text-base italic">
         <Contact className="size-5" />
         {company}
@@ -52,28 +50,30 @@ const OpportunitiesMenu = ({
         {location}
       </div>
 
-      <Separator orientation="horizontal" className="my-4 border border-foreground"/>
+      <Separator
+        orientation="horizontal"
+        className="my-4 border border-foreground"
+      />
 
-      <div className="mb-2 text-primary text-xl font-semibold">
-        Insights
-      </div>
+      <div className="mb-2 text-primary text-xl font-semibold">Insights</div>
       <p className="pb-20 text-primary text-base font-medium">
-        {showMore ? 
+        {showMore ? (
           <>
-           {description}
-           <br />
+            {description}
+            <br />
             <a className="text-blue-500" onClick={() => setShowMore(!showMore)}>
               See less
             </a>
-          </> : 
+          </>
+        ) : (
           <>
             {displayedDescription}
             <br />
             <a className="text-blue-500" onClick={() => setShowMore(!showMore)}>
               See more
             </a>
-          </> 
-        }
+          </>
+        )}
       </p>
 
       {/* Horizontal line */}
@@ -92,7 +92,7 @@ const OpportunitiesMenu = ({
         </button>
 
         <Link to="">
-          <button className="text-background w-[140px] h-[39px] rounded-lg border border-primary bg-blue-500 flex items-center justify-center">
+          <button className="text-white w-[140px] h-[39px] rounded-lg border-2 border-black bg-[#007CE8] hover:bg-[#0056b3]  flex cursor-pointer items-center justify-center">
             Check now
           </button>
         </Link>

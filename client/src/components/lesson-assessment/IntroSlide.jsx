@@ -5,12 +5,7 @@ import { useAssessment } from "@/api/INSERT";
 import { useState } from "react";
 import CapyAssess from "@/assets/lesson-assessment/CapyAssess.png";
 
-export default function IntroSlide({
-  lessonData,
-  gems,
-  exp,
-  setIntroSlide,
-}) {
+export default function IntroSlide({ lessonData, gems, exp, setIntroSlide }) {
   const [isClicked, setClicked] = useState(false);
   const generated_assessment = useLessonFetchStore(
     (state) => state.generated_assessment
@@ -39,7 +34,10 @@ export default function IntroSlide({
         });
         setGeneratedAssessment(true);
       } else {
-        console.error("Cannot generate assessment: Missing lesson details in store.", lessonFetch);
+        console.error(
+          "Cannot generate assessment: Missing lesson details in store.",
+          lessonFetch
+        );
       }
     }
   }
@@ -69,11 +67,21 @@ export default function IntroSlide({
         className="py-3 w-full mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
                 hover:bg-neutral-300 disabled:bg-neutral-200 disabled:text-neutral-400"
         onClick={generateQuestions}
-        disabled={isClicked || isPending || !lessonFetch?.id || !lessonFetch?.name || !lessonFetch?.lesson}
+        disabled={
+          isClicked ||
+          isPending ||
+          !lessonFetch?.id ||
+          !lessonFetch?.name ||
+          !lessonFetch?.lesson
+        }
       >
         {generated_assessment ? "Start Assessment" : "Generate & Start"}
       </button>
-      {isError && <p className="text-red-500 mt-2">Failed to generate assessment. Please try again.</p>}
+      {isError && (
+        <p className="text-red-500 mt-2">
+          Failed to generate assessment. Please try again.
+        </p>
+      )}
     </article>
   );
 }

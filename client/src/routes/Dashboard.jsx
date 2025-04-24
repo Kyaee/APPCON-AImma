@@ -28,23 +28,15 @@ export default function Dashboard({ setAssessed }) {
     localStorage.setItem("selectedRoadmapIndex", roadmapIndex.toString());
   }, [roadmapIndex]);
 
-  // Fetch roadmap data
+  // Fetch roadmap data with better caching parameters
   const {
     data: roadmapData,
     isLoading: loadingRoadmap,
     isError: roadmapError,
-    refetch: refetchRoadmaps, // <<< Add refetch function for roadmaps
-  } = useQuery(fetchRoadmap(id)); // Assuming fetchRoadmap returns query options like { queryKey: ["roadmaps", id], queryFn: ... }
-
-  // <<< Add logging here
-  console.log("Dashboard: Fetched roadmapData:", roadmapData);
+    refetch: refetchRoadmaps,
+  } = useQuery(fetchRoadmap(id));
 
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
-
-  // <<< Add logging here
-  console.log("Dashboard: Selected currentRoadmap:", currentRoadmap);
-  console.log("Dashboard: Progression value:", currentRoadmap?.progress);
-
   const roadmapId = currentRoadmap?.roadmap_id;
 
   // Fetch lesson data
@@ -53,56 +45,32 @@ export default function Dashboard({ setAssessed }) {
     isLoading: loadingLessons,
     refetch: refetchLessons,
   } = useQuery({
-    queryKey: ["lessons", roadmapId], // Add roadmapId to the queryKey to automatically refetch when it changes
+    queryKey: ["lessons", roadmapId],
     queryFn: () => fetchLesson(roadmapId),
-    enabled: !!roadmapId, // Only fetch lessons when roadmap is loaded
+    enabled: !!roadmapId,
   });
 
-  // Refetch lessons when roadmapIndex changes
+  // Keep only ONE useEffect for handling returns from lessons/assessments
   useEffect(() => {
-    if (roadmapId) {
-      refetchLessons();
-    }
-  }, [roadmapId, refetchLessons]);
-
-  // Refetch data when returning from a lesson/assessment or when roadmapId changes
-  useEffect(() => {
-    // Only proceed if we have a valid roadmapId and userId (id)
     if (roadmapId && id) {
-      const doRefetch = async () => {
-        console.log(
-          "Dashboard: Forcing refetch of data for roadmap:",
-          roadmapId,
-          "and user:",
-          id
-        );
-        // Invalidate queries first to mark them as stale
-        await queryClient.invalidateQueries({
-          queryKey: ["lessons", roadmapId],
-        });
-        await queryClient.invalidateQueries({ queryKey: ["roadmaps", id] });
-
-        // Explicitly refetch both after invalidation to ensure fresh data is loaded
-        await refetchLessons();
-        await refetchRoadmaps(); // <<< Explicitly refetch roadmaps
-        console.log("Dashboard: Refetch complete.");
-      };
-
-      // Check for timestamp parameter
+      // Check only for timestamp parameter
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has("t")) {
         console.log(
           "Dashboard: Returned from lesson/assessment with timestamp:",
           urlParams.get("t")
         );
-        doRefetch();
-      } else {
-        // Refetch lessons if only roadmapId changes (no timestamp)
-        refetchLessons();
+
+        // Use invalidateQueries ONLY - don't call explicit refetches
+        queryClient.invalidateQueries({
+          queryKey: ["lessons", roadmapId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["roadmap", id],
+        });
       }
     }
-    // Ensure all dependencies are included
-  }, [roadmapId, id, queryClient, refetchLessons, refetchRoadmaps]); // <<< Added refetchRoadmaps and id
+  }, [roadmapId, id, queryClient]);
 
   if (loadingRoadmap || loadingLessons) return <Loading />;
 
@@ -148,7 +116,7 @@ export default function Dashboard({ setAssessed }) {
           } sticky top-20`}
         >
           {!isSidebarExpanded && (
-            <div className="ml-[calc(3vw+12px)] w-[calc(20%+5vw)] top-30 p-3 fixed">
+            <div className="ml-[calc(3vw+12px)] w-[calc(20%+4vw)] top-30 p-3 fixed">
               <div className="relative inline-block w-full">
                 <div className="relative inline-block w-full">
                   {/* Header content with inline horizontal line */}
@@ -168,7 +136,7 @@ export default function Dashboard({ setAssessed }) {
                         id="headerContainer"
                       >
                         <h2
-                          className="text-[calc(1.5rem+0.5vw)] font-bold text-black dark:text-primary text-balance pr-10"
+                          className="text-[calc(1.0rem+0.5vw)] font-bold text-black dark:text-primary text-balance pr-10"
                           style={{ width: "calc(100% - 0rem)" }}
                         >
                           {currentRoadmap?.roadmap_name || "Select a roadmap"}

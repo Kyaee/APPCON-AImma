@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { VideoBackground } from "@/components/layout/Background";
 import brandIcon from "@/assets/general/brandicon.png";
 import Loading from "@/routes/Loading"; // Import the Loading component
@@ -60,6 +60,7 @@ const IntroSlides = [
 const Showcase = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isReady, setIsReady] = useState(false); // Add loading state
+  const navigate = useNavigate(); // Add useNavigate hook
 
   // Preload images and handle initial delay
   useEffect(() => {
@@ -113,8 +114,8 @@ const Showcase = () => {
   };
 
   const handleSkip = () => {
-    // Skip to the last showcase slide (analytics)
-    setCurrentSlide(IntroSlides.length - 1);
+    // Navigate directly to assessment instead of last slide
+    navigate("/start/assessment");
   };
 
   const currentSlideData = IntroSlides[currentSlide];
@@ -135,7 +136,7 @@ const Showcase = () => {
             <button
               onClick={handleSkip}
               className="
-              bg-[#BF9566] custom-shadow-50 border-black border-2 text-white px-10 py-2 rounded-lg text-sm  backdrop-blur-sm hover:bg-[#BF8648]
+              bg-brown custom-shadow-50 border-black border-2 text-white px-10 py-2 rounded-lg text-sm  backdrop-blur-sm hover:bg-dark-brown
               transition-colors  "
             >
               Skip
@@ -165,7 +166,7 @@ const Showcase = () => {
             <img
               src={currentSlideData.image}
               alt={currentSlideData.title}
-              className="w-full h-[432px] object-cover rounded-lg border-3 border-black custom-shadow-75" // Full width, fixed height (e.g., 432px), object-cover, keep border/rounded
+              className="w-full h-[432px] object-cover rounded-lg border-3 border-black custom-shadow-50" // Full width, fixed height (e.g., 432px), object-cover, keep border/rounded
             />
           </div>
         )}
@@ -212,7 +213,7 @@ const Showcase = () => {
                     key={index}
                     className={`w-5 h-5 rounded-full border-black border-2 transition-colors duration-200 ${
                       index + 1 === currentSlide
-                        ? "bg-amber-500"
+                        ? "bg-[#007CE8]"
                         : index + 1 < currentSlide
                         ? "bg-gray-300" // Mark past slides
                         : "bg-gray-300/50" // Future slides
@@ -234,8 +235,8 @@ const Showcase = () => {
               {isLastSlide ? (
                 <Link
                   to="/start/assessment" // Navigate to assessment route
-                  className="bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
-                  shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+                  className="bg-brown border-black border-2 text-white px-8 py-2 rounded-lg text-lg
+                  shadow-lg hover:bg-dark-brown transition-colors inline-flex items-center gap-2"
                 >
                   {currentSlideData.button} {/* Should be "Next" */}
                   <ArrowRight size={20} />
@@ -243,8 +244,8 @@ const Showcase = () => {
               ) : (
                 <button
                   onClick={handleNext}
-                  className="custom-shadow-50 bg-[#BF9566] border-black border-2 text-white px-8 py-2 rounded-lg text-lg
-                  shadow-lg hover:bg-[#BF8648] transition-colors inline-flex items-center gap-2"
+                  className="custom-shadow-50 bg-brown border-black border-2 text-white px-8 py-2 rounded-lg text-lg
+                  shadow-lg hover:bg-dark-brown transition-colors inline-flex items-center gap-2"
                 >
                   {currentSlideData.button}
                   <ArrowRight size={20} />

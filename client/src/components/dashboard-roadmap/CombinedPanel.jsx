@@ -8,7 +8,7 @@ import QuestPanel from "./QuestPanel";
 
 const CombinedPanel = ({ userId }) => {
   return (
-    <div className="relative bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-dark-mode-highlight custom-shadow-75 p-[2vh] w-[calc(20vw+1rem)] min-w-[280px] max-w-[350px] text-[clamp(0.8rem,1vw,1.1rem)]">
+    <div className="relative bg-white dark:bg-dark-inner-bg rounded-lg border-2 border-black dark:border-white/50 custom-shadow-75 p-[2vh] w-[calc(20vw+1rem)] min-w-[280px] max-w-[350px] text-[clamp(0.8rem,1vw,1.1rem)]">
       {/* Single capybara image at the top */}
       <img
         src={CapySlide}
@@ -24,7 +24,7 @@ const CombinedPanel = ({ userId }) => {
       </div>
 
       {/* Separator */}
-      <div className="border-t border-gray-300 dark:border-dark-mode-highlight my-[2vh]"></div>
+      <div className="border-t border-primary my-[2vh]"></div>
 
       {/* Streak Section */}
       <div className="mb-[2vh]">
@@ -32,7 +32,7 @@ const CombinedPanel = ({ userId }) => {
       </div>
 
       {/* Separator */}
-      <div className="border-t border-gray-300 dark:border-dark-mode-highlight my-[2vh]"></div>
+      <div className="border-t border-primary my-[2vh]"></div>
 
       {/* Quest Section */}
       <div>

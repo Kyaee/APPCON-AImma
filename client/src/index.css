@@ -80,6 +80,7 @@
   --dark-nav-bg: hsl(240 3% 7%); /* Converting from #121214 */
   --dark-nav-text: hsl(240 3% 41%); /* Converting from #64646a */
   --dark-inner-bg: hsl(240 3% 15%); /* Converting from #242429 */
+  --dark-box-shadow: 4px 4px 0px 0px hsla(0, 1%, 34%, 0.75); /* Converting from rgba(255, 255, 255, 0.75) */
 }
 
 @theme inline {
@@ -130,7 +131,7 @@
 
   @keyframes tilt-bounce {
     0% {
-      transform: scaleX(-1)  translateY(-80px) rotate(-5deg);
+      transform: scaleX(-1) translateY(-80px) rotate(-5deg);
     }
     50% {
       transform: scaleX(-1) translateY(-85px) rotate(-10deg);
@@ -302,6 +303,7 @@
     box-shadow: 4px 4px 0px 0px hsl(0 0% 0% / 0.75); /* Converting from rgba(0, 0, 0, 0.75) */
     box-shadow: 4px 4px 0px 0px hsl(0 0% 0% / 0.75); /* Converting from rgba(0, 0, 0, 0.75) */
   }
+
   .hide-scrollbar {
     -webkit-mask: linear-gradient(
       90deg,
@@ -423,7 +425,12 @@
   }
 
   .card-bg-opacity {
-    background-color: hsla(0, 0%, 100%, 0.2); /* semi-transparent white with 20% opacity */
+    background-color: hsla(
+      0,
+      0%,
+      100%,
+      0.2
+    ); /* semi-transparent white with 20% opacity */
   }
 
   @keyframes gradient-animation {

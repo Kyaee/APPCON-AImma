@@ -766,19 +766,19 @@ export default function UserAssessment() {
   const getProgress = () => {
     const stepProgressMap = {
       userType: 0,
-      educationLevel: 15,
-      experience: 15,
-      previousExperience: 15,
-      careerTransition: 15,
-      hsQuestions: 30,
-      collegeQuestions: 30,
-      gradQuestions: 30,
-      entryQuestions: 30,
-      midQuestions: 30,
-      seniorQuestions: 30,
-      dailyGoal: 50,
-      techInterest: 75,
-      complete: 95,
+      educationLevel: 16,
+      experience: 16,
+      previousExperience: 16,
+      careerTransition: 16,
+      hsQuestions: 32,
+      collegeQuestions: 32,
+      gradQuestions: 32,
+      entryQuestions: 32,
+      midQuestions: 32,
+      seniorQuestions: 32,
+      dailyGoal: 52,
+      techInterest: 80,
+      complete: 100,
     };
 
     return stepProgressMap[currentStep] || 0;
