@@ -3,17 +3,22 @@ import { CheckCircleIcon } from "lucide-react";
 
 const Questions = ({
   display_wrong_answer,
-  lesson_name,
-  questionNumber,
-  type,
-  question,
+  lesson_name = "Lesson",
+  questionNumber = 0,
+  type = "multiple-choice",
+  question = "Loading question...",
   options = [],
   correct,
-  isSelectedAnswer,
+  isSelectedAnswer = {},
   setSelectedAnswer,
   validate,
-  explanation,
+  explanation = "",
 }) => {
+  // Early return if essential props are missing
+  if (!setSelectedAnswer) {
+    return <div>Loading question content...</div>;
+  }
+
   switch (type) {
     case "multiple-choice":
       return (
@@ -29,24 +34,26 @@ const Questions = ({
                 : `grid-cols-1 animate-text-fade`
             }`}
           >
-            <article className="flex flex-col items-start justify-center relative">
-              <div>
-                <h1 className="font-extrabold text-4xl mb-7 text-primary">
-                  #{questionNumber + 1}
-                </h1>
-                <span className="border border-primary bg-[rgba(106,11,188,0.49)] p-1 px-3 rounded-2xl text-white">
+            <article className="flex flex-col items-start justify-center relative w-[600px]">
+              <div className="flex justify-between items-center w-full mb-5">
+                <div className="flex items-center gap-2">
+                  <h1 className="font-extrabold text-4xl text-primary">
+                    #{questionNumber + 1}
+                  </h1>
+                  <p className="tracking-tight text-primary font-lightx1">
+                    {lesson_name}
+                  </p>
+                </div>
+                <span className="border border-primary bg-black/30 p-1 px-3 rounded-2xl text-white">
                   Multiple Choice
                 </span>
-                <p className="mt-5 mb-2 tracking-tight text-primary font-lightx1">
-                  {lesson_name}
-                </p>
-                <h1 className="font-bold text-3xl mb-8 max-w-xl tracking-tight text-primary">
-                  {question}
-                </h1>
               </div>
+              <h1 className="font-bold text-3xl mb-8 w-full tracking-tight text-primary">
+                {question}
+              </h1>
               <div
-                className="grid grid-cols-1 gap-3 max-w-lg sm:w-full 
-                  *:p-4  *:text-black *:gap-4 *:rounded-sm"
+                className="grid grid-cols-1 gap-3 w-full 
+                  *:p-4 *:text-black *:gap-4 *:rounded-sm"
               >
                 {options.map((option, index) => {
                   const isChecked =
@@ -111,7 +118,7 @@ const Questions = ({
                 <img
                   src={CapyShout}
                   alt="capybara superhero"
-                  className="absolute -right-55 animate-tilt-bounce w-auto h-150 mb-4"
+                  className="absolute -right-25 animate-tilt-bounce w-auto h-150 mb-4"
                 />
               </div>
             )}

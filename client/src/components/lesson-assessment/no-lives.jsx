@@ -14,7 +14,7 @@ const NoLives = ({ userId }) => {
       <p className="text-lg text-primary">Wait for more lives.</p>
       <Link
         to={dashboardUrl}
-        className="py-3 px-4 mt-8 text-lg bg-white text-black font-extrabold custom-shadow-50 rounded-md hover:bg-neutral-300"
+        className="py-3 px-4 mt-8 border-2 border-black text-lg bg-white hover:bg-brown hover:text-white text-black font-extrabold custom-shadow-75 rounded-md cursor-pointer transition-all duration-400"
       >
         Go back to Dashboard
       </Link>

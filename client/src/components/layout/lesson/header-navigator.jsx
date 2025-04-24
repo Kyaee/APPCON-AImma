@@ -1,40 +1,42 @@
-import { Link, useLocation } from "react-router-dom";
-import { Sprout, Target, ShoppingCart, ArrowUpRight } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Sprout, Target, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/config/AuthContext";
 import { useEvaluation } from "@/api/INSERT";
-import { useNavigate } from "react-router-dom";
+import { useNavigation } from "@/context/navigationContext";
 
 export default function Header({
   id,
   isAssessment,
   previousProgress,
   scrollProgress,
-  inShop = false, // New prop to indicate when used in shop
 }) {
-  const navigate = useNavigate(); // Initialize the navigate function
-  const { session } = useAuth(); // Get the session from the auth context
-  const { updateLesson } = useEvaluation(); // Function to update user data
+  const navigate = useNavigate();
+  const { session } = useAuth();
+  const { updateLesson } = useEvaluation();
+  const location = useLocation();
+  const { suppressNavigation } = useNavigation(); // Get the current suppression state
 
-  // Updated navigation items - using state for shop navigation
-  const navItems = [
-    { icon: <Sprout size="20" />, label: "Lesson", path: `/lesson/${id}` },
-    {
+  // Define navigation tabs only if the lesson has an assessment
+  const navItems = [];
+
+  // Only add navigation tabs if the lesson has an assessment AND we're not suppressing center nav
+  if (isAssessment && suppressNavigation !== "centerNav") {
+    // Add Lesson tab
+    navItems.push({
+      icon: <Sprout size="20" />,
+      label: "Lesson",
+      path: `/lesson/${id}`,
+    });
+
+    // Add Assessment tab
+    navItems.push({
       icon: <Target size="20" />,
       label: "Assessment",
       path: `/l/${id}/assessment`,
-    },
-    // Use state to indicate shop is being accessed from a lesson
-    {
-      icon: <ShoppingCart size="20" />,
-      label: "Shop",
-      path: `/l/shop/${id}`,
-      state: { source: "lesson" },
-    },
-  ];
+    });
+  }
 
-  const location = useLocation();
   const isActive = (path) => {
-    // Special cases for each navigation item
     if (path.includes("/lesson/") && location.pathname.includes("/lesson/")) {
       return true;
     }
@@ -44,19 +46,17 @@ export default function Header({
     ) {
       return true;
     }
-    if (path.includes("/shop/") && location.pathname.includes("/shop/")) {
-      return true;
-    }
-
     return false;
   };
 
-  const filteredNavItems = isAssessment
-    ? navItems
-    : navItems.filter((item) => item.label !== "Assessment");
-
+  // Handle quit button action - MODIFIED to return to lesson
   const handleQuit = () => {
-    if (scrollProgress > previousProgress) {
+    // If we're in assessment, go back to the lesson page
+    if (location.pathname.includes("/assessment")) {
+      navigate(`/lesson/${id}`);
+    }
+    // Otherwise use the original dashboard navigation logic
+    else if (scrollProgress > previousProgress) {
       updateLesson({
         userId: session?.user?.id,
         lessonId: id,
@@ -64,7 +64,6 @@ export default function Header({
         progress: scrollProgress,
       });
       navigate(`/dashboard/${session?.user?.id}`);
-      console.log("successful");
     } else {
       navigate(`/dashboard/${session?.user?.id}`);
     }
@@ -72,35 +71,37 @@ export default function Header({
 
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
-      <h1
-        className={`text-2xl text-primary`} // Always use black text
-      >
-        CapyCademy
-      </h1>
-      <nav className="flex items-center bg-white text-black border border-black custom-shadow-75 rounded-lg h-[48px] mr-10">
-        {" "}
-        {/* Use white bg, black text/border */}
-        {filteredNavItems.map((item) => (
-          <Link
-            key={item.label}
-            to={item.path}
-            state={item.state} // Use state if provided
-            className={`group flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg transition-all duration-300 ${
-              isActive(item.path)
-                ? "bg-light-brown border-x"
-                : "hover:bg-light-brown"
-            }`}
-          >
-            <div className="flex items-center gap-2 text-black">
-              {item.icon}
-              <span className="text-sm font-inter">{item.label}</span>
-            </div>
-          </Link>
-        ))}
-      </nav>
+      <div className="flex items-center gap-2">
+        <img src="/favicon.svg" alt="CapyCademy Logo" className="w-8 h-8" />
+        <h1 className="text-2xl text-primary font-bold">CapyCademy</h1>
+      </div>
+
+      {/* Only show nav if we have tabs to display (lesson has an assessment) */}
+      {navItems.length > 0 && (
+        <nav className="flex items-center bg-white text-black border border-black custom-shadow-75 rounded-lg h-[48px] mr-10">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              to={item.path}
+              className={`group flex items-center gap-2 px-5 h-full first:rounded-l-lg last:rounded-r-lg transition-all duration-300 ${
+                isActive(item.path)
+                  ? "bg-light-brown border-x"
+                  : "hover:bg-light-brown"
+              }`}
+            >
+              <div className="flex items-center gap-2 text-black">
+                {item.icon}
+                <span className="text-sm font-inter">{item.label}</span>
+              </div>
+            </Link>
+          ))}
+        </nav>
+      )}
+
+      {/* Always show the quit button */}
       <button
         onClick={handleQuit}
-        className="text-sm mr-6 p-2 flex bg-white border border-black text-black gap-1 custom-shadow-50 rounded-md" // Use white bg, black text/border
+        className="text-md px-10 py-2 flex bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border border-black text-white gap-1 custom-shadow-75 rounded-md"
       >
         <ArrowUpRight size="20" />
         Quit
