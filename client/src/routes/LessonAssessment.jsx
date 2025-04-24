@@ -9,11 +9,12 @@ import IntroSlide from "@/components/lesson-assessment/IntroSlide";
 import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 import { markLessonCompleted } from "@/api/UPDATE";
+import capyCry from "@/assets/lesson-assessment/CapySad.png"; // Import the crying capybara image
 
 // Use Hooks
 import { useState, useEffect, useCallback } from "react";
 import { useSummary, useEvaluation } from "@/api/INSERT";
-import { fetchLessonAssessmentData } from "@/api/FETCH";
+import { fetchLessonAssessmentData, fetchUserdata } from "@/api/FETCH";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
@@ -30,18 +31,39 @@ export default function Assessment() {
   const [isCurrentSlide, setCurrentSlide] = useState(0);
   const [isValidateAnswer, setValidateAnswer] = useState(false);
   const [isCount, setCount] = useState({
-    lives: 5,
+    lives: 5, // Default to 5, will be updated with user's actual HP (capped at 5)
     score: 0,
     wrong: false,
     livesLost: 0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userTotalLives, setUserTotalLives] = useState(5); // Track user's total lives in the database
+  const [assessmentAttempts, setAssessmentAttempts] = useState(0); // Track assessment attempts
 
   const { session } = useAuth();
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const userData = useFetchStore((state) => state.fetch);
   const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData());
   const queryClient = useQueryClient();
+
+  // Fetch user data to get lives/HP information
+  const { data: userDataFetched, isLoading: isUserDataLoading } = useQuery({
+    queryKey: ["fetch_user", session?.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("lives, user_id")
+        .eq("user_id", session?.user?.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id,
+    staleTime: 30000, // 30 seconds
+    refetchOnWindowFocus: false,
+  });
+
   const updateStreakFromLesson = useStreakStore(
     (state) => state.updateStreakFromLesson
   );
@@ -63,6 +85,21 @@ export default function Assessment() {
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(userId);
+
+  // Initialize lives based on user data when it's loaded
+  useEffect(() => {
+    if (userDataFetched && !isUserDataLoading) {
+      // Get user's total lives from database, default to 5 if not available
+      const totalLives = userDataFetched.lives || 5;
+      setUserTotalLives(totalLives);
+
+      // Cap assessment lives at 5, or use actual value if less than 5
+      const assessmentLives = Math.min(totalLives, 5);
+
+      // Update the lives count for the assessment
+      setCount((prev) => ({ ...prev, lives: assessmentLives }));
+    }
+  }, [userDataFetched, isUserDataLoading]);
 
   // Calculate rewards based on difficulty
   const calculateRewards = useCallback((difficulty) => {
@@ -129,6 +166,42 @@ export default function Assessment() {
     // Restore navigation when leaving
     return () => setSuppressNavigation(null);
   }, [isIntroSlide, isLastSlide, setSuppressNavigation]);
+
+  // Function to handle retrying the assessment
+  const handleRetryAssessment = () => {
+    // Increment attempts counter
+    setAssessmentAttempts((prev) => prev + 1);
+
+    // Reset assessment state
+    setIntroSlide(true); // Go back to intro slide
+    setLastSlide(false);
+    setCurrentSlide(0);
+    setValidateAnswer(false);
+
+    // Update lives with remaining lives from database (capped at 5)
+    const remainingLives = Math.min(userTotalLives - isCount.livesLost, 5);
+
+    setCount({
+      lives: remainingLives,
+      score: 0,
+      wrong: false,
+      livesLost: 0, // Reset lives lost for this assessment attempt
+    });
+
+    // Reset answers
+    setAnswers([
+      {
+        id: 0,
+        question: "",
+        answer: "",
+        correct: false,
+        validated: false,
+      },
+    ]);
+
+    // Refetch question data if needed
+    queryClient.invalidateQueries(["lessonAssessment"]);
+  };
 
   const handleCheck = () => {
     setValidateAnswer(true);
@@ -426,11 +499,36 @@ export default function Assessment() {
   // 1. Data is being fetched initially
   // 2. Questions array doesn't exist or is empty
   const showLoading =
-    isLoading || !lessonData?.questions || lessonData.questions.length === 0;
+    isLoading ||
+    isUserDataLoading ||
+    !lessonData?.questions ||
+    lessonData.questions.length === 0;
 
   if (showLoading) return <Loading generate_assessment={true} />;
 
-  if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
+  // Check if user has no lives left in assessment and database
+  if (isCount.lives === 0) {
+    // Calculate remaining lives in database after this assessment
+    const remainingLivesInDb = Math.max(0, userTotalLives - isCount.livesLost);
+
+    // If there are still lives left in the database, show fail slide with retry option
+    if (remainingLivesInDb > 0) {
+      return (
+        <FailLastSlide
+          lessonId={lessonFetch?.id}
+          passing={3}
+          score={isCount.score}
+          total={lessonData.questions.length - 1}
+          onClick={handleFinishAssessment}
+          remainingLives={remainingLivesInDb}
+          onRetry={handleRetryAssessment}
+        />
+      );
+    }
+
+    // If no lives left in database, show NoLivesPage
+    return <NoLivesPage userId={userId} />;
+  }
 
   // Add additional check to ensure lessonData and questions are available
   const hasValidQuestions =

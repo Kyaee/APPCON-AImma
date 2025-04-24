@@ -214,8 +214,18 @@ export function useAssessment() {
     const requestBody = {
       prompt_assessment_generate: `
       Generate 11 assessment questions for ${lesson_name} with the following content: ${lesson_content}
-      The questions must only be "multiple-choice".
-      IMPORTANT: Ensure the length of the correct answer option is varied and not consistently longer than the incorrect options, to avoid making the correct answer obvious.
+      
+      REQUIREMENTS:
+      1. Questions must be "multiple-choice" only
+      2. EVERY question MUST have EXACTLY 4 options (no more, no less)
+      3. Distribute information evenly across all choices - DO NOT put all the relevant information in the first choice
+      4. The correct answer should be randomly positioned (not always option A, B, C, or D)
+      5. Wrong answers (distractors) should be plausible and related to the content
+      6. Ensure the length of the correct answer option is varied and not consistently longer than the incorrect options
+      7. Make all options approximately the same length when possible
+      8. Each option should be concise (1-2 sentences maximum)
+      
+      This assessment should genuinely test understanding of the lesson's key concepts.
       `,
       id: lesson_id,
       name: lesson_name,
