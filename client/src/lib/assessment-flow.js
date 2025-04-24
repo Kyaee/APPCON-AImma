@@ -86,9 +86,10 @@ export const assessmentFlow = {
     questions: [
       { id: 'yearLevel', label: 'What year level are you in?', type: 'select',
         options: ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year+'] },
-      { id: 'currentCourse', label: 'What is your current course?', type: 'text' },
+      { id: 'currentCourse', label: 'What is your current course?', type: 'select',
+        options: ['Computer Science', 'Information Technology', 'Software Engineering', 'Other'] },
       { id: 'internshipStatus', label: 'Have you completed any internships?', type: 'boolean' },
-      { id: 'targetIndustry', label: 'Which industry are you targeting?', type: 'select',
+      { id: 'targetIndustry', label: 'Which industry are you targeting?', type: 'multiselect',
         options: ['Software Development', 'Data Science', 'Cybersecurity', 'Web Development', 'Game Development', 'Other'] }
     ],
     nextStep: 'dailyGoal'

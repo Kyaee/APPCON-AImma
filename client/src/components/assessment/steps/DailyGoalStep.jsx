@@ -24,7 +24,7 @@ export default function DailyGoalStep({
               <img
                 src={option.icon}
                 alt={option.label}
-                className="w-55 h-20 sm:w-65 sm:h-30"
+                className="w-55 h-20 sm:w-65 sm:h-30 select-none pointer-events-none"
               />
             </div>
             <div>

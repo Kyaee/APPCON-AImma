@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function EntryQuestionsStep({ formData, setFormData }) {
+  // Get questions from assessment flow
+  const entryQuestions = assessmentFlow.entryQuestions.questions;
+  
   // Create local state for form inputs
   const [localFormData, setLocalFormData] = useState({
     currentRole: formData.currentRole || "",
@@ -43,12 +47,12 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
   };
 
   return (
-    <AssessmentStep title="Tell us about your experience">
+    <AssessmentStep title={assessmentFlow.entryQuestions.title}>
       <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
         {/* Current Role */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What is your current role?
+            {entryQuestions.find(q => q.id === 'currentRole').label}
           </label>
           <input
             type="text"
@@ -62,7 +66,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
         {/* Company Industry */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What industry is your company in?
+            {entryQuestions.find(q => q.id === 'companyIndustry').label}
           </label>
           <select
             value={localFormData.companyIndustry}
@@ -74,15 +78,7 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
             <option value="" disabled>
               Select industry
             </option>
-            {[
-              "Technology",
-              "Finance",
-              "Healthcare",
-              "Education",
-              "E-commerce",
-              "Manufacturing",
-              "Other",
-            ].map((industry) => (
+            {entryQuestions.find(q => q.id === 'companyIndustry').options.map((industry) => (
               <option key={industry} value={industry}>
                 {industry}
               </option>
@@ -93,20 +89,10 @@ export default function EntryQuestionsStep({ formData, setFormData }) {
         {/* Skills Used */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What skills have you used in your current role?
+            {entryQuestions.find(q => q.id === 'skillsUsed').label}
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              "Programming",
-              "Networking",
-              "Web Development",
-              "Game Development",
-              "AI/Machine Learning",
-              "Data Analysis",
-              "Cybersecurity",
-              "Project Management",
-              "Other",
-            ].map((skill) => (
+            {entryQuestions.find(q => q.id === 'skillsUsed').options.map((skill) => (
               <button
                 key={skill}
                 type="button"

@@ -24,7 +24,7 @@ export default function ExperienceStep({
               <img
                 src={option.icon}
                 alt={option.label}
-                className="w-60 h-30 sm:w-70 sm:h-35 select-none"
+                className="w-60 h-30 sm:w-70 sm:h-35 select-none pointer-events-none"
               />
             </div>
             <div>
