@@ -5,7 +5,14 @@ import { useAssessment } from "@/api/INSERT";
 import { useState } from "react";
 import CapyAssess from "@/assets/lesson-assessment/CapyAssess.png";
 
-export default function IntroSlide({ lessonData, gems, exp, setIntroSlide }) {
+export default function IntroSlide({
+  lessonData,
+  gems,
+  exp,
+  setIntroSlide,
+  disabled,
+  buttonText = "Start Assessment", // Add default button text prop
+}) {
   const [isClicked, setClicked] = useState(false);
   const generated_assessment = useLessonFetchStore(
     (state) => state.generated_assessment
@@ -75,7 +82,7 @@ export default function IntroSlide({ lessonData, gems, exp, setIntroSlide }) {
           !lessonFetch?.lesson
         }
       >
-        {generated_assessment ? "Start Assessment" : "Generate & Start"}
+        {buttonText} {/* Use the provided button text */}
       </button>
       {isError && (
         <p className="text-red-500 mt-2">

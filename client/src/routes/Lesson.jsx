@@ -487,17 +487,21 @@ export default function ElementLesson() {
     }
 
     if (generated_assessment) {
-      setGeneratedAssessment(false);
+      // If assessment was already generated, don't regenerate, just navigate
       navigate(`/l/${id}/assessment`);
     } else {
+      // Otherwise generate the assessment
       createAssessment({
         lesson_id: lessonFetch.id,
         lesson_name: lessonFetch.name,
         lesson_content: lessonFetch.lesson,
       });
-      setLoading(false);
+
+      // Set flag to indicate assessment was just generated
       setGeneratedAssessment(true);
-      setTimeout(() => navigate(`/l/${id}/assessment`), 2000);
+
+      // Navigate after short delay to ensure data is saved
+      setTimeout(() => navigate(`/l/${id}/assessment`), 1000);
     }
   };
 

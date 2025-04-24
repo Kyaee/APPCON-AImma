@@ -22,6 +22,7 @@ import { useQuestStore } from "@/store/useQuestStore"; // Import useQuestStore
 import { useAuth } from "@/config/AuthContext";
 import { useStreakStore } from "@/store/useStreakStore";
 import { handleUpdateStreak } from "@/lib/check-day-streak";
+import { useNavigation } from "@/context/navigationContext"; // Import the navigation context properly
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
@@ -45,6 +46,7 @@ export default function Assessment() {
     (state) => state.updateStreakFromLesson
   );
   const completeLessonTest = useQuestStore((state) => state.completeLessonTest); // Get quest action
+  const { setSuppressNavigation } = useNavigation(); // Get the function from hook
   const [isAnswers, setAnswers] = useState([
     {
       id: isCurrentSlide,
@@ -108,6 +110,36 @@ export default function Assessment() {
       }
     }
   }, [isLoading, lessonData, isIntroSlide]);
+
+  // Update this useEffect to properly skip intro slide after assessment generation
+  useEffect(() => {
+    // If we have lesson data and we're showing the intro slide
+    if (!isLoading && lessonData) {
+      // Check if assessment was just generated
+      const generatedAssessment =
+        useLessonFetchStore.getState().generated_assessment;
+
+      if (generatedAssessment) {
+        // Reset the generated_assessment flag to false to avoid future auto-skips
+        useLessonFetchStore.getState().setGeneratedAssessment(false);
+
+        // Automatically proceed to the questionnaire
+        console.log("Assessment just generated, skipping intro slide");
+        setIntroSlide(false);
+      }
+    }
+  }, [isLoading, lessonData]);
+
+  // Fixed effect to suppress header navigation when in assessment
+  useEffect(() => {
+    // Suppress the lesson navigation header when in assessment
+    if (!isIntroSlide && !isLastSlide) {
+      setSuppressNavigation("lesson");
+    }
+
+    // Restore navigation when leaving
+    return () => setSuppressNavigation(null);
+  }, [isIntroSlide, isLastSlide, setSuppressNavigation]); // Added setSuppressNavigation to deps
 
   const handleCheck = () => {
     setValidateAnswer(true);
@@ -420,6 +452,8 @@ export default function Assessment() {
               exp={lessonFetch?.exp}
               setIntroSlide={() => setIntroSlide(false)}
               disabled={isLoading}
+              // Always use "Start Assessment" button text, never "Generate and Start"
+              buttonText="Start Assessment"
             />
           ) : isLastSlide ? (
             isCount.score >= 3 ? (

@@ -3,17 +3,22 @@ import { CheckCircleIcon } from "lucide-react";
 
 const Questions = ({
   display_wrong_answer,
-  lesson_name,
-  questionNumber,
-  type,
-  question,
+  lesson_name = "Lesson",
+  questionNumber = 0,
+  type = "multiple-choice",
+  question = "Loading question...",
   options = [],
   correct,
-  isSelectedAnswer,
+  isSelectedAnswer = {},
   setSelectedAnswer,
   validate,
-  explanation,
+  explanation = "",
 }) => {
+  // Early return if essential props are missing
+  if (!setSelectedAnswer) {
+    return <div>Loading question content...</div>;
+  }
+
   switch (type) {
     case "multiple-choice":
       return (
