@@ -92,12 +92,12 @@ export default function IconButton({notification}) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button onClick={logOut} className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight max-w-30 hover:bg-light-brown dark:hover:bg-dark-mode-highlight">
+                <Button onClick={logOut} className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight max-w-30 hover:bg-light-brown dark:hover:bg-dark-inner-bg">
                   Log-out
                 </Button>
                 <Button
                   variant="outline"
-                  className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight max-w-30 hover:bg-light-brown dark:hover:bg-dark-mode-highlight"
+                  className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight max-w-30 hover:bg-light-brown dark:hover:bg-dark-inner-bg"
                 >
                   Support Us
                 </Button>
@@ -109,10 +109,10 @@ export default function IconButton({notification}) {
             className="border border-foreground dark:border-dark-mode-highlight"
           />
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-foreground dark:text-primary bg-background dark:bg-dark-mode-bg hover:bg-accent dark:hover:bg-dark-mode-highlight border border-foreground dark:border-dark-mode-highlight">
+            <AlertDialogCancel className="text-foreground dark:text-primary bg-background dark:bg-dark-mode-bg hover:bg-accent dark:hover:bg-dark-inner-bg border border-foreground dark:border-dark-mode-highlight">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg hover:bg-light-brown dark:hover:bg-dark-mode-highlight border border-foreground dark:border-dark-mode-highlight">
+            <AlertDialogAction className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg hover:bg-light-brown dark:hover:bg-dark-inner-bg border border-foreground dark:border-dark-mode-highlight">
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
