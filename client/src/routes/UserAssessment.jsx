@@ -41,49 +41,50 @@ export default function UserAssessment() {
     setTechnicalAnswers,
     resetAssessment,
   } = useAssessmentStore((state) => state);
-  
+
   const { createRoadmap } = useGenerateRoadmap();
   const { session } = useAuth();
   const navigate = useNavigate();
 
-  // Core assessment state
-  const [currentStep, setCurrentStep] = useState(() => 
-    localStorage.getItem("currentAssessmentPage") || "userType");
-  const [selectedType, setSelectedType] = useState(() => 
-    JSON.parse(localStorage.getItem("selectedType") || "null"));
-  const [selectedLevel, setSelectedLevel] = useState(() => 
-    JSON.parse(localStorage.getItem("selectedLevel") || "null"));
+  // Core assessment state - removed localStorage dependencies
+  const [currentStep, setCurrentStep] = useState("userType");
+  const [selectedType, setSelectedType] = useState(null);
+  const [selectedLevel, setSelectedLevel] = useState(null);
 
-  // State for different user types
+  // State for different user types - with default values
   const [previousExperience, setPreviousExp] = useState({
     lastRole: "",
     yearsExperience: "",
     reasonForChange: "",
   });
+
   const [transition, setTransition] = useState({
     currentField: "",
     desiredField: "",
     transitionReason: "",
   });
+
   const [dailyGoal, setDailyGoalState] = useState(null);
   const [technicalInterest, setTechnicalInterestState] = useState(null);
   const [technicalAnswers, setTechnicalAnswersState] = useState({});
   const [feedback, setFeedback] = useState("");
   const [techQuestionsVisible, setTechQuestionsVisible] = useState(false);
 
-  // Form data for different user types
+  // Form data for different user types - with default values
   const [hsFormData, setHsFormData] = useState({
     strand: "",
     planningCollege: null,
     interestAreas: [],
     careerGoals: "",
   });
+
   const [collegeFormData, setCollegeFormData] = useState({
     course: "",
     yearLevel: "",
     technicalSkills: [],
     careerPath: "",
   });
+
   const [gradFormData, setGradFormData] = useState({
     fieldStudy: "",
     researchFocus: "",
@@ -92,15 +93,24 @@ export default function UserAssessment() {
     technicalExpertise: 3,
     researchInterests: [],
   });
-  const [entryFormData, setEntryFormData] = useState(() =>
-    JSON.parse(localStorage.getItem("entryLevelSavepoint") || 
-    '{"currentRole":"","companyIndustry":"","skillsUsed":[]}'));
-  const [midFormData, setMidFormData] = useState(() =>
-    JSON.parse(localStorage.getItem("midLevelSavepoint") || 
-    '{"currentRole":"","companyIndustry":"","skillsUsed":[]}'));
-  const [seniorFormData, setSeniorFormData] = useState(() =>
-    JSON.parse(localStorage.getItem("seniorLevelSavepoint") || 
-    '{"currentRole":"","companyIndustry":"","skillsUsed":[]}'));
+
+  const [entryFormData, setEntryFormData] = useState({
+    currentRole: "",
+    companyIndustry: "",
+    skillsUsed: [],
+  });
+
+  const [midFormData, setMidFormData] = useState({
+    currentRole: "",
+    companyIndustry: "",
+    skillsUsed: [],
+  });
+
+  const [seniorFormData, setSeniorFormData] = useState({
+    currentRole: "",
+    companyIndustry: "",
+    skillsUsed: [],
+  });
 
   // Refs for form handling
   const formRefs = {
@@ -116,131 +126,12 @@ export default function UserAssessment() {
     complete: useRef(null),
   };
 
-  // Load data on component mount
+  // Component initialization - simplified without localStorage
   useEffect(() => {
     resetAssessment();
-    
-    // Load saved form data
-    const loadSavedData = () => {
-      // Previous experience data
-      const savedPreviousExp = localStorage.getItem("previousExpData");
-      if (savedPreviousExp) setPreviousExp(JSON.parse(savedPreviousExp));
-
-      // Career transition data
-      const savedTransition = localStorage.getItem("careerTransitionData");
-      if (savedTransition) setTransition(JSON.parse(savedTransition));
-
-      // Student form data
-      const savedHsResponses = localStorage.getItem("hsResponses");
-      if (savedHsResponses) setHsFormData(JSON.parse(savedHsResponses));
-      
-      const savedCollegeResponses = localStorage.getItem("collegeResponses");
-      if (savedCollegeResponses) setCollegeFormData(JSON.parse(savedCollegeResponses));
-      
-      const savedGradResponses = localStorage.getItem("gradResponses");
-      if (savedGradResponses) setGradFormData(JSON.parse(savedGradResponses));
-
-      // Daily goal and technical interests
-      const savedDailyGoal = localStorage.getItem("daily-goal");
-      if (savedDailyGoal) setDailyGoalState(savedDailyGoal);
-      
-      const savedTechnicalInterest = localStorage.getItem("technicalInterest");
-      if (savedTechnicalInterest) setTechnicalInterestState(JSON.parse(savedTechnicalInterest));
-      
-      const savedTechnicalAnswers = localStorage.getItem("technicalAnswers");
-      if (savedTechnicalAnswers) setTechnicalAnswersState(JSON.parse(savedTechnicalAnswers));
-    };
-    
-    loadSavedData();
-    
     const timer = setTimeout(() => setIsReady(true), 800);
     return () => clearTimeout(timer);
   }, [resetAssessment]);
-
-  // Save current step to localStorage
-  useEffect(() => {
-    localStorage.setItem("currentAssessmentPage", currentStep);
-  }, [currentStep]);
-
-  // Save selected type and level to localStorage
-  useEffect(() => {
-    if (selectedType) localStorage.setItem("selectedType", JSON.stringify(selectedType));
-    if (selectedLevel) localStorage.setItem("selectedLevel", JSON.stringify(selectedLevel));
-  }, [selectedType, selectedLevel]);
-
-  // Save technical interest and answers to localStorage
-  useEffect(() => {
-    if (technicalInterest) {
-      localStorage.setItem("technicalInterest", JSON.stringify(technicalInterest));
-    }
-    if (Object.keys(technicalAnswers).length > 0) {
-      localStorage.setItem("technicalAnswers", JSON.stringify(technicalAnswers));
-    }
-  }, [technicalInterest, technicalAnswers]);
-
-  // Save tech question visibility state to localStorage
-  useEffect(() => {
-    localStorage.setItem("techQuestionsVisible", JSON.stringify(techQuestionsVisible));
-  }, [techQuestionsVisible]);
-  
-  // Load saved technical interest state
-  useEffect(() => {
-    const savedTechQuestionsVisible = localStorage.getItem("techQuestionsVisible");
-    if (savedTechQuestionsVisible) {
-      setTechQuestionsVisible(JSON.parse(savedTechQuestionsVisible));
-    }
-  }, []);
-
-  // Save form data when it changes
-  useEffect(() => {
-    if (Object.keys(hsFormData).length > 0) {
-      localStorage.setItem("hsResponses", JSON.stringify(hsFormData));
-    }
-  }, [hsFormData]);
-  
-  useEffect(() => {
-    if (Object.keys(collegeFormData).length > 0) {
-      localStorage.setItem("collegeResponses", JSON.stringify(collegeFormData));
-    }
-  }, [collegeFormData]);
-  
-  useEffect(() => {
-    if (Object.keys(gradFormData).length > 0) {
-      localStorage.setItem("gradResponses", JSON.stringify(gradFormData));
-    }
-  }, [gradFormData]);
-  
-  useEffect(() => {
-    if (Object.keys(entryFormData).length > 0) {
-      localStorage.setItem("entryLevelSavepoint", JSON.stringify(entryFormData));
-    }
-  }, [entryFormData]);
-  
-  useEffect(() => {
-    if (Object.keys(midFormData).length > 0) {
-      localStorage.setItem("midLevelSavepoint", JSON.stringify(midFormData));
-    }
-  }, [midFormData]);
-  
-  useEffect(() => {
-    if (Object.keys(seniorFormData).length > 0) {
-      localStorage.setItem("seniorLevelSavepoint", JSON.stringify(seniorFormData));
-    }
-  }, [seniorFormData]);
-  
-  useEffect(() => {
-    if (Object.keys(previousExperience).length > 0 && 
-        previousExperience.lastRole !== undefined) {
-      localStorage.setItem("previousExpData", JSON.stringify(previousExperience));
-    }
-  }, [previousExperience]);
-  
-  useEffect(() => {
-    if (Object.keys(transition).length > 0 && 
-        transition.currentField !== undefined) {
-      localStorage.setItem("careerTransitionData", JSON.stringify(transition));
-    }
-  }, [transition]);
 
   // Handlers for navigation and form submission
   const handleTypeSelection = (option) => {
@@ -261,7 +152,6 @@ export default function UserAssessment() {
     setEducationLevel(option);
 
     if (currentStep === "educationLevel") {
-      localStorage.setItem("educationLevelData", JSON.stringify(option));
       const nextSteps = {
         highSchool: "hsQuestions",
         college: "collegeQuestions",
@@ -269,7 +159,6 @@ export default function UserAssessment() {
       };
       navigateToNextStep(nextSteps[option.id]);
     } else if (currentStep === "experience") {
-      localStorage.setItem("yearsOfExpSavepoint", JSON.stringify(option));
       const nextSteps = {
         entryLevel: "entryQuestions",
         midLevel: "midQuestions",
@@ -282,16 +171,13 @@ export default function UserAssessment() {
   const handleDailyGoalSelect = (value) => {
     setDailyGoalState(value);
     setDailyGoal(value);
-    localStorage.setItem("daily-goal", value);
     navigateToNextStep("techInterest");
   };
 
   const handleTechInterestSelect = (option) => {
     setTechnicalInterestState(option);
     setTechnicalInterest(option);
-    localStorage.setItem("technicalInterest", JSON.stringify(option));
     setTechQuestionsVisible(true);
-    localStorage.setItem("techQuestionsVisible", JSON.stringify(true));
   };
 
   const handleTechAnswerChange = (questionId, value) => {
@@ -305,15 +191,15 @@ export default function UserAssessment() {
   const syncFormRef = (refName) => {
     const formRef = formRefs[refName].current;
     if (formRef) {
-      const syncButton = formRef.querySelector('button[style*="display: none"]');
+      const syncButton = formRef.querySelector(
+        'button[style*="display: none"]'
+      );
       if (syncButton) syncButton.dispatchEvent(new Event("syncToParent"));
     }
   };
 
   const handleSubmitCompletion = async () => {
     setIsGenerating(true);
-    localStorage.setItem("assessmentCompleted", "true");
-    if (feedback.trim()) localStorage.setItem("assessmentFeedback", feedback);
 
     // Compile all assessment data
     const assessmentData = {
@@ -325,19 +211,23 @@ export default function UserAssessment() {
       previousExperience: previousExperience,
       careerTransition: transition,
       feedback: feedback,
-      formData: getFormDataByUserType()
+      formData: getFormDataByUserType(),
     };
-
-    localStorage.setItem("completeAssessmentData", JSON.stringify(assessmentData));
 
     // Data for roadmap generation
     const userData = {
       user_id: session?.user?.id,
       roadmap_name: `${selectedType?.label || "Custom"} Learning Path`,
-      description: `Personalized learning path based on ${selectedType?.label || "user"} assessment.`,
-      daily_goal: typeof dailyGoal === "number" ? dailyGoal.toString() : dailyGoal || "30min",
+      description: `Personalized learning path based on ${
+        selectedType?.label || "user"
+      } assessment.`,
+      daily_goal:
+        typeof dailyGoal === "number"
+          ? dailyGoal.toString()
+          : dailyGoal || "30min",
       technicalInterest: technicalInterest?.label || null,
-      technicalAnswers: Object.keys(technicalAnswers).length > 0 ? technicalAnswers : null,
+      technicalAnswers:
+        Object.keys(technicalAnswers).length > 0 ? technicalAnswers : null,
     };
 
     try {
@@ -366,70 +256,64 @@ export default function UserAssessment() {
     return {};
   };
 
-  // Form submission validation and handling
+  // Form submission validation and handling - removed localStorage dependencies
   const handleFormSubmission = () => {
     // Form validation object - key is step name, value is validation function
     const formValidations = {
       previousExperience: () => {
-        syncFormRef('previousExperience');
+        syncFormRef("previousExperience");
         if (
           previousExperience.lastRole.trim() !== "" &&
           previousExperience.yearsExperience.trim() !== "" &&
           previousExperience.reasonForChange.trim() !== ""
         ) {
           setPreviousExperience(previousExperience);
-          localStorage.setItem("previousExpData", JSON.stringify(previousExperience));
           return "dailyGoal";
         }
         alert("Please fill in all fields for Previous Experience");
         return null;
       },
       careerTransition: () => {
-        syncFormRef('careerTransition');
+        syncFormRef("careerTransition");
         if (
           transition.currentField.trim() !== "" &&
           transition.desiredField.trim() !== "" &&
           transition.transitionReason.trim() !== ""
         ) {
           setCareerTransition(transition);
-          localStorage.setItem("careerTransitionData", JSON.stringify(transition));
           return "dailyGoal";
         }
         alert("Please fill in all fields for Career Transition");
         return null;
       },
       hsQuestions: () => {
-        syncFormRef('hsQuestions');
+        syncFormRef("hsQuestions");
         if (
           hsFormData.strand &&
           hsFormData.planningCollege !== null &&
           hsFormData.interestAreas.length > 0 &&
           hsFormData.careerGoals
         ) {
-          localStorage.setItem("hsResponses", JSON.stringify(hsFormData));
-          localStorage.setItem("hsQuestionsSavepoint", "true");
           return "dailyGoal";
         }
         alert("Please complete all fields before proceeding");
         return null;
       },
       collegeQuestions: () => {
-        syncFormRef('collegeQuestions');
+        syncFormRef("collegeQuestions");
         if (
           collegeFormData.yearLevel &&
           collegeFormData.currentCourse &&
           collegeFormData.internshipStatus !== null &&
           collegeFormData.targetIndustry
         ) {
-          localStorage.setItem("collegeResponses", JSON.stringify(collegeFormData));
-          localStorage.setItem("collegeQuestionsSavepoint", "true");
           return "dailyGoal";
         }
         alert("Please complete all fields before proceeding");
         return null;
       },
       gradQuestions: () => {
-        syncFormRef('gradQuestions');
+        syncFormRef("gradQuestions");
         if (
           gradFormData.fieldStudy &&
           gradFormData.researchFocus &&
@@ -437,48 +321,42 @@ export default function UserAssessment() {
           gradFormData.careerPlans &&
           gradFormData.researchInterests.length > 0
         ) {
-          localStorage.setItem("gradResponses", JSON.stringify(gradFormData));
-          localStorage.setItem("gradQuestionsSavepoint", "true");
           return "dailyGoal";
         }
         alert("Please complete all fields before proceeding");
         return null;
       },
       entryQuestions: () => {
-        syncFormRef('entryQuestions');
+        syncFormRef("entryQuestions");
         if (
           entryFormData.currentRole &&
           entryFormData.companyIndustry &&
           entryFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem("entryLevelSavepoint", JSON.stringify(entryFormData));
-          localStorage.setItem("entryLevelResponses", JSON.stringify(entryFormData));
           return "dailyGoal";
         }
         alert("Please complete all fields before proceeding");
         return null;
       },
       midQuestions: () => {
-        syncFormRef('midQuestions');
+        syncFormRef("midQuestions");
         if (
           midFormData.currentRole &&
           midFormData.companyIndustry &&
           midFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem("midLevelResponses", JSON.stringify(midFormData));
           return "dailyGoal";
         }
         alert("Please complete all fields before proceeding");
         return null;
       },
       seniorQuestions: () => {
-        syncFormRef('seniorQuestions');
+        syncFormRef("seniorQuestions");
         if (
           seniorFormData.currentRole &&
           seniorFormData.companyIndustry &&
           seniorFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem("seniorLevelResponses", JSON.stringify(seniorFormData));
           return "dailyGoal";
         }
         alert("Please complete all fields before proceeding");
@@ -486,18 +364,16 @@ export default function UserAssessment() {
       },
       techInterest: () => {
         if (techQuestionsVisible) {
-          syncFormRef('techInterest');
-          localStorage.setItem("technicalAnswers", JSON.stringify(technicalAnswers));
-          localStorage.setItem("techQuestionsVisible", JSON.stringify(true));
+          syncFormRef("techInterest");
           return "complete";
         }
         return null;
       },
       complete: () => {
-        syncFormRef('complete');
+        syncFormRef("complete");
         handleSubmitCompletion();
         return null;
-      }
+      },
     };
 
     if (formValidations[currentStep]) {
@@ -506,17 +382,12 @@ export default function UserAssessment() {
     }
   };
 
+  // Simplified navigation function without localStorage
   const navigateToNextStep = (step) => {
-    // Save current step state before navigating
-    if (currentStep === "techInterest" && techQuestionsVisible) {
-      localStorage.setItem("techQuestionsVisible", JSON.stringify(techQuestionsVisible));
-      localStorage.setItem("technicalAnswers", JSON.stringify(technicalAnswers));
-    }
-    
     setCurrentStep(step);
   };
 
-  // Back button logic
+  // Back button logic - simplified without localStorage
   const handleBack = () => {
     if (currentStep === "userType") {
       setShowIntro(true);
@@ -525,7 +396,6 @@ export default function UserAssessment() {
 
     if (currentStep === "techInterest" && techQuestionsVisible) {
       setTechQuestionsVisible(false);
-      localStorage.setItem("techQuestionsVisible", JSON.stringify(false));
       return;
     }
 
@@ -555,7 +425,7 @@ export default function UserAssessment() {
     setCurrentStep("userType");
   };
 
-  // Logic to determine the previous step when coming from Daily Goal
+  // Logic to determine the previous step without localStorage
   function getPreviousStepForDailyGoal() {
     if (selectedType) {
       if (selectedType.id === "student") {
@@ -566,12 +436,10 @@ export default function UserAssessment() {
         }
         return "educationLevel";
       } else if (selectedType.id === "professional") {
-        const expChoice = localStorage.getItem("yearsOfExpSavepoint");
-        if (expChoice) {
-          const choice = JSON.parse(expChoice);
-          if (choice.id === "entryLevel") return "entryQuestions";
-          if (choice.id === "midLevel") return "midQuestions";
-          if (choice.id === "seniorLevel") return "seniorQuestions";
+        if (selectedLevel) {
+          if (selectedLevel.id === "entryLevel") return "entryQuestions";
+          if (selectedLevel.id === "midLevel") return "midQuestions";
+          if (selectedLevel.id === "seniorLevel") return "seniorQuestions";
         }
         return "experience";
       } else if (selectedType.id === "jobSeeker") {
@@ -579,14 +447,6 @@ export default function UserAssessment() {
       } else if (selectedType.id === "careerShifter") {
         return "careerTransition";
       }
-    }
-
-    // Fallback to localStorage check
-    const savedType = localStorage.getItem("selectedType");
-    if (savedType) {
-      const type = JSON.parse(savedType);
-      if (type.id === "jobSeeker") return "previousExperience";
-      if (type.id === "careerShifter") return "careerTransition";
     }
 
     return "userType";
@@ -618,9 +478,10 @@ export default function UserAssessment() {
     const genericTitles = {
       userType: "Career Assessment",
       dailyGoal: "Daily Learning Goal",
-      techInterest: techQuestionsVisible && technicalInterest
-        ? `${technicalInterest.label || "Technical"} Questions`
-        : "Technical Interests",
+      techInterest:
+        techQuestionsVisible && technicalInterest
+          ? `${technicalInterest.label || "Technical"} Questions`
+          : "Technical Interests",
       complete: "Assessment Complete",
     };
 
@@ -646,20 +507,20 @@ export default function UserAssessment() {
         },
         careerShifter: {
           careerTransition: "Career Transition",
-        }
+        },
       };
-      
+
       const typeSpecificTitle = titleMappings[selectedType.id]?.[currentStep];
       if (typeSpecificTitle) return typeSpecificTitle;
-      
+
       // Default titles based on user type
       const defaultTitles = {
         student: "Student Assessment",
         professional: "Professional Assessment",
         jobSeeker: "Job Seeker Assessment",
-        careerShifter: "Career Shifter Assessment"
+        careerShifter: "Career Shifter Assessment",
       };
-      
+
       return defaultTitles[selectedType.id] || "Assessment";
     }
 
@@ -680,82 +541,119 @@ export default function UserAssessment() {
             {stepName === "complete" ? "Continue to Dashboard" : "Continue"}
           </button>
         </div>
-        <button type="button" style={{ display: "none" }} onClick={e => e.preventDefault()}>Sync</button>
+        <button
+          type="button"
+          style={{ display: "none" }}
+          onClick={(e) => e.preventDefault()}
+        >
+          Sync
+        </button>
       </div>
     );
 
     // Map of step names to components
     const stepComponents = {
-      userType: <UserTypeStep 
-                  userTypeOptions={assessmentFlow.userType.options}
-                  selectedType={selectedType}
-                  onTypeSelect={handleTypeSelection}
-                />,
-      educationLevel: <EducationLevelStep
-                        selectedType={selectedType}
-                        selectedLevel={selectedLevel}
-                        educationOptions={assessmentFlow.educationLevel.options}
-                        onLevelSelect={handleLevelSelection}
-                      />,
-      experience: <ExperienceStep
-                    experienceOptions={assessmentFlow.yearsExperience.options}
-                    selectedLevel={selectedLevel}
-                    onLevelSelect={handleLevelSelection}
-                  />,
-      dailyGoal: <DailyGoalStep
-                    dailyGoalOptions={assessmentFlow.dailyGoal.questions[0].options}
-                    selectedGoal={dailyGoal}
-                    onGoalSelect={handleDailyGoalSelect}
-                  />,
-      techInterest: techQuestionsVisible 
-                    ? <FormWrapper stepName="techInterest">
-                        <TechInterestStep
-                          technicalInterest={technicalInterest}
-                          onInterestSelect={handleTechInterestSelect}
-                          technicalAnswers={technicalAnswers}
-                          onAnswerChange={handleTechAnswerChange}
-                          showQuestions={true}
-                        />
-                      </FormWrapper>
-                    : <TechInterestStep
-                        technicalInterest={technicalInterest}
-                        onInterestSelect={handleTechInterestSelect}
-                        technicalAnswers={technicalAnswers}
-                        onAnswerChange={handleTechAnswerChange}
-                        showQuestions={false}
-                      />,
+      userType: (
+        <UserTypeStep
+          userTypeOptions={assessmentFlow.userType.options}
+          selectedType={selectedType}
+          onTypeSelect={handleTypeSelection}
+        />
+      ),
+      educationLevel: (
+        <EducationLevelStep
+          selectedType={selectedType}
+          selectedLevel={selectedLevel}
+          educationOptions={assessmentFlow.educationLevel.options}
+          onLevelSelect={handleLevelSelection}
+        />
+      ),
+      experience: (
+        <ExperienceStep
+          experienceOptions={assessmentFlow.yearsExperience.options}
+          selectedLevel={selectedLevel}
+          onLevelSelect={handleLevelSelection}
+        />
+      ),
+      dailyGoal: (
+        <DailyGoalStep
+          dailyGoalOptions={assessmentFlow.dailyGoal.questions[0].options}
+          selectedGoal={dailyGoal}
+          onGoalSelect={handleDailyGoalSelect}
+        />
+      ),
+      techInterest: techQuestionsVisible ? (
+        <FormWrapper stepName="techInterest">
+          <TechInterestStep
+            technicalInterest={technicalInterest}
+            onInterestSelect={handleTechInterestSelect}
+            technicalAnswers={technicalAnswers}
+            onAnswerChange={handleTechAnswerChange}
+            showQuestions={true}
+          />
+        </FormWrapper>
+      ) : (
+        <TechInterestStep
+          technicalInterest={technicalInterest}
+          onInterestSelect={handleTechInterestSelect}
+          technicalAnswers={technicalAnswers}
+          onAnswerChange={handleTechAnswerChange}
+          showQuestions={false}
+        />
+      ),
     };
 
     // Form wrapper components
     const formStepComponents = {
-      previousExperience: <PreviousExperienceStep
-                            experience={previousExperience}
-                            setExperience={setPreviousExp} />,
-      careerTransition: <CareerTransitionStep
-                          transition={transition}
-                          setTransition={setTransition} />,
-      hsQuestions: <HSQuestionsStep
-                     formData={hsFormData}
-                     setFormData={setHsFormData} />,
-      collegeQuestions: <CollegeQuestionsStep
-                          formData={collegeFormData}
-                          setFormData={setCollegeFormData} />,
-      gradQuestions: <GradQuestionsStep
-                       formData={gradFormData}
-                       setFormData={setGradFormData} />,
-      entryQuestions: <EntryQuestionsStep
-                        formData={entryFormData}
-                        setFormData={setEntryFormData} />,
-      midQuestions: <MidQuestionsStep
-                      formData={midFormData}
-                      setFormData={setMidFormData} />,
-      seniorQuestions: <SeniorQuestionsStep
-                         formData={seniorFormData}
-                         setFormData={setSeniorFormData} />,
-      complete: <CompleteStep
-                  title={assessmentFlow.complete.title}
-                  feedback={feedback}
-                  onFeedbackChange={handleFeedbackChange} />
+      previousExperience: (
+        <PreviousExperienceStep
+          experience={previousExperience}
+          setExperience={setPreviousExp}
+        />
+      ),
+      careerTransition: (
+        <CareerTransitionStep
+          transition={transition}
+          setTransition={setTransition}
+        />
+      ),
+      hsQuestions: (
+        <HSQuestionsStep formData={hsFormData} setFormData={setHsFormData} />
+      ),
+      collegeQuestions: (
+        <CollegeQuestionsStep
+          formData={collegeFormData}
+          setFormData={setCollegeFormData}
+        />
+      ),
+      gradQuestions: (
+        <GradQuestionsStep
+          formData={gradFormData}
+          setFormData={setGradFormData}
+        />
+      ),
+      entryQuestions: (
+        <EntryQuestionsStep
+          formData={entryFormData}
+          setFormData={setEntryFormData}
+        />
+      ),
+      midQuestions: (
+        <MidQuestionsStep formData={midFormData} setFormData={setMidFormData} />
+      ),
+      seniorQuestions: (
+        <SeniorQuestionsStep
+          formData={seniorFormData}
+          setFormData={setSeniorFormData}
+        />
+      ),
+      complete: (
+        <CompleteStep
+          title={assessmentFlow.complete.title}
+          feedback={feedback}
+          onFeedbackChange={handleFeedbackChange}
+        />
+      ),
     };
 
     // Return direct component for non-form steps
@@ -777,15 +675,19 @@ export default function UserAssessment() {
 
   // Loading and intro screens
   if (isGenerating) return <Loading generate_roadmap={true} />;
-  if (!isReady) return <Loading className="flex-grow flex justify-center items-center" />;
-  if (showIntro) return <AssessmentIntro onBeginAssessment={handleBeginAssessment} />;
+  if (!isReady)
+    return <Loading className="flex-grow flex justify-center items-center" />;
+  if (showIntro)
+    return <AssessmentIntro onBeginAssessment={handleBeginAssessment} />;
 
   // Main assessment layout
   return (
     <AssessmentLayout
       title={getTitle()}
       progress={getProgress()}
-      prevPage={currentStep === "userType" ? () => setShowIntro(true) : handleBack}
+      prevPage={
+        currentStep === "userType" ? () => setShowIntro(true) : handleBack
+      }
     >
       {renderCurrentStep()}
     </AssessmentLayout>
