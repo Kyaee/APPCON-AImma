@@ -5,6 +5,7 @@ import Loading from "./Loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
 import CapyStart from "@/assets/lesson-assessment/CapyStart.png";
+import { Separator } from "@/components/ui/separator";
 
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
 import { useNavigate } from "react-router-dom";
@@ -671,11 +672,11 @@ export default function ElementLesson() {
 
       <section className="mt-40 max-w-2xl mx-auto overflow-hidden">
         <LessonArticle
-          name={lessonFetch?.name}
-          difficulty={lessonFetch?.difficulty}
-          duration={lessonFetch?.duration}
-          exp={lessonFetch?.exp}
-          gems={lessonFetch?.gems}
+          name={lessonFetch?.lesson_name || lessonFetch?.name}
+          difficulty={lessonFetch?.lesson_difficulty || lessonFetch?.difficulty}
+          duration={lessonFetch?.lesson_duration || lessonFetch?.duration}
+          exp={lessonFetch?.exp || lessonFetch?.lesson_expierence}
+          gems={lessonFetch?.gems || lessonFetch?.lesson_gems}
           assessment={lessonFetch?.assessment}
         />
         {/* Title */}
@@ -685,12 +686,13 @@ export default function ElementLesson() {
 
         {lessonFetch?.assessment ? (
           <NavigateAssessment
-            name={lessonFetch?.name}
+            name={lessonFetch?.lesson_name || lessonFetch?.name}
             onClick={handleAssessment}
             disabled={isLoading}
           />
         ) : (
-          <article className="flex mt-10">
+          <article className="flex flex-col items-start w-full mt-10">
+            <Separator className="border-2 bg-white dark:bg-blue-400 py-0.5 border-black dark:border-black mb-5 rounded-full w-full" />
             <p className="text-3xl font-extrabold">End of lesson.</p>
           </article>
         )}
