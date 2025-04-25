@@ -66,7 +66,7 @@ const Sidebar = ({
         </div>
       ) : (
         <div
-          className={`transition animate-panel-in fixed top-0 left-0 h-screen w-[280px] sm:w-[300px] md:w-[320px] lg:w-[25%] xl:w-[20%] border-r-3 border-black dark:border-dark-mode-highlight ${
+          className={`transition animate-panel-in fixed top-0 left-0 h-screen w-[280px] sm:w-[300px] md:w-[320px] lg:w-[25%] xl:w-[20%] border-r-3 border-black dark:border-black ${
             isLessonOpen ? "z-20" : "z-40"
           } overflow-y-auto flex flex-col bg-gray-50 dark:bg-dark-inner-bg`}
         >

@@ -178,7 +178,7 @@ export default function Dashboard({ setAssessed }) {
               {/* Dropdown menu */}
               {isLeftDropdownOpen && !condition && (
                 <div
-                  className="mt-4 border-2 border-black dark:border-primary rounded-lg shadow-md bg-white dark:bg-[#252527] z-30 w-full scrollbar-thin scrollbar-thumb-[#CBB09B]/50 hover:scrollbar-thumb-[#CBB09B] scrollbar-track-transparent dark:scrollbar-thumb-dark-mode-highlight/50 dark:hover:scrollbar-thumb-dark-mode-highlight"
+                  className="mt-4 border-2 border-black dark:border-none rounded-lg shadow-md bg-white dark:bg-dark-inner-bg z-30 w-full scrollbar-thin scrollbar-thumb-[#CBB09B]/50 hover:scrollbar-thumb-[#CBB09B] scrollbar-track-transparent dark:scrollbar-thumb-dark-mode-highlight/50 dark:hover:scrollbar-thumb-dark-mode-highlight"
                   style={{
                     maxHeight: "300px",
                     overflowY: "auto",
