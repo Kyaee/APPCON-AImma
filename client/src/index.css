@@ -7,14 +7,16 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(20 14.3% 4.1%);
+  --background: hsl(0 0% 100%); /* Final */
+  --foreground: hsl(20 14.3% 4.1%); /* Final */
   --card: hsl(40 12% 98%); /* Converting from #FBFAF9 */
   --card-foreground: hsl(20 14.3% 4.1%);
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(20 14.3% 4.1%);
+
   --primary: hsl(24 9.8% 10%);
   --primary-foreground: hsl(60 9.1% 97.8%);
+
   --secondary: hsl(60 4.8% 95.9%);
   --secondary-foreground: hsl(24 9.8% 10%);
   --muted: hsl(60 4.8% 95.9%);
@@ -46,8 +48,8 @@
 }
 
 .dark {
-  --background: hsl(20 14.3% 4.1%);
-  --foreground: hsl(60 9.1% 97.8%);
+  --background: hsl(20 14.3% 4.1%); /* Final */
+  --foreground: hsl(60 9.1% 97.8%); /* Final */
   --card: hsl(20 14.3% 4.1%);
   --card-foreground: hsl(60 9.1% 97.8%);
   --popover: hsl(20 14.3% 4.1%);

@@ -80,7 +80,7 @@ export default function LessonArticle({
         </div>
       </div>
 
-      <Separator className="border border-foreground dark:border-black mb-10" />
+      <Separator className="border-2 dark:bg-blue-400 bg-[#FFD700] py-0.5 border-black dark:border-black mb-10 rounded-full" />
     </>
   );
 }
