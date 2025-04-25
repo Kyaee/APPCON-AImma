@@ -84,7 +84,7 @@ const Sidebar = ({
             </div>
             <button
               onClick={() => onToggle()}
-              className="p-2 rounded-lg border border-black hover:bg-secondary transition-colors bg-background dark:bg-dark-inner-bg dark:border-dark-mode-highlight dark:hover:bg-dark-mode-highlight"
+              className="p-2 transition-colors rounded-full  dark:bg-dark-inner-bg hover:bg-[#CBB09B] dark:hover:bg-dark-mode-highlight"
             >
               <X className="w-6 h-6 text-foreground dark:text-primary" />
             </button>

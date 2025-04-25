@@ -462,12 +462,68 @@ export default function ElementLesson() {
     }
   }, [lessonFetch, session, reviewLesson]);
 
+  // Keep track of whether data is still loading
+  const [isContentLoading, setIsContentLoading] = useState(true);
+
+  // Add useEffect to handle initial loading state
+  useEffect(() => {
+    // Set initial loading state
+    setIsContentLoading(true);
+
+    // Check if we have lesson data
+    if (
+      lessonFetch &&
+      Object.keys(lessonFetch).length > 0 &&
+      lessonFetch.lesson
+    ) {
+      // Data has loaded, clear loading state after a short delay to ensure rendering
+      const timer = setTimeout(() => setIsContentLoading(false), 500);
+      return () => clearTimeout(timer);
+    }
+
+    // If no data yet, keep loading state true
+    return () => {};
+  }, [lessonFetch]);
+
+  if (isPending)
+    return (
+      <>
+        <Background className="opacity-90" />
+        <Loading generate_lesson={true} />
+      </>
+    );
+
+  // Show loading state while content is being generated or fetched
+  if (isContentLoading || !lessonFetch || !lessonFetch.lesson) {
+    return (
+      <>
+        <Background className="opacity-90" />
+        <div className="w-full h-screen flex items-center justify-center">
+          <Loading generate_lesson={true} />
+        </div>
+      </>
+    );
+  }
+
+  // Only show the "Lesson not found" error if we're past loading and have confirmed
+  // the lesson doesn't match the requested ID
   if (lessonFetch && lessonFetch.id !== parseInt(id)) {
     return (
-      <div className="mt-32 max-w-2xl mx-auto text-center">
-        <h2 className="text-3xl font-bold">Lesson not found</h2>
-        <p className="mt-4">The lesson you requested could not be found.</p>
-      </div>
+      <>
+        <Background className="opacity-90" />
+        <div className="flex items-center justify-center h-screen w-full">
+          <div className="max-w-2xl mx-auto text-center text-foreground">
+            <h2 className="text-3xl font-bold">Lesson not found</h2>
+            <p className="mt-4">The lesson you requested could not be found.</p>
+            <button
+              onClick={() => navigate(`/dashboard/${session?.user?.id}`)}
+              className="mt-8 px-6 py-3 bg-brown text-white rounded-md hover:bg-dark-brown transition-colors custom-shadow-75"
+            >
+              Return to Dashboard
+            </button>
+          </div>
+        </div>
+      </>
     );
   }
 

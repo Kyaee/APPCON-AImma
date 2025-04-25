@@ -101,7 +101,7 @@ export default function Header({
       {/* Always show the quit button */}
       <button
         onClick={handleQuit}
-        className="text-md px-10 py-2 flex bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border border-black text-white gap-1 custom-shadow-75 rounded-md"
+        className="text-md px-10 py-2 flex bg-white hover:bg-light-brown cursor-pointer transition-all duration-400 border border-black text-black gap-1 custom-shadow-75 rounded-md"
       >
         <ArrowUpRight size="20" />
         Quit
