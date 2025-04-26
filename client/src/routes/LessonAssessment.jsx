@@ -9,11 +9,12 @@ import IntroSlide from "@/components/lesson-assessment/IntroSlide";
 import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 import { markLessonCompleted } from "@/api/UPDATE";
+import capyCry from "@/assets/lesson-assessment/CapySad.png"; // Import the crying capybara image
 
 // Use Hooks
 import { useState, useEffect, useCallback } from "react";
 import { useSummary, useEvaluation } from "@/api/INSERT";
-import { fetchLessonAssessmentData } from "@/api/FETCH";
+import { fetchLessonAssessmentData, fetchUserdata } from "@/api/FETCH";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useFetchStore } from "@/store/useUserData";
@@ -22,6 +23,7 @@ import { useQuestStore } from "@/store/useQuestStore"; // Import useQuestStore
 import { useAuth } from "@/config/AuthContext";
 import { useStreakStore } from "@/store/useStreakStore";
 import { handleUpdateStreak } from "@/lib/check-day-streak";
+import { useNavigation } from "@/context/navigationContext"; // Import the navigation context properly
 
 export default function Assessment() {
   const [isIntroSlide, setIntroSlide] = useState(true);
@@ -29,22 +31,44 @@ export default function Assessment() {
   const [isCurrentSlide, setCurrentSlide] = useState(0);
   const [isValidateAnswer, setValidateAnswer] = useState(false);
   const [isCount, setCount] = useState({
-    lives: 5,
+    lives: 5, // Default to 5, will be updated with user's actual HP (capped at 5)
     score: 0,
     wrong: false,
     livesLost: 0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userTotalLives, setUserTotalLives] = useState(5); // Track user's total lives in the database
+  const [assessmentAttempts, setAssessmentAttempts] = useState(0); // Track assessment attempts
 
   const { session } = useAuth();
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const userData = useFetchStore((state) => state.fetch);
   const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData());
   const queryClient = useQueryClient();
+
+  // Fetch user data to get lives/HP information
+  const { data: userDataFetched, isLoading: isUserDataLoading } = useQuery({
+    queryKey: ["fetch_user", session?.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("lives, user_id")
+        .eq("user_id", session?.user?.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id,
+    staleTime: 30000, // 30 seconds
+    refetchOnWindowFocus: false,
+  });
+
   const updateStreakFromLesson = useStreakStore(
     (state) => state.updateStreakFromLesson
   );
   const completeLessonTest = useQuestStore((state) => state.completeLessonTest); // Get quest action
+  const { setSuppressNavigation } = useNavigation(); // Get the function from hook
   const [isAnswers, setAnswers] = useState([
     {
       id: isCurrentSlide,
@@ -61,6 +85,21 @@ export default function Assessment() {
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(userId);
+
+  // Initialize lives based on user data when it's loaded
+  useEffect(() => {
+    if (userDataFetched && !isUserDataLoading) {
+      // Get user's total lives from database, default to 5 if not available
+      const totalLives = userDataFetched.lives || 5;
+      setUserTotalLives(totalLives);
+
+      // Cap assessment lives at 5, or use actual value if less than 5
+      const assessmentLives = Math.min(totalLives, 5);
+
+      // Update the lives count for the assessment
+      setCount((prev) => ({ ...prev, lives: assessmentLives }));
+    }
+  }, [userDataFetched, isUserDataLoading]);
 
   // Calculate rewards based on difficulty
   const calculateRewards = useCallback((difficulty) => {
@@ -93,6 +132,76 @@ export default function Assessment() {
     // Return fixed rewards values based only on difficulty (not success rate)
     return { gems: baseGemsReward, exp: baseExpReward };
   }, []);
+
+  // Modify this useEffect to better handle assessment generation and loading states
+  useEffect(() => {
+    // Only attempt to skip the intro slide if we have actual question data available
+    // This prevents transitioning to an empty questionnaire
+    if (!isLoading && lessonData?.questions?.length > 0 && isIntroSlide) {
+      const generatedAssessment =
+        useLessonFetchStore.getState().generated_assessment;
+      if (generatedAssessment) {
+        console.log("Assessment questions loaded, proceeding to questionnaire");
+        setIntroSlide(false);
+        // Reset the flag only after we've successfully transitioned
+        useLessonFetchStore.getState().setGeneratedAssessment(false);
+      }
+    }
+  }, [isLoading, lessonData, isIntroSlide]);
+
+  // Remove the additional useEffect that might be causing duplicate transitions
+  // The single useEffect above will handle both checking for generated assessment
+  // and ensuring questions are actually loaded
+
+  // Modified effect to only hide center navigation elements, not the entire header
+  useEffect(() => {
+    // Use "centerNav" to indicate we want to keep the header but hide the center tabs
+    // This new value will need to be handled in the header-navigator component
+    if (!isIntroSlide && !isLastSlide) {
+      setSuppressNavigation("centerNav");
+    } else {
+      setSuppressNavigation(null);
+    }
+
+    // Restore navigation when leaving
+    return () => setSuppressNavigation(null);
+  }, [isIntroSlide, isLastSlide, setSuppressNavigation]);
+
+  // Function to handle retrying the assessment
+  const handleRetryAssessment = () => {
+    // Increment attempts counter
+    setAssessmentAttempts((prev) => prev + 1);
+
+    // Reset assessment state
+    setIntroSlide(true); // Go back to intro slide
+    setLastSlide(false);
+    setCurrentSlide(0);
+    setValidateAnswer(false);
+
+    // Update lives with remaining lives from database (capped at 5)
+    const remainingLives = Math.min(userTotalLives - isCount.livesLost, 5);
+
+    setCount({
+      lives: remainingLives,
+      score: 0,
+      wrong: false,
+      livesLost: 0, // Reset lives lost for this assessment attempt
+    });
+
+    // Reset answers
+    setAnswers([
+      {
+        id: 0,
+        question: "",
+        answer: "",
+        correct: false,
+        validated: false,
+      },
+    ]);
+
+    // Refetch question data if needed
+    queryClient.invalidateQueries(["lessonAssessment"]);
+  };
 
   const handleCheck = () => {
     setValidateAnswer(true);
@@ -385,15 +494,53 @@ export default function Assessment() {
     }
   };
 
-  if (isLoading) return <Loading />;
+  // Enhance the loading condition to be more comprehensive
+  // Show loading state when:
+  // 1. Data is being fetched initially
+  // 2. Questions array doesn't exist or is empty
+  const showLoading =
+    isLoading ||
+    isUserDataLoading ||
+    !lessonData?.questions ||
+    lessonData.questions.length === 0;
 
-  if (isCount.lives === 0) return <NoLivesPage userId={userId} />;
+  if (showLoading) return <Loading generate_assessment={true} />;
+
+  // Check if user has no lives left in assessment and database
+  if (isCount.lives === 0) {
+    // Calculate remaining lives in database after this assessment
+    const remainingLivesInDb = Math.max(0, userTotalLives - isCount.livesLost);
+
+    // If there are still lives left in the database, show fail slide with retry option
+    if (remainingLivesInDb > 0) {
+      return (
+        <FailLastSlide
+          lessonId={lessonFetch?.id}
+          passing={3}
+          score={isCount.score}
+          total={lessonData.questions.length - 1}
+          onClick={handleFinishAssessment}
+          remainingLives={remainingLivesInDb}
+          onRetry={handleRetryAssessment}
+        />
+      );
+    }
+
+    // If no lives left in database, show NoLivesPage
+    return <NoLivesPage userId={userId} />;
+  }
+
+  // Add additional check to ensure lessonData and questions are available
+  const hasValidQuestions =
+    lessonData &&
+    Array.isArray(lessonData.questions) &&
+    lessonData.questions.length > 0;
 
   return (
     <>
       <main className="h-screen w-full flex justify-center items-center select-none relative overflow-hidden">
-        <VideoBackground />
-
+        <VideoBackground headerVisible={true} />{" "}
+        {/* Add prop to indicate header is visible */}
         <form>
           {isIntroSlide ? (
             // ------------------------
@@ -404,7 +551,9 @@ export default function Assessment() {
               gems={lessonFetch?.gems}
               exp={lessonFetch?.exp}
               setIntroSlide={() => setIntroSlide(false)}
-              disabled={isLoading}
+              disabled={showLoading}
+              // Always use "Start Assessment" button text, never "Generate and Start"
+              buttonText="Start Assessment"
             />
           ) : isLastSlide ? (
             isCount.score >= 3 ? (
@@ -413,7 +562,7 @@ export default function Assessment() {
               // -------------------------
               <PassLastSlide
                 score={isCount?.score}
-                total={lessonData?.questions?.length - 1}
+                total={hasValidQuestions ? lessonData.questions.length - 1 : 0}
                 gems={lessonFetch?.gems}
                 exp={lessonFetch?.exp}
                 userId={userId}
@@ -422,7 +571,9 @@ export default function Assessment() {
                 lessonDifficulty={lessonFetch?.difficulty}
                 userLives={isCount.lives}
                 userScore={isCount.score}
-                userTotal={lessonData?.questions?.length - 1}
+                userTotal={
+                  hasValidQuestions ? lessonData.questions.length - 1 : 0
+                }
                 answers={isAnswers}
                 onClick={handleFinishAssessment}
               />
@@ -434,27 +585,34 @@ export default function Assessment() {
                 lessonId={lessonFetch?.id}
                 passing={3}
                 score={isCount.score}
-                total={lessonData?.questions?.length - 1}
+                total={hasValidQuestions ? lessonData.questions.length - 1 : 0}
                 onClick={handleFinishAssessment}
               />
             )
           ) : (
+            // RENDER QUESTIONS - remove the ternary/fallback and just render Questions
             <Questions
               display_wrong_answer={isCount.wrong}
-              lesson_name={lessonData.name}
+              lesson_name={lessonData.name || "Assessment"}
               type={"multiple-choice"}
-              question={lessonData?.questions[isCurrentSlide]?.text}
-              options={lessonData?.questions[isCurrentSlide]?.options}
+              question={
+                lessonData.questions[isCurrentSlide]?.text ||
+                "Loading question..."
+              }
+              options={lessonData.questions[isCurrentSlide]?.options || []}
               questionNumber={isCurrentSlide}
-              correct={lessonData?.questions[isCurrentSlide]?.correct_answer}
+              correct={
+                lessonData.questions[isCurrentSlide]?.correct_answer || ""
+              }
               isSelectedAnswer={isAnswers}
               setSelectedAnswer={setAnswers}
               validate={isValidateAnswer}
-              explanation={lessonData?.questions[isCurrentSlide]?.explanation}
+              explanation={
+                lessonData.questions[isCurrentSlide]?.explanation || ""
+              }
             />
           )}
         </form>
-
         {/*********************************************
                   FOOTER DESIGN LOGIC
         **********************************************/}
@@ -462,11 +620,11 @@ export default function Assessment() {
           <></>
         ) : (
           <footer
-            className="absolute bottom-0 left-0 w-full py-5 flex items-center justify-around border-t border-primary
+            className="absolute bottom-0 left-0 w-full py-3 flex items-center justify-around border-3 bg-black/50 border-black
             *:flex *:py-3 *:rounded-lg *:gap-2 "
           >
             <button
-              className="border-primary border px-10 text-primary"
+              className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-primary px-10 text-white custom-shadow-75 border-2"
               onClick={() =>
                 isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
               }
@@ -474,14 +632,15 @@ export default function Assessment() {
               <ArrowLeft />
               Back
             </button>
-            <div className="flex gap-2 h-15 text-xl text-primary">
+            <div className="flex gap-2 h-15 text-xl text-white">
               <HeartIcon />
               {isCount.lives}
+              <p>HP</p>
             </div>
 
             {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (
               <button
-                className="bg-[#BF8648] border-2 disabled:bg-light-brown border-black px-6 custom-shadow-50 text-black"
+                className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-2 disabled:bg-light-brown border-black px-9 custom-shadow-75 text-white"
                 onClick={handleCheck}
                 disabled={!isAnswers[isCurrentSlide]?.answer}
               >

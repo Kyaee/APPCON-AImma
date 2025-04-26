@@ -33,7 +33,7 @@ export default function selectLanguage({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between border border-foreground dark:border-dark-mode-highlight bg-brown dark:bg-dark-mode-bg text-background dark:text-primary hover:bg-light-brown dark:hover:bg-dark-mode-highlight"
+          className="w-[200px] justify-between border border-foreground dark:border-dark-mode-highlight bg-brown dark:bg-dark-mode-bg text-background dark:text-primary hover:bg-light-brown dark:hover:bg-dark-inner-bg"
         >
           {value
             ? options.find((framework) => framework.value === value)?.name

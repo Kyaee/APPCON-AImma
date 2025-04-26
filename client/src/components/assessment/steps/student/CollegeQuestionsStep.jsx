@@ -1,29 +1,38 @@
 import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function CollegeQuestionsStep({ formData, setFormData }) {
-  // Create local state for form inputs
+  // Access questions and title from assessment-flow.js
+  const { questions, title } = assessmentFlow.collegeQuestions;
+
+  // Create local state for form inputs based on questions from assessment flow
   const [localFormData, setLocalFormData] = useState({
-    course: formData.course || "",
     yearLevel: formData.yearLevel || "",
-    technicalSkills: formData.technicalSkills || [],
-    careerPath: formData.careerPath || "",
+    currentCourse: formData.currentCourse || "",
+    internshipStatus: formData.internshipStatus ?? null,
+    targetIndustry: formData.targetIndustry || "",
   });
 
   // Update local state from props when component mounts
   useEffect(() => {
     setLocalFormData({
-      course: formData.course || "",
       yearLevel: formData.yearLevel || "",
-      technicalSkills: formData.technicalSkills || [],
-      careerPath: formData.careerPath || "",
+      currentCourse: formData.currentCourse || "",
+      internshipStatus: formData.internshipStatus ?? null,
+      targetIndustry: formData.targetIndustry || "",
     });
-  }, []);
+  }, [formData]);
 
   // Only update parent state when form submission is triggered
   const syncToParent = () => {
     setFormData(localFormData);
   };
+
+  // Log form data for debugging
+  useEffect(() => {
+    console.log("CollegeQuestions local form data:", localFormData);
+  }, [localFormData]);
 
   const handleInputChange = (field, value) => {
     setLocalFormData((prev) => ({
@@ -32,107 +41,83 @@ export default function CollegeQuestionsStep({ formData, setFormData }) {
     }));
   };
 
-  const handleSkillChange = (skill) => {
-    setLocalFormData((prev) => ({
-      ...prev,
-      technicalSkills: prev.technicalSkills.includes(skill)
-        ? prev.technicalSkills.filter((s) => s !== skill)
-        : [...prev.technicalSkills, skill],
-    }));
-  };
-
   return (
     <AssessmentStep title="Tell us about your academic journey">
       <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
-        {/* Course Selection */}
-        <div>
-          <label className="block text-lg mb-2 text-white">
-            What's your course?
-          </label>
-          <select
-            value={localFormData.course}
-            onChange={(e) => handleInputChange("course", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
-          >
-            <option value="" disabled>
-              Select course
-            </option>
-            {[
-              "Computer Science",
-              "Information Technology",
-              "Software Engineering",
-              "Other",
-            ].map((course) => (
-              <option key={course} value={course}>
-                {course}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Year Level */}
-        <div>
-          <label className="block text-lg mb-2 text-white">Year Level</label>
-          <select
-            value={localFormData.yearLevel}
-            onChange={(e) => handleInputChange("yearLevel", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
-          >
-            <option value="" disabled>
-              Select year level
-            </option>
-            {["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year"].map(
-              (year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              )
-            )}
-          </select>
-        </div>
-
-        {/* Technical Skills */}
-        <div>
-          <label className="block text-lg mb-2 text-white">
-            What technical skills do you have?
-          </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              "Programming",
-              "Web Development",
-              "Database",
-              "Networking",
-              "Cloud Computing",
-              "Mobile Development",
-            ].map((skill) => (
-              <button
-                key={skill}
-                onClick={() => handleSkillChange(skill)}
-                className={`p-3 rounded-lg transition-all duration-200 bg-white
-                  ${
-                    localFormData.technicalSkills.includes(skill)
-                      ? "border-[#3F6CFF] border-3 custom-shadow-75"
-                      : "border-black border-2 hover:border-black hover:border-3"
-                  }`}
+        {questions.map((question) => (
+          <div key={question.id} className="mb-6">
+            <label className="block text-lg mb-2 text-white">
+              {question.label}
+            </label>
+            
+            {question.type === 'select' && (
+              <select
+                value={localFormData[question.id] || ""}
+                onChange={(e) => handleInputChange(question.id, e.target.value)}
+                className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
               >
-                <span className="text-black">{skill}</span>
-              </button>
-            ))}
+                <option value="" disabled>
+                  Select {question.id.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                </option>
+                {question.options.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            )}
+            
+            {question.type === 'text' && (
+              <input
+                type="text"
+                value={localFormData[question.id] || ""}
+                onChange={(e) => handleInputChange(question.id, e.target.value)}
+                className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
+                placeholder={`Enter your ${question.id.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
+              />
+            )}
+            
+            {question.type === 'boolean' && (
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: "Yes", value: true },
+                  { label: "No", value: false },
+                ].map((option) => (
+                  <button
+                    key={option.label}
+                    type="button"
+                    onClick={() => handleInputChange(question.id, option.value)}
+                    className={`p-3 rounded-lg transition-all duration-200 bg-white border-2
+                      ${
+                        localFormData[question.id] === option.value
+                          ? "border-[#3F6CFF] custom-shadow-75"
+                          : "border-black hover:bg-gray-50"
+                      }`}
+                  >
+                    <span className="text-black">{option.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            {question.type === 'multiselect' && (
+              <select
+                value={localFormData[question.id] || ""}
+                onChange={(e) => handleInputChange(question.id, e.target.value)}
+                className="w-full p-3 rounded-lg border-2 border-black text-black bg-white"
+              >
+                <option value="" disabled>
+                  Select {question.id.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                </option>
+                {question.options.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
-        </div>
-
-        {/* Career Path */}
-        <div>
-          <label className="block text-lg mb-2 text-white">
-            What's your intended career path?
-          </label>
-          <textarea
-            value={localFormData.careerPath}
-            onChange={(e) => handleInputChange("careerPath", e.target.value)}
-            className="w-full p-3 rounded-lg border-2 border-black bg-white text-black h-32"
-            placeholder="Describe your career goals"
-          />
-        </div>
+        ))}
       </div>
       
       {/* Hidden button to sync state on form submission */}

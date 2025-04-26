@@ -5,6 +5,7 @@ import Loading from "./Loading";
 import LessonArticle from "@/components/layout/lesson/LessonArticle";
 import FormattedContent from "@/components/layout/lesson/markdownFormat";
 import CapyStart from "@/assets/lesson-assessment/CapyStart.png";
+import { Separator } from "@/components/ui/separator";
 
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
 import { useNavigate } from "react-router-dom";
@@ -66,20 +67,22 @@ export default function ElementLesson() {
     const { scrollTop, scrollHeight, clientHeight } = main;
     const maxScroll = scrollHeight - clientHeight;
 
-    // If there's no scroll needed
-    if (maxScroll <= 0) {
-      return 100;
+    // If there's no scroll needed or very little content
+    if (maxScroll <= 10) {
+      return 0; // Return 0 instead of 100 for very short content
     }
 
     // Calculate percentage more accurately
     const scrollPercentage = (scrollTop / maxScroll) * 100;
 
-    // Consider it complete if within 5px of bottom OR above 95% scrolled
-    if (scrollHeight - scrollTop - clientHeight < 5 || scrollPercentage > 95) {
+    // Only consider it complete if we're truly at the bottom
+    // More conservative approach - must be actually at the bottom (within 2px)
+    if (Math.abs(scrollHeight - scrollTop - clientHeight) <= 2) {
       return 100;
     }
 
-    return Math.round(scrollPercentage);
+    // Otherwise return the actual percentage, capped at 99 until truly complete
+    return Math.min(99, Math.round(scrollPercentage));
   }, []);
 
   // Calculate rewards based on lesson difficulty
@@ -462,14 +465,144 @@ export default function ElementLesson() {
     }
   }, [lessonFetch, session, reviewLesson]);
 
-  if (lessonFetch && lessonFetch.id !== parseInt(id)) {
-    return (
-      <div className="mt-32 max-w-2xl mx-auto text-center">
-        <h2 className="text-3xl font-bold">Lesson not found</h2>
-        <p className="mt-4">The lesson you requested could not be found.</p>
-      </div>
-    );
+  // Add useEffect to fetch the specific lesson when ID changes
+  // This is critical to handle direct navigation to a specific lesson
+  useEffect(() => {
+    const requestedIdNum = parseInt(id);
+    const fetchedIdNum = lessonFetch ? parseInt(lessonFetch.id) : null;
+
+    // If we have a mismatch between requested ID and currently loaded lesson
+    // OR if lesson exists but has no content
+    if (
+      !isNaN(requestedIdNum) &&
+      (fetchedIdNum !== requestedIdNum || (lessonFetch && !lessonFetch.lesson))
+    ) {
+      console.log(
+        `Lesson issue detected: ${
+          fetchedIdNum !== requestedIdNum
+            ? `ID mismatch (have ${fetchedIdNum}, need ${requestedIdNum})`
+            : "Missing lesson content"
+        }. Attempting to load complete lesson...`
+      );
+
+      // Set loading state while we attempt to fetch the correct lesson
+      setLoading(true);
+
+      // Make API call to load the correct lesson
+      const loadRequestedLesson = async () => {
+        try {
+          // Fetch the specific lesson from the database
+          const { data, error } = await supabase
+            .from("lessons")
+            .select("*")
+            .eq("id", requestedIdNum)
+            .single();
+
+          if (error) throw error;
+
+          if (data) {
+            console.log(
+              `Successfully found lesson ${requestedIdNum} in database`
+            );
+
+            // If lesson data exists but no content, we need to fetch from the AI API
+            if (!data.lesson) {
+              console.log("Lesson found but no content, fetching from API...");
+              try {
+                // Attempt to get the generated content from the API
+                const apiUrl =
+                  "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-lesson";
+                const response = await fetch(apiUrl);
+
+                if (response.ok) {
+                  const apiData = await response.json();
+                  console.log(
+                    "API lesson content received:",
+                    apiData.id === data.id ? "matching ID" : "different ID"
+                  );
+
+                  // Combine database lesson metadata with API content
+                  const completeLesson = {
+                    ...data,
+                    lesson: apiData.lesson || "",
+                    message: apiData.message || "",
+                  };
+
+                  // Update the store with the complete lesson
+                  useLessonFetchStore.getState().setFetch(completeLesson);
+                } else {
+                  console.error("API returned error:", response.status);
+                  // Still use the database lesson as fallback
+                  useLessonFetchStore.getState().setFetch(data);
+                }
+              } catch (apiError) {
+                console.error("Error fetching from lesson API:", apiError);
+                // Fall back to database lesson data
+                useLessonFetchStore.getState().setFetch(data);
+              }
+            } else {
+              // Lesson already has content, just update the store
+              useLessonFetchStore.getState().setFetch(data);
+            }
+          } else {
+            console.error(
+              `Lesson with ID ${requestedIdNum} not found in database`
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching requested lesson:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      loadRequestedLesson();
+    }
+  }, [id, lessonFetch]);
+
+  // Add more robust console logging to better understand the loading state
+  console.log("Lesson component state:", {
+    isPending,
+    isLoading,
+    lessonFetch: lessonFetch
+      ? `ID: ${lessonFetch.id}, Has content: ${!!lessonFetch.lesson}`
+      : "Not loaded yet",
+    requestedId: id,
+    generated_assessment,
+    highestProgress,
+  });
+
+  // ALWAYS show loading state if either:
+  // 1. The assessment generation is pending (isPending)
+  // 2. The general loading state is active (isLoading)
+  // 3. No lessonFetch data available yet or it's still loading
+  // 4. The requested ID doesn't match the loaded lesson ID
+  // 5. Lesson data exists but content hasn't loaded yet
+  const requestedIdNum = parseInt(id);
+  const fetchedIdNum = lessonFetch ? parseInt(lessonFetch.id) : null;
+  const idMismatch = !isNaN(requestedIdNum) && fetchedIdNum !== requestedIdNum;
+  const contentMissing = lessonFetch && !lessonFetch.lesson;
+
+  if (isPending || isLoading || !lessonFetch || idMismatch || contentMissing) {
+    // Enhanced logging to better understand why we're showing the loading screen
+    const reason = isPending
+      ? "assessment generation pending"
+      : isLoading
+      ? "general loading state active"
+      : !lessonFetch
+      ? "no lesson data available"
+      : idMismatch
+      ? `ID mismatch (have ${fetchedIdNum}, need ${requestedIdNum})`
+      : contentMissing
+      ? "lesson content still loading"
+      : "unknown reason";
+
+    console.log(`Showing loading screen - ${reason}`);
+    return <Loading generate_lesson={true} preserveBackground="static" />;
   }
+
+  // We no longer need this check since we've incorporated it into the loading condition above
+  // and we're now actively trying to load the correct lesson
 
   // Set up scroll animations
   const handleAssessment = () => {
@@ -487,17 +620,21 @@ export default function ElementLesson() {
     }
 
     if (generated_assessment) {
-      setGeneratedAssessment(false);
+      // If assessment was already generated, don't regenerate, just navigate
       navigate(`/l/${id}/assessment`);
     } else {
+      // Otherwise generate the assessment
       createAssessment({
         lesson_id: lessonFetch.id,
         lesson_name: lessonFetch.name,
         lesson_content: lessonFetch.lesson,
       });
-      setLoading(false);
+
+      // Set flag to indicate assessment was just generated
       setGeneratedAssessment(true);
-      setTimeout(() => navigate(`/l/${id}/assessment`), 2000);
+
+      // Navigate after short delay to ensure data is saved
+      setTimeout(() => navigate(`/l/${id}/assessment`), 1000);
     }
   };
 
@@ -535,11 +672,11 @@ export default function ElementLesson() {
 
       <section className="mt-40 max-w-2xl mx-auto overflow-hidden">
         <LessonArticle
-          name={lessonFetch?.name}
-          difficulty={lessonFetch?.difficulty}
-          duration={lessonFetch?.duration}
-          exp={lessonFetch?.exp}
-          gems={lessonFetch?.gems}
+          name={lessonFetch?.lesson_name || lessonFetch?.name}
+          difficulty={lessonFetch?.lesson_difficulty || lessonFetch?.difficulty}
+          duration={lessonFetch?.lesson_duration || lessonFetch?.duration}
+          exp={lessonFetch?.exp || lessonFetch?.lesson_expierence}
+          gems={lessonFetch?.gems || lessonFetch?.lesson_gems}
           assessment={lessonFetch?.assessment}
         />
         {/* Title */}
@@ -549,12 +686,13 @@ export default function ElementLesson() {
 
         {lessonFetch?.assessment ? (
           <NavigateAssessment
-            name={lessonFetch?.name}
+            name={lessonFetch?.lesson_name || lessonFetch?.name}
             onClick={handleAssessment}
             disabled={isLoading}
           />
         ) : (
-          <article className="flex mt-10">
+          <article className="flex flex-col items-start w-full mt-10">
+            <Separator className="border-2 bg-white dark:bg-blue-400 py-0.5 border-black dark:border-black mb-5 rounded-full w-full" />
             <p className="text-3xl font-extrabold">End of lesson.</p>
           </article>
         )}

@@ -29,9 +29,9 @@ export function fetchUserdata() {
       
       return userData[0];
     },
-    refetchOnMount: true,      // Refetch on component mount
-    refetchOnWindowFocus: true, // Refetch when window regains focus
-    staleTime: 1000,           // Consider data stale after 1 second
+    refetchOnMount: "if-stale",      // Only refetch if stale
+    refetchOnWindowFocus: "if-stale", // Only refetch if stale
+    staleTime: 60000,                // Consider data stale after 1 minute instead of 1 second
   });
 }
 
@@ -50,6 +50,7 @@ export function fetchRoadmap(id) {
       if (error) throw new Error(error.message);
       return data;
     },
+    staleTime: 60000, // Add a reasonable stale time
   });
 }
 

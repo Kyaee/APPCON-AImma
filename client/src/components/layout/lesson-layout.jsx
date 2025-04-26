@@ -1,15 +1,11 @@
 import { Outlet } from "react-router-dom";
 import Header from "@/components/layout/lesson/header-navigator";
 import { useQuery } from "@tanstack/react-query";
-import { fetchLessonAIdata } from "@/api/FETCH"; // Adjust the import path as needed
+import { fetchLessonAIdata } from "@/api/FETCH";
 import Loading from "@/routes/Loading";
 import { useLessonFetchStore } from "@/store/useLessonData";
 import { useEffect } from "react";
 import { useNavigation } from "@/context/navigationContext";
-
-const message = {
-  message: ""
-}
 
 export default function LessonLayout({ children }) {
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
@@ -25,10 +21,10 @@ export default function LessonLayout({ children }) {
 
   useEffect(() => {
     if (lessonData) setLessonFetch(lessonData);
-  }, [lessonData]);
+  }, [lessonData, setLessonFetch]);
 
   if (isLoading) return <Loading />;
-  if (isError) return <div>Error loading user data.</div>;
+  if (isError) return <div>Error loading lesson data.</div>;
 
   return (
     <>

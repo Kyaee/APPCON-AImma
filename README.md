@@ -4,7 +4,6 @@
 
 CapyCademy is an AI-powered e-learning platform tailored to bridge skill gaps in the Information Technology sector. By assessing individual skill levels, it generates personalized learning roadmaps enhanced with gamification, interactive tools, and AI-driven insights for an engaging and effective learning experience. With flexible subscription plans—including student discounts and enterprise packages—CapyCademy makes upskilling accessible, promoting career growth and workforce efficiency across diverse user groups.
 
-insert gif or link here
 
 ## 🧰 Tech Stack
 
@@ -94,6 +93,20 @@ uvicorn app:app --reload
 | GEMINI_API_URL | ```https://generativelanguage.googleapis.com/v1beta/openai/```|
 <br>
 
+## 🌐 How to Access CapyCademy
+
+Getting started with CapyCademy is quick and easy! Just follow these steps:
+
+**🔗 Step 1: Visit the Platform**  
+Head over to our platform by clicking the link below or pasting it into your browser:  
+👉 [https://appcon-a-imma.vercel.app](https://appcon-a-imma.vercel.app)
+
+**📝 Step 2: Sign Up with Google**  
+Use your Google account to sign up and set a secure password—no hassle, no fuss.
+
+**🧭 Step 3: Start Exploring**  
+Dive into your personalized learning roadmap, interact with AI tools, and enjoy a gamified upskilling experience tailored just for you!
+
 ## 🚀 Deployment
 **To deploy this project:**
 
@@ -116,5 +129,8 @@ npm run deploy
 ## 💬 Feedback
 **We'd love to hear from you✨!**
 
+**If you have any feedback, please reach out to us:* 
 
-**If you have any feedback, please reach out to us:* emmanuelfabella606@gmail.com or notadocath@gmail.com
+📩 emmanuelfabella606@gmail.com
+
+📩 notadocath@gmail.com

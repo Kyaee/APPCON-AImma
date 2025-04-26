@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function SeniorQuestionsStep({ formData, setFormData }) {
+  // Get questions and options from assessment-flow.js
+  const { questions } = assessmentFlow.seniorQuestions;
+  
   // Create local state for form inputs
   const [localFormData, setLocalFormData] = useState({
-    currentRole: formData.currentRole || "",
-    companyIndustry: formData.companyIndustry || "",
-    skillsUsed: formData.skillsUsed || [],
+    currentRole: formData.currentRole ,
+    companyIndustry: formData.companyIndustry,
+    skillsUsed: formData.skillsUsed,
   });
 
   // Update local state from props when component mounts
   useEffect(() => {
     setLocalFormData({
-      currentRole: formData.currentRole || "",
-      companyIndustry: formData.companyIndustry || "",
-      skillsUsed: formData.skillsUsed || [],
+      currentRole: formData.currentRole,
+      companyIndustry: formData.companyIndustry,
+      skillsUsed: formData.skillsUsed,
     });
   }, []);
 
@@ -42,13 +46,18 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
     }));
   };
 
+  // Find specific questions by ID
+  const currentRoleQuestion = questions.find(q => q.id === 'currentRole');
+  const companyIndustryQuestion = questions.find(q => q.id === 'companyIndustry');
+  const skillsUsedQuestion = questions.find(q => q.id === 'skillsUsed');
+
   return (
-    <AssessmentStep title="Tell us about your experience">
+    <AssessmentStep title={assessmentFlow.seniorQuestions.title}>
       <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
         {/* Current Role */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What is your current role?
+            {currentRoleQuestion?.label}
           </label>
           <input
             type="text"
@@ -62,7 +71,7 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
         {/* Company Industry */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What industry is your company in?
+            {companyIndustryQuestion?.label}
           </label>
           <select
             value={localFormData.companyIndustry}
@@ -74,15 +83,7 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
             <option value="" disabled>
               Select industry
             </option>
-            {[
-              "Technology",
-              "Finance",
-              "Healthcare",
-              "Education",
-              "E-commerce",
-              "Manufacturing",
-              "Other",
-            ].map((industry) => (
+            {companyIndustryQuestion?.options.map((industry) => (
               <option key={industry} value={industry}>
                 {industry}
               </option>
@@ -93,20 +94,10 @@ export default function SeniorQuestionsStep({ formData, setFormData }) {
         {/* Skills Used */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What skills have you used in your current role?
+            {skillsUsedQuestion?.label}
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              "Programming",
-              "Networking",
-              "Web Development",
-              "Game Development",
-              "AI/Machine Learning",
-              "Data Analysis",
-              "Cybersecurity",
-              "Project Management",
-              "Other",
-            ].map((skill) => (
+            {skillsUsedQuestion?.options.map((skill) => (
               <button
                 key={skill}
                 type="button"

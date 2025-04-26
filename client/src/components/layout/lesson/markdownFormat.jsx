@@ -10,12 +10,12 @@ export default function markdownFormat({ children }) {
           </div>
         ),
         h2: ({ children }) => (
-          <h2 className="mt-12 tracking-tight text-3xl font-bold text-[#333] dark:text-primary leading-10 mb-6 border-b-2 border-gray-300 dark:border-dark-mode-highlight pb-2">
+          <h2 className="mt-12 tracking-tight text-3xl font-bold text-dark-brown dark:text-[#FFD700] leading-10 mb-6 border-b-2 border-dark-brown dark:border-dark-brown pb-2">
             {children}
           </h2>
         ),
         h3: ({ children }) => (
-          <h3 className="mt-12 text-3xl font-semibold text-[#444] dark:text-primary tracking-tight leading-9 mb-5">
+          <h3 className="mt-12 text-3xl font-semibold text-[#333] dark:text-light-brown tracking-tight leading-9 mb-5">
             {children}
           </h3>
         ),
@@ -40,7 +40,7 @@ export default function markdownFormat({ children }) {
           </li>
         ),
         code: ({ children }) => (
-          <code className="inline-block bg-[#f5f5f5] dark:bg-dark-mode-bg text-[#d6336c] dark:text-pink-400 border border-gray-300 dark:border-dark-mode-highlight rounded-md p-2 text-md font-mono">
+          <code className="inline-block bg-[#444a66] dark:bg-[#2b213a] text-white dark:text-pink-400 border-2 border-primary dark:border-primary-foreground  rounded-md p-2 text-md font-mono">
             {children}
           </code>
         ),

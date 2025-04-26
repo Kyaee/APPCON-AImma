@@ -27,46 +27,31 @@ import CompleteStep from "@/components/assessment/steps/CompletionStep";
 export default function UserAssessment() {
   // Loading states
   const [isReady, setIsReady] = useState(false);
-  const [showIntro, setShowIntro] = useState(true); // Start by showing intro
+  const [showIntro, setShowIntro] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Store actions and state
-  const setUserType = useAssessmentStore((state) => state.setUserType);
-  const setEducationLevel = useAssessmentStore(
-    (state) => state.setEducationLevel
-  );
-  const setCareerTransition = useAssessmentStore(
-    (state) => state.setCareerTransition
-  );
-  const setPreviousExperience = useAssessmentStore(
-    (state) => state.setPreviousExperience
-  );
-  const setDailyGoal = useAssessmentStore((state) => state.setDailyGoal);
-  const setTechnicalInterest = useAssessmentStore(
-    (state) => state.setTechnicalInterest
-  );
-  const setTechnicalAnswers = useAssessmentStore(
-    (state) => state.setTechnicalAnswers
-  );
-  const resetAssessment = useAssessmentStore((state) => state.resetAssessment);
+  const {
+    setUserType,
+    setEducationLevel,
+    setCareerTransition,
+    setPreviousExperience,
+    setDailyGoal,
+    setTechnicalInterest,
+    setTechnicalAnswers,
+    resetAssessment,
+  } = useAssessmentStore((state) => state);
+
   const { createRoadmap } = useGenerateRoadmap();
   const { session } = useAuth();
+  const navigate = useNavigate();
 
-  // Local state
-  const [currentStep, setCurrentStep] = useState(() => {
-    const saved = localStorage.getItem("currentAssessmentPage");
-    return saved || "userType";
-  });
+  // Core assessment state - removed localStorage dependencies
+  const [currentStep, setCurrentStep] = useState("userType");
+  const [selectedType, setSelectedType] = useState(null);
+  const [selectedLevel, setSelectedLevel] = useState(null);
 
-  const [selectedType, setSelectedType] = useState(() => {
-    const saved = localStorage.getItem("selectedType");
-    return saved ? JSON.parse(saved) : null;
-  });
-
-  const [selectedLevel, setSelectedLevel] = useState(() => {
-    const saved = localStorage.getItem("selectedLevel");
-    return saved ? JSON.parse(saved) : null;
-  });
-
+  // State for different user types - with default values
   const [previousExperience, setPreviousExp] = useState({
     lastRole: "",
     yearsExperience: "",
@@ -82,8 +67,10 @@ export default function UserAssessment() {
   const [dailyGoal, setDailyGoalState] = useState(null);
   const [technicalInterest, setTechnicalInterestState] = useState(null);
   const [technicalAnswers, setTechnicalAnswersState] = useState({});
+  const [feedback, setFeedback] = useState("");
+  const [techQuestionsVisible, setTechQuestionsVisible] = useState(false);
 
-  // Student form data
+  // Form data for different user types - with default values
   const [hsFormData, setHsFormData] = useState({
     strand: "",
     planningCollege: null,
@@ -107,42 +94,23 @@ export default function UserAssessment() {
     researchInterests: [],
   });
 
-  // Professional form data
-  const [entryFormData, setEntryFormData] = useState(() => {
-    const saved = localStorage.getItem("entryLevelSavepoint");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          currentRole: "",
-          companyIndustry: "",
-          skillsUsed: [],
-        };
+  const [entryFormData, setEntryFormData] = useState({
+    currentRole: "",
+    companyIndustry: "",
+    skillsUsed: [],
   });
 
-  const [midFormData, setMidFormData] = useState(() => {
-    const saved = localStorage.getItem("midLevelSavepoint");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          currentRole: "",
-          companyIndustry: "",
-          skillsUsed: [],
-        };
+  const [midFormData, setMidFormData] = useState({
+    currentRole: "",
+    companyIndustry: "",
+    skillsUsed: [],
   });
 
-  const [seniorFormData, setSeniorFormData] = useState(() => {
-    const saved = localStorage.getItem("seniorLevelSavepoint");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          currentRole: "",
-          companyIndustry: "",
-          skillsUsed: [],
-        };
+  const [seniorFormData, setSeniorFormData] = useState({
+    currentRole: "",
+    companyIndustry: "",
+    skillsUsed: [],
   });
-
-  const [feedback, setFeedback] = useState("");
-  const [techQuestionsVisible, setTechQuestionsVisible] = useState(false);
 
   // Refs for form handling
   const formRefs = {
@@ -158,316 +126,194 @@ export default function UserAssessment() {
     complete: useRef(null),
   };
 
-  const navigate = useNavigate();
-
-  // Set up loading effect - wait for all necessary data
+  // Component initialization - simplified without localStorage
   useEffect(() => {
-    // Reset assessment when component mounts
     resetAssessment();
-
-    // Use a small timeout to ensure everything is loaded
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 800);
-
+    const timer = setTimeout(() => setIsReady(true), 800);
     return () => clearTimeout(timer);
   }, [resetAssessment]);
 
-  // Effects for localStorage handling
-  useEffect(() => {
-    localStorage.setItem("currentAssessmentPage", currentStep);
-  }, [currentStep]);
-
-  useEffect(() => {
-    if (selectedType)
-      localStorage.setItem("selectedType", JSON.stringify(selectedType));
-    if (selectedLevel)
-      localStorage.setItem("selectedLevel", JSON.stringify(selectedLevel));
-  }, [selectedType, selectedLevel]);
-
-  useEffect(() => {
-    // Load previous experience data
-    const savedPreviousExp = localStorage.getItem("previousExpData");
-    if (savedPreviousExp) {
-      setPreviousExp(JSON.parse(savedPreviousExp));
-    }
-
-    // Load career transition data
-    const savedTransition = localStorage.getItem("careerTransitionData");
-    if (savedTransition) {
-      setTransition(JSON.parse(savedTransition));
-    }
-
-    // Load HS form data
-    const savedHsResponses = localStorage.getItem("hsResponses");
-    if (savedHsResponses) {
-      setHsFormData(JSON.parse(savedHsResponses));
-    }
-
-    // Load college form data
-    const savedCollegeResponses = localStorage.getItem("collegeResponses");
-    if (savedCollegeResponses) {
-      setCollegeFormData(JSON.parse(savedCollegeResponses));
-    }
-
-    // Load graduate form data
-    const savedGradResponses = localStorage.getItem("gradResponses");
-    if (savedGradResponses) {
-      setGradFormData(JSON.parse(savedGradResponses));
-    }
-
-    // Load daily goal
-    const savedDailyGoal = localStorage.getItem("daily-goal");
-    if (savedDailyGoal) {
-      setDailyGoalState(savedDailyGoal);
-    }
-
-    // Load technical interest
-    const savedTechnicalInterest = localStorage.getItem("technicalInterest");
-    if (savedTechnicalInterest) {
-      setTechnicalInterestState(JSON.parse(savedTechnicalInterest));
-    }
-
-    // Load technical answers
-    const savedTechnicalAnswers = localStorage.getItem("technicalAnswers");
-    if (savedTechnicalAnswers) {
-      setTechnicalAnswersState(JSON.parse(savedTechnicalAnswers));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (technicalInterest) {
-      localStorage.setItem(
-        "technicalInterest",
-        JSON.stringify(technicalInterest)
-      );
-    }
-  }, [technicalInterest]);
-
-  useEffect(() => {
-    if (Object.keys(technicalAnswers).length > 0) {
-      localStorage.setItem(
-        "technicalAnswers",
-        JSON.stringify(technicalAnswers)
-      );
-    }
-  }, [technicalAnswers]);
-
-  // Handlers
+  // Handlers for navigation and form submission
   const handleTypeSelection = (option) => {
     setSelectedType(option);
     setUserType(option);
 
-    // Directly navigate to next step based on selection
-    if (option.id === "student") {
-      navigateToNextStep("educationLevel");
-    } else if (option.id === "professional") {
-      navigateToNextStep("experience");
-    } else if (option.id === "jobSeeker") {
-      navigateToNextStep("previousExperience");
-    } else if (option.id === "careerShifter") {
-      navigateToNextStep("careerTransition");
-    }
+    const nextSteps = {
+      student: "educationLevel",
+      professional: "experience",
+      jobSeeker: "previousExperience",
+      careerShifter: "careerTransition",
+    };
+    navigateToNextStep(nextSteps[option.id]);
   };
 
   const handleLevelSelection = (option) => {
     setSelectedLevel(option);
     setEducationLevel(option);
 
-    // For education level selection
     if (currentStep === "educationLevel") {
-      localStorage.setItem("educationLevelData", JSON.stringify(option));
-
-      if (option.id === "highSchool") {
-        navigateToNextStep("hsQuestions");
-      } else if (option.id === "college") {
-        navigateToNextStep("collegeQuestions");
-      } else if (option.id === "graduateSchool") {
-        navigateToNextStep("gradQuestions");
-      }
-    }
-
-    // For experience level selection
-    if (currentStep === "experience") {
-      localStorage.setItem("yearsOfExpSavepoint", JSON.stringify(option));
-
-      if (option.id === "entryLevel") {
-        navigateToNextStep("entryQuestions");
-      } else if (option.id === "midLevel") {
-        navigateToNextStep("midQuestions");
-      } else if (option.id === "seniorLevel") {
-        navigateToNextStep("seniorQuestions");
-      }
+      const nextSteps = {
+        highSchool: "hsQuestions",
+        college: "collegeQuestions",
+        graduateSchool: "gradQuestions",
+      };
+      navigateToNextStep(nextSteps[option.id]);
+    } else if (currentStep === "experience") {
+      const nextSteps = {
+        entryLevel: "entryQuestions",
+        midLevel: "midQuestions",
+        seniorLevel: "seniorQuestions",
+      };
+      navigateToNextStep(nextSteps[option.id]);
     }
   };
 
   const handleDailyGoalSelect = (value) => {
     setDailyGoalState(value);
     setDailyGoal(value);
-    localStorage.setItem("daily-goal", value);
     navigateToNextStep("techInterest");
   };
 
   const handleTechInterestSelect = (option) => {
-    // Set both the local state and global store
     setTechnicalInterestState(option);
     setTechnicalInterest(option);
-
-    // Ensure it's properly stored in localStorage
-    localStorage.setItem("technicalInterest", JSON.stringify(option));
-
-    // Show questions after selecting interest
     setTechQuestionsVisible(true);
   };
 
   const handleTechAnswerChange = (questionId, value) => {
-    const updatedAnswers = {
-      ...technicalAnswers,
-      [questionId]: value,
-    };
+    const updatedAnswers = { ...technicalAnswers, [questionId]: value };
     setTechnicalAnswersState(updatedAnswers);
     setTechnicalAnswers(updatedAnswers);
   };
 
-  const handleFeedbackChange = (value) => {
-    setFeedback(value);
+  const handleFeedbackChange = (value) => setFeedback(value);
+
+  const syncFormRef = (refName) => {
+    const formRef = formRefs[refName].current;
+    if (formRef) {
+      const syncButton = formRef.querySelector(
+        'button[style*="display: none"]'
+      );
+      if (syncButton) syncButton.dispatchEvent(new Event("syncToParent"));
+    }
   };
 
-  const handleSubmitTechAnswers = () => {
-    navigateToNextStep("complete");
+  const handleSubmitCompletion = async () => {
+    setIsGenerating(true);
+
+    // Compile all assessment data
+    const assessmentData = {
+      userType: selectedType,
+      educationLevel: selectedLevel,
+      dailyGoal: dailyGoal,
+      technicalInterest: technicalInterest,
+      technicalAnswers: technicalAnswers,
+      previousExperience: previousExperience,
+      careerTransition: transition,
+      feedback: feedback,
+      formData: getFormDataByUserType(),
+    };
+
+    // Data for roadmap generation
+    const userData = {
+      user_id: session?.user?.id,
+      roadmap_name: `${selectedType?.label || "Custom"} Learning Path`,
+      description: `Personalized learning path based on ${
+        selectedType?.label || "user"
+      } assessment.`,
+      daily_goal:
+        typeof dailyGoal === "number"
+          ? dailyGoal.toString()
+          : dailyGoal || "30min",
+      technicalInterest: technicalInterest?.label || null,
+      technicalAnswers:
+        Object.keys(technicalAnswers).length > 0 ? technicalAnswers : null,
+    };
+
+    try {
+      console.log("Generating roadmap with user data:", userData);
+      const result = await createRoadmap(userData);
+      console.log("Roadmap generation completed successfully", result);
+      navigate(`/dashboard/${session?.user?.id}?t=${Date.now()}`);
+    } catch (error) {
+      console.error("Error generating roadmap:", error);
+      setIsGenerating(false);
+      alert("Failed to generate your roadmap. Please try again.");
+    }
   };
 
-  const handleSubmitCompletion = () => {
-    createRoadmap();
-    // Navigate to the process dashboard to generate the roadmap
-    navigate(`/dashboard/p?user=${session?.user?.id}`);
+  // Helper function to get form data based on user type
+  const getFormDataByUserType = () => {
+    if (selectedType?.id === "student") {
+      if (selectedLevel?.id === "highSchool") return hsFormData;
+      if (selectedLevel?.id === "college") return collegeFormData;
+      if (selectedLevel?.id === "graduateSchool") return gradFormData;
+    } else if (selectedType?.id === "professional") {
+      if (selectedLevel?.id === "entryLevel") return entryFormData;
+      if (selectedLevel?.id === "midLevel") return midFormData;
+      if (selectedLevel?.id === "seniorLevel") return seniorFormData;
+    }
+    return {};
   };
 
+  // Form submission validation and handling - removed localStorage dependencies
   const handleFormSubmission = () => {
-    switch (currentStep) {
-      case "previousExperience":
-        // Trigger sync from child component before validating
-        const previousExperienceForm = formRefs.previousExperience.current;
-        if (previousExperienceForm) {
-          const syncButton = previousExperienceForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+    // Form validation object - key is step name, value is validation function
+    const formValidations = {
+      previousExperience: () => {
+        syncFormRef("previousExperience");
         if (
           previousExperience.lastRole.trim() !== "" &&
           previousExperience.yearsExperience.trim() !== "" &&
           previousExperience.reasonForChange.trim() !== ""
         ) {
           setPreviousExperience(previousExperience);
-          localStorage.setItem(
-            "previousExpData",
-            JSON.stringify(previousExperience)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please fill in all fields for Previous Experience");
+          return "dailyGoal";
         }
-        break;
-
-      case "careerTransition":
-        // Trigger sync from child component before validating
-        const careerTransitionForm = formRefs.careerTransition.current;
-        if (careerTransitionForm) {
-          const syncButton = careerTransitionForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+        alert("Please fill in all fields for Previous Experience");
+        return null;
+      },
+      careerTransition: () => {
+        syncFormRef("careerTransition");
         if (
           transition.currentField.trim() !== "" &&
           transition.desiredField.trim() !== "" &&
           transition.transitionReason.trim() !== ""
         ) {
           setCareerTransition(transition);
-          localStorage.setItem(
-            "careerTransitionData",
-            JSON.stringify(transition)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please fill in all fields for Career Transition");
+          return "dailyGoal";
         }
-        break;
-
-      case "hsQuestions":
-        // Trigger sync from child component before validating
-        const hsForm = formRefs.hsQuestions.current;
-        if (hsForm) {
-          const syncButton = hsForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+        alert("Please fill in all fields for Career Transition");
+        return null;
+      },
+      hsQuestions: () => {
+        syncFormRef("hsQuestions");
         if (
           hsFormData.strand &&
           hsFormData.planningCollege !== null &&
           hsFormData.interestAreas.length > 0 &&
           hsFormData.careerGoals
         ) {
-          localStorage.setItem("hsResponses", JSON.stringify(hsFormData));
-          localStorage.setItem("hsQuestionsSavepoint", "true");
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          return "dailyGoal";
         }
-        break;
-
-      case "collegeQuestions":
-        // Trigger sync from child component before validating
-        const collegeForm = formRefs.collegeQuestions.current;
-        if (collegeForm) {
-          const syncButton = collegeForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+        alert("Please complete all fields before proceeding");
+        return null;
+      },
+      collegeQuestions: () => {
+        syncFormRef("collegeQuestions");
         if (
-          collegeFormData.course &&
           collegeFormData.yearLevel &&
-          collegeFormData.technicalSkills.length > 0 &&
-          collegeFormData.careerPath
+          collegeFormData.currentCourse &&
+          collegeFormData.internshipStatus !== null &&
+          collegeFormData.targetIndustry
         ) {
-          localStorage.setItem(
-            "collegeResponses",
-            JSON.stringify(collegeFormData)
-          );
-          localStorage.setItem("collegeQuestionsSavepoint", "true");
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          return "dailyGoal";
         }
-        break;
-
-      case "gradQuestions":
-        // Trigger sync from child component before validating
-        const gradForm = formRefs.gradQuestions.current;
-        if (gradForm) {
-          const syncButton = gradForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+        alert("Please complete all fields before proceeding");
+        return null;
+      },
+      gradQuestions: () => {
+        syncFormRef("gradQuestions");
         if (
           gradFormData.fieldStudy &&
           gradFormData.researchFocus &&
@@ -475,149 +321,86 @@ export default function UserAssessment() {
           gradFormData.careerPlans &&
           gradFormData.researchInterests.length > 0
         ) {
-          localStorage.setItem("gradResponses", JSON.stringify(gradFormData));
-          localStorage.setItem("gradQuestionsSavepoint", "true");
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          return "dailyGoal";
         }
-        break;
-
-      case "entryQuestions":
-        // Trigger sync from child component before validating
-        const entryForm = formRefs.entryQuestions.current;
-        if (entryForm) {
-          const syncButton = entryForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+        alert("Please complete all fields before proceeding");
+        return null;
+      },
+      entryQuestions: () => {
+        syncFormRef("entryQuestions");
         if (
           entryFormData.currentRole &&
           entryFormData.companyIndustry &&
           entryFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem(
-            "entryLevelSavepoint",
-            JSON.stringify(entryFormData)
-          );
-          localStorage.setItem(
-            "entryLevelResponses",
-            JSON.stringify(entryFormData)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          return "dailyGoal";
         }
-        break;
-
-      case "midQuestions":
-        // Trigger sync from child component before validating
-        const midForm = formRefs.midQuestions.current;
-        if (midForm) {
-          const syncButton = midForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+        alert("Please complete all fields before proceeding");
+        return null;
+      },
+      midQuestions: () => {
+        syncFormRef("midQuestions");
         if (
           midFormData.currentRole &&
           midFormData.companyIndustry &&
           midFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem(
-            "midLevelResponses",
-            JSON.stringify(midFormData)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          return "dailyGoal";
         }
-        break;
-
-      case "seniorQuestions":
-        // Trigger sync from child component before validating
-        const seniorForm = formRefs.seniorQuestions.current;
-        if (seniorForm) {
-          const syncButton = seniorForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
-
+        alert("Please complete all fields before proceeding");
+        return null;
+      },
+      seniorQuestions: () => {
+        syncFormRef("seniorQuestions");
         if (
           seniorFormData.currentRole &&
           seniorFormData.companyIndustry &&
           seniorFormData.skillsUsed.length > 0
         ) {
-          localStorage.setItem(
-            "seniorLevelResponses",
-            JSON.stringify(seniorFormData)
-          );
-          navigateToNextStep("dailyGoal");
-        } else {
-          alert("Please complete all fields before proceeding");
+          return "dailyGoal";
         }
-        break;
-
-      case "techInterest":
-        // Trigger sync from child component before validating
+        alert("Please complete all fields before proceeding");
+        return null;
+      },
+      techInterest: () => {
         if (techQuestionsVisible) {
-          const techInterestForm = formRefs.techInterest.current;
-          if (techInterestForm) {
-            const syncButton = techInterestForm.querySelector(
-              'button[style*="display: none"]'
-            );
-            if (syncButton) {
-              syncButton.dispatchEvent(new Event("syncToParent"));
-            }
-          }
-          handleSubmitTechAnswers();
+          syncFormRef("techInterest");
+          return "complete";
         }
-        break;
-
-      case "complete":
-        // Sync feedback before submission
-        const completeForm = formRefs.complete.current;
-        if (completeForm) {
-          const syncButton = completeForm.querySelector(
-            'button[style*="display: none"]'
-          );
-          if (syncButton) {
-            syncButton.dispatchEvent(new Event("syncToParent"));
-          }
-        }
+        return null;
+      },
+      complete: () => {
+        syncFormRef("complete");
         handleSubmitCompletion();
-        break;
+        return null;
+      },
+    };
+
+    if (formValidations[currentStep]) {
+      const nextStep = formValidations[currentStep]();
+      if (nextStep) navigateToNextStep(nextStep);
     }
   };
 
+  // Simplified navigation function without localStorage
   const navigateToNextStep = (step) => {
     setCurrentStep(step);
   };
 
+  // Back button logic - simplified without localStorage
   const handleBack = () => {
     if (currentStep === "userType") {
       setShowIntro(true);
       return;
     }
 
-    // If on tech interest questions view, go back to interest selection
     if (currentStep === "techInterest" && techQuestionsVisible) {
       setTechQuestionsVisible(false);
       return;
     }
 
     const backMapping = {
-      userType: null, // No going back from first step
+      userType: null,
       educationLevel: "userType",
       experience: "userType",
       previousExperience: "userType",
@@ -639,28 +422,24 @@ export default function UserAssessment() {
 
   const handleBeginAssessment = () => {
     setShowIntro(false);
-    setCurrentStep("userType"); // Start with user type selection
+    setCurrentStep("userType");
   };
 
-  // Determine previous step for daily goal based on state
+  // Logic to determine the previous step without localStorage
   function getPreviousStepForDailyGoal() {
-    // We need to look at the selectedType stored in state rather than localStorage
-    // to ensure we get the correct user type
     if (selectedType) {
       if (selectedType.id === "student") {
-        if (localStorage.getItem("hsQuestionsSavepoint")) return "hsQuestions";
-        if (localStorage.getItem("collegeQuestionsSavepoint"))
-          return "collegeQuestions";
-        if (localStorage.getItem("gradQuestionsSavepoint"))
-          return "gradQuestions";
+        if (selectedLevel) {
+          if (selectedLevel.id === "highSchool") return "hsQuestions";
+          if (selectedLevel.id === "college") return "collegeQuestions";
+          if (selectedLevel.id === "graduateSchool") return "gradQuestions";
+        }
         return "educationLevel";
       } else if (selectedType.id === "professional") {
-        const expChoice = localStorage.getItem("yearsOfExpSavepoint");
-        if (expChoice) {
-          const choice = JSON.parse(expChoice);
-          if (choice.id === "entryLevel") return "entryQuestions";
-          if (choice.id === "midLevel") return "midQuestions";
-          if (choice.id === "seniorLevel") return "seniorQuestions";
+        if (selectedLevel) {
+          if (selectedLevel.id === "entryLevel") return "entryQuestions";
+          if (selectedLevel.id === "midLevel") return "midQuestions";
+          if (selectedLevel.id === "seniorLevel") return "seniorQuestions";
         }
         return "experience";
       } else if (selectedType.id === "jobSeeker") {
@@ -670,43 +449,33 @@ export default function UserAssessment() {
       }
     }
 
-    // Fallback to localStorage check only if selectedType is not available
-    const savedType = localStorage.getItem("selectedType");
-    if (savedType) {
-      const type = JSON.parse(savedType);
-      if (type.id === "jobSeeker") return "previousExperience";
-      if (type.id === "careerShifter") return "careerTransition";
-    }
-
     return "userType";
   }
 
-  // Determine the progress based on currentStep
+  // UI helpers
   const getProgress = () => {
-    const stepProgressMap = {
+    const progressMap = {
       userType: 0,
-      educationLevel: 15,
-      experience: 15,
-      previousExperience: 15,
-      careerTransition: 15,
-      hsQuestions: 30,
-      collegeQuestions: 30,
-      gradQuestions: 30,
-      entryQuestions: 30,
-      midQuestions: 30,
-      seniorQuestions: 30,
-      dailyGoal: 50,
-      techInterest: 75,
-      complete: 95,
+      educationLevel: 16,
+      experience: 16,
+      previousExperience: 16,
+      careerTransition: 16,
+      hsQuestions: 32,
+      collegeQuestions: 32,
+      gradQuestions: 32,
+      entryQuestions: 32,
+      midQuestions: 32,
+      seniorQuestions: 32,
+      dailyGoal: 52,
+      techInterest: 80,
+      complete: 100,
     };
-
-    return stepProgressMap[currentStep] || 0;
+    return progressMap[currentStep] || 0;
   };
 
-  // Determine the title based on currentStep and user type
   const getTitle = () => {
-    // First check if we have a specific title for the current step
-    const genericStepTitleMap = {
+    // Generic step titles
+    const genericTitles = {
       userType: "Career Assessment",
       dailyGoal: "Daily Learning Goal",
       techInterest:
@@ -716,227 +485,202 @@ export default function UserAssessment() {
       complete: "Assessment Complete",
     };
 
-    // If we have a generic title, use it
-    if (genericStepTitleMap[currentStep]) {
-      return genericStepTitleMap[currentStep];
-    }
+    if (genericTitles[currentStep]) return genericTitles[currentStep];
 
-    // Otherwise, determine title based on user type
+    // Type-specific titles
     if (selectedType) {
-      if (selectedType.id === "student") {
-        const educationStepMap = {
+      const titleMappings = {
+        student: {
           educationLevel: "Skill Level Assessment",
           hsQuestions: "High School Assessment",
           collegeQuestions: "College Assessment",
           gradQuestions: "Graduate Path",
-        };
-        return educationStepMap[currentStep] || "Student Assessment";
-      } else if (selectedType.id === "professional") {
-        const professionalStepMap = {
+        },
+        professional: {
           experience: "Years of Experience",
           entryQuestions: "Entry Level Assessment",
           midQuestions: "Middle Level Assessment",
           seniorQuestions: "Senior Level Assessment",
-        };
-        return professionalStepMap[currentStep] || "Professional Assessment";
-      } else if (selectedType.id === "jobSeeker") {
-        return currentStep === "previousExperience"
-          ? "Previous Experience"
-          : "Job Seeker Assessment";
-      } else if (selectedType.id === "careerShifter") {
-        return currentStep === "careerTransition"
-          ? "Career Transition"
-          : "Career Shifter Assessment";
-      }
+        },
+        jobSeeker: {
+          previousExperience: "Previous Experience",
+        },
+        careerShifter: {
+          careerTransition: "Career Transition",
+        },
+      };
+
+      const typeSpecificTitle = titleMappings[selectedType.id]?.[currentStep];
+      if (typeSpecificTitle) return typeSpecificTitle;
+
+      // Default titles based on user type
+      const defaultTitles = {
+        student: "Student Assessment",
+        professional: "Professional Assessment",
+        jobSeeker: "Job Seeker Assessment",
+        careerShifter: "Career Shifter Assessment",
+      };
+
+      return defaultTitles[selectedType.id] || "Assessment";
     }
 
-    // Default title if nothing else matches
     return "Assessment";
   };
 
-  // Render the current step with a form wrapper when appropriate
+  // Render different steps with consistent wrapper
   const renderCurrentStep = () => {
-    const FormWrapper = ({ children, stepName }) => {
-      return (
-        <div className="w-full">
-          <div ref={formRefs[stepName]}>{children}</div>
-          <div className="flex justify-center mt-8">
-            <button
-              type="button"
-              onClick={handleFormSubmission}
-              className="px-10 py-3 bg-brown hover:bg-dark-brown text-white rounded-md transition-colors border-2 border-black"
-            >
-              {stepName === "complete" ? "Continue to Dashboard" : "Continue"}
-            </button>
-          </div>
-          {/* Hidden button for sync events */}
+    const FormWrapper = ({ children, stepName }) => (
+      <div className="w-full">
+        <div ref={formRefs[stepName]}>{children}</div>
+        <div className="flex justify-center mt-8">
           <button
             type="button"
-            style={{ display: "none" }}
-            onClick={(e) => {
-              e.preventDefault();
-            }}
+            onClick={handleFormSubmission}
+            className="px-10 py-3 bg-brown hover:bg-dark-brown text-white rounded-md transition-colors border-2 border-black"
           >
-            Sync
+            {stepName === "complete" ? "Continue to Dashboard" : "Continue"}
           </button>
         </div>
-      );
-    };
+        <button
+          type="button"
+          style={{ display: "none" }}
+          onClick={(e) => e.preventDefault()}
+        >
+          Sync
+        </button>
+      </div>
+    );
 
-    switch (currentStep) {
-      case "userType":
-        return (
-          <UserTypeStep
-            userTypeOptions={assessmentFlow.userType.options}
-            selectedType={selectedType}
-            onTypeSelect={handleTypeSelection}
-          />
-        );
-      case "educationLevel":
-        return (
-          <EducationLevelStep
-            selectedType={selectedType}
-            selectedLevel={selectedLevel}
-            educationOptions={assessmentFlow.educationLevel.options}
-            onLevelSelect={handleLevelSelection}
-          />
-        );
-      case "experience":
-        return (
-          <ExperienceStep
-            experienceOptions={assessmentFlow.yearsExperience.options}
-            selectedLevel={selectedLevel}
-            onLevelSelect={handleLevelSelection}
-          />
-        );
-      case "previousExperience":
-        return (
-          <FormWrapper stepName="previousExperience">
-            <PreviousExperienceStep
-              experience={previousExperience}
-              setExperience={setPreviousExp}
-            />
-          </FormWrapper>
-        );
-      case "careerTransition":
-        return (
-          <FormWrapper stepName="careerTransition">
-            <CareerTransitionStep
-              transition={transition}
-              setTransition={setTransition}
-            />
-          </FormWrapper>
-        );
-      case "hsQuestions":
-        return (
-          <FormWrapper stepName="hsQuestions">
-            <HSQuestionsStep
-              formData={hsFormData}
-              setFormData={setHsFormData}
-            />
-          </FormWrapper>
-        );
-      case "collegeQuestions":
-        return (
-          <FormWrapper stepName="collegeQuestions">
-            <CollegeQuestionsStep
-              formData={collegeFormData}
-              setFormData={setCollegeFormData}
-            />
-          </FormWrapper>
-        );
-      case "gradQuestions":
-        return (
-          <FormWrapper stepName="gradQuestions">
-            <GradQuestionsStep
-              formData={gradFormData}
-              setFormData={setGradFormData}
-            />
-          </FormWrapper>
-        );
-      case "entryQuestions":
-        return (
-          <FormWrapper stepName="entryQuestions">
-            <EntryQuestionsStep
-              formData={entryFormData}
-              setFormData={setEntryFormData}
-            />
-          </FormWrapper>
-        );
-      case "midQuestions":
-        return (
-          <FormWrapper stepName="midQuestions">
-            <MidQuestionsStep
-              formData={midFormData}
-              setFormData={setMidFormData}
-            />
-          </FormWrapper>
-        );
-      case "seniorQuestions":
-        return (
-          <FormWrapper stepName="seniorQuestions">
-            <SeniorQuestionsStep
-              formData={seniorFormData}
-              setFormData={setSeniorFormData}
-            />
-          </FormWrapper>
-        );
-      case "dailyGoal":
-        return (
-          <DailyGoalStep
-            dailyGoalOptions={assessmentFlow.dailyGoal.questions[0].options}
-            selectedGoal={dailyGoal}
-            onGoalSelect={handleDailyGoalSelect}
-          />
-        );
-      case "techInterest":
-        return techQuestionsVisible ? (
-          <FormWrapper stepName="techInterest">
-            <TechInterestStep
-              techInterestOptions={assessmentFlow.techInterest.options}
-              selectedInterest={technicalInterest}
-              onInterestSelect={handleTechInterestSelect}
-              technicalAnswers={technicalAnswers}
-              onAnswerChange={handleTechAnswerChange}
-              showQuestions={true}
-            />
-          </FormWrapper>
-        ) : (
+    // Map of step names to components
+    const stepComponents = {
+      userType: (
+        <UserTypeStep
+          userTypeOptions={assessmentFlow.userType.options}
+          selectedType={selectedType}
+          onTypeSelect={handleTypeSelection}
+        />
+      ),
+      educationLevel: (
+        <EducationLevelStep
+          selectedType={selectedType}
+          selectedLevel={selectedLevel}
+          educationOptions={assessmentFlow.educationLevel.options}
+          onLevelSelect={handleLevelSelection}
+        />
+      ),
+      experience: (
+        <ExperienceStep
+          experienceOptions={assessmentFlow.yearsExperience.options}
+          selectedLevel={selectedLevel}
+          onLevelSelect={handleLevelSelection}
+        />
+      ),
+      dailyGoal: (
+        <DailyGoalStep
+          dailyGoalOptions={assessmentFlow.dailyGoal.questions[0].options}
+          selectedGoal={dailyGoal}
+          onGoalSelect={handleDailyGoalSelect}
+        />
+      ),
+      techInterest: techQuestionsVisible ? (
+        <FormWrapper stepName="techInterest">
           <TechInterestStep
-            techInterestOptions={assessmentFlow.techInterest.options}
-            selectedInterest={technicalInterest}
+            technicalInterest={technicalInterest}
             onInterestSelect={handleTechInterestSelect}
             technicalAnswers={technicalAnswers}
             onAnswerChange={handleTechAnswerChange}
-            showQuestions={false}
+            showQuestions={true}
           />
-        );
-      case "complete":
-        return (
-          <FormWrapper stepName="complete">
-            <CompleteStep
-              title={assessmentFlow.complete.title}
-              feedback={feedback}
-              onFeedbackChange={handleFeedbackChange}
-            />
-          </FormWrapper>
-        );
-      default:
-        return null;
+        </FormWrapper>
+      ) : (
+        <TechInterestStep
+          technicalInterest={technicalInterest}
+          onInterestSelect={handleTechInterestSelect}
+          technicalAnswers={technicalAnswers}
+          onAnswerChange={handleTechAnswerChange}
+          showQuestions={false}
+        />
+      ),
+    };
+
+    // Form wrapper components
+    const formStepComponents = {
+      previousExperience: (
+        <PreviousExperienceStep
+          experience={previousExperience}
+          setExperience={setPreviousExp}
+        />
+      ),
+      careerTransition: (
+        <CareerTransitionStep
+          transition={transition}
+          setTransition={setTransition}
+        />
+      ),
+      hsQuestions: (
+        <HSQuestionsStep formData={hsFormData} setFormData={setHsFormData} />
+      ),
+      collegeQuestions: (
+        <CollegeQuestionsStep
+          formData={collegeFormData}
+          setFormData={setCollegeFormData}
+        />
+      ),
+      gradQuestions: (
+        <GradQuestionsStep
+          formData={gradFormData}
+          setFormData={setGradFormData}
+        />
+      ),
+      entryQuestions: (
+        <EntryQuestionsStep
+          formData={entryFormData}
+          setFormData={setEntryFormData}
+        />
+      ),
+      midQuestions: (
+        <MidQuestionsStep formData={midFormData} setFormData={setMidFormData} />
+      ),
+      seniorQuestions: (
+        <SeniorQuestionsStep
+          formData={seniorFormData}
+          setFormData={setSeniorFormData}
+        />
+      ),
+      complete: (
+        <CompleteStep
+          title={assessmentFlow.complete.title}
+          feedback={feedback}
+          onFeedbackChange={handleFeedbackChange}
+        />
+      ),
+    };
+
+    // Return direct component for non-form steps
+    if (stepComponents[currentStep]) {
+      return stepComponents[currentStep];
     }
+
+    // Return wrapped component for form steps
+    if (formStepComponents[currentStep]) {
+      return (
+        <FormWrapper stepName={currentStep}>
+          {formStepComponents[currentStep]}
+        </FormWrapper>
+      );
+    }
+
+    return null;
   };
 
-  // If still loading, show loading state
-  if (!isReady) {
+  // Loading and intro screens
+  if (isGenerating) return <Loading generate_roadmap={true} />;
+  if (!isReady)
     return <Loading className="flex-grow flex justify-center items-center" />;
-  }
-
-  // Show intro screen if showIntro is true (completely separate from the regular assessment layout)
-  if (showIntro) {
+  if (showIntro)
     return <AssessmentIntro onBeginAssessment={handleBeginAssessment} />;
-  }
 
-  // Otherwise continue with the AssessmentLayout and the step content
+  // Main assessment layout
   return (
     <AssessmentLayout
       title={getTitle()}

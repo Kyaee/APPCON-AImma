@@ -22,7 +22,7 @@ const technicalAnswers = useAssessmentStore.getState().technicalAnswers;
 export function useGenerateRoadmap() {
   const prompt_roadmap = {
   prompt_roadmap_generate: `
-    Generate a comprehensive, structured, and focused learning roadmap in ${JSON.stringify(language)} with approximately 20-30 lessons.
+    Generate a comprehensive, structured, and focused learning roadmap in ${JSON.stringify(language)} with 20 or more (the more the better).
 
     Roadmap tailored for a "${userType?.label}" ${JSON.stringify(educationLevel?.label || previousExperience || careerTransition)} user, 
     with a daily goal of ${JSON.stringify(dailyGoal)} (if two digits its minutes, else hours) .
@@ -42,14 +42,21 @@ export function useGenerateRoadmap() {
     with assessment: (Easy: 50 exp, 25 gems) (Intermediate: 100 exp, 50 gems) (Hard: 200 exp, 100 gems)
   `}
 
-  const postPrompt1 = async () => {
+  const postPrompt1 = async (userData) => {
     try {
+
+      // Validate that we have a user ID
+      if (!userData || !userData.user_id) {
+        throw new Error("User ID is required");
+      }
+      
       console.log("Generating roadmap with user data:", { 
         language, 
         userType: userType?.label, 
         educationLevel: educationLevel?.label, 
         dailyGoal, 
-        technicalInterest: technicalInterest?.label 
+        technicalInterest: technicalInterest?.label,
+        userId: userData.user_id
       });
       
       const response = await axios.post(
@@ -63,7 +70,16 @@ export function useGenerateRoadmap() {
       }
       
       console.log("Roadmap API response received successfully");
-      return response.data;
+      
+      // Format response for database - simple check if array or object
+      const roadmapData = response.data;
+      const roadmapsToInsert = Array.isArray(roadmapData) ? roadmapData : [roadmapData];
+      
+      // Create the roadmaps in database and await the result
+      await createNewRoadmap(roadmapsToInsert, userData.user_id);
+      console.log(`${roadmapsToInsert.length} roadmap(s) saved to database successfully`);
+      
+      return { success: true, data: roadmapsToInsert };
     } catch (error) {
       console.error("Error generating roadmap:", error);
       throw error;
@@ -82,7 +98,6 @@ export function useGenerateRoadmap() {
 
   return { createRoadmap, isSuccess, isError, error, isPending };
 }
-
 
 /**************************************
  *        POST LESSON PROMPT
@@ -155,8 +170,18 @@ export function useAssessment() {
     const requestBody = {
       prompt_assessment_generate: `
       Generate 11 assessment questions for ${lesson_name} with the following content: ${lesson_content}
-      The questions must only be "multiple-choice".
-      IMPORTANT: Ensure the length of the correct answer option is varied and not consistently longer than the incorrect options, to avoid making the correct answer obvious.
+      
+      REQUIREMENTS:
+      1. Questions must be "multiple-choice" only
+      2. EVERY question MUST have EXACTLY 4 options (no more, no less)
+      3. Distribute information evenly across all choices - DO NOT put all the relevant information in the first choice
+      4. The correct answer should be randomly positioned (not always option A, B, C, or D)
+      5. Wrong answers (distractors) should be plausible and related to the content
+      6. Ensure the length of the correct answer option is varied and not consistently longer than the incorrect options
+      7. Make all options approximately the same length when possible
+      8. Each option should be concise (1-2 sentences maximum)
+      
+      This assessment should genuinely test understanding of the lesson's key concepts.
       `,
       id: lesson_id,
       name: lesson_name,

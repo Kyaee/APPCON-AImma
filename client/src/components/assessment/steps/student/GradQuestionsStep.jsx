@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function GradQuestionsStep({ formData, setFormData }) {
+  // Access questions from assessment-flow.js
+  const { questions, title } = assessmentFlow.gradQuestions;
+
   // Create local state for form inputs
   const [localFormData, setLocalFormData] = useState({
     fieldStudy: formData.fieldStudy || "",
@@ -45,6 +49,14 @@ export default function GradQuestionsStep({ formData, setFormData }) {
     }));
   };
 
+  // Find questions by their id
+  const fieldStudyQuestion = questions.find(q => q.id === 'fieldStudy');
+  const researchFocusQuestion = questions.find(q => q.id === 'researchFocus');
+  const industryExperienceQuestion = questions.find(q => q.id === 'industryExperience');
+  const careerPlansQuestion = questions.find(q => q.id === 'careerPlans');
+  const technicalExpertiseQuestion = questions.find(q => q.id === 'technicalExpertise');
+  const researchInterestsQuestion = questions.find(q => q.id === 'researchInterests');
+
   return (
     <AssessmentStep title="Tell us about your graduate studies">
       <div
@@ -55,7 +67,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
           {/* Field of Study */}
           <div>
             <label className="block text-lg mb-2 text-white">
-              What is your field of study?
+              {fieldStudyQuestion.label}
             </label>
             <input
               type="text"
@@ -69,7 +81,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
           {/* Research Focus */}
           <div>
             <label className="block text-lg mb-2 text-white">
-              What is your research focus?
+              {researchFocusQuestion.label}
             </label>
             <input
               type="text"
@@ -85,7 +97,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
           {/* Industry Experience */}
           <div>
             <label className="block text-lg mb-2 text-white">
-              Do you have industry experience?
+              {industryExperienceQuestion.label}
             </label>
             <div className="grid grid-cols-2 gap-3">
               {[
@@ -113,7 +125,7 @@ export default function GradQuestionsStep({ formData, setFormData }) {
           {/* Career Plans */}
           <div>
             <label className="block text-lg mb-2 text-white">
-              What are your career plans after graduation?
+              {careerPlansQuestion.label}
             </label>
             <textarea
               value={localFormData.careerPlans}
@@ -126,13 +138,13 @@ export default function GradQuestionsStep({ formData, setFormData }) {
           {/* Technical Expertise */}
           <div>
             <label className="block text-lg mb-2 text-white">
-              Rate your technical expertise level
+              {technicalExpertiseQuestion.label}
             </label>
             <div className="flex items-center space-x-2">
               <input
                 type="range"
-                min="1"
-                max="5"
+                min={technicalExpertiseQuestion.min}
+                max={technicalExpertiseQuestion.max}
                 value={localFormData.technicalExpertise}
                 onChange={(e) =>
                   handleInputChange("technicalExpertise", e.target.value)
@@ -148,18 +160,10 @@ export default function GradQuestionsStep({ formData, setFormData }) {
           {/* Research Interests */}
           <div>
             <label className="block text-lg mb-2 text-white">
-              What are your research interests?
+              {researchInterestsQuestion.label}
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {[
-                "AI/ML",
-                "Data Science",
-                "Computer Vision",
-                "Cybersecurity",
-                "Robotics",
-                "Human-Computer Interaction",
-                "Other",
-              ].map((interest) => (
+              {researchInterestsQuestion.options.map((interest) => (
                 <button
                   key={interest}
                   onClick={() => handleInterestChange(interest)}

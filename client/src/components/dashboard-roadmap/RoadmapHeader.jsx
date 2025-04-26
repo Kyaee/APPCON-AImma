@@ -5,11 +5,7 @@ import ReactDOM from "react-dom";
 const RoadmapHeader = ({
   currentCourse = "Web Development",
   progression = 10,
-  courseOptions = [
-    "Web Development",
-    "Quality Assurance",
-    "Mobile Development",
-  ],
+  courseOptions = [], // Default to empty array instead of hardcoded values
   className = "",
   isSidebarExpanded = false,
   onCourseSelect,
@@ -27,6 +23,13 @@ const RoadmapHeader = ({
     if (onCourseSelect) {
       onCourseSelect(index);
       setIsDropdownOpen(false);
+    }
+  };
+
+  // Don't open dropdown if there are no options
+  const toggleDropdown = () => {
+    if (courseOptions && courseOptions.length > 0) {
+      setIsDropdownOpen(!isDropdownOpen);
     }
   };
 
@@ -73,30 +76,49 @@ const RoadmapHeader = ({
       }
     };
 
+    // Improved scroll handler - close dropdown when scrolling the document/window
+    // but not when scrolling occurs inside the dropdown
+    const handleDocumentScroll = () => {
+      if (isDropdownOpen) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    // This attaches to the document's scroll event, not a specific element
     document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleDocumentScroll);
 
     // Clean up
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleDocumentScroll);
     };
   }, [currentCourse, isDropdownOpen, isSidebarExpanded]);
 
   // Create dropdown portal
   const renderDropdown = () => {
-    if (!isDropdownOpen || !courseOptions || courseOptions.length === 0)
+    // Don't render dropdown if no options or only one option
+    if (!isDropdownOpen || !courseOptions || courseOptions.length <= 1) {
       return null;
+    }
 
     return ReactDOM.createPortal(
       <div
         id="roadmap-dropdown"
-        className="fixed bg-primary-foreground dark:bg-dark-inner-bg border-2 border-black dark:border-dark-mode-highlight  rounded-lg shadow-md"
+        className="fixed bg-primary-foreground dark:bg-dark-inner-bg border-2 border-black dark:border-dark-mode-highlight rounded-lg shadow-md scrollbar-thin scrollbar-thumb-[#CBB09B]/50 hover:scrollbar-thumb-[#CBB09B] scrollbar-track-transparent dark:scrollbar-thumb-dark-mode-highlight/50 dark:hover:scrollbar-thumb-dark-mode-highlight"
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,
           width: dropdownWidth,
           zIndex: 9999,
+          maxHeight: "300px",
+          overflowY: "auto",
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(203, 176, 155, 0.5) transparent",
         }}
+        onClick={(e) => e.stopPropagation()}
+        onScroll={(e) => e.stopPropagation()}
       >
         {courseOptions.map((course, index) => (
           <div
@@ -117,10 +139,13 @@ const RoadmapHeader = ({
     <div className={`py-6 ml-25 ${className} relative z-50`}>
       <div className="relative inline-block">
         <div className="flex flex-col">
+          {/* Use toggle function with checks */}
           <div
             ref={containerRef}
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="inline-flex items-start gap-3 cursor-pointer group"
+            onClick={toggleDropdown}
+            className={`inline-flex items-start gap-3 ${
+              courseOptions && courseOptions.length > 1 ? "cursor-pointer" : ""
+            } group`}
           >
             <h2
               className={`text-2xl font-bold text-black dark:text-primary  ${
@@ -140,11 +165,14 @@ const RoadmapHeader = ({
             >
               {currentCourse}
             </h2>
-            <ChevronRight
-              className={`w-8 h-8 text-black dark:text-primary flex-shrink-0 mt-1 transition-transform duration-200 ${
-                isDropdownOpen ? "rotate-90" : "rotate-0"
-              }`}
-            />
+            {/* Only show dropdown indicator if we have multiple options */}
+            {courseOptions && courseOptions.length > 1 && (
+              <ChevronRight
+                className={`w-8 h-8 text-black dark:text-primary flex-shrink-0 transition-transform duration-200 ${
+                  isDropdownOpen ? "rotate-90" : "rotate-0"
+                }`}
+              />
+            )}
           </div>
 
           <div
@@ -156,7 +184,7 @@ const RoadmapHeader = ({
 
       {renderDropdown()}
 
-      <p className="text-black dark:text-primary  font-medium mt-4 text-md">
+      <p className="text-black dark:text-primary font-medium mt-4 text-md">
         Current Progression: {progression}%
       </p>
     </div>

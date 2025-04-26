@@ -171,7 +171,7 @@ export default function FeatureSlider() {
               {/* Content on the right without the button */}
               <div className="flex-1 md:pr-28 lg:pr-32">
                 {/* Title at the top - centered on mobile, left-aligned on desktop */}
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1 md:mb-3 text-center md:text-left">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-1 md:mb-3 text-center md:text-left">
                   {featureData[currentFeature].title}
                 </h2>
 

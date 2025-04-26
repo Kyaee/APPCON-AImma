@@ -26,14 +26,13 @@ const RoadmapContent = ({
   currentCourse,
   onCourseChange,
   isSidebarExpanded,
-  setIsSidebarExpanded, // Add this prop
-  isOpenLesson, // Add this prop
-  setOpenLesson, // Add this prop
-  // Update default path color to black
-  pathColor = "#706E6E", // Changed from #E6E0EA to black
-  pathWidth = 4, // Slightly thinner
-  pathDashLength = 8, // Shorter dashes
-  pathDashGap = 6, // Slightly more gap between dashes
+  // setIsSidebarExpanded, // Remove this prop or make it optional
+  isOpenLesson,
+  setOpenLesson,
+  pathColor = "#706E6E",
+  pathWidth = 4,
+  pathDashLength = 8,
+  pathDashGap = 6,
   pathBorderRadius = 30,
   isLoading,
   setLoading,
@@ -298,11 +297,6 @@ const RoadmapContent = ({
     if (!position.isLocked) {
       setCurrentLessonId(position.lessonId);
       setOpenLesson(true); // This now updates the parent state
-
-      // Close the sidebar when opening a lesson
-      if (isSidebarExpanded) {
-        setIsSidebarExpanded(false);
-      }
 
       console.log(
         stagePositions.findIndex((pos) => pos.lessonId === position.lessonId)

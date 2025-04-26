@@ -56,7 +56,6 @@ function App() {
                 <Route path="/m" element={<Mobile />} />
                 <Route path="*" element={<NotFound />} />
 
-
                 {!session ? (
                   // IF USER IS NOT LOGGED-IN
                   <>
@@ -67,7 +66,7 @@ function App() {
                       element={<ConfirmAccount />}
                     />
                   </>
-                ) : 
+                ) : (
                   // IF USER IS LOGGED-IN, AND NOT ASSESSED
                   <>
                     <Route path="/start/showcase" element={<Showcase />} />
@@ -76,14 +75,8 @@ function App() {
                       path="/start/assessment/*"
                       element={<UserAssessment />}
                     />
-                    <Route
-                      path="/dashboard/p"
-                      element={<ProcessDashboard />}
-                    />
-                    <Route
-                      path="/dashboard"
-                      element={<RedirectDashboard />}
-                    />
+                    <Route path="/dashboard/p" element={<ProcessDashboard />} />
+                    <Route path="/dashboard" element={<RedirectDashboard />} />
                     <Route path="/profile" element={<RedirectProfile />} />
                     <Route path="/shop" element={<RedirectShop />} />
                     <Route
@@ -91,10 +84,7 @@ function App() {
                       element={<RedirectJobOpportunities />}
                     />
                     <Route element={<MainLayout />}>
-                      <Route
-                        path="/dashboard/:id"
-                        element={<Dashboard />}
-                      />
+                      <Route path="/dashboard/:id" element={<Dashboard />} />
                       <Route path="/profile/:id" element={<Profile />} />
                       <Route path="/shop/:id" element={<ElementShop />} />
                       <Route
@@ -113,7 +103,7 @@ function App() {
                       <Route path="/l/shop/:id" element={<ElementShop />} />
                     </Route>
                   </>
-                }
+                )}
               </Routes>
             </BrowserRouter>
           </QueryClientProvider>

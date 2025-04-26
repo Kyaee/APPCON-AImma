@@ -18,7 +18,7 @@ export function ModeToggle({ className, ...props }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight hover:bg-light-brown dark:hover:bg-dark-mode-highlight"
+          className="text-background dark:text-primary bg-brown dark:bg-dark-mode-bg border border-foreground dark:border-dark-mode-highlight hover:bg-light-brown dark:hover:bg-dark-inner-bg"
         >
           <div className="relative">
             <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

@@ -56,7 +56,7 @@ export function LoginForm({ className, ...props }) {
           <div className="mt-4 flex flex-col gap-4">
             <Button
               variant="outline"
-              className="w-full text-gray-700 bg-white border-gray-300 hover:bg-gray-50"
+              className="w-full text-gray-700 bg-white border-gray-300 hover:bg-gray-50 dark:text-black"
               onClick={signInWithGoogle}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

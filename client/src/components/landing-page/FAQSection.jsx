@@ -37,10 +37,10 @@ const FAQSection = () => {
   return (
     <section id="faq" className="py-10 md:py-20">
       <div className="w-[90%] md:w-4/5 mx-auto">
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-4 text-center">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-3 md:mb-4 text-center">
           Frequently Asked Questions
         </h2>
-        <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-10 mx-auto text-center max-w-2xl px-4">
+        <p className="text-base md:text-xl text-black mb-6 md:mb-10 mx-auto text-center max-w-2xl px-4">
           Get answers to common questions about CapyCademy and how it works
         </p>
 

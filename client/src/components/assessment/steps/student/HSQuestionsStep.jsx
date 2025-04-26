@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import AssessmentStep from "@/components/assessment/AssessmentStep";
+import { assessmentFlow } from "@/lib/assessment-flow";
 
 export default function HSQuestionsStep({ formData, setFormData }) {
+  // Access the questions from assessment-flow.js
+  const { questions, title } = assessmentFlow.hsQuestions;
+
   // Create local state for form inputs
   const [localFormData, setLocalFormData] = useState({
     strand: formData.strand || "",
@@ -47,13 +51,19 @@ export default function HSQuestionsStep({ formData, setFormData }) {
     }));
   };
 
+  // Find the questions by their id
+  const strandQuestion = questions.find(q => q.id === 'strand');
+  const planningCollegeQuestion = questions.find(q => q.id === 'planningCollege');
+  const interestAreasQuestion = questions.find(q => q.id === 'interestAreas');
+  const careerGoalsQuestion = questions.find(q => q.id === 'careerGoals');
+
   return (
     <AssessmentStep title="Tell us about your academic path">
       <div className="w-full max-w-3xl mx-auto space-y-6 mt-8 px-4 sm:px-6">
         {/* Strand Selection */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            Which strand are you currently in?
+            {strandQuestion.label}
           </label>
           <select
             value={localFormData.strand}
@@ -63,7 +73,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
             <option value="" disabled>
               Select strand
             </option>
-            {["STEM", "ICT", "Other"].map((strand) => (
+            {strandQuestion.options.map((strand) => (
               <option key={strand} value={strand}>
                 {strand}
               </option>
@@ -74,7 +84,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
         {/* College Plans */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            Are you planning to go to college?
+            {planningCollegeQuestion.label}
           </label>
           <div className="grid grid-cols-2 gap-3">
             {[
@@ -103,16 +113,10 @@ export default function HSQuestionsStep({ formData, setFormData }) {
         {/* Interest Areas */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What are your areas of interest in technology?
+            {interestAreasQuestion.label}
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              "Programming",
-              "Networking",
-              "Web Development",
-              "Game Development",
-              "AI/Machine Learning",
-            ].map((area) => (
+            {interestAreasQuestion.options.map((area) => (
               <button
                 key={area}
                 type="button"
@@ -133,7 +137,7 @@ export default function HSQuestionsStep({ formData, setFormData }) {
         {/* Career Goals */}
         <div>
           <label className="block text-lg mb-2 text-white">
-            What are your career goals?
+            {careerGoalsQuestion.label}
           </label>
           <textarea
             value={localFormData.careerGoals}

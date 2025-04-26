@@ -8,7 +8,7 @@ function Background({ className }) {
   return (
     <div
       className={cn(
-        "fixed top-0 -z-10 min-h-screen w-screen bg-[#fffaf4] dark:bg-[#1a1a1e]",
+        "fixed top-0 -z-10 min-h-screen w-screen bg-[#fffaf4] dark:bg-[#292d3e]",
         className
       )}
       style={{
