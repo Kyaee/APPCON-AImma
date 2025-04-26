@@ -24,7 +24,7 @@ const CombinedPanel = ({ userId }) => {
       </div>
 
       {/* Separator */}
-      <div className="border-t border-primary my-[2vh]"></div>
+      <div className="my-[3vh]"></div>
 
       {/* Streak Section */}
       <div className="mb-[2vh]">
@@ -32,7 +32,7 @@ const CombinedPanel = ({ userId }) => {
       </div>
 
       {/* Separator */}
-      <div className="border-t border-primary my-[2vh]"></div>
+      <div className="my-[4vh]"></div>
 
       {/* Quest Section */}
       <div>
