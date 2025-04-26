@@ -11,7 +11,8 @@ WEB PAGES
 - Check the `Routes` folder for more pages 
 ------------------------------------------*/
 
-import Landing from "./routes/Landing";
+import Desktop from "./routes/landing/Desktop";
+import Mobile from "./routes/landing/Mobile";
 import MainLayout from "./components/layout/main-layout";
 import LessonLayout from "./components/layout/lesson-layout";
 // AUTHENTICATION
@@ -24,6 +25,7 @@ import Showcase from "./routes/Showcase";
 import UserAssessment from "./routes/UserAssessment";
 // REDIRECTS
 import ProcessDashboard from "./routes/redirects/ProcessDashboard";
+import RedirectLanding from "./routes/redirects/RedirectLanding";
 import RedirectDashboard from "./routes/redirects/RedirectDashboard";
 import RedirectProfile from "./routes/redirects/RedirectProfile";
 import RedirectShop from "./routes/redirects/RedirectShop";
@@ -49,7 +51,9 @@ function App() {
             <BrowserRouter>
               <Routes>
                 {/* GENERAL ROUTES */}
-                <Route path="/" element={<Landing />} />
+                <Route path="/" element={<RedirectLanding />} />
+                <Route path="/d" element={<Desktop />} />
+                <Route path="/m" element={<Mobile />} />
                 <Route path="*" element={<NotFound />} />
 
 

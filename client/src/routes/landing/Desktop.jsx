@@ -5,7 +5,7 @@ import FAQSection from "@/components/landing-page/FAQSection";
 import CTASection from "@/components/landing-page/CTASection";
 import LandingFooter from "@/components/landing-page/LandingFooter";
 import { useEffect } from "react";
-import Loading from "./Loading";
+import Loading from "../Loading";
 import { useAuth } from "@/config/AuthContext";
 
 // Import the SVG background files
