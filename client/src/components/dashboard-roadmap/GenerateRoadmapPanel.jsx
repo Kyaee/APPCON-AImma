@@ -7,7 +7,7 @@ const GenerateRoadmapPanel = ({ userId }) => {
 
   const handleGenerateRoadmap = () => {
     // Navigate to the UserAssessment page with focus on technical interests
-    navigate(`/user-assessment/${userId}?focus=technical`);
+    navigate(`/start/assessment`);
   };
 
   return (
