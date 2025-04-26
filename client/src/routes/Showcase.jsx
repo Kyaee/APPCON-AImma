@@ -123,7 +123,7 @@ const Showcase = () => {
 
   // Conditionally render Loading component
   if (!isReady) {
-    return <Loading />;
+    return <Loading preserveBackground="video"/>;
   }
 
   return (

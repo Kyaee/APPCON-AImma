@@ -1,12 +1,11 @@
 import { useTheme } from "@/config/theme-provider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { quantum } from "ldrs";
 quantum.register();
 import { bouncy } from "ldrs";
 bouncy.register();
 import wait from "@/assets/general/waiting.gif";
 import { Background, VideoBackground } from "@/components/layout/Background";
-import { useLocation } from "react-router-dom";
 
 export default function loading({
   generate_roadmap,
@@ -16,34 +15,11 @@ export default function loading({
 }) {
   const { theme } = useTheme();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const location = useLocation();
 
   // Determine if this is a long-loading process (AI generation)
   const isLongLoadProcess =
     generate_roadmap || generate_lesson || generate_assessment;
 
-  // Determine which background to use based on the previous route or the preserveBackground prop
-  const shouldUseVideoBackground = () => {
-    if (preserveBackground === "video") return true;
-    if (preserveBackground === "static") return false;
-
-    // Auto-detect based on current/previous route
-    const gradientBgRoutes = [
-      "/showcase",
-      "/assessment",
-      "/user-assessment",
-      "/introduction",
-      "/login",
-      "/register",
-      "/onboarding",
-    ];
-
-    // Check if current path includes any of the gradient routes
-    return gradientBgRoutes.some(
-      (route) =>
-        location.pathname.includes(route) || document.referrer.includes(route)
-    );
-  };
 
   // Preload the GIF image
   useEffect(() => {
@@ -95,15 +71,27 @@ export default function loading({
     "Capybaras are close relatives of guinea pigs",
   ];
 
-  const randomLoadText = loadtext[Math.floor(Math.random() * loadtext.length)];
-  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-  const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
-  const randomTip = tips[Math.floor(Math.random() * tips.length)];
+  const randomLoadText = useMemo(
+    () => loadtext[Math.floor(Math.random() * loadtext.length)],
+    []
+  );
+  const randomQuote = useMemo(
+    () => quotes[Math.floor(Math.random() * quotes.length)],
+    []
+  );
+  const randomIdea = useMemo(
+    () => ideas[Math.floor(Math.random() * ideas.length)],
+    []
+  );
+  const randomTip = useMemo(
+    () => tips[Math.floor(Math.random() * tips.length)],
+    []
+  );
 
   return (
     <main className="fixed top-0 left-0 h-screen w-full py-5 flex flex-col justify-center items-center select-none z-50">
       {/* Use either video or static background based on the detection */}
-      {shouldUseVideoBackground() ? <VideoBackground /> : <Background />}
+      {(preserveBackground === "video") ? <VideoBackground /> : <Background />}
 
       {/* Load text moved above the image */}
       <h3 className="font-extrabold text-3xl mb-6">{randomLoadText}</h3>

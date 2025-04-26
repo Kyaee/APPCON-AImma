@@ -676,7 +676,7 @@ export default function UserAssessment() {
   // Loading and intro screens
   if (isGenerating) return <Loading generate_roadmap={true} />;
   if (!isReady)
-    return <Loading className="flex-grow flex justify-center items-center" />;
+    return <Loading preserveBackground="video"/>;
   if (showIntro)
     return <AssessmentIntro onBeginAssessment={handleBeginAssessment} />;
 
