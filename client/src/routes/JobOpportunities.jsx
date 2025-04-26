@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import OpportunitiesMenu from "../components/features/job-item";
 import CapySearch from "@/assets/general/capy_search.png";
 import SampleJobData from "@/components/features/sampleJobData";
+import { Link } from "react-router-dom";
 
 export default function JobOpportunities() {
   const [isNewUser, setIsNewUser] = useState(() => {
@@ -55,9 +56,11 @@ export default function JobOpportunities() {
               <h1 className="text-[#4C4C4C] dark:text-primary text-5xl font-extrabold mb-4 tracking-tight">
                 Personalized for You
               </h1>
-              <Button className="px-5 py-5 bg-brown border-2 border-black text-white hover:bg-dark-brown">
-                Generate Again
-              </Button>
+              <Link to="https://ph.indeed.com/jobs?q=&l=remote">
+                <Button className="px-5 py-5 bg-brown border-2 border-black text-white hover:bg-dark-brown">
+                  Check Now
+                </Button>
+              </Link>
             </div>
             <p className="text-black dark:text-primary text-base font-medium mb-8 max-w-[760px]">
               We prepared possible opportunities based on your capabilities and

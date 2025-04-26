@@ -33,7 +33,6 @@ export default function Dashboard({ setAssessed }) {
     data: roadmapData,
     isLoading: loadingRoadmap,
     isError: roadmapError,
-    refetch: refetchRoadmaps,
   } = useQuery(fetchRoadmap(id));
 
   const currentRoadmap = roadmapData ? roadmapData[roadmapIndex] : null;
@@ -43,7 +42,6 @@ export default function Dashboard({ setAssessed }) {
   const {
     data: lessonData,
     isLoading: loadingLessons,
-    refetch: refetchLessons,
   } = useQuery({
     queryKey: ["lessons", roadmapId],
     queryFn: () => fetchLesson(roadmapId),
