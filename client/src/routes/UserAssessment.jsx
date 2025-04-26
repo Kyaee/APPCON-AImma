@@ -201,18 +201,8 @@ export default function UserAssessment() {
   const handleSubmitCompletion = async () => {
     setIsGenerating(true);
 
-    // Compile all assessment data
-    const assessmentData = {
-      userType: selectedType,
-      educationLevel: selectedLevel,
-      dailyGoal: dailyGoal,
-      technicalInterest: technicalInterest,
-      technicalAnswers: technicalAnswers,
-      previousExperience: previousExperience,
-      careerTransition: transition,
-      feedback: feedback,
-      formData: getFormDataByUserType(),
-    };
+    // Get form data based on user type
+    const detailedFormData = getFormDataByUserType();
 
     // Data for roadmap generation
     const userData = {
@@ -225,9 +215,25 @@ export default function UserAssessment() {
         typeof dailyGoal === "number"
           ? dailyGoal.toString()
           : dailyGoal || "30min",
+      // Include all user type information
+      userType: selectedType?.id,
+      userTypeLabel: selectedType?.label,
+      // Include education/experience level
+      level: selectedLevel?.id,
+      levelLabel: selectedLevel?.label,
+      // Include all technical interest data
       technicalInterest: technicalInterest?.label || null,
       technicalAnswers:
         Object.keys(technicalAnswers).length > 0 ? technicalAnswers : null,
+      // Include specific user path data
+      previousExperience:
+        selectedType?.id === "jobSeeker" ? previousExperience : null,
+      careerTransition:
+        selectedType?.id === "careerShifter" ? transition : null,
+      // Include all detailed form answers
+      formData: detailedFormData,
+      // Include optional feedback
+      feedback: feedback || null,
     };
 
     try {

@@ -3,10 +3,7 @@ import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { useAssessmentStore } from "@/store/useAssessmentStore";
 
-// const proficiencySkills = useAssessmentStore.getState().proficiencySkills;
-// const appGoals = useAssessmentStore.getState().appGoals;
-// const dailyTimeCommitment = useAssessmentStore.getState().dailyTimeCommitment;
-// const assessmentAnswers = useAssessmentStore.getState().assessmentAnswers;
+// These store values capture user inputs from the assessment
 const language = useAssessmentStore.getState().language;
 const userType = useAssessmentStore.getState().userType;
 const educationLevel = useAssessmentStore.getState().educationLevel;
@@ -20,31 +17,8 @@ const technicalAnswers = useAssessmentStore.getState().technicalAnswers;
  *        POST ROADMAP PROMPT
  **************************************/
 export function useGenerateRoadmap() {
-  const prompt_roadmap = {
-  prompt_roadmap_generate: `
-    Generate a comprehensive, structured, and focused learning roadmap in ${JSON.stringify(language)} with 20 or more (the more the better).
-
-    Roadmap tailored for a "${userType?.label}" ${JSON.stringify(educationLevel?.label || previousExperience || careerTransition)} user, 
-    with a daily goal of ${JSON.stringify(dailyGoal)} (if two digits its minutes, else hours) .
-    The lessons are based on interests such as ${JSON.stringify(technicalInterest?.label)} and user personalization: ${JSON.stringify(technicalAnswers)}. 
-    Don't include actual content but provide a structure to generate lesson in the next prompt.
-
-    Format:
-    - Roadmap Name, roadmap dailyGoal 
-    - Lesson Categories in ARRAY 
-    - Lesson description: Provide a verbose and detailed description covering the key topics and learning objectives for each lesson.
-    - Lesson difficulty(return only "Easy", "Intermediate", "Hard")
-    - Lesson status(returns "locked" for premium access, "in_progress", or no output if unlocked)
-    - Lesson Assessment(returns true or false)
-    - Lesson duration time unit (e.g., 30 minutes, 1 hour)
-    - Gems & Exp rewarded per lesson 
-    (No assessment: 15 exp, 10 gems),
-    with assessment: (Easy: 50 exp, 25 gems) (Intermediate: 100 exp, 50 gems) (Hard: 200 exp, 100 gems)
-  `}
-
   const postPrompt1 = async (userData) => {
     try {
-
       // Validate that we have a user ID
       if (!userData || !userData.user_id) {
         throw new Error("User ID is required");
@@ -52,12 +26,44 @@ export function useGenerateRoadmap() {
       
       console.log("Generating roadmap with user data:", { 
         language, 
-        userType: userType?.label, 
-        educationLevel: educationLevel?.label, 
-        dailyGoal, 
-        technicalInterest: technicalInterest?.label,
-        userId: userData.user_id
+        userType: userData.userTypeLabel || userType?.label, 
+        educationLevel: userData.levelLabel || educationLevel?.label, 
+        dailyGoal: userData.daily_goal || dailyGoal,
+        technicalInterest: userData.technicalInterest || technicalInterest?.label,
+        detailedAnswers: userData
       });
+      
+      // Format the prompt for the AI
+      const prompt_roadmap = {
+        prompt_roadmap_generate: `
+          Generate a comprehensive, structured, and focused learning roadmap in ${JSON.stringify(language)} with 20 or more (the more the better).
+
+          Roadmap tailored for a "${userData.userTypeLabel || userType?.label}" ${JSON.stringify(userData.levelLabel || educationLevel?.label || previousExperience || careerTransition)} user, 
+          with a daily goal of ${JSON.stringify(userData.daily_goal || dailyGoal)} (if two digits its minutes, else hours).
+          
+          The lessons are based on interests such as ${JSON.stringify(userData.technicalInterest || technicalInterest?.label)} and user personalization: ${JSON.stringify(userData.technicalAnswers || technicalAnswers)}. 
+          
+          Additional user information:
+          ${userData.formData ? `- Form data: ${JSON.stringify(userData.formData)}` : ''}
+          ${userData.previousExperience ? `- Previous Experience: ${JSON.stringify(userData.previousExperience)}` : ''}
+          ${userData.careerTransition ? `- Career Transition: ${JSON.stringify(userData.careerTransition)}` : ''}
+          
+          Don't include actual content but provide a structure to generate lesson in the next prompt.
+
+          Format:
+          - Roadmap Name, roadmap dailyGoal 
+          - Lesson Categories in ARRAY 
+          - Lesson description: Provide a verbose and detailed description covering the key topics and learning objectives for each lesson.
+          - Lesson difficulty(return only "Easy", "Intermediate", "Hard")
+          - Lesson status(returns "locked" for premium access, "in_progress", or no output if unlocked)
+          - Lesson Assessment(returns true or false)
+          - Lesson duration time unit (e.g., 30 minutes, 1 hour)
+          - Gems & Exp rewarded per lesson 
+          (No assessment: 15 exp, 10 gems),
+          with assessment: (Easy: 50 exp, 25 gems) (Intermediate: 100 exp, 50 gems) (Hard: 200 exp, 100 gems)
+        `,
+        userId: userData.user_id
+      };
       
       const response = await axios.post(
         "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/generate-roadmap",
@@ -69,17 +75,29 @@ export function useGenerateRoadmap() {
         throw new Error(response.data.error);
       }
       
-      console.log("Roadmap API response received successfully");
+      // Use GET endpoint to retrieve processed roadmap data
+      const roadmapResponse = await axios.get(
+        "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-roadmap"
+      );
       
-      // Format response for database - simple check if array or object
-      const roadmapData = response.data;
-      const roadmapsToInsert = Array.isArray(roadmapData) ? roadmapData : [roadmapData];
+      if (roadmapResponse.data?.message && roadmapResponse.data.message.includes("No roadmap")) {
+        throw new Error("No roadmap data generated. Please try again.");
+      }
       
+      console.log("Roadmap data retrieved:", roadmapResponse.data);
+      
+      // Process the roadmap data
+      const roadmapData = roadmapResponse.data;
+      
+      if (!roadmapData || (Array.isArray(roadmapData) && roadmapData.length === 0)) {
+        throw new Error("Empty roadmap data received from API");
+      }
+
       // Create the roadmaps in database and await the result
-      await createNewRoadmap(roadmapsToInsert, userData.user_id);
-      console.log(`${roadmapsToInsert.length} roadmap(s) saved to database successfully`);
+      await createNewRoadmap(roadmapData, userData.user_id);
+      console.log("Roadmap saved to database successfully");
       
-      return { success: true, data: roadmapsToInsert };
+      return { success: true, data: roadmapData };
     } catch (error) {
       console.error("Error generating roadmap:", error);
       throw error;
@@ -276,45 +294,99 @@ export function useSummary() {
  *   POST ROADMAP DATA TO SUPABASE
  **************************************/
 export const createNewRoadmap = async (roadmaps, userId) => {
-  roadmaps.map(async (roadmap) => {
-    const { data: roadmapData, error: roadmapError } = await supabase
-      .from("roadmap")
-      .insert([
-        {
+  if (!roadmaps) {
+    console.error("No roadmap data provided");
+    throw new Error("No roadmap data provided");
+  }
+
+  // Ensure roadmaps is always an array
+  const roadmapsArray = Array.isArray(roadmaps) ? roadmaps : [roadmaps];
+  
+  if (roadmapsArray.length === 0) {
+    console.error("Empty roadmaps array");
+    throw new Error("Empty roadmaps array");
+  }
+
+  // Process each roadmap
+  const promises = roadmapsArray.map(async (roadmap) => {
+    if (!roadmap) {
+      console.error("Null roadmap in array");
+      throw new Error("Null roadmap in array");
+    }
+
+    console.log("Processing roadmap:", roadmap);
+    
+    try {
+      // Insert roadmap with validation
+      const roadmapName = roadmap.roadmap_name;
+      const description = roadmap.description;
+      const dailyGoal = roadmap.daily_goal;
+
+      const { data: roadmapData, error: roadmapError } = await supabase
+        .from("roadmap")
+        .insert([
+          {
+            user_id: userId,
+            roadmap_name: roadmapName,
+            description: description,
+            daily_goal: dailyGoal,
+          },
+        ])
+        .select("*");
+      
+      if (roadmapError) {
+        console.error("Error inserting roadmap:", roadmapError);
+        throw roadmapError;
+      }
+
+      if (!roadmapData || roadmapData.length === 0) {
+        console.error("No roadmap data returned after insert");
+        throw new Error("Failed to create roadmap");
+      }
+
+      const roadmapId = roadmapData[0].roadmap_id;
+      console.log(`Created roadmap with ID: ${roadmapId}`);
+
+      // Insert lessons if they exist
+      if (roadmap.lessons?.length > 0) {
+        const lessonsToInsert = roadmap.lessons.map((lesson) => ({
+          roadmap_id: roadmapId,
           user_id: userId,
-          roadmap_name: roadmap.roadmap_name,
-          description: roadmap.description,
-          daily_goal: roadmap.daily_goal,
-        },
-      ])
-      .select("*");
-    if (roadmapError) throw roadmapError;
+          lesson_name: lesson.lesson_name, // Fixed: was lesso_name
+          description: lesson.description, // Fixed: was descrption
+          lesson_category: [lesson.category],
+          status: lesson.status,
+          lesson_difficulty: lesson.difficulty,
+          lesson_duration: lesson.duration,
+          assessment: lesson.assessment,
+          gems: lesson.gems,
+          exp: lesson.exp,
+        }));
 
-    const roadmapId = roadmapData[0].roadmap_id;
+        console.log(`Inserting ${lessonsToInsert.length} lessons for roadmap ${roadmapId}`);
+        const { error: lessonsError } = await supabase
+          .from("lessons")
+          .insert(lessonsToInsert);
 
-    // Insert lessons with the roadmap_id reference
-    if (roadmap.lessons?.length > 0) {
-      const lessonsToInsert = roadmap.lessons.map((lesson) => ({
-        roadmap_id: roadmapId,
-        user_id: userId,
-        lesson_name: lesson.lesson_name,
-        description: lesson.description,
-        lesson_category: [lesson.category],
-        status: lesson.status,
-        lesson_difficulty: lesson.difficulty,
-        lesson_duration: lesson.duration,
-        assessment: lesson.assessment,
-        gems: lesson.gems,
-        exp: lesson.exp,
-      }));
-
-      const { error: lessonsError } = await supabase
-        .from("lessons")
-        .insert(lessonsToInsert);
-
-      if (lessonsError) throw lessonsError;
+        if (lessonsError) {
+          console.error("Error inserting lessons:", lessonsError);
+          throw lessonsError;
+        }
+        
+        console.log(`Successfully inserted ${lessonsToInsert.length} lessons`);
+      } else {
+        console.log("No lessons to insert for this roadmap");
+      }
+      
+      return roadmapId;
+    } catch (error) {
+      console.error("Error in roadmap creation process:", error);
+      throw error;
     }
   });
+  
+  // Wait for all roadmaps to be created
+  return Promise.all(promises);
 };
 
 /**************************************

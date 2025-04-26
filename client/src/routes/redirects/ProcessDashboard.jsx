@@ -82,6 +82,14 @@ export default function ProcessDashboard() {
     }
   }, [roadmapData, processingStatus]);
 
+  // If redirection is needed immediately (fixing direct navigation)
+  useEffect(() => {
+    if (processingStatus === "success") {
+      // Fix: Use correct URL format - path parameter instead of query parameter
+      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+    }
+  }, [processingStatus, userId, navigate]);
+
   if (
     isLoading ||
     processingStatus === "loading" ||
