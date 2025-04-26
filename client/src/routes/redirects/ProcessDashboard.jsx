@@ -48,12 +48,26 @@ export default function ProcessDashboard() {
       setProcessingStatus("processing");
       console.log("Processing roadmap data:", roadmapData);
 
+      // Ensure roadmapData is properly formatted as an array
       const roadmapArray = Array.isArray(roadmapData)
         ? roadmapData
         : [roadmapData];
 
-      await createNewRoadmap(roadmapArray, userId);
+      // Validate roadmap data structure
+      if (
+        roadmapArray.length === 0 ||
+        !roadmapArray.every(
+          (rm) => rm && rm.roadmap_name && Array.isArray(rm.lessons)
+        )
+      ) {
+        console.error("Invalid roadmap data structure:", roadmapArray);
+        throw new Error("Invalid roadmap data format received");
+      }
+
+      // Create the roadmap and its lessons in the database
+      const createdRoadmapIds = await createNewRoadmap(roadmapArray, userId);
       console.log("Roadmap data created successfully for user:", userId);
+      console.log("Created roadmap IDs:", createdRoadmapIds);
 
       // Invalidate any existing dashboard queries to ensure fresh data
       await queryClient.invalidateQueries(["roadmap", userId]);
@@ -81,6 +95,14 @@ export default function ProcessDashboard() {
       processRoadmap();
     }
   }, [roadmapData, processingStatus]);
+
+  // If redirection is needed immediately (fixing direct navigation)
+  useEffect(() => {
+    if (processingStatus === "success") {
+      // Fix: Use correct URL format - path parameter instead of query parameter
+      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+    }
+  }, [processingStatus, userId, navigate]);
 
   if (
     isLoading ||
