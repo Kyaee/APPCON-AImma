@@ -48,26 +48,12 @@ export default function ProcessDashboard() {
       setProcessingStatus("processing");
       console.log("Processing roadmap data:", roadmapData);
 
-      // Ensure roadmapData is properly formatted as an array
       const roadmapArray = Array.isArray(roadmapData)
         ? roadmapData
         : [roadmapData];
 
-      // Validate roadmap data structure
-      if (
-        roadmapArray.length === 0 ||
-        !roadmapArray.every(
-          (rm) => rm && rm.roadmap_name && Array.isArray(rm.lessons)
-        )
-      ) {
-        console.error("Invalid roadmap data structure:", roadmapArray);
-        throw new Error("Invalid roadmap data format received");
-      }
-
-      // Create the roadmap and its lessons in the database
-      const createdRoadmapIds = await createNewRoadmap(roadmapArray, userId);
+      await createNewRoadmap(roadmapArray, userId);
       console.log("Roadmap data created successfully for user:", userId);
-      console.log("Created roadmap IDs:", createdRoadmapIds);
 
       // Invalidate any existing dashboard queries to ensure fresh data
       await queryClient.invalidateQueries(["roadmap", userId]);
