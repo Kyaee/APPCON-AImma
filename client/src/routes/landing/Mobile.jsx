@@ -43,7 +43,7 @@ export default function Landing() {
             maxHeight: "160vh",
             maxWidth: "150vw", // Prevent image from being too large on small screens
             userSelect: "none",
-            pointerEvents: "none"
+            pointerEvents: "none",
           }}
           draggable="false"
         />

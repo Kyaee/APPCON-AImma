@@ -27,11 +27,29 @@ const MainNav = ({ isLoggedIn }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, [mobileMenuOpen]);
 
+  // Add smooth scroll function with offset adjustment
+  const handleSmoothScroll = (elementId) => {
+    setMobileMenuOpen(false);
+    const element = document.getElementById(elementId);
+    if (element) {
+      // Get the height of the header to use as offset
+      const headerHeight = document.querySelector("header").offsetHeight;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerHeight - 20; // Extra 20px buffer
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <header
-      className={`w-full fixed top-0 left-0 flex justify-center items-center z-50 pt-3 pb-3 transition-all duration-300 ${
-        scrolled
-          ? "bg-background/80 backdrop-blur-md shadow-sm border-b-2 border-black"
+      className={`w-full fixed top-0 left-0 flex justify-center items-center z-50 pt-5 pb-3 transition-all duration-300 ${
+        scrolled || mobileMenuOpen
+          ? "bg-black shadow-sm border-b-3 border-black"
           : ""
       }`}
     >
@@ -42,14 +60,20 @@ const MainNav = ({ isLoggedIn }) => {
             alt="CapyCademy Logo"
             className="h-8 w-8 md:h-10 md:w-10 object-contain"
           />
-          <span className="text-xl md:text-2xl font-bold text-foreground">
+          <span
+            className={`text-xl md:text-2xl font-bold ${
+              scrolled || mobileMenuOpen ? "text-white" : "text-white"
+            }`}
+          >
             CapyCademy
           </span>
         </div>
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden text-foreground p-1 transition-colors hover:bg-muted rounded-md"
+          className={`md:hidden p-1 transition-colors hover:bg-[#007CE8] rounded-md ${
+            scrolled || mobileMenuOpen ? "text-white" : "text-white"
+          }`}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
@@ -58,33 +82,35 @@ const MainNav = ({ isLoggedIn }) => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <a
-            href="#features"
-            className="text-base text-foreground hover:text-primary font-medium"
+          <button
+            onClick={() => handleSmoothScroll("features")}
+            className={`text-base font-medium cursor-pointer ${
+              scrolled
+                ? "text-white hover:text-[#007CE8]"
+                : "text-white hover:text-[#007CE8]"
+            }`}
           >
             Features
-          </a>
-          <a
-            href="#how-it-works"
-            className="text-base text-foreground hover:text-primary font-medium"
-          >
-            How It Works
-          </a>
-          <a
-            href="#faq"
-            className="text-base text-foreground hover:text-primary font-medium"
+          </button>
+          <button
+            onClick={() => handleSmoothScroll("faq")}
+            className={`text-base font-medium cursor-pointer ${
+              scrolled
+                ? "text-white hover:text-[#007CE8]"
+                : "text-white hover:text-[#007CE8]"
+            }`}
           >
             FAQ
-          </a>
+          </button>
           {!isLoggedIn ? (
             <Link to="/auth/login">
-              <Button className="px-4 md:px-8 py-3 md:py-4 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+              <Button className="px-4 md:px-8 py-3 md:py-4 bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
                 Log In
               </Button>
             </Link>
           ) : (
             <Link to="/dashboard">
-              <Button className="px-4 md:px-8 py-3 md:py-4 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+              <Button className="px-4 md:px-8 py-5 md:py-5 bg-[#F4CB57] cursor-pointer border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
                 Dashboard
               </Button>
             </Link>
@@ -93,38 +119,29 @@ const MainNav = ({ isLoggedIn }) => {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="fixed top-[60px] right-0 h-screen w-full md:w-64 bg-background/95 backdrop-blur-md shadow-lg z-50 animate-in slide-in-from-right">
-            <div className="flex flex-col p-6 gap-6">
-              <a
-                href="#features"
-                className="text-base text-foreground hover:text-primary font-medium py-3 border-b border-border"
-                onClick={() => setMobileMenuOpen(false)}
+          <div className="fixed top-[80px] right-0 h-screen w-full md:w-64 bg-white backdrop-blur-md shadow-lg z-50 animate-in slide-in-from-right">
+            <div className="flex flex-col p-6 gap-6 ">
+              <button
+                onClick={() => handleSmoothScroll("features")}
+                className="text-base text-center text-foreground hover:text-[#007CE8] hover:bg-white font-medium py-3 border-b border-border cursor-pointer"
               >
                 Features
-              </a>
-              <a
-                href="#how-it-works"
-                className="text-base text-foreground hover:text-primary font-medium py-3 border-b border-border"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                How It Works
-              </a>
-              <a
-                href="#faq"
-                className="text-base text-foreground hover:text-primary font-medium py-3 border-b border-border"
-                onClick={() => setMobileMenuOpen(false)}
+              </button>
+              <button
+                onClick={() => handleSmoothScroll("faq")}
+                className="text-base text-center text-foreground hover:text-[#007CE8] hover:bg-white font-medium py-3 border-b border-border cursor-pointer"
               >
                 FAQ
-              </a>
+              </button>
               {!isLoggedIn ? (
                 <Link to="/auth/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full mt-4 py-4 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+                  <Button className="w-full mt-4 py-4 bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
                     Log In
                   </Button>
                 </Link>
               ) : (
                 <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full mt-4 py-4 bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+                  <Button className="w-full mt-4 py-5 bg-[#F4CB57] cursor-pointer border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
                     Dashboard
                   </Button>
                 </Link>

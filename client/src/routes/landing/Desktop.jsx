@@ -7,9 +7,9 @@ import LandingFooter from "@/components/landing-page/LandingFooter";
 import { useEffect } from "react";
 import Loading from "../Loading";
 import { useAuth } from "@/config/AuthContext";
+import { VideoBackground } from "@/components/layout/Background";
 
 // Import the SVG background files
-import landingBg from "@/assets/landing/landing-bg.svg";
 import landingBgCapy from "@/assets/landing/landing-bg-capy.svg";
 
 export default function Landing() {
@@ -23,13 +23,11 @@ export default function Landing() {
 
   return (
     <div className="bg-background relative smooth-scroll scroll-smooth overflow-x-hidden">
-      {/* Full-height background SVG - responsive */}
-      <div className="absolute inset-0 w-full h-full z-0">
-        <img
-          src={landingBg}
-          alt=""
-          className="w-full h-full object-cover opacity-90 sm:opacity-100"
-        />
+      {/* Video Background - Fixed position with dark theme forced */}
+      <div className="fixed top-0 left-0 w-full h-screen z-0 overflow-hidden">
+        <div className="absolute inset-0">
+          <VideoBackground forceDarkTheme={true} />
+        </div>
       </div>
 
       {/* Background capybara image - enhanced mobile responsiveness */}
@@ -43,16 +41,18 @@ export default function Landing() {
             maxHeight: "160vh",
             maxWidth: "150vw", // Prevent image from being too large on small screens
             userSelect: "none",
-            pointerEvents: "none"
+            pointerEvents: "none",
           }}
           draggable="false"
         />
       </div>
 
-      {/* Content positioned above the background */}
-      <div className="relative z-20">
+      {/* Content positioned above the background with increased top margin */}
+      <div className="relative z-20 mt-8">
         <LandingNav isLoggedIn={isLoggedIn} />
-        <HeroSection />
+        <div className="mt-16 md:mt-20">
+          <HeroSection />
+        </div>
         <FeatureSlider />
 
         {/* Improved structure with better z-index control */}

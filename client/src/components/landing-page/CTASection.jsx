@@ -12,10 +12,10 @@ export default function CTASection() {
             alt="CapyCademy Brand"
             className="w-40 h-40 md:w-62 md:h-62 mb-4 md:mb-6"
           />
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-4 md:mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 md:mb-6">
             Ready to start your coding journey?
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-black mb-6 md:mb-8 max-w-3xl mx-auto px-4">
+          <p className="text-base sm:text-lg md:text-xl text-white mb-6 md:mb-8 max-w-3xl mx-auto px-4">
             Join thousands of learners who are building their skills and
             advancing their careers with CapyCademy's interactive learning
             platform.
@@ -23,7 +23,7 @@ export default function CTASection() {
           <Link to="/auth/register">
             <Button
               size="lg"
-              className="bg-[#F4CB57] custom-shadow-50 border-2 border-black px-6 py-6 md:px-8 md:py-8 hover:bg-[#e7b21d] text-black text-base md:text-lg"
+              className="bg-[#F4CB57] custom-shadow-50 border-3 border-black px-6 py-6 md:px-8 md:py-8 hover:bg-[#e7b21d] text-black text-base md:text-lg"
             >
               Create Your Free Account
             </Button>

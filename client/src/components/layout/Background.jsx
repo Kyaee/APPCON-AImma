@@ -40,7 +40,7 @@ function StaticBackground() {
 }
 
 // Direct video element approach - simpler and more performant
-function VideoBackground() {
+function VideoBackground({ forceDarkTheme }) {
   const location = useLocation();
   const [fallbackActive, setFallbackActive] = useState(false);
   // Get the current theme
@@ -56,13 +56,13 @@ function VideoBackground() {
     return <StaticBackground />;
   }
 
-  // Determine video sources based on theme
+  // Determine video sources based on theme or forced dark theme
   const videoSrcMp4 =
-    theme === "dark"
+    forceDarkTheme || theme === "dark"
       ? "/background/dark-gradient-bg.mp4"
       : "/background/light-gradient-bg.mp4";
   const videoSrcWebm =
-    theme === "dark"
+    forceDarkTheme || theme === "dark"
       ? "/background/dark-gradient-bg.webm"
       : "/background/light-gradient-bg.webm";
 
@@ -70,7 +70,7 @@ function VideoBackground() {
     <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
       <video
         // Add a key that changes with the theme to force re-render/reload
-        key={theme}
+        key={forceDarkTheme ? "dark" : theme}
         autoPlay
         loop
         muted
