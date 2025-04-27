@@ -35,9 +35,13 @@ export default function Landing() {
         <img
           src={landingBgCapy}
           alt=""
-          className="w-[600px] xs:w-[700px] sm:w-[1000px] md:w-[1200px] lg:w-[1500px] h-auto object-contain opacity-50 xs:opacity-60 sm:opacity-80 md:opacity-100"
+          className="w-[700px] xs:w-[900px] sm:w-[1000px] md:w-[1000px] lg:w-[1500px] h-auto object-contain opacity-50 xs:opacity-60 sm:opacity-80 md:opacity-100 
+          translate-y-[-90%] translate-x-[25%] 
+          xs:translate-y-[-10%] xs:translate-x-[15%]
+          sm:translate-y-[-40%] sm:translate-x-[30%]
+          md:translate-y-[-5%] md:translate-x-[20%]
+          lg:translate-y-[-19%] lg:translate-x-[7%]"
           style={{
-            transform: "translateY(-5%) translateX(20%)",
             maxHeight: "160vh",
             maxWidth: "150vw", // Prevent image from being too large on small screens
             userSelect: "none",

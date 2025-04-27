@@ -7,9 +7,9 @@ import LandingFooter from "@/components/landing-page/LandingFooter";
 import { useEffect } from "react";
 import Loading from "../Loading";
 import { useAuth } from "@/config/AuthContext";
+import { VideoBackground } from "@/components/layout/Background";
 
 // Import the SVG background files
-import landingBg from "@/assets/landing/landing-bg.svg";
 import landingBgCapy from "@/assets/landing/landing-bg-capy.svg";
 
 export default function Landing() {
@@ -23,13 +23,11 @@ export default function Landing() {
 
   return (
     <div className="bg-background relative smooth-scroll scroll-smooth overflow-x-hidden">
-      {/* Full-height background SVG - responsive */}
-      <div className="absolute inset-0 w-full h-full z-0">
-        <img
-          src={landingBg}
-          alt=""
-          className="w-full h-full object-cover opacity-90 sm:opacity-100"
-        />
+      {/* Video Background - Fixed position with dark theme forced */}
+      <div className="fixed top-0 left-0 w-full h-screen z-0 overflow-hidden">
+        <div className="absolute inset-0">
+          <VideoBackground forceDarkTheme={true} />
+        </div>
       </div>
 
       {/* Background capybara image - enhanced mobile responsiveness */}
@@ -37,9 +35,13 @@ export default function Landing() {
         <img
           src={landingBgCapy}
           alt=""
-          className="w-[600px] xs:w-[700px] sm:w-[1000px] md:w-[1200px] lg:w-[1500px] h-auto object-contain opacity-50 xs:opacity-60 sm:opacity-80 md:opacity-100"
+          className="w-[700px] xs:w-[900px] sm:w-[1000px] md:w-[1000px] lg:w-[1500px] h-auto object-contain opacity-50 xs:opacity-60 sm:opacity-80 md:opacity-100 
+          translate-y-[-90%] translate-x-[25%] 
+          xs:translate-y-[-10%] xs:translate-x-[15%]
+          sm:translate-y-[-40%] sm:translate-x-[30%]
+          md:translate-y-[-5%] md:translate-x-[20%]
+          lg:translate-y-[-19%] lg:translate-x-[7%]"
           style={{
-            transform: "translateY(-5%) translateX(20%)",
             maxHeight: "160vh",
             maxWidth: "150vw", // Prevent image from being too large on small screens
             userSelect: "none",
@@ -49,10 +51,12 @@ export default function Landing() {
         />
       </div>
 
-      {/* Content positioned above the background */}
-      <div className="relative z-20">
+      {/* Content positioned above the background with increased top margin */}
+      <div className="relative z-20 mt-8">
         <LandingNav isLoggedIn={isLoggedIn} />
-        <HeroSection />
+        <div className="mt-16 md:mt-20">
+          <HeroSection />
+        </div>
         <FeatureSlider />
 
         {/* Improved structure with better z-index control */}
