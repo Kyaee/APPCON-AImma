@@ -1,7 +1,5 @@
 import { useTheme } from "@/config/theme-provider";
 import { useState, useEffect, useMemo } from "react";
-import { quantum } from "ldrs";
-quantum.register();
 import { bouncy } from "ldrs";
 bouncy.register();
 import wait from "@/assets/general/waiting.gif";
@@ -20,12 +18,24 @@ export default function loading({
   const isLongLoadProcess =
     generate_roadmap || generate_lesson || generate_assessment;
 
-
-  // Preload the GIF image
+  // Preload the GIF image before component renders
   useEffect(() => {
+    // Create new image object and set source
     const img = new Image();
     img.src = wait;
-    img.onload = () => setImageLoaded(true);
+
+    // Check if the image is already cached
+    if (img.complete) {
+      setImageLoaded(true);
+    } else {
+      // Set up the onload handler if not cached
+      img.onload = () => setImageLoaded(true);
+    }
+
+    // Cleanup function
+    return () => {
+      img.onload = null;
+    };
   }, []);
 
   // Random loading text arrays
@@ -91,12 +101,12 @@ export default function loading({
   return (
     <main className="fixed top-0 left-0 h-screen w-full py-5 flex flex-col justify-center items-center select-none z-50">
       {/* Use either video or static background based on the detection */}
-      {(preserveBackground === "video") ? <VideoBackground /> : <Background />}
+      {preserveBackground === "video" ? <VideoBackground /> : <Background />}
 
       {/* Load text moved above the image */}
       <h3 className="font-extrabold text-3xl mb-6">{randomLoadText}</h3>
 
-      {/* Only show GIF if loaded, otherwise show a loader */}
+      {/* Only show GIF if loaded, otherwise show the bouncy loader */}
       {imageLoaded ? (
         <img
           src={wait}
@@ -113,22 +123,13 @@ export default function loading({
         </div>
       )}
 
-      {/* Show appropriate loader based on the loading type */}
-      {isLongLoadProcess ? (
-        <l-quantum
-          size="80"
-          speed="1.5"
-          color={theme === "dark" ? "#fff" : "#000"}
-          className="mb-6"
-        ></l-quantum>
-      ) : (
-        <l-bouncy
-          size="45"
-          speed="1.75"
-          color={theme === "dark" ? "#fff" : "#000"}
-          className="mb-6"
-        ></l-bouncy>
-      )}
+      {/* Using bouncy for all loading types, just with different size/speed based on type */}
+      <l-bouncy
+        size={isLongLoadProcess ? "45" : "35"}
+        speed={isLongLoadProcess ? "1.5" : "1.75"}
+        color={theme === "dark" ? "#fff" : "#000"}
+        className="mb-6"
+      ></l-bouncy>
 
       {/* Conditional text content based on loading type */}
       {isLongLoadProcess ? (
