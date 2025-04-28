@@ -3,6 +3,22 @@ import readingCapy from "@/assets/landing/reading-capy.png";
 import { Link } from "react-router-dom";
 
 export default function HeroSection() {
+  // Add scroll function matching the nav functionality
+  const handleSmoothScroll = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      const headerHeight = document.querySelector("header").offsetHeight;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - headerHeight - 20;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <section className="pt-24 pb-16 md:py-40">
       <div className="w-[90%] md:w-4/5 mx-auto">
@@ -10,10 +26,10 @@ export default function HeroSection() {
         <div className="flex flex-col md:hidden">
           {/* Header Text */}
           <div className="px-4 text-center mb-6">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground mb-4 text-balance">
+            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white mb-4 text-balance">
               It's Time to Train Your Brain 💡
               <br />
-              <span className="text-primary text-2xl sm:text-3xl">
+              <span className="text-white text-2xl sm:text-3xl">
                 - Capybara Says 👀
               </span>
             </h1>
@@ -30,10 +46,12 @@ export default function HeroSection() {
 
           {/* Description Text */}
           <div className="px-4 text-center mb-8">
-            <p className="text-base sm:text-lg text-foreground/80 text-balance">
+            <p className="text-base sm:text-lg text-white text-balance">
               Dive into smart, bite-sized lessons tailored to you—led by{" "}
-              <span className="bg-[#F4CB57] p-1">your Capybara friend</span> who
-              learns as fast as{" "}
+              <span className="bg-[#007CE8] p-1 rounded-md">
+                your Capybara friend
+              </span>{" "}
+              who learns as fast as{" "}
               <span className="font-bold italic tracking-tight font-serif">
                 you do
               </span>
@@ -46,37 +64,38 @@ export default function HeroSection() {
             <Link to="/auth/register" className="w-full">
               <Button
                 size="lg"
-                className="w-full py-4 text-base bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
+                className="w-full py-6 cursor-pointer custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
               >
                 Start Learning Now
               </Button>
             </Link>
-            <a href="#how-it-works" className="w-full">
-              <Button
-                variant="outline"
-                className="w-full py-4 text-base"
-                size="lg"
-              >
-                See How It Works
-              </Button>
-            </a>
+            <Button
+              variant="outline"
+              className="w-full py-6 border-3 custom-shadow-50 text-black bg-white hover:bg-white/80 hover:text-black cursor-pointer"
+              size="lg"
+              onClick={() => handleSmoothScroll("features")}
+            >
+              See How It Works
+            </Button>
           </div>
         </div>
 
         {/* Desktop Layout (Original Side-by-Side) */}
         <div className="hidden md:flex md:flex-row items-center">
           <div className="w-1/2 px-4 ml-8">
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 md:mb-8 text-balance">
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 md:mb-8 text-balance">
               It's Time to Train Your Brain 💡
               <br />
-              <span className="text-primary text-3xl md:text-4xl">
+              <span className="text-white text-3xl md:text-4xl">
                 - Capybara Says 👀
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-foreground/80 mb-8 md:mb-12 text-balance">
+            <p className="text-lg md:text-xl text-white mb-8 md:mb-12 text-balance">
               Dive into smart, bite-sized lessons tailored to you—led by{" "}
-              <span className="bg-[#F4CB57] p-1">your Capybara friend</span> who
-              learns as fast as{" "}
+              <span className="bg-[#007CE8] text-white p-1 px-2 rounded-md">
+                your Capybara friend
+              </span>{" "}
+              who learns as fast as{" "}
               <span className="font-bold italic tracking-tight font-serif">
                 you do
               </span>
@@ -86,20 +105,19 @@ export default function HeroSection() {
               <Link to="/auth/register">
                 <Button
                   size="lg"
-                  className="px-6 py-4 text-base bg-[#F4CB57] border-2 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
+                  className="px-6 py-6 cursor-pointer custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
                 >
                   Start Learning Now
                 </Button>
               </Link>
-              <a href="#how-it-works">
-                <Button
-                  variant="outline"
-                  className="px-6 py-4 text-base"
-                  size="lg"
-                >
-                  See How It Works
-                </Button>
-              </a>
+              <Button
+                variant="outline"
+                className="px-8 py-6 border-3 border-black custom-shadow-50 text-black bg-white hover:bg-white/80 hover:text-black cursor-pointer"
+                size="lg"
+                onClick={() => handleSmoothScroll("features")}
+              >
+                See How It Works
+              </Button>
             </div>
           </div>
           <div className="w-1/2 flex justify-center items-center">

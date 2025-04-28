@@ -8,7 +8,7 @@ const featureData = [
     title: "AI-Generated Courses",
     description:
       "Our AI creates personalized courses tailored to your learning style and goals, ensuring effective skill acquisition.",
-    icon: <Zap className="w-8 h-8 text-primary" />,
+    icon: <Zap className="w-8 h-8 text-black" />,
     image: "/showcase-features/learning.png", // Using public directory image
   },
   {
@@ -16,7 +16,7 @@ const featureData = [
     title: "Interactive Roadmap",
     description:
       "Follow a clear learning path with milestones and achievements to track your progress like Duolingo.",
-    icon: <Route className="w-8 h-8 text-primary" />,
+    icon: <Route className="w-8 h-8 text-black" />,
     image: "/showcase-features/gamification.png", // Using public directory image
   },
   {
@@ -24,7 +24,7 @@ const featureData = [
     title: "Quiz Assessments",
     description:
       "Test your knowledge with interactive quizzes after each lesson to reinforce your learning.",
-    icon: <BookOpen className="w-8 h-8 text-primary" />,
+    icon: <BookOpen className="w-8 h-8 text-black" />,
     image: "/showcase-features/quiz.png", // Using public directory image
   },
   {
@@ -32,7 +32,7 @@ const featureData = [
     title: "Skill Proficiency Analytics",
     description:
       "Detailed analytics track your progress and identify areas for improvement with data visualization.",
-    icon: <BarChart className="w-8 h-8 text-primary" />,
+    icon: <BarChart className="w-8 h-8 text-black" />,
     image: "/showcase-features/analytics.png", // Using public directory image
   },
 ];
@@ -110,10 +110,10 @@ export default function FeatureSlider() {
   return (
     <section
       id="features"
-      className="w-full py-8 md:py-16 mb-35 overflow-hidden flex justify-center"
+      className="w-full py-8 md:py-16 mb-35 overflow-hidden flex justify-center scroll-mt-24"
     >
       {/* Main container with auto height based on content */}
-      <div className="w-[90%] md:w-4/5 border-[2px] md:border-[3px] border-black rounded-xl relative flex flex-col overflow-hidden">
+      <div className="w-[90%] md:w-4/5 border-[3px] border-black rounded-xl relative flex flex-col overflow-hidden custom-shadow-50">
         {/* Image section with responsive height - now with touch events */}
         <div
           ref={sliderRef}
@@ -139,8 +139,8 @@ export default function FeatureSlider() {
                   key={index}
                   className={`h-2 md:h-3 rounded-full transition-all ${
                     currentFeature === index
-                      ? "bg-primary w-8 md:w-10"
-                      : "bg-gray-400 w-2 md:w-3"
+                      ? "bg-[#007CE8] w-8 md:w-10 border-black border-2"
+                      : "bg-gray-400 w-2 md:w-3 border-black border-2"
                   }`}
                 />
               ))}
@@ -149,10 +149,10 @@ export default function FeatureSlider() {
         </div>
 
         {/* Content section with white background */}
-        <div className="w-full bg-white py-6 md:py-8 rounded-b-lg border-t-2 border-black relative">
+        <div className="w-full bg-white py-6 md:py-8 rounded-b-lg border-t-3 border-black relative">
           {/* Navigation button - only visible on tablet and larger screens */}
           <button
-            className="hidden md:flex absolute right-8 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-white hover:bg-gray-100 items-center justify-center shadow-md border-2 border-black"
+            className="hidden md:flex absolute right-8 top-1/2 transform -translate-y-1/2 w-15 h-15 rounded-full bg-white hover:bg-[#007CE8] items-center justify-center shadow-md border-3 border-black cursor-pointer"
             onClick={() => handleNavigation()}
             aria-label="Next feature"
           >
@@ -162,7 +162,7 @@ export default function FeatureSlider() {
           <div className="container ml-0 max-w-7xl px-4 md:px-8">
             <div className="flex items-start gap-4 md:gap-8">
               {/* Larger icon on the left - hidden on mobile */}
-              <div className="hidden md:block p-3 md:p-5 bg-primary/10 rounded-full">
+              <div className="hidden md:block p-3 md:p-5 bg-primary/10 rounded-full border-3 border-black">
                 <div className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center">
                   {featureData[currentFeature].icon}
                 </div>
@@ -176,7 +176,7 @@ export default function FeatureSlider() {
                 </h2>
 
                 {/* Description below title - centered on mobile, left-aligned on desktop  */}
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground text-center md:text-left md:max-w-none md:whitespace-normal">
+                <p className="text-sm md:text-lg text-black/80 text-center md:text-left md:max-w-none md:whitespace-normal">
                   {featureData[currentFeature].description}
                 </p>
               </div>
