@@ -1,15 +1,12 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import Image from "@/assets/lesson-assessment/la-intro-capybara.png";
 import Questions from "./LessonQuestionnaire";
 import Loading from "@/routes/Loading";
 import { VideoBackground } from "@/components/layout/Background";
 import { HeartIcon } from "@/components/layout/stats-icons";
 import NoLivesPage from "@/components/lesson-assessment/no-lives";
-import IntroSlide from "@/components/lesson-assessment/IntroSlide";
 import PassLastSlide from "@/components/lesson-assessment/pass-LastSlide";
 import FailLastSlide from "@/components/lesson-assessment/fail-LastSlide";
 import { markLessonCompleted } from "@/api/UPDATE";
-import capyCry from "@/assets/lesson-assessment/CapySad.png"; // Import the crying capybara image
 
 // Use Hooks
 import { useState, useEffect, useCallback } from "react";
@@ -22,11 +19,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuestStore } from "@/store/useQuestStore"; // Import useQuestStore
 import { useAuth } from "@/config/AuthContext";
 import { useStreakStore } from "@/store/useStreakStore";
-import { handleUpdateStreak } from "@/lib/check-day-streak";
 import { useNavigation } from "@/context/navigationContext"; // Import the navigation context properly
 
 export default function Assessment() {
-  const [isIntroSlide, setIntroSlide] = useState(true);
+  const { id } = useParams();
   const [isLastSlide, setLastSlide] = useState(false);
   const [isCurrentSlide, setCurrentSlide] = useState(0);
   const [isValidateAnswer, setValidateAnswer] = useState(false);
@@ -39,16 +35,20 @@ export default function Assessment() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userTotalLives, setUserTotalLives] = useState(5); // Track user's total lives in the database
   const [assessmentAttempts, setAssessmentAttempts] = useState(0); // Track assessment attempts
-
   const { session } = useAuth();
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const userData = useFetchStore((state) => state.fetch);
+  const updateStreakFromLesson = useStreakStore((state) => state.updateStreakFromLesson);
+  const completeLessonTest = useQuestStore((state) => state.completeLessonTest); 
   const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData());
   const queryClient = useQueryClient();
+  const { setSuppressNavigation } = useNavigation(); 
+  const navigate = useNavigate();
 
-  // Fetch user data to get lives/HP information
+
+  // NEUTRAL PERSPECTIVE.///////////////////////////////////////////////////////////////////////////////////////////
   const { data: userDataFetched, isLoading: isUserDataLoading } = useQuery({
-    queryKey: ["fetch_user", session?.user?.id],
+    queryKey: ["fetch_user", session?.user?.id],  
     queryFn: async () => {
       const { data, error } = await supabase
         .from("users")
@@ -64,11 +64,6 @@ export default function Assessment() {
     refetchOnWindowFocus: false,
   });
 
-  const updateStreakFromLesson = useStreakStore(
-    (state) => state.updateStreakFromLesson
-  );
-  const completeLessonTest = useQuestStore((state) => state.completeLessonTest); // Get quest action
-  const { setSuppressNavigation } = useNavigation(); // Get the function from hook
   const [isAnswers, setAnswers] = useState([
     {
       id: isCurrentSlide,
@@ -79,14 +74,14 @@ export default function Assessment() {
     },
   ]);
 
-  const { id } = useParams();
-  const navigate = useNavigate();
+  
   const userId = session?.user?.id || id;
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(userId);
 
-  // Initialize lives based on user data when it's loaded
+
+  // Initialize lives based on user data when it's loaded /////////////////////////////////////////////////////////////
   useEffect(() => {
     if (userDataFetched && !isUserDataLoading) {
       // Get user's total lives from database, default to 5 if not available
@@ -101,71 +96,6 @@ export default function Assessment() {
     }
   }, [userDataFetched, isUserDataLoading]);
 
-  // Calculate rewards based on difficulty
-  const calculateRewards = useCallback((difficulty) => {
-    // Default reward values based on difficulty
-    let baseGemsReward, baseExpReward;
-
-    // Set rewards based on difficulty as per prompt_roadmap_generate:
-    // Easy: 50 exp, 25 gems
-    // Intermediate: 100 exp, 50 gems
-    // Hard: 200 exp, 100 gems
-    if (difficulty === "Easy") {
-      baseGemsReward = 25;
-      baseExpReward = 50;
-    } else if (difficulty === "Intermediate") {
-      baseGemsReward = 50;
-      baseExpReward = 100;
-    } else if (difficulty === "Hard") {
-      baseGemsReward = 100;
-      baseExpReward = 200;
-    } else {
-      // Default to Easy if difficulty is undefined
-      baseGemsReward = 25;
-      baseExpReward = 50;
-    }
-
-    console.log(
-      `Standard rewards for ${difficulty} difficulty: ${baseGemsReward} gems, ${baseExpReward} exp`
-    );
-
-    // Return fixed rewards values based only on difficulty (not success rate)
-    return { gems: baseGemsReward, exp: baseExpReward };
-  }, []);
-
-  // Modify this useEffect to better handle assessment generation and loading states
-  useEffect(() => {
-    // Only attempt to skip the intro slide if we have actual question data available
-    // This prevents transitioning to an empty questionnaire
-    if (!isLoading && lessonData?.questions?.length > 0 && isIntroSlide) {
-      const generatedAssessment =
-        useLessonFetchStore.getState().generated_assessment;
-      if (generatedAssessment) {
-        console.log("Assessment questions loaded, proceeding to questionnaire");
-        setIntroSlide(false);
-        // Reset the flag only after we've successfully transitioned
-        useLessonFetchStore.getState().setGeneratedAssessment(false);
-      }
-    }
-  }, [isLoading, lessonData, isIntroSlide]);
-
-  // Remove the additional useEffect that might be causing duplicate transitions
-  // The single useEffect above will handle both checking for generated assessment
-  // and ensuring questions are actually loaded
-
-  // Modified effect to only hide center navigation elements, not the entire header
-  useEffect(() => {
-    // Use "centerNav" to indicate we want to keep the header but hide the center tabs
-    // This new value will need to be handled in the header-navigator component
-    if (!isIntroSlide && !isLastSlide) {
-      setSuppressNavigation("centerNav");
-    } else {
-      setSuppressNavigation(null);
-    }
-
-    // Restore navigation when leaving
-    return () => setSuppressNavigation(null);
-  }, [isIntroSlide, isLastSlide, setSuppressNavigation]);
 
   // Function to handle retrying the assessment
   const handleRetryAssessment = () => {
@@ -264,7 +194,7 @@ export default function Assessment() {
     setIsSubmitting(true);
 
     if (!userId || !lessonFetch) {
-      navigate(`/dashboard/${userId}?t=${Date.now()}`);
+      navigate(`/dashboard/${session?.user?.id}`);
       return;
     }
 
@@ -396,8 +326,7 @@ export default function Assessment() {
             updateError
           );
         }
-        // Optionally update lesson progress even if failed
-        // You might want to save the score or keep the old progress
+        
         await updateLesson({
           userId: userId,
           lessonId: lessonFetch.id,
@@ -429,89 +358,11 @@ export default function Assessment() {
     }
   };
 
-  // Update user stats in the database
-  const updateUserStats = async () => {
-    if (!userId || !lessonFetch) return false;
-
-    try {
-      // Get fixed rewards based on lesson difficulty
-      const { gems, exp } = calculateRewards(lessonFetch.difficulty);
-
-      // Calculate lives lost based on wrong answers
-      const totalQuestions = lessonData.questions.length - 1;
-      const livesLost = isCount.livesLost || totalQuestions - isCount.score;
-
-      // Check if we should update streak
-      let streakUpdated = false;
-      if (livesLost === 0 && isCount.score >= 3) {
-        // Try to update streak using the streakStore method that includes the daily check
-        streakUpdated = await updateStreakFromLesson(userId);
-      }
-
-      // Update user data with rewards (but don't increment streak here)
-      await updateUser({
-        userId: userId,
-        gems: gems,
-        exp: exp,
-        streak: 0, // Don't increment streak here
-        lives: livesLost,
-      });
-
-      console.log("User stats updated with rewards:", {
-        gems,
-        exp,
-        livesLost,
-        streakUpdated,
-      });
-      return true;
-    } catch (error) {
-      console.error("Error updating user stats:", error);
-      return false;
-    }
-  };
-
-  const saveLessonProgress = async () => {
-    if (!userId || !lessonFetch) return false;
-
-    try {
-      const totalQuestions = lessonData.questions.length - 1;
-      const progress = Math.floor((isCount.score / totalQuestions) * 100);
-      const status = progress >= 70 ? "Completed" : "In-progress";
-
-      await updateLesson({
-        userId: userId,
-        lessonId: lessonFetch.id,
-        lastAccessed: new Date().toISOString(),
-        progress: progress,
-        status: status,
-      });
-
-      console.log("Lesson progress saved successfully");
-      return true;
-    } catch (error) {
-      console.error("Error saving lesson progress:", error);
-      return false;
-    }
-  };
-
-  // Enhance the loading condition to be more comprehensive
-  // Show loading state when:
-  // 1. Data is being fetched initially
-  // 2. Questions array doesn't exist or is empty
-  const showLoading =
-    isLoading ||
-    isUserDataLoading ||
-    !lessonData?.questions ||
-    lessonData.questions.length === 0;
-
-  if (showLoading) return <Loading generate_assessment={true} />;
+  if (isLoading || isUserDataLoading) return <Loading generate_assessment={true} />;
 
   // Check if user has no lives left in assessment and database
   if (isCount.lives === 0) {
-    // Calculate remaining lives in database after this assessment
     const remainingLivesInDb = Math.max(0, userTotalLives - isCount.livesLost);
-
-    // If there are still lives left in the database, show fail slide with retry option
     if (remainingLivesInDb > 0) {
       return (
         <FailLastSlide
@@ -526,11 +377,9 @@ export default function Assessment() {
       );
     }
 
-    // If no lives left in database, show NoLivesPage
     return <NoLivesPage userId={userId} />;
   }
 
-  // Add additional check to ensure lessonData and questions are available
   const hasValidQuestions =
     lessonData &&
     Array.isArray(lessonData.questions) &&
@@ -542,20 +391,8 @@ export default function Assessment() {
         <VideoBackground headerVisible={true} />{" "}
         {/* Add prop to indicate header is visible */}
         <form>
-          {isIntroSlide ? (
-            // ------------------------
-            //       FIRST PAGE
-            // -------------------------
-            <IntroSlide
-              lessonData={lessonData ? lessonData : {}}
-              gems={lessonFetch?.gems}
-              exp={lessonFetch?.exp}
-              setIntroSlide={() => setIntroSlide(false)}
-              disabled={showLoading}
-              // Always use "Start Assessment" button text, never "Generate and Start"
-              buttonText="Start Assessment"
-            />
-          ) : isLastSlide ? (
+          {isLastSlide ? (
+            
             isCount.score >= 3 ? (
               // ------------------------
               //   USER PASSED ASSESSMENT
@@ -593,22 +430,22 @@ export default function Assessment() {
             // RENDER QUESTIONS - remove the ternary/fallback and just render Questions
             <Questions
               display_wrong_answer={isCount.wrong}
-              lesson_name={lessonData.name || "Assessment"}
+              lesson_name={lessonData?.name || "Assessment"}
               type={"multiple-choice"}
               question={
-                lessonData.questions[isCurrentSlide]?.text ||
+                lessonData?.questions[isCurrentSlide]?.text ||
                 "Loading question..."
               }
-              options={lessonData.questions[isCurrentSlide]?.options || []}
+              options={lessonData?.questions[isCurrentSlide]?.options || []}
               questionNumber={isCurrentSlide}
               correct={
-                lessonData.questions[isCurrentSlide]?.correct_answer || ""
+                lessonData?.questions[isCurrentSlide]?.correct_answer || ""
               }
               isSelectedAnswer={isAnswers}
               setSelectedAnswer={setAnswers}
               validate={isValidateAnswer}
               explanation={
-                lessonData.questions[isCurrentSlide]?.explanation || ""
+                lessonData?.questions[isCurrentSlide]?.explanation || ""
               }
             />
           )}
@@ -616,9 +453,6 @@ export default function Assessment() {
         {/*********************************************
                   FOOTER DESIGN LOGIC
         **********************************************/}
-        {isIntroSlide ? (
-          <></>
-        ) : (
           <footer
             className="absolute bottom-0 left-0 w-full py-3 flex items-center justify-around border-3 bg-black/50 border-black
             *:flex *:py-3 *:rounded-lg *:gap-2 "
@@ -661,7 +495,6 @@ export default function Assessment() {
               </button>
             )}
           </footer>
-        )}
       </main>
     </>
   );

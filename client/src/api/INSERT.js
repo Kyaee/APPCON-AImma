@@ -180,7 +180,7 @@ export const postPrompt2 = async (
 /**************************************
  *       POST ASSESSMENT PROMPT
  **************************************/
-export function useAssessment() {
+export function useAssessment(id) {
   const postPrompt3 = async ({ lesson_id, lesson_name, lesson_content }) => {
     if (!lesson_id || !lesson_name || !lesson_content) {
       throw new Error("Invalid input parameters for postPrompt3");
@@ -220,7 +220,8 @@ export function useAssessment() {
   } = useMutation({
     mutationFn: postPrompt3,
     onSuccess: (data) => {
-      console.log("Data: Successful");
+      console.log("Data: Successful");  
+      window.location.href=`/l/${id}/assessment`;
     },
     onError: (error) => {
       console.error("Error:", error);

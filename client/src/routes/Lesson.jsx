@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/config/supabase";
 
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
-import { useParams } from "react-router-dom";
 import { useLessonFetchStore } from "@/store/useLessonData"; // Adjust the import path as needed
 import { useAssessment, useEvaluation } from "@/api/INSERT";
 import { useAuth } from "@/config/AuthContext";
@@ -23,36 +22,19 @@ import { useTimeTracking } from "@/lib/timeTracker"; // Import time tracking hoo
 
 export default function ElementLesson() {
   const navigate = useNavigate();
-  const { id } = useParams(); // Get the lesson ID from the URL parameters
   const { session } = useAuth();
   const queryClient = useQueryClient(); // Added for query invalidation
-  const generated_assessment = useLessonFetchStore(
-    (state) => state.generated_assessment
-  );
-  const setGeneratedAssessment = useLessonFetchStore(
-    (state) => state.setGeneratedAssessment
-  );
+  const generated_assessment = useLessonFetchStore((state) => state.generated_assessment);
+  const setGeneratedAssessment = useLessonFetchStore((state) => state.setGeneratedAssessment);
   const lessonFetch = useLessonFetchStore((state) => state.fetch); // Get the lesson data from the store
   const scrollProgress = useLessonFetchStore((state) => state.scrollProgress); // Get the scroll progress from the store
-  const setScrollProgress = useLessonFetchStore(
-    (state) => state.setScrollProgress
-  ); // Function to set scroll progress
+  const setScrollProgress = useLessonFetchStore((state) => state.setScrollProgress); // Function to set scroll progress
   const contentRef = useRef(null); // Attach to main
   const [isLoading, setLoading] = useState(false); // State to manage loading status
   const { createAssessment, isPending } = useAssessment();
-  const updateStreakFromLesson = useStreakStore(
-    (state) => state.updateStreakFromLesson
-  );
+  const updateStreakFromLesson = useStreakStore((state) => state.updateStreakFromLesson);
   const reviewLesson = useQuestStore((state) => state.reviewLesson); // Get reviewLesson action
   const { startTracking, stopTracking } = useTimeTracking(session?.user?.id); // Get time tracking functions
-
-  // Add state to track user performance
-  const [userPerformance, setUserPerformance] = useState({
-    gemsEarned: 0,
-    expEarned: 0,
-    livesLost: 0,
-    streakIncrement: 1, // Assuming completing a lesson adds 1 to streak
-  });
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(session?.user?.id);
@@ -244,72 +226,11 @@ export default function ElementLesson() {
     markLessonCompleted, // <<< Add markLessonCompleted dependency
   ]);
 
-  // Add this function to your component
-  const handleQuit = async (e) => {
-    if (e) e.preventDefault();
-    setLoading(true);
-
-    // Stop time tracking before saving progress and navigating
-    const minutes = stopTracking();
-    console.log(`Time tracking stopped on quit. ${minutes} minutes recorded.`);
-
-    if (session?.user?.id && lessonFetch?.id) {
-      try {
-        // First, get the current stored progress from Supabase
-        const { data: currentData } = await supabase
-          .from("lessons")
-          .select("progress, status")
-          .eq("user_id", session.user.id)
-          .eq("id", lessonFetch.id)
-          .single();
-
-        // Use the highest progress value between current progress in Supabase and new progress
-        const finalProgress = Math.max(
-          currentData?.progress || 0,
-          highestProgress
-        );
-        console.log(`Saving highest progress: ${finalProgress}%`);
-
-        // Determine if the lesson should be marked as completed
-        const shouldComplete = finalProgress >= 100 && !lessonFetch.assessment;
-        const newStatus = shouldComplete ? "Completed" : lessonFetch.status;
-
-        // Ensure we wait for this to complete
-        await updateLesson({
-          userId: session.user.id,
-          lessonId: lessonFetch.id,
-          lastAccessed: new Date().toISOString(),
-          progress: finalProgress, // Use the higher value
-          status: newStatus,
-        });
-
-        // If lesson is completed without assessment, award rewards
-        if (shouldComplete && newStatus === "Completed") {
-          console.log("Lesson completed without assessment - awarding rewards");
-          await awardLessonRewards();
-
-          // Invalidate queries to refresh dashboard data
-          queryClient.invalidateQueries(["userStats", session.user.id]);
-          queryClient.invalidateQueries(["fetch_user"]);
-        }
-
-        console.log(`Progress saved: ${finalProgress}%`);
-      } catch (error) {
-        console.error("Failed to save progress before quitting:", error);
-      } finally {
-        setLoading(false);
-        // Make sure we're navigating to the right URL with a timestamp to force refresh
-        navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
-      }
-    } else {
-      setLoading(false);
-      navigate(`/dashboard/${session.user.id}?t=${Date.now()}`);
-    }
-  };
 
   // Initialize unload listener
   useEffect(() => {
     // For navigation within the app (like going back to dashboard)
+    console.log(lessonFetch)  
     const handlePopState = async (e) => {
       // If we're navigating away, try to save progress first
       if (document.visibilityState !== "hidden") {
@@ -419,14 +340,6 @@ export default function ElementLesson() {
     setScrollProgress,
   ]);
 
-  // Save progress to Supabase when component unmounts or user navigates away
-  useEffect(() => {
-    // Save progress when component unmounts
-    return () => {
-      saveProgress();
-    };
-  }, [saveProgress]);
-
   // Periodically save progress while the user is viewing the lesson
   useEffect(() => {
     // Only start saving if we have the necessary data
@@ -443,15 +356,6 @@ export default function ElementLesson() {
     return () => clearInterval(intervalId);
   }, [session, lessonFetch, highestProgress, saveProgress]);
 
-  // Start time tracking on mount, stop on unmount
-  useEffect(() => {
-    startTracking();
-    console.log("Time tracking started for lesson.");
-    return () => {
-      const minutes = stopTracking();
-      console.log(`Time tracking stopped. ${minutes} minutes recorded.`);
-    };
-  }, [startTracking, stopTracking]); // Add dependencies
 
   // Add useEffect to trigger reviewLesson when a completed lesson is loaded
   useEffect(() => {
@@ -465,134 +369,18 @@ export default function ElementLesson() {
     }
   }, [lessonFetch, session, reviewLesson]);
 
-  // Add useEffect to fetch the specific lesson when ID changes
-  // This is critical to handle direct navigation to a specific lesson
-  useEffect(() => {
-    const requestedIdNum = parseInt(id);
-    const fetchedIdNum = lessonFetch ? parseInt(lessonFetch.id) : null;
-
-    // If we have a mismatch between requested ID and currently loaded lesson
-    // OR if lesson exists but has no content
-    if (
-      !isNaN(requestedIdNum) &&
-      (fetchedIdNum !== requestedIdNum || (lessonFetch && !lessonFetch.lesson))
-    ) {
-      console.log(
-        `Lesson issue detected: ${
-          fetchedIdNum !== requestedIdNum
-            ? `ID mismatch (have ${fetchedIdNum}, need ${requestedIdNum})`
-            : "Missing lesson content"
-        }. Attempting to load complete lesson...`
-      );
-
-      // Set loading state while we attempt to fetch the correct lesson
-      setLoading(true);
-
-      // Make API call to load the correct lesson
-      const loadRequestedLesson = async () => {
-        try {
-          // Fetch the specific lesson from the database
-          const { data, error } = await supabase
-            .from("lessons")
-            .select("*")
-            .eq("id", requestedIdNum)
-            .single();
-
-          if (error) throw error;
-
-          if (data) {
-            console.log(
-              `Successfully found lesson ${requestedIdNum} in database`
-            );
-
-            // If lesson data exists but no content, we need to fetch from the AI API
-            if (!data.lesson) {
-              console.log("Lesson found but no content, fetching from API...");
-              try {
-                // Attempt to get the generated content from the API
-                const apiUrl =
-                  "https://wispy-nanice-mastertraits-ea47ff0a.koyeb.app/api/get-lesson";
-                const response = await fetch(apiUrl);
-
-                if (response.ok) {
-                  const apiData = await response.json();
-                  console.log(
-                    "API lesson content received:",
-                    apiData.id === data.id ? "matching ID" : "different ID"
-                  );
-
-                  // Combine database lesson metadata with API content
-                  const completeLesson = {
-                    ...data,
-                    lesson: apiData.lesson || "",
-                    message: apiData.message || "",
-                  };
-
-                  // Update the store with the complete lesson
-                  useLessonFetchStore.getState().setFetch(completeLesson);
-                } else {
-                  console.error("API returned error:", response.status);
-                  // Still use the database lesson as fallback
-                  useLessonFetchStore.getState().setFetch(data);
-                }
-              } catch (apiError) {
-                console.error("Error fetching from lesson API:", apiError);
-                // Fall back to database lesson data
-                useLessonFetchStore.getState().setFetch(data);
-              }
-            } else {
-              // Lesson already has content, just update the store
-              useLessonFetchStore.getState().setFetch(data);
-            }
-          } else {
-            console.error(
-              `Lesson with ID ${requestedIdNum} not found in database`
-            );
-          }
-        } catch (error) {
-          console.error("Error fetching requested lesson:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      loadRequestedLesson();
-    }
-  }, [id, lessonFetch]);
-
-  // Add more robust console logging to better understand the loading state
-  console.log("Lesson component state:", {
-    isPending,
-    isLoading,
-    lessonFetch: lessonFetch
-      ? `ID: ${lessonFetch.id}, Has content: ${!!lessonFetch.lesson}`
-      : "Not loaded yet",
-    requestedId: id,
-    generated_assessment,
-    highestProgress,
-  });
 
   // ALWAYS show loading state if either:
-  // 1. The assessment generation is pending (isPending)
-  // 2. The general loading state is active (isLoading)
-  // 3. No lessonFetch data available yet or it's still loading
-  // 4. The requested ID doesn't match the loaded lesson ID
-  // 5. Lesson data exists but content hasn't loaded yet
-  const requestedIdNum = parseInt(id);
-  const fetchedIdNum = lessonFetch ? parseInt(lessonFetch.id) : null;
-  const idMismatch = !isNaN(requestedIdNum) && fetchedIdNum !== requestedIdNum;
+  // DEBUGGING PURPOSES
   const contentMissing = lessonFetch && !lessonFetch.lesson;
 
-  if (isPending || isLoading || !lessonFetch || idMismatch || contentMissing) {
-    // Enhanced logging to better understand why we're showing the loading screen
+  if (isPending || isLoading) {
     const reason = isPending
       ? "assessment generation pending"
       : isLoading
       ? "general loading state active"
       : !lessonFetch
       ? "no lesson data available"
-      : idMismatch
-      ? `ID mismatch (have ${fetchedIdNum}, need ${requestedIdNum})`
       : contentMissing
       ? "lesson content still loading"
       : "unknown reason";
@@ -600,9 +388,6 @@ export default function ElementLesson() {
     console.log(`Showing loading screen - ${reason}`);
     return <Loading generate_lesson={true} preserveBackground="static" />;
   }
-
-  // We no longer need this check since we've incorporated it into the loading condition above
-  // and we're now actively trying to load the correct lesson
 
   // Set up scroll animations
   const handleAssessment = () => {
@@ -620,12 +405,11 @@ export default function ElementLesson() {
     }
 
     if (generated_assessment) {
-      // If assessment was already generated, don't regenerate, just navigate
-      navigate(`/l/${id}/assessment`);
+      navigate(`/l/${lessonFetch?.id}/start`);
     } else {
       // Otherwise generate the assessment
       createAssessment({
-        lesson_id: lessonFetch.id,
+        lesson_id: lessonFetch?.id,
         lesson_name: lessonFetch.name,
         lesson_content: lessonFetch.lesson,
       });
@@ -634,26 +418,8 @@ export default function ElementLesson() {
       setGeneratedAssessment(true);
 
       // Navigate after short delay to ensure data is saved
-      setTimeout(() => navigate(`/l/${id}/assessment`), 1000);
+      setTimeout(() => navigate(`/l/${lessonFetch?.id}/assessment`), 1000);
     }
-  };
-
-  // Update performance metrics based on user actions
-  const handleLessonCompletion = (success) => {
-    // Calculate rewards based on performance
-    const gems = success ? calculateGemReward(lessonDifficulty) : 0;
-    const exp = success ? calculateExpReward(lessonDifficulty) : 0;
-    const lives = success ? 0 : 1; // Lose a life if failed
-
-    setUserPerformance({
-      gemsEarned: gems,
-      expEarned: exp,
-      livesLost: lives,
-      streakIncrement: success ? 1 : 0,
-    });
-
-    // Save performance data to be used later
-    savePerformanceData(userPerformance);
   };
 
   if (isPending) return <Loading generate_assessment={true} />;

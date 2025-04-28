@@ -32,7 +32,7 @@ export default function Header({
     navItems.push({
       icon: <Target size="20" />,
       label: "Assessment",
-      path: `/l/${id}/assessment`,
+      path: `/l/${id}/start`,
     });
   }
 
@@ -40,10 +40,7 @@ export default function Header({
     if (path.includes("/lesson/") && location.pathname.includes("/lesson/")) {
       return true;
     }
-    if (
-      path.includes("/assessment") &&
-      location.pathname.includes("/assessment")
-    ) {
+    if (path.includes(`/start`) &&location.pathname.includes(`/start`)) {
       return true;
     }
     return false;

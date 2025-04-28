@@ -137,6 +137,7 @@ export function fetchLessonAssessmentData() {
           console.error("Error fetching lesson assessment data:", error);
           throw error;
         });
+      console.log("Lesson assessment data:", response.data); // Log the fetched lesson assessment data
       if (response.status !== 200) {
         throw new Error("Failed to fetch lesson assessment data");
       }

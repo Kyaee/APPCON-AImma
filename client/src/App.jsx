@@ -38,6 +38,7 @@ import LessonAssessment from "./routes/LessonAssessment";
 import JobOpportunities from "./routes/JobOpportunities";
 import NotFound from "./routes/NotFound";
 import ElementShop from "./routes/ElementShop";
+import RedirectAssessment from "./routes/redirects/RedirectAssessment";
 
 function App() {
   const queryClient = new QueryClient();
@@ -96,6 +97,10 @@ function App() {
                     <Route element={<LessonLayout />}>
                       <Route path="/lesson/:id" element={<Lesson />} />
                       <Route
+                        path="/l/:id/start"
+                        element={<RedirectAssessment />}
+                      />
+                      <Route 
                         path="/l/:id/assessment"
                         element={<LessonAssessment />}
                       />
