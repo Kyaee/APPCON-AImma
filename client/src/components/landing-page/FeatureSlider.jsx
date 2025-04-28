@@ -8,7 +8,7 @@ const featureData = [
     title: "AI-Generated Courses",
     description:
       "Our AI creates personalized courses tailored to your learning style and goals, ensuring effective skill acquisition.",
-    icon: <Zap className="w-8 h-8 text-primary" />,
+    icon: <Zap className="w-8 h-8 text-black" />,
     image: "/showcase-features/learning.png", // Using public directory image
   },
   {
@@ -16,7 +16,7 @@ const featureData = [
     title: "Interactive Roadmap",
     description:
       "Follow a clear learning path with milestones and achievements to track your progress like Duolingo.",
-    icon: <Route className="w-8 h-8 text-primary" />,
+    icon: <Route className="w-8 h-8 text-black" />,
     image: "/showcase-features/gamification.png", // Using public directory image
   },
   {
@@ -24,7 +24,7 @@ const featureData = [
     title: "Quiz Assessments",
     description:
       "Test your knowledge with interactive quizzes after each lesson to reinforce your learning.",
-    icon: <BookOpen className="w-8 h-8 text-primary" />,
+    icon: <BookOpen className="w-8 h-8 text-black" />,
     image: "/showcase-features/quiz.png", // Using public directory image
   },
   {
@@ -32,7 +32,7 @@ const featureData = [
     title: "Skill Proficiency Analytics",
     description:
       "Detailed analytics track your progress and identify areas for improvement with data visualization.",
-    icon: <BarChart className="w-8 h-8 text-primary" />,
+    icon: <BarChart className="w-8 h-8 text-black" />,
     image: "/showcase-features/analytics.png", // Using public directory image
   },
 ];
@@ -176,7 +176,7 @@ export default function FeatureSlider() {
                 </h2>
 
                 {/* Description below title - centered on mobile, left-aligned on desktop  */}
-                <p className="text-sm sm:text-base md:text-lg text-foreground/80 text-center md:text-left md:max-w-none md:whitespace-normal">
+                <p className="text-sm md:text-lg text-black/80 text-center md:text-left md:max-w-none md:whitespace-normal">
                   {featureData[currentFeature].description}
                 </p>
               </div>

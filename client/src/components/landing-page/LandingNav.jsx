@@ -123,13 +123,13 @@ const MainNav = ({ isLoggedIn }) => {
             <div className="flex flex-col p-6 gap-6 ">
               <button
                 onClick={() => handleSmoothScroll("features")}
-                className="text-base text-center text-foreground hover:text-[#007CE8] hover:bg-white font-medium py-3 border-b border-border cursor-pointer"
+                className="text-base text-center text-black hover:text-[#007CE8] hover:bg-white font-medium py-3 border-b border-border cursor-pointer"
               >
                 Features
               </button>
               <button
                 onClick={() => handleSmoothScroll("faq")}
-                className="text-base text-center text-foreground hover:text-[#007CE8] hover:bg-white font-medium py-3 border-b border-border cursor-pointer"
+                className="text-base text-center text-black hover:text-[#007CE8] hover:bg-white font-medium py-3 border-b border-border cursor-pointer"
               >
                 FAQ
               </button>

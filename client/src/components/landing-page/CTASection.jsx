@@ -23,7 +23,7 @@ export default function CTASection() {
           <Link to="/auth/register">
             <Button
               size="lg"
-              className="bg-[#F4CB57] custom-shadow-50 border-3 border-black px-6 py-6 md:px-8 md:py-8 hover:bg-[#e7b21d] text-black text-base md:text-lg"
+              className="bg-[#F4CB57] custom-shadow-50 border-3 border-black px-6 py-6 md:px-8 md:py-8 hover:bg-[#e7b21d] cursor-pointer text-black text-base md:text-lg"
             >
               Create Your Free Account
             </Button>

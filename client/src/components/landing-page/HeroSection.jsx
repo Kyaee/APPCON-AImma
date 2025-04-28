@@ -64,14 +64,14 @@ export default function HeroSection() {
             <Link to="/auth/register" className="w-full">
               <Button
                 size="lg"
-                className="w-full py-6 custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
+                className="w-full py-6 cursor-pointer custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
               >
                 Start Learning Now
               </Button>
             </Link>
             <Button
               variant="outline"
-              className="w-full py-6 border-3 custom-shadow-50 text-base"
+              className="w-full py-6 border-3 custom-shadow-50 text-black bg-white hover:bg-white/80 hover:text-black cursor-pointer"
               size="lg"
               onClick={() => handleSmoothScroll("features")}
             >
@@ -105,14 +105,14 @@ export default function HeroSection() {
               <Link to="/auth/register">
                 <Button
                   size="lg"
-                  className="px-6 py-6 custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
+                  className="px-6 py-6 cursor-pointer custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
                 >
                   Start Learning Now
                 </Button>
               </Link>
               <Button
                 variant="outline"
-                className="px-6 py-6 border-3 border-black custom-shadow-50 text-base"
+                className="px-8 py-6 border-3 border-black custom-shadow-50 text-black bg-white hover:bg-white/80 hover:text-black cursor-pointer"
                 size="lg"
                 onClick={() => handleSmoothScroll("features")}
               >
