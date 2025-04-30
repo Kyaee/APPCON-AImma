@@ -3,6 +3,8 @@ import { Sprout, Target, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/config/AuthContext";
 import { useEvaluation } from "@/api/INSERT";
 import { useNavigation } from "@/context/navigationContext";
+import { useLessonFetchStore } from "@/store/useLessonData";
+import { useEffect } from "react";
 
 export default function Header({
   id,
@@ -14,13 +16,19 @@ export default function Header({
   const { session } = useAuth();
   const { updateLesson } = useEvaluation();
   const location = useLocation();
+  const setGeneratedAssessment = useLessonFetchStore(
+    (state) => state.setGeneratedAssessment
+  );
   const { suppressNavigation } = useNavigation(); // Get the current suppression state
 
   // Define navigation tabs only if the lesson has an assessment
   const navItems = [];
+  const condition =
+    location.pathname.includes("/lesson") ||
+    location.pathname.includes("/start");
 
   // Only add navigation tabs if the lesson has an assessment AND we're not suppressing center nav
-  if (isAssessment && suppressNavigation !== "centerNav") {
+  if (isAssessment && condition) {
     // Add Lesson tab
     navItems.push({
       icon: <Sprout size="20" />,
@@ -37,21 +45,18 @@ export default function Header({
   }
 
   const isActive = (path) => {
-    if (path.includes("/lesson/") && location.pathname.includes("/lesson/")) {
+    if (path.includes("/lesson/") && location.pathname.includes("/lesson/"))
       return true;
-    }
-    if (path.includes(`/start`) &&location.pathname.includes(`/start`)) {
+    if (path.includes(`/start`) && location.pathname.includes(`/start`))
       return true;
-    }
     return false;
   };
 
   // Handle quit button action - MODIFIED to return to lesson
   const handleQuit = () => {
     // If we're in assessment, go back to the lesson page
-    if (location.pathname.includes("/assessment")) {
-      navigate(`/lesson/${id}`);
-    }
+    setGeneratedAssessment(false);
+    if (location.pathname.includes("/assessment")) navigate(`/lesson/${id}`);
     // Otherwise use the original dashboard navigation logic
     else if (scrollProgress > previousProgress) {
       updateLesson({
@@ -61,10 +66,12 @@ export default function Header({
         progress: scrollProgress,
       });
       navigate(`/dashboard/${session?.user?.id}`);
-    } else {
-      navigate(`/dashboard/${session?.user?.id}`);
-    }
+    } else navigate(`/dashboard/${session?.user?.id}`);
   };
+
+  useEffect(() => {
+    console.log(condition, isAssessment);
+  });
 
   return (
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">

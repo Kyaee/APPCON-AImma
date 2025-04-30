@@ -31,7 +31,7 @@ export default function ElementLesson() {
   const setScrollProgress = useLessonFetchStore((state) => state.setScrollProgress); // Function to set scroll progress
   const contentRef = useRef(null); // Attach to main
   const [isLoading, setLoading] = useState(false); // State to manage loading status
-  const { createAssessment, isPending } = useAssessment();
+  const { createAssessment, isPending } = useAssessment(lessonFetch?.id);
   const updateStreakFromLesson = useStreakStore((state) => state.updateStreakFromLesson);
   const reviewLesson = useQuestStore((state) => state.reviewLesson); // Get reviewLesson action
   const { startTracking, stopTracking } = useTimeTracking(session?.user?.id); // Get time tracking functions
@@ -405,20 +405,26 @@ export default function ElementLesson() {
     }
 
     if (generated_assessment) {
+      setGeneratedAssessment(false)
       navigate(`/l/${lessonFetch?.id}/start`);
     } else {
       // Otherwise generate the assessment
-      createAssessment({
-        lesson_id: lessonFetch?.id,
-        lesson_name: lessonFetch.name,
-        lesson_content: lessonFetch.lesson,
-      });
-
-      // Set flag to indicate assessment was just generated
       setGeneratedAssessment(true);
 
-      // Navigate after short delay to ensure data is saved
-      setTimeout(() => navigate(`/l/${lessonFetch?.id}/assessment`), 1000);
+      if (lessonFetch?.id) {
+        console.log("Generating assessment using lessonFetch data...");
+        createAssessment({
+          lesson_id: lessonFetch?.id,
+          lesson_name: lessonFetch.name,
+          lesson_content: lessonFetch.lesson,
+        });
+      } else {
+        console.error(
+          "Cannot generate assessment: Missing lesson details in store.",
+          lessonFetch
+        );
+        setGeneratedAssessment(false)
+      }
     }
   };
 

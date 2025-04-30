@@ -19,21 +19,24 @@ export default function LessonLayout({ children }) {
     data: lessonData,
     isLoading,
     isError,
-    refetch
+    refetch,
   } = useQuery(fetchLessonAIdata());
   const requestedIdNum = parseInt(id);
-  const idMismatch = !isNaN(requestedIdNum) && lessonData?.id !== requestedIdNum;
+  const idMismatch =
+    !isNaN(requestedIdNum) && lessonData?.id !== requestedIdNum;
 
   useEffect(() => {
-    console.log(lessonData)
+    console.log(lessonData);
     if (lessonData) setLessonFetch(lessonData);
     if (idMismatch) {
-      console.log(lessonFetch)
+      console.log(lessonFetch);
       setLessonFetch(lessonData);
       // window.location.reload();
-      console.error(`ID mismatch: requested ${requestedIdNum}, fetched ${lessonData?.id}`);
+      console.error(
+        `ID mismatch: requested ${requestedIdNum}, fetched ${lessonData?.id}`
+      );
       refetch();
-    } 
+    }
   }, [lessonData, idMismatch, setLessonFetch]);
 
   if (isLoading || idMismatch) return <Loading />;
@@ -41,14 +44,12 @@ export default function LessonLayout({ children }) {
 
   return (
     <>
-      {suppressNavigation !== "l/:id/assessment" ? (
-        <Header
-          id={lessonFetch?.id || lessonData.id}
-          isAssessment={lessonFetch?.assessment || lessonData?.assessment}
-          previousProgress={lessonFetch?.progress}
-          scrollProgress={scrollProgress}
-        />
-      ) : ""}
+      <Header
+        id={lessonFetch?.id || lessonData.id}
+        isAssessment={lessonFetch?.assessment}
+        previousProgress={lessonFetch?.progress}
+        scrollProgress={scrollProgress}
+      />
       <Outlet />
       {children}
     </>
