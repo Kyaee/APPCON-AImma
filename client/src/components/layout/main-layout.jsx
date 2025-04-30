@@ -31,7 +31,7 @@ export default function MainLayout({ children }) {
       <Background />
       {suppressNavigation !== "main" && <MainNav userId={session.user.id} />}
 
-      <div className="fixed top-8 right-15 flex items-center gap-5 z-50">
+      <div className="fixed top-8 right-15 flex items-start xl:w-[18%] 2xl:w-auto justify-around flex-wrap gap-5 z-50">
         <StatsDisplay
           hearts={userData.lives}
           gems={userData.gems}

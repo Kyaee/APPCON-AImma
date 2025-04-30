@@ -58,7 +58,7 @@ export default function StatsDisplay({ hearts, gems, userId }) {
   };
 
   return (
-    <>
+    <div className="2xl:flex flex-nowrap gap-4">
       <div onClick={() => onClose(!isOpen)} className="flex items-center gap-2">
         <HeartIcon className="[&_path]:dark:stroke-primary" />
         <span className="text-black dark:text-primary font-inter text-lg font-black leading-7">
@@ -84,6 +84,6 @@ export default function StatsDisplay({ hearts, gems, userId }) {
           {gems || "Error"}
         </span>
       </div>
-    </>
+    </div>
   );
 }
