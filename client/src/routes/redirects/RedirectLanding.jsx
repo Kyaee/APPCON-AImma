@@ -1,12 +1,15 @@
 
 export default function RedirectLanding() {
-  if (screen.width < 1080) {
-    window.location.href = "/m";
-  } else {
-    window.location.href = "/d";
+  setTimeout(() => {
+    // Redirect to the appropriate page after 2 seconds
+    if (window.innerWidth < 768) {
+      window.location.href = "/m";
+    } else {
+      window.location.href = "/d";
+    }
   }
+  , 1000);
   
-  return (
-    <></>
-  )
+  return null
 }
+  

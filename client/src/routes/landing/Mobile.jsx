@@ -53,9 +53,9 @@ export default function Landing() {
 
       {/* Content positioned above the background with increased top margin */}
       <div className="relative z-20 mt-8">
-        <LandingNav isLoggedIn={isLoggedIn} />
+        <LandingNav isLoggedIn={isLoggedIn} mobile={true}/>
         <div className="mt-16 md:mt-20">
-          <HeroSection />
+          <HeroSection mobile={true}/>
         </div>
         <FeatureSlider />
 
@@ -70,7 +70,7 @@ export default function Landing() {
 
             {/* CTA Section - removed conditional rendering */}
             <div className="relative z-10">
-              <CTASection />
+              <CTASection mobile={true}/>
             </div>
             <LandingFooter />
           </div>

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import readingCapy from "@/assets/landing/reading-capy.png";
 import { Link } from "react-router-dom";
 
-export default function HeroSection() {
+export default function HeroSection({ mobile }) {
   // Add scroll function matching the nav functionality
   const handleSmoothScroll = (elementId) => {
     const element = document.getElementById(elementId);
@@ -62,12 +62,23 @@ export default function HeroSection() {
           {/* Buttons */}
           <div className="flex flex-col gap-4 px-4">
             <Link to="/auth/register" className="w-full">
-              <Button
-                size="lg"
-                className="w-full py-6 cursor-pointer custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
-              >
-                Start Learning Now
-              </Button>
+              {!mobile ? (
+                <Button
+                  size="lg"
+                  className="w-full py-6 cursor-pointer custom-shadow-50 text-base bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out"
+                >
+                  Start Learning Now
+                </Button>
+              ) : (
+                <>
+                <Button 
+                  size="lg"
+                  className="w-full py-8 text-wrap bg-neutral-300 border-3 border-black text-black hover:bg-neutral-400 transition duration-300 ease-in-out text-base">
+                  This feature is not available on mobile yet ;-;<br/>
+                  Use desktop for the best experience
+                </Button>
+                </>
+              )}
             </Link>
             <Button
               variant="outline"

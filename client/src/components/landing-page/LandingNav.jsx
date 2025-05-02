@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const MainNav = ({ isLoggedIn }) => {
+const MainNav = ({ isLoggedIn, mobile }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -133,18 +133,30 @@ const MainNav = ({ isLoggedIn }) => {
               >
                 FAQ
               </button>
-              {!isLoggedIn ? (
-                <Link to="/auth/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full mt-4 py-4 bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
-                    Log In
-                  </Button>
-                </Link>
+              {!mobile ? (
+                !isLoggedIn ? (
+                  <Link
+                    to="/auth/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button className="w-full mt-4 py-4 bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+                      Log In
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Button className="w-full mt-4 py-5 bg-[#F4CB57] cursor-pointer border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+                      Dashboard
+                    </Button>
+                  </Link>
+                )
               ) : (
-                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full mt-4 py-5 bg-[#F4CB57] cursor-pointer border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
-                    Dashboard
-                  </Button>
-                </Link>
+                <Button className="w-full mt-4 py-4 bg-neutral-400 border-3 border-black text-black hover:text-black transition duration-300 ease-in-out text-base">
+                  This feature is not available on mobile yet.
+                </Button>
               )}
             </div>
           </div>

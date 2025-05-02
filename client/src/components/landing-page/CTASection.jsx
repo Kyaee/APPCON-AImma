@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import brandIcon from "@/assets/general/brandicon.png";
 
-export default function CTASection() {
+export default function CTASection({ mobile }) {
   return (
     <section className="py-10 md:py-20 mb-16 md:mb-25">
       <div className="w-[90%] md:w-4/5 mx-auto text-center">
@@ -20,14 +20,23 @@ export default function CTASection() {
             advancing their careers with CapyCademy's interactive learning
             platform.
           </p>
-          <Link to="/auth/register">
+          {!mobile ? (
+            <Link to="/auth/register">
+              <Button
+                size="lg"
+                className="bg-[#F4CB57] custom-shadow-50 border-3 border-black px-6 py-6 md:px-8 md:py-8 hover:bg-[#e7b21d] cursor-pointer text-black text-base md:text-lg"
+              >
+                Create Your Free Account
+              </Button>
+            </Link>
+          ) : (
             <Button
               size="lg"
-              className="bg-[#F4CB57] custom-shadow-50 border-3 border-black px-6 py-6 md:px-8 md:py-8 hover:bg-[#e7b21d] cursor-pointer text-black text-base md:text-lg"
+              className="w-full py-8 text-wrap bg-neutral-300 border-3 border-black text-black hover:bg-neutral-400 transition duration-300 ease-in-out text-base"
             >
-              Create Your Free Account
+              Use desktop for the best experience
             </Button>
-          </Link>
+          )}
         </div>
       </div>
     </section>
