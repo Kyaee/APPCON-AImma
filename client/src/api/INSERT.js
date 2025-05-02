@@ -107,7 +107,7 @@ export function useGenerateRoadmap() {
   const { mutate: createRoadmap, isSuccess, isError, error, isPending } = useMutation({
     mutationFn: postPrompt1,
     onSuccess: (data) => {
-      console.log("Roadmap generation successful:", data);
+      window.location.href = `/dashboard/p`
     },
     onError: (error) => {
       console.error("Roadmap generation error:", error);

@@ -24,8 +24,6 @@ export default function MainLayout({ children }) {
 
   if (isLoading) return <Loading />;
 
-  if (isError) return <div>Error loading user data.</div>;
-
   return (
     <div className="select-none">
       <Background />
@@ -33,12 +31,15 @@ export default function MainLayout({ children }) {
 
       <div className="fixed top-8 right-15 flex items-start xl:w-[18%] 2xl:w-auto justify-around flex-wrap gap-5 z-50">
         <StatsDisplay
-          hearts={userData.lives}
-          gems={userData.gems}
+          hearts={userData?.lives}
+          gems={userData?.gems}
           userId={session?.user?.id}
         />
         <ActionIcons notification={session?.user?.created_at} />
       </div>
+      {isError && <div className="bg-red-400 py-5 text-lg text-center text-white font-bold ">
+        Error loading user data.
+      </div>}
 
       <Outlet />
       {children}

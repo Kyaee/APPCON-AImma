@@ -238,9 +238,7 @@ export default function UserAssessment() {
 
     try {
       console.log("Generating roadmap with user data:", userData);
-      const result = await createRoadmap(userData);
-      console.log("Roadmap generation completed successfully", result);
-      navigate(`/dashboard/${session?.user?.id}?t=${Date.now()}`);
+      createRoadmap(userData);
     } catch (error) {
       console.error("Error generating roadmap:", error);
       setIsGenerating(false);
