@@ -11,8 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Gem, Rocket, Briefcase } from "lucide-react";
 // Fix image imports from public directory
-import BlueCappy from "/src/assets/shop/BlueCappy.svg";
-import RedCappy from "/src/assets/shop/RedCappy.svg";
+import CapySwag from "/src/assets/shop/CapySwag.png";
+import CapyApprove from "/src/assets/shop/CapyApprove.png";
 import MainNav from "@/components/layout/main-nav";
 import Header from "@/components/layout/lesson/header-navigator";
 import { useParams, useLocation } from "react-router-dom";
@@ -59,41 +59,36 @@ export default function ElementShop() {
       id: 1,
       title: "+1 Life",
       price: "50 Gems",
-      image: RedCappy,
+      image: CapySwag,
       bgColor: "#ffcb23",
-      icon: "?!",
     },
     {
       id: 2,
       title: "Unlock a lesson",
       price: "250 Gems",
-      image: BlueCappy,
+      image: CapyApprove,
       bgColor: "#57b2f4e6",
-      icon: "++",
     },
     {
       id: 3,
       title: "EXP Boost 2xp for 1 hour",
       price: "300 Gems",
-      image: RedCappy,
+      image: CapySwag,
       bgColor: "#ffcb23",
-      icon: "?!",
     },
     {
       id: 4,
       title: "Free trial for 6 hours",
       price: "500 Gems",
-      image: BlueCappy,
+      image: CapyApprove,
       bgColor: "#57b2f4e6",
-      icon: "++",
     },
     {
       id: 5,
       title: "Free trial for 3 hours",
       price: "250 Gems",
-      image: BlueCappy,
+      image: CapyApprove,
       bgColor: "#57b2f4e6",
-      icon: "++",
     },
   ];
 

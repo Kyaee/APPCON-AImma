@@ -8,8 +8,7 @@ import CapyStart from "@/assets/lesson-assessment/CapyStart.png";
 import { Separator } from "@/components/ui/separator";
 
 import NavigateAssessment from "@/components/layout/lesson/navigate-assessment";
-// Import useLocation if not already imported (though not directly used here, it's part of the pattern)
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/config/supabase";
 
 import { useState, useEffect, useRef, useCallback, Suspense } from "react";
@@ -25,9 +24,12 @@ export default function ElementLesson() {
   const navigate = useNavigate();
   const { session } = useAuth();
   const queryClient = useQueryClient(); // Added for query invalidation
-  // Remove generated_assessment state management from here if it's solely for triggering generation
-  // const generated_assessment = useLessonFetchStore((state) => state.generated_assessment);
-  // const setGeneratedAssessment = useLessonFetchStore((state) => state.setGeneratedAssessment);
+  const generated_assessment = useLessonFetchStore(
+    (state) => state.generated_assessment
+  );
+  const setGeneratedAssessment = useLessonFetchStore(
+    (state) => state.setGeneratedAssessment
+  );
   const lessonFetch = useLessonFetchStore((state) => state.fetch); // Get the lesson data from the store
   const scrollProgress = useLessonFetchStore((state) => state.scrollProgress); // Get the scroll progress from the store
   const setScrollProgress = useLessonFetchStore(
@@ -35,8 +37,7 @@ export default function ElementLesson() {
   ); // Function to set scroll progress
   const contentRef = useRef(null); // Attach to main
   const [isLoading, setLoading] = useState(false); // State to manage loading status
-  // Remove useAssessment hook import and usage from here if generation is moved entirely to IntroSlide
-  // const { createAssessment, isPending } = useAssessment(lessonFetch?.id);
+  const { createAssessment, isPending } = useAssessment(lessonFetch?.id);
   const updateStreakFromLesson = useStreakStore(
     (state) => state.updateStreakFromLesson
   );
@@ -378,81 +379,61 @@ export default function ElementLesson() {
   // DEBUGGING PURPOSES
   const contentMissing = lessonFetch && !lessonFetch.lesson;
 
-  if (isLoading || !lessonFetch || contentMissing) {
-    // Simplified loading check
-    const reason = isLoading
+  if (isPending || isLoading) {
+    const reason = isPending
+      ? "assessment generation pending"
+      : isLoading
       ? "general loading state active"
       : !lessonFetch
       ? "no lesson data available"
       : contentMissing
       ? "lesson content still loading"
       : "unknown reason";
+
     console.log(`Showing loading screen - ${reason}`);
     return <Loading generate_lesson={true} preserveBackground="static" />;
   }
 
   // Set up scroll animations
-  const handleAssessment = async () => {
-    // Make async if saveProgress is async
+  const handleAssessment = () => {
     setLoading(true);
 
     // Save highest progress before navigating to assessment
     if (session?.user?.id && lessonFetch?.id) {
-      try {
-        await updateLesson({
-          // Await the update
-          userId: session.user.id,
-          lessonId: lessonFetch.id,
-          lastAccessed: new Date().toISOString(),
-          progress: highestProgress,
-          // Keep status as 'in_progress' unless it was already 'Completed'
-          status:
-            lessonFetch.status === "Completed" ? "Completed" : "in_progress",
+      updateLesson({
+        userId: session.user.id,
+        lessonId: lessonFetch.id,
+        lastAccessed: new Date().toISOString(),
+        progress: highestProgress,
+        status: highestProgress >= 100 ? "In Progress" : lessonFetch.status,
+      });
+    }
+
+    if (generated_assessment) {
+      setGeneratedAssessment(false);
+      navigate(`/l/${lessonFetch?.id}/start`);
+    } else {
+      // Otherwise generate the assessment
+      setGeneratedAssessment(true);
+
+      if (lessonFetch?.id) {
+        console.log("Generating assessment using lessonFetch data...");
+        createAssessment({
+          lesson_id: lessonFetch?.id,
+          lesson_name: lessonFetch.name,
+          lesson_content: lessonFetch.lesson,
         });
-        console.log("Progress saved before navigating to assessment.");
-      } catch (error) {
-        console.error("Error saving progress before assessment:", error);
-        // Decide if you want to proceed even if saving fails
+      } else {
+        console.error(
+          "Cannot generate assessment: Missing lesson details in store.",
+          lessonFetch
+        );
+        setGeneratedAssessment(false);
       }
     }
-
-    // Navigate to the assessment start page, passing necessary lesson details in state
-    if (lessonFetch?.id && lessonFetch?.name && lessonFetch?.lesson) {
-      console.log("Navigating to assessment start with state:", {
-        lessonId: lessonFetch.id,
-        lessonName: lessonFetch.name,
-        // lessonContent: lessonFetch.lesson, // Content can be large, consider if needed here or fetched again
-        // Let's assume IntroSlide needs it for the generation prompt
-        lessonContent: lessonFetch.lesson,
-        // Pass other relevant details if needed by IntroSlide/Assessment generation
-        gems: lessonFetch.gems,
-        exp: lessonFetch.exp,
-        difficulty: lessonFetch.difficulty,
-      });
-      navigate(`/l/${lessonFetch.id}/start`, {
-        state: {
-          lessonId: lessonFetch.id,
-          lessonName: lessonFetch.name,
-          lessonContent: lessonFetch.lesson,
-          gems: lessonFetch.gems,
-          exp: lessonFetch.exp,
-          difficulty: lessonFetch.difficulty,
-        },
-      });
-    } else {
-      console.error(
-        "Cannot navigate to assessment: Missing required lesson details in lessonFetch store.",
-        lessonFetch
-      );
-      setLoading(false); // Reset loading state on error
-    }
-
-    // REMOVE assessment generation logic from here
-    // if (generated_assessment) { ... } else { ... createAssessment(...) ... }
   };
 
-  // Remove isPending check related to createAssessment here
-  // if (isPending || isLoading) { ... }
+  if (isPending) return <Loading generate_assessment={true} />;
 
   return (
     <main
@@ -483,8 +464,8 @@ export default function ElementLesson() {
         {lessonFetch?.assessment ? (
           <NavigateAssessment
             name={lessonFetch?.lesson_name || lessonFetch?.name}
-            onClick={handleAssessment} // Use the updated handleAssessment
-            disabled={isLoading} // Disable button while loading/navigating
+            onClick={handleAssessment}
+            disabled={isLoading}
           />
         ) : (
           <article className="flex flex-col items-start w-full mt-10">

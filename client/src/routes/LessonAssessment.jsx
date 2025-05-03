@@ -464,10 +464,11 @@ export default function Assessment() {
             <ArrowLeft />
             Back
           </button>
-          <div className="flex gap-2 h-15 text-xl text-white">
-            <HeartIcon />
-            {isCount.lives}
-            <p>HP</p>
+          {/* Lives Counter */}
+          <div className="flex items-center gap-2 h-10 text-xl text-white px-4 bg-red-800/50 rounded-lg border border-red-600">
+            <HeartIcon filled={true} className="text-red-500 w-6 h-6" />
+            <span className="font-bold">{isCount.lives}</span>
+            {/* <p>HP</p> */}
           </div>
 
           {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (

@@ -1,8 +1,9 @@
 import { Gem, ZapIcon } from "lucide-react";
 import { bouncy } from "ldrs";
-import Capybaraillant from "@/assets/lesson-assessment/Capybaraillant.png";
-import YouDidIt from "@/assets/lesson-assessment/YouDidIt.png";
+// Import all three capybara images
+import CapyAmazing from "@/assets/lesson-assessment/CapyAmazing.png";
 import Capytastic from "@/assets/lesson-assessment/Capytastic.png";
+import CapyBrilliant from "@/assets/lesson-assessment/CapyBrilliant.png";
 bouncy.register();
 
 import { useState, useCallback, useEffect } from "react";
@@ -13,8 +14,16 @@ import { useEvaluation } from "@/api/INSERT";
 import { useFetchSummary } from "@/api/FETCH";
 import { useStreakStore } from "@/store/useStreakStore";
 
-const images = [Capybaraillant, YouDidIt, Capytastic];
-const randomImage = images[Math.floor(Math.random() * images.length)];
+// Remove the randomImage function and add score-based image selection
+const getCapybaraImage = (score) => {
+  if (score === 10) {
+    return CapyBrilliant;
+  } else if (score >= 8) {
+    return Capytastic;
+  } else {
+    return CapyAmazing; // For scores 6-7
+  }
+};
 
 export default function LastSlide({
   lessonId,
@@ -29,6 +38,17 @@ export default function LastSlide({
   onClick,
   userId,
 }) {
+  // Get the appropriate image based on score
+  const capybaraImage = getCapybaraImage(userScore);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Preload the image before rendering anything
+  useEffect(() => {
+    const img = new Image();
+    img.src = capybaraImage;
+    img.onload = () => setImageLoaded(true);
+  }, [capybaraImage]);
+
   const [isPage, setPage] = useState(1);
   const [isSummaryDone, setSummaryDone] = useState(false); // Track summary completion
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent double submission
@@ -251,13 +271,21 @@ export default function LastSlide({
 
   switch (isPage) {
     case 1:
-      return (
+      // Only render the component when image is loaded
+      return imageLoaded ? (
         <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-primary ">
+          <img
+            src={capybaraImage}
+            alt="Capybara celebration"
+            className="w-65 h-75 object-cover object-bottom animate-bounce-slow"
+          />
+
           <h1 className="text-4xl font-extrabold mb-4 text-center">
             Congratulations!
             <br /> You have completed the assessment.
           </h1>
-          <div className="grid grid-cols-2  gap-x-10">
+
+          <div className="grid grid-cols-2 gap-x-10">
             <div>
               <p>Your Score</p>
               <h2 className="text-3xl font-bold">
@@ -285,6 +313,11 @@ export default function LastSlide({
             {isLoading ? "Processing..." : "Finish"}
           </button>
         </article>
+      ) : (
+        // Empty div to maintain layout while loading
+        <div className="h-full flex items-center justify-center">
+          <l-bouncy size="45" speed="1.75" color="white"></l-bouncy>
+        </div>
       );
     case 2:
       return (

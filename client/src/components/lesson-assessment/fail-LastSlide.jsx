@@ -18,9 +18,9 @@ export default function LastSlide({
     <article className="animate-text-fade flex flex-col gap-2 items-center justify-center p-8 h-full md:p-12 relative text-black">
       {/* Add sad capybara image */}
       <img
-        src={capyCry}
-        alt="Sad Capybara"
-        className="w-32 h-32 object-contain mb-2"
+        src={CapyFail}
+        alt="Feeling Down Capybara"
+        className="w-72 h-72 object-contain mb-2"
       />
 
       <h1 className="text-4xl font-extrabold mb-4 text-center">
