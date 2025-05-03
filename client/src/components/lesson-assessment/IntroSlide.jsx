@@ -4,38 +4,55 @@ import Loading from "@/routes/Loading";
 import { useAssessment } from "@/api/INSERT";
 import { useState, useEffect } from "react";
 import CapyAssess from "@/assets/lesson-assessment/CapyAssess.png";
+import { useQueryClient } from "@tanstack/react-query"; // Import useQueryClient
 
 export default function IntroSlide({
   lessonData,
-  buttonText = "Start Assessment", // Add default button text prop
+  buttonText = "Start Assessment",
+  onGenerationComplete, // Add new prop
 }) {
   const [isClicked, setClicked] = useState(false);
-  const generated_assessment = useLessonFetchStore(
-    (state) => state.generated_assessment
+  // Remove generated_assessment state tracking from here, parent will handle component switch
+  // const generated_assessment = useLessonFetchStore(
+  //   (state) => state.generated_assessment
+  // );
+  // const setGeneratedAssessment = useLessonFetchStore(
+  //   (state) => state.setGeneratedAssessment
+  // );
+  const queryClient = useQueryClient(); // Get query client instance
+
+  // Pass the onSuccess logic to useAssessment hook
+  const { createAssessment, isPending, isError } = useAssessment(
+    lessonData?.id,
+    () => {
+      // Define onSuccess callback here
+      console.log("Assessment generated, invalidating query and calling prop.");
+      queryClient.invalidateQueries({
+        queryKey: ["lessonAssessment", lessonData?.id],
+      }); // Invalidate query
+      if (onGenerationComplete) {
+        onGenerationComplete(); // Signal parent component
+      }
+    }
   );
-  const setGeneratedAssessment = useLessonFetchStore(
-    (state) => state.setGeneratedAssessment
-  );
-  const { createAssessment, isPending, isError } = useAssessment(lessonData?.id);
 
   function generateQuestions(e) {
     e.preventDefault();
     setClicked(true);
-
-    setGeneratedAssessment(true);
+    // Remove setGeneratedAssessment call
+    // setGeneratedAssessment(true);
 
     if (lessonData?.id) {
       console.log("Generating assessment using lessonFetch data...");
-      createAssessment(
-        {
-          lesson_id: lessonData.id,
-          lesson_name: lessonData.name,
-          lesson_content: lessonData.lesson,
-        });
+      createAssessment({
+        lesson_id: lessonData.id,
+        lesson_name: lessonData.name,
+        lesson_content: lessonData.lesson,
+      });
     } else {
       console.error(
         "Cannot generate assessment: Missing lesson details in store.",
-        lessonFetch
+        lessonData // Use lessonData directly for logging
       );
       setClicked(false); // Reset to allow retry
     }
@@ -43,13 +60,17 @@ export default function IntroSlide({
 
   if (isError) {
     console.error("Assessment generation failed.");
+    // Optionally reset isClicked if generation fails permanently
+    // setClicked(false);
   }
 
-  // Show loading screen while assessment is being generated
-  if (isPending || (isClicked && !generated_assessment)) {
-    return <Loading generate_assessment={true} preserveBackground={"video"}/>;
+  // Show loading screen ONLY while assessment is being generated (isPending)
+  // The parent component will handle switching to LessonAssessment component
+  if (isPending) {
+    return <Loading generate_assessment={true} preserveBackground={"video"} />;
   }
 
+  // Render IntroSlide content if not loading
   return (
     <article className="flex flex-col items-center justify-center p-8 h-full md:p-12 relative text-foreground ">
       <img src={CapyAssess} alt="capybara superhero" className="w-100" />
@@ -69,8 +90,9 @@ export default function IntroSlide({
         className="py-3 w-full mt-8 text-lg  bg-white text-black font-extrabold custom-shadow-50 rounded-lg
                 hover:bg-neutral-300 disabled:bg-neutral-200 disabled:text-neutral-400"
         onClick={generateQuestions}
+        disabled={isClicked} // Disable button after click to prevent multiple submissions
       >
-        {buttonText} {/* Use the provided button text */}
+        {buttonText}
       </button>
       {isError && (
         <p className="text-red-500 mt-2">

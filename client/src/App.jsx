@@ -34,7 +34,6 @@ import RedirectJobOpportunities from "./routes/redirects/RedirectJobOpportunitie
 import Dashboard from "./routes/Dashboard";
 import Profile from "./routes/Profile";
 import Lesson from "./routes/Lesson";
-import LessonAssessment from "./routes/LessonAssessment";
 import JobOpportunities from "./routes/JobOpportunities";
 import NotFound from "./routes/NotFound";
 import ElementShop from "./routes/ElementShop";
@@ -99,10 +98,6 @@ function App() {
                       <Route
                         path="/l/:id/start"
                         element={<RedirectAssessment />}
-                      />
-                      <Route 
-                        path="/l/:id/assessment"
-                        element={<LessonAssessment />}
                       />
                       {/* Use the same ElementShop component for lesson shop route */}
                       <Route path="/l/shop/:id" element={<ElementShop />} />

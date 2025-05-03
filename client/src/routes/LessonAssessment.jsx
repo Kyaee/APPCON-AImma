@@ -38,17 +38,18 @@ export default function Assessment() {
   const { session } = useAuth();
   const lessonFetch = useLessonFetchStore((state) => state.fetch);
   const userData = useFetchStore((state) => state.fetch);
-  const updateStreakFromLesson = useStreakStore((state) => state.updateStreakFromLesson);
-  const completeLessonTest = useQuestStore((state) => state.completeLessonTest); 
+  const updateStreakFromLesson = useStreakStore(
+    (state) => state.updateStreakFromLesson
+  );
+  const completeLessonTest = useQuestStore((state) => state.completeLessonTest);
   const { data: lessonData, isLoading } = useQuery(fetchLessonAssessmentData());
   const queryClient = useQueryClient();
-  const { setSuppressNavigation } = useNavigation(); 
+  const { setSuppressNavigation } = useNavigation();
   const navigate = useNavigate();
-
 
   // NEUTRAL PERSPECTIVE.///////////////////////////////////////////////////////////////////////////////////////////
   const { data: userDataFetched, isLoading: isUserDataLoading } = useQuery({
-    queryKey: ["fetch_user", session?.user?.id],  
+    queryKey: ["fetch_user", session?.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("users")
@@ -74,12 +75,10 @@ export default function Assessment() {
     },
   ]);
 
-  
   const userId = session?.user?.id || id;
 
   // Get the updateLesson function to update progress in Supabase
   const { updateLesson, updateUser } = useEvaluation(userId);
-
 
   // Initialize lives based on user data when it's loaded /////////////////////////////////////////////////////////////
   useEffect(() => {
@@ -95,7 +94,6 @@ export default function Assessment() {
       setCount((prev) => ({ ...prev, lives: assessmentLives }));
     }
   }, [userDataFetched, isUserDataLoading]);
-
 
   // Function to handle retrying the assessment
   const handleRetryAssessment = () => {
@@ -326,7 +324,7 @@ export default function Assessment() {
             updateError
           );
         }
-        
+
         await updateLesson({
           userId: userId,
           lessonId: lessonFetch.id,
@@ -358,7 +356,8 @@ export default function Assessment() {
     }
   };
 
-  if (isLoading || isUserDataLoading) return <Loading generate_assessment={true} />;
+  if (isLoading || isUserDataLoading)
+    return <Loading generate_assessment={true} preserveBackground={"video"} />; // Pass preserveBackground here
 
   // Check if user has no lives left in assessment and database
   if (isCount.lives === 0) {
@@ -392,7 +391,6 @@ export default function Assessment() {
         {/* Add prop to indicate header is visible */}
         <form>
           {isLastSlide ? (
-            
             isCount.score >= 3 ? (
               // ------------------------
               //   USER PASSED ASSESSMENT
@@ -453,48 +451,48 @@ export default function Assessment() {
         {/*********************************************
                   FOOTER DESIGN LOGIC
         **********************************************/}
-          <footer
-            className="absolute bottom-0 left-0 w-full py-3 flex items-center justify-around border-3 bg-black/50 border-black
+        <footer
+          className="absolute bottom-0 left-0 w-full py-3 flex items-center justify-around border-3 bg-black/50 border-black
             *:flex *:py-3 *:rounded-lg *:gap-2 "
+        >
+          <button
+            className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-primary px-10 text-white custom-shadow-75 border-2"
+            onClick={() =>
+              isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
+            }
           >
-            <button
-              className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-primary px-10 text-white custom-shadow-75 border-2"
-              onClick={() =>
-                isCurrentSlide === 0 ? setIntroSlide(true) : handleBack()
-              }
-            >
-              <ArrowLeft />
-              Back
-            </button>
-            <div className="flex gap-2 h-15 text-xl text-white">
-              <HeartIcon />
-              {isCount.lives}
-              <p>HP</p>
-            </div>
+            <ArrowLeft />
+            Back
+          </button>
+          <div className="flex gap-2 h-15 text-xl text-white">
+            <HeartIcon />
+            {isCount.lives}
+            <p>HP</p>
+          </div>
 
-            {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (
-              <button
-                className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-2 disabled:bg-light-brown border-black px-9 custom-shadow-75 text-white"
-                onClick={handleCheck}
-                disabled={!isAnswers[isCurrentSlide]?.answer}
-              >
-                {/* You can create a ternary operator for this {STATE ? }   */}
-                Check
-                <ArrowRight />
-              </button>
-            )}
-            {isAnswers[isCurrentSlide]?.validated && (
-              <button
-                className="mr-3 bg-[#BF8648] border-2 border-black px-6 custom-shadow-50 text-white"
-                onClick={handleNext}
-                disabled={isCurrentSlide === lessonData.questions.length - 1}
-              >
-                {/* You can create a ternary operator for this {STATE ? } */}
-                Next
-                <ArrowRight />
-              </button>
-            )}
-          </footer>
+          {!isAnswers[isCurrentSlide]?.validated && !isLastSlide && (
+            <button
+              className="bg-brown hover:bg-dark-brown cursor-pointer transition-all duration-400 border-2 disabled:bg-light-brown border-black px-9 custom-shadow-75 text-white"
+              onClick={handleCheck}
+              disabled={!isAnswers[isCurrentSlide]?.answer}
+            >
+              {/* You can create a ternary operator for this {STATE ? }   */}
+              Check
+              <ArrowRight />
+            </button>
+          )}
+          {isAnswers[isCurrentSlide]?.validated && (
+            <button
+              className="mr-3 bg-[#BF8648] border-2 border-black px-6 custom-shadow-50 text-white"
+              onClick={handleNext}
+              disabled={isCurrentSlide === lessonData.questions.length - 1}
+            >
+              {/* You can create a ternary operator for this {STATE ? } */}
+              Next
+              <ArrowRight />
+            </button>
+          )}
+        </footer>
       </main>
     </>
   );

@@ -180,7 +180,8 @@ export const postPrompt2 = async (
 /**************************************
  *       POST ASSESSMENT PROMPT
  **************************************/
-export function useAssessment(id) {
+// Modify the hook to accept an onSuccess callback
+export function useAssessment(id, onSuccessCallback) {
   const postPrompt3 = async ({ lesson_id, lesson_name, lesson_content }) => {
     if (!lesson_id || !lesson_name || !lesson_content) {
       throw new Error("Invalid input parameters for postPrompt3");
@@ -220,8 +221,12 @@ export function useAssessment(id) {
   } = useMutation({
     mutationFn: postPrompt3,
     onSuccess: (data) => {
-      console.log("Data: Successful");  
-      window.location.href=`/l/${id}/assessment`;
+      console.log("Assessment Generation Data: Successful");
+      // Call the provided callback instead of redirecting
+      if (onSuccessCallback) {
+        onSuccessCallback(data);
+      }
+      // REMOVED: window.location.href=`/l/${id}/assessment`;
     },
     onError: (error) => {
       console.error("Error:", error);
