@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // Import SVG assets
 import capySvg from "@/assets/dashboard/capy.svg";
 import stageSvg from "@/assets/dashboard/stage.svg";
-import lockedStageSvg from "@/assets/dashboard/locked-stage.svg";
+// import lockedStageSvg from "@/assets/dashboard/locked-stage.svg";
 import currentPlaySvg from "@/assets/dashboard/current-play.svg";
 import iconFirstSvg from "@/assets/dashboard/icon-first.svg";
 import iconSecondSvg from "@/assets/dashboard/icon-second.svg";
@@ -175,6 +175,7 @@ const RoadmapContent = ({
         isCurrentStage: currentActiveLessonIndex === 0, // Show currentPlay if this is the active lesson
         isCompleted: extendedLessons[0]?.status === "completed",
         isLocked: extendedLessons[0]?.status === "locked",
+        status: extendedLessons[0]?.status, // Add explicit status property
         iconSrc: iconFirstSvg,
         fruitSrc: fruitOneSvg,
         difficulty: extendedLessons[0]?.lesson_difficulty,
@@ -206,6 +207,7 @@ const RoadmapContent = ({
         isCurrentStage: currentActiveLessonIndex === 1, // Show currentPlay if this is the active lesson
         isCompleted: extendedLessons[1]?.status === "completed",
         isLocked: extendedLessons[1]?.status === "locked",
+        status: extendedLessons[1]?.status, // Add explicit status property
         iconSrc: iconSecondSvg,
         fruitSrc: fruitOneSvg,
         difficulty: extendedLessons[1]?.lesson_difficulty,
@@ -412,27 +414,23 @@ const RoadmapContent = ({
   ]);
 
   const handleStageClick = (position) => {
-    if (!position.isLocked) {
-      // Update both currentLessonId for the OpenLesson component
-      // and lastSelectedLessonId for tracking the current stage in the roadmap
-      setCurrentLessonId(position.lessonId);
-      setLastSelectedLessonId(position.lessonId);
-      // Immediately update localStorage too
-      localStorage.setItem(
-        `roadmap_${currentCourse}_lastLesson`,
-        position.lessonId
-      );
-      setOpenLesson(true);
+    // Removed isLocked check - all stages are now clickable
+    setCurrentLessonId(position.lessonId);
+    setLastSelectedLessonId(position.lessonId);
+    // Immediately update localStorage too
+    localStorage.setItem(
+      `roadmap_${currentCourse}_lastLesson`,
+      position.lessonId
+    );
+    setOpenLesson(true);
 
-      // Log for debugging
-      console.log(
-        `Selected lesson ${position.lessonId}: ${position.lessonTitle} (${position.status})`
-      );
-    }
+    // Log for debugging
+    console.log(
+      `Selected lesson ${position.lessonId}: ${position.lessonTitle} (${position.status})`
+    );
   };
 
   // Listen for URL changes that might indicate returning from a lesson
-  // This helps with persistence after completing a lesson
   useEffect(() => {
     // When lessons array changes, check for any newly completed lessons
     if (extendedLessons && extendedLessons.length > 0 && lastSelectedLessonId) {
@@ -446,17 +444,15 @@ const RoadmapContent = ({
           (l) => l.id === lastSelectedLessonId
         );
         if (currentIndex !== -1) {
-          // Look for the next non-locked lesson after the current one
-          for (let i = currentIndex + 1; i < extendedLessons.length; i++) {
-            if (extendedLessons[i].status !== "locked") {
-              setLastSelectedLessonId(extendedLessons[i].id);
-              // Also update in localStorage immediately
-              localStorage.setItem(
-                `roadmap_${currentCourse}_lastLesson`,
-                extendedLessons[i].id
-              );
-              break;
-            }
+          // Look for the next lesson after the current one
+          // Removed "non-locked" condition
+          if (currentIndex + 1 < extendedLessons.length) {
+            setLastSelectedLessonId(extendedLessons[currentIndex + 1].id);
+            // Also update in localStorage immediately
+            localStorage.setItem(
+              `roadmap_${currentCourse}_lastLesson`,
+              extendedLessons[currentIndex + 1].id
+            );
           }
         }
       }
@@ -514,18 +510,16 @@ const RoadmapContent = ({
                     <img src={capySvg} alt="Capy" className="w-full h-full" />
                   </div>
                 ) : (
-                  // Render stage
+                  // Render stage - removed all "locked" conditions
                   <div
-                    className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 ${
-                      position.isLocked ? "opacity-90" : ""
-                    }`}
+                    className="relative cursor-pointer transition-transform duration-300 hover:scale-105"
                     onClick={() => handleStageClick(position)}
                     title={position.lessonTitle}
                   >
-                    {/* Stage image - increased size */}
+                    {/* Stage image - always use normal stage */}
                     <img
-                      src={position.isLocked ? lockedStageSvg : stageSvg}
-                      alt={position.isLocked ? "Locked Stage" : "Stage"}
+                      src={stageSvg}
+                      alt="Stage"
                       className="w-[120px] h-[120px]" // Increased from 90px
                     />
 
@@ -543,11 +537,7 @@ const RoadmapContent = ({
                           alt={`Icon ${
                             position.isLastStage ? "Trophy" : index
                           }`}
-                          className={`w-16 h-16 mb-4 ${
-                            position.isLocked
-                              ? "filter grayscale opacity-50"
-                              : ""
-                          }`} // Increased from 12
+                          className="w-16 h-16 mb-4" // Removed grayscale filter
                         />
                       )}
                     </div>
@@ -557,9 +547,7 @@ const RoadmapContent = ({
                       <img
                         src={position.fruitSrc}
                         alt={`Difficulty ${position.difficulty}`}
-                        className={`w-20 h-12 ${
-                          position.isLocked ? "opacity-50" : ""
-                        }`} // Increased from 14x8
+                        className="w-20 h-12" // Removed opacity reduction
                       />
                     </div>
                   </div>
