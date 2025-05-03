@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { VideoBackground } from "@/components/layout/Background";
 import { LoginForm } from "@/components/features/login-form";
-import brandIcon from "@/assets/general/brandicon.png";
+import brandIcon from "/favicon.svg";
 import { useState, useEffect } from "react";
 
 export default function LoginPage() {
@@ -45,7 +45,7 @@ export default function LoginPage() {
       </div>
 
       {/* Content Container */}
-      <div 
+      <div
         className={`flex w-full max-w-sm flex-col gap-6 z-10 transition-all duration-700 ${
           contentLoaded
             ? "opacity-100 translate-y-0"
@@ -56,9 +56,9 @@ export default function LoginPage() {
           <img
             src={brandIcon}
             alt="CapyCademy Logo"
-            className="h-12 w-12 object-contain"
+            className="h-8 w-8 object-contain"
           />
-          <span className="text-2xl">CapyCademy</span>
+          <span className="text-xl">CapyCademy</span>
         </Link>
 
         <LoginForm />

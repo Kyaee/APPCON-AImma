@@ -104,7 +104,7 @@ const MainNav = ({ isLoggedIn, mobile }) => {
           </button>
           {!isLoggedIn ? (
             <Link to="/auth/login">
-              <Button className="px-4 md:px-8 py-3 md:py-4 bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+              <Button className="px-4 md:px-8 py-3 md:py-4 bg-[#F4CB57] border-3 cursor-pointer border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
                 Log In
               </Button>
             </Link>
@@ -139,7 +139,7 @@ const MainNav = ({ isLoggedIn, mobile }) => {
                     to="/auth/login"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Button className="w-full mt-4 py-4 bg-[#F4CB57] border-3 border-black text-black hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
+                    <Button className="w-full mt-4 py-4 bg-[#F4CB57] border-3 border-black text-black cursor-pointer hover:bg-[#e7b21d] hover:text-black transition duration-300 ease-in-out text-base">
                       Log In
                     </Button>
                   </Link>

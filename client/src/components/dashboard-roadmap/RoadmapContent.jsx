@@ -26,7 +26,6 @@ const RoadmapContent = ({
   currentCourse,
   onCourseChange,
   isSidebarExpanded,
-  // setIsSidebarExpanded, // Remove this prop or make it optional
   isOpenLesson,
   setOpenLesson,
   pathColor = "#706E6E",
@@ -37,13 +36,115 @@ const RoadmapContent = ({
   isLoading,
   setLoading,
 }) => {
+  // Initialize lastSelectedLessonId from localStorage if available
+  const [lastSelectedLessonId, setLastSelectedLessonId] = useState(() => {
+    const storedId = localStorage.getItem(
+      `roadmap_${currentCourse}_lastLesson`
+    );
+    return storedId ? parseInt(storedId, 10) : null;
+  });
+
   const [currentLessonId, setCurrentLessonId] = useState(null);
   const navigate = useNavigate();
-  // Create a ref for the canvas
   const canvasRef = useRef(null);
 
-  // Modify the useMemo with shouldExtend = false
-  const extendedLessons = lessons; // Just use the original lessons array directly
+  const extendedLessons = lessons;
+
+  // Persist lastSelectedLessonId to localStorage whenever it changes
+  useEffect(() => {
+    if (lastSelectedLessonId && currentCourse) {
+      localStorage.setItem(
+        `roadmap_${currentCourse}_lastLesson`,
+        lastSelectedLessonId
+      );
+    }
+  }, [lastSelectedLessonId, currentCourse]);
+
+  // Determine which lesson should show the current play icon
+  const currentActiveLessonIndex = useMemo(() => {
+    // If we have a lastSelectedLessonId, prioritize that for the currentPlay icon
+    if (lastSelectedLessonId) {
+      const selectedIndex = extendedLessons.findIndex(
+        (lesson) => lesson.id === lastSelectedLessonId
+      );
+      if (selectedIndex !== -1) {
+        // Only use this if the lesson isn't completed (can't be current if completed)
+        if (extendedLessons[selectedIndex].status !== "completed") {
+          return selectedIndex;
+        }
+      }
+    }
+
+    // If no selected lesson or it's completed, fallback to these priority rules:
+
+    // 1. Find any lesson marked as "in_progress"
+    const inProgressIndex = extendedLessons.findIndex(
+      (lesson) => lesson.status === "in_progress"
+    );
+    if (inProgressIndex !== -1) return inProgressIndex;
+
+    // 2. Find the first lesson that's unlocked but not completed
+    const firstUnlockedIndex = extendedLessons.findIndex(
+      (lesson) => lesson.status !== "locked" && lesson.status !== "completed"
+    );
+    if (firstUnlockedIndex !== -1) return firstUnlockedIndex;
+
+    // 3. Find the first unlocked lesson (including completed ones)
+    const firstUnlockedOrCompletedIndex = extendedLessons.findIndex(
+      (lesson) => lesson.status !== "locked"
+    );
+    if (firstUnlockedOrCompletedIndex !== -1)
+      return firstUnlockedOrCompletedIndex;
+
+    // Default: first lesson
+    return 0;
+  }, [extendedLessons, lastSelectedLessonId]);
+
+  // On initial mount, check for persisted lesson or set based on lesson status
+  useEffect(() => {
+    if (extendedLessons && extendedLessons.length > 0) {
+      // If we already have a lastSelectedLessonId from localStorage but it's invalid now,
+      // clear it and proceed with normal logic
+      if (lastSelectedLessonId) {
+        const foundLesson = extendedLessons.find(
+          (lesson) => lesson.id === lastSelectedLessonId
+        );
+        // If lesson exists and is valid (not completed), keep using it
+        if (foundLesson && foundLesson.status !== "completed") {
+          return; // Keep using the stored lesson id
+        }
+        // Otherwise, reset it and proceed with finding a new one
+      }
+
+      // Try to find a lesson with "in_progress" status
+      const inProgressLesson = extendedLessons.find(
+        (lesson) => lesson.status === "in_progress"
+      );
+
+      if (inProgressLesson) {
+        setLastSelectedLessonId(inProgressLesson.id);
+      } else {
+        // If no in-progress lesson, try to find the first unlocked, non-completed lesson
+        const firstUnlockedLesson = extendedLessons.find(
+          (lesson) =>
+            lesson.status !== "locked" && lesson.status !== "completed"
+        );
+
+        if (firstUnlockedLesson) {
+          setLastSelectedLessonId(firstUnlockedLesson.id);
+        } else {
+          // If everything is either locked or completed, just use first unlocked lesson
+          const anyUnlockedLesson = extendedLessons.find(
+            (lesson) => lesson.status !== "locked"
+          );
+
+          if (anyUnlockedLesson) {
+            setLastSelectedLessonId(anyUnlockedLesson.id);
+          }
+        }
+      }
+    }
+  }, [extendedLessons]); // Remove lastSelectedLessonId dependency to avoid conflicts with localStorage
 
   // Generate positions for each stage in a wave-like pattern
   const stagePositions = useMemo(() => {
@@ -71,7 +172,7 @@ const RoadmapContent = ({
       positions.push({
         horizontalPosition: CENTER_POSITION,
         verticalPosition: VERTICAL_GAP,
-        isCurrentStage: extendedLessons[0]?.status === "in_progress",
+        isCurrentStage: currentActiveLessonIndex === 0, // Show currentPlay if this is the active lesson
         isCompleted: extendedLessons[0]?.status === "completed",
         isLocked: extendedLessons[0]?.status === "locked",
         iconSrc: iconFirstSvg,
@@ -102,7 +203,7 @@ const RoadmapContent = ({
         // Position the second stage to the full right position
         horizontalPosition: CENTER_POSITION + HORIZONTAL_STEP, // Changed from 0.6 to full step
         verticalPosition: VERTICAL_GAP * 2, // Positioned 2 gaps down from top
-        isCurrentStage: extendedLessons[1]?.status === "in_progress",
+        isCurrentStage: currentActiveLessonIndex === 1, // Show currentPlay if this is the active lesson
         isCompleted: extendedLessons[1]?.status === "completed",
         isLocked: extendedLessons[1]?.status === "locked",
         iconSrc: iconSecondSvg,
@@ -164,7 +265,10 @@ const RoadmapContent = ({
       positions.push({
         horizontalPosition: currentPosition,
         verticalPosition: VERTICAL_GAP + i * VERTICAL_GAP,
-        status: extendedLessons[i].status,
+        status: stageStatus,
+        isCurrentStage: currentActiveLessonIndex === i, // Show currentPlay if this is the active lesson
+        isCompleted: stageStatus === "completed",
+        isLocked: stageStatus === "locked",
         iconSrc,
         fruitSrc,
         difficulty: extendedLessons[i].lesson_difficulty,
@@ -176,7 +280,21 @@ const RoadmapContent = ({
     }
 
     return positions;
-  }, [extendedLessons]);
+  }, [extendedLessons, currentActiveLessonIndex]);
+
+  // Effect to update current lesson ID when active lesson changes
+  useEffect(() => {
+    if (
+      extendedLessons &&
+      extendedLessons.length > 0 &&
+      currentActiveLessonIndex >= 0
+    ) {
+      const activeLessonId = extendedLessons[currentActiveLessonIndex]?.id;
+      if (activeLessonId) {
+        setCurrentLessonId(activeLessonId);
+      }
+    }
+  }, [extendedLessons, currentActiveLessonIndex]);
 
   // Draw curved path lines on canvas when positions change
   useEffect(() => {
@@ -295,14 +413,55 @@ const RoadmapContent = ({
 
   const handleStageClick = (position) => {
     if (!position.isLocked) {
+      // Update both currentLessonId for the OpenLesson component
+      // and lastSelectedLessonId for tracking the current stage in the roadmap
       setCurrentLessonId(position.lessonId);
-      setOpenLesson(true); // This now updates the parent state
+      setLastSelectedLessonId(position.lessonId);
+      // Immediately update localStorage too
+      localStorage.setItem(
+        `roadmap_${currentCourse}_lastLesson`,
+        position.lessonId
+      );
+      setOpenLesson(true);
 
+      // Log for debugging
       console.log(
-        stagePositions.findIndex((pos) => pos.lessonId === position.lessonId)
+        `Selected lesson ${position.lessonId}: ${position.lessonTitle} (${position.status})`
       );
     }
   };
+
+  // Listen for URL changes that might indicate returning from a lesson
+  // This helps with persistence after completing a lesson
+  useEffect(() => {
+    // When lessons array changes, check for any newly completed lessons
+    if (extendedLessons && extendedLessons.length > 0 && lastSelectedLessonId) {
+      const selectedLesson = extendedLessons.find(
+        (l) => l.id === lastSelectedLessonId
+      );
+
+      // If the selected lesson is now completed, find the next uncompleted lesson
+      if (selectedLesson && selectedLesson.status === "completed") {
+        const currentIndex = extendedLessons.findIndex(
+          (l) => l.id === lastSelectedLessonId
+        );
+        if (currentIndex !== -1) {
+          // Look for the next non-locked lesson after the current one
+          for (let i = currentIndex + 1; i < extendedLessons.length; i++) {
+            if (extendedLessons[i].status !== "locked") {
+              setLastSelectedLessonId(extendedLessons[i].id);
+              // Also update in localStorage immediately
+              localStorage.setItem(
+                `roadmap_${currentCourse}_lastLesson`,
+                extendedLessons[i].id
+              );
+              break;
+            }
+          }
+        }
+      }
+    }
+  }, [extendedLessons, lastSelectedLessonId]);
 
   return (
     <div

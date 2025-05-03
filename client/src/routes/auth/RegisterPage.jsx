@@ -1,6 +1,6 @@
 import { VideoBackground } from "@/components/layout/Background";
 import { RegisterForm } from "@/components/features/register-form";
-import brandIcon from "@/assets/general/brandicon.png";
+import brandIcon from "/favicon.svg";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -50,12 +50,12 @@ export default function RegisterPage() {
         <div className="flex justify-center gap-2 md:justify-start">
           <Link
             to="/"
-            className="flex items-center gap-2 font-medium text-xl text-black"
+            className="flex items-center gap-2 font-medium text-lg text-black"
           >
             <img
               src={brandIcon}
               alt="CapyCademy Logo"
-              className="h-12 w-12 object-contain"
+              className="h-8 w-8 object-contain"
             />
             CapyCademy
           </Link>
