@@ -77,7 +77,11 @@ export default function Header({
     <header className="fixed top-5 w-full px-8 flex justify-between items-center z-50">
       <div className="flex items-center gap-2">
         <img src="/favicon.svg" alt="CapyCademy Logo" className="w-8 h-8" />
-        <h1 className="text-2xl text-primary font-bold">CapyCademy</h1>
+        <img
+          src="/CapyCademy.svg"
+          alt="CapyCademy"
+          className="h-11 translate-x-[-15px]"
+        />
       </div>
 
       {/* Only show nav if we have tabs to display (lesson has an assessment) */}

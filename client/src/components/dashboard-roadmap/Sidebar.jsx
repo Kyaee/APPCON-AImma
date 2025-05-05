@@ -76,11 +76,13 @@ const Sidebar = ({
               <img
                 src="/favicon.svg"
                 alt="CapyCademy Logo"
-                className="w-8 h-8"
+                className="w-7 h-7"
               />
-              <span className="transition animate-text-reveal text-lg font-bold text-black dark:text-primary">
-                CapyCademy
-              </span>
+              <img
+                src="/CapyCademy.svg"
+                alt="CapyCademy"
+                className="h-9 translate-x-[-15px] transition animate-text-reveal dark:text-primary"
+              />
             </div>
             <button
               onClick={() => onToggle()}

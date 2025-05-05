@@ -60,13 +60,13 @@ const MainNav = ({ isLoggedIn, mobile }) => {
             alt="CapyCademy Logo"
             className="h-8 w-8 md:h-10 md:w-10 object-contain"
           />
-          <span
-            className={`text-xl md:text-2xl font-bold ${
-              scrolled || mobileMenuOpen ? "text-white" : "text-white"
+          <img
+            src="/CapyCademy.svg"
+            alt="CapyCademy"
+            className={`h-7 md:h-10 translate-x-[-15px] ${
+              scrolled || mobileMenuOpen ? "" : ""
             }`}
-          >
-            CapyCademy
-          </span>
+          />
         </div>
 
         {/* Mobile menu button */}

@@ -17,7 +17,11 @@ export default function LandingFooter() {
                   alt="CapyCademy Logo"
                   className="h-8 w-8 md:h-10 md:w-10 p-1"
                 />
-                <span className="text-xl font-bold text-white">CapyCademy</span>
+                <img
+                  src="/CapyCademy.svg"
+                  alt="CapyCademy"
+                  className="h-9 translate-x-[-17px]"
+                />
               </div>
               <p className="text-base mb-4 w-full">
                 Your intelligent learning companion that adapts to your needs,
@@ -178,7 +182,13 @@ export default function LandingFooter() {
 
           <div className="border-t border-dark-mode-highlight mt-8 md:mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
             <p className="text-base">
-              © {currentYear} CapyCademy. All rights reserved.
+              © {currentYear}{" "}
+              <img
+                src="/CapyCademy.svg"
+                alt="CapyCademy"
+                className="h-4 inline-block filter brightness-0 invert"
+              />
+              . All rights reserved.
             </p>
             <div className="flex gap-4 md:gap-6 mt-4 md:mt-0">
               <a

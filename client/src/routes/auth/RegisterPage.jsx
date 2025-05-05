@@ -57,7 +57,11 @@ export default function RegisterPage() {
               alt="CapyCademy Logo"
               className="h-8 w-8 object-contain"
             />
-            CapyCademy
+            <img
+              src="/CapyCademy.svg"
+              alt="CapyCademy"
+              className="h-10 translate-x-[-15px]"
+            />
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">

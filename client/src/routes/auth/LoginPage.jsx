@@ -58,7 +58,11 @@ export default function LoginPage() {
             alt="CapyCademy Logo"
             className="h-8 w-8 object-contain"
           />
-          <span className="text-xl">CapyCademy</span>
+          <img
+            src="/CapyCademy.svg"
+            alt="CapyCademy"
+            className="h-11 translate-x-[-15px] "
+          />
         </Link>
 
         <LoginForm />
