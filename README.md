@@ -76,23 +76,6 @@ pip install -r requirements.txt
 uvicorn app:app --reload
 ```
 
-## III. 🔐 Environment Variables
-
-| Client | URL   |
-| ---- | ---- | 
-| VITE_SUPABASE_KEY | ```eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndteHVnY3Fqa3Jkcmh3YXZseGplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5Mzc0NDYsImV4cCI6MjA1NzUxMzQ0Nn0.ut6C9mnpXg9rZxt2yvmB3PWZ_em-IL3SD-roe0lmPcY```|
-| VITE_SUPABASE_URL | ```https://wmxugcqjkrdrhwavlxje.supabase.co``` |
-
-<br>
-
-| Server | URL    |
-| ------ | --- |  
-| DEEPSEEK_API_KEY | ```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``` |
-| DEEPSEEK_URL | ```https://openrouter.ai/api/v1``` |
-| GEMINI_API_KEY | ```GEMINI_API_KEY=AIzaSyBi57LIg2UFpQrwpHdaAcsVkrlGJrzzNz8``` |
-| GEMINI_API_URL | ```https://generativelanguage.googleapis.com/v1beta/openai/```|
-<br>
-
 ## 🌐 How to Access CapyCademy
 
 Getting started with CapyCademy is quick and easy! Just follow these steps:
